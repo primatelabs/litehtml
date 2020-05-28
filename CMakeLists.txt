@@ -11,7 +11,11 @@ set(SOURCE_LITEHTML
     src/box.cpp
     src/context.cpp
     src/css_length.cpp
+    src/css_number.cpp
     src/css_selector.cpp
+    src/css_token.cpp
+    src/css_tokenizer_input_stream.cpp
+    src/css_tokenizer.cpp
     src/document.cpp
     src/el_anchor.cpp
     src/el_base.cpp
@@ -56,9 +60,13 @@ set(HEADER_LITEHTML
     include/litehtml/context.h
     include/litehtml/css_length.h
     include/litehtml/css_margins.h
+    include/litehtml/css_number.h
     include/litehtml/css_offsets.h
     include/litehtml/css_position.h
     include/litehtml/css_selector.h
+    include/litehtml/css_token.h
+    include/litehtml/css_tokenizer_input_stream.h
+    include/litehtml/css_tokenizer.h
     include/litehtml/document.h
     include/litehtml/el_anchor.h
     include/litehtml/el_base.h
@@ -99,6 +107,8 @@ set(TEST_LITEHTML
     containers/test/container_test.cpp
     test/contextTest.cpp
     test/cssTest.cpp
+    test/css_tokenizer_input_stream_test.cpp
+    test/css_tokenizer_test.cpp
     test/documentTest.cpp
     test/layoutGlobalTest.cpp
     test/mediaQueryTest.cpp
@@ -170,4 +180,6 @@ if (BUILD_TESTING)
     add_test(NAME layoutGlobalTest COMMAND ${TEST_NAME} 4)
     add_test(NAME mediaQueryTest COMMAND ${TEST_NAME} 5)
     add_test(NAME webColorTest COMMAND ${TEST_NAME} 6)
+    add_test(NAME CssTokenizerInputStreamTest COMMAND ${TEST_NAME} 7)
+    add_test(NAME CssTokenizerTest COMMAND ${TEST_NAME} 8)
 endif()

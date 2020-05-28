@@ -12,6 +12,8 @@ void documentTest();
 void layoutGlobalTest();
 void mediaQueryTest();
 void webColorTest();
+void CssTokenizerInputStreamTest();
+void CssTokenizerTest();
 
 #if _HASPAUSE
 #define mainPause(fmt) { printf(fmt"\n"); char c; scanf("%c", &c); }
@@ -30,6 +32,8 @@ int main(int argc, char **argv) {
 	case 4: layoutGlobalTest(); break;
 	case 5: mediaQueryTest(); break;
 	case 6: webColorTest(); break;
+	case 7: CssTokenizerInputStreamTest(); break;
+	case 8: CssTokenizerTest(); break;
 	default: mainPause("Unknown test."); break;
 	}
 	return 0;
