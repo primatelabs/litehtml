@@ -4,7 +4,10 @@
 #include <stdlib.h>
 #include <memory>
 #include <map>
+#include <string>
 #include <vector>
+
+#include "os_types.h"
 
 namespace litehtml
 {
