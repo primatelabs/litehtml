@@ -378,11 +378,11 @@ css_token css_tokenizer::consume_ident(tchar_t first)
         tchar_t c = stream_.consume();
         if (is_name_code_point(c)) {
             // Append
+        } else if (c == _t('\\')) {
+            // TODO: Handle escape sequences
         } else {
             stream_.replace(c);
-        }
-        if (c == _t('\\')) {
-            // TODO: Handle escape sequences
+            break;
         }
     }
     return css_token(kCSSTokenIdent);
