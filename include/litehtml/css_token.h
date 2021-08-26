@@ -30,6 +30,7 @@
 #define LITEHTML_CSS_TOKEN_H__
 
 #include "litehtml/types.h"
+#include "litehtml/css_number.h"
 
 namespace litehtml {
 
@@ -68,13 +69,29 @@ class css_token {
 protected:
     css_token_type type_;
 
+    tstring value_;
+
+    css_number numeric_value_;
+
 public:
     css_token();
 
-	explicit css_token(css_token_type type);
+    explicit css_token(css_token_type type);
+
+    css_token(css_token_type type, const tstring& value);
+
+    css_token(css_token_type type, const css_number& numeric_value);
 
     css_token_type type() const {
         return type_;
+    }
+
+    tstring value() const {
+        return value_;
+    }
+
+    css_number numeric_value() const {
+        return numeric_value_;
     }
 };
 

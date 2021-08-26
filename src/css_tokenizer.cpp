@@ -366,26 +366,18 @@ void css_tokenizer::consume_comment()
 // https://www.w3.org/TR/css-syntax-3/#consume-numeric-token
 css_token css_tokenizer::consume_numeric(tchar_t first)
 {
-    css_number number = consume_number(first);
-    return css_token(kCSSTokenNumber);
+    return css_token(kCSSTokenNumber, consume_number(first));
 }
 
 
 // https://www.w3.org/TR/css-syntax-3/#consume-ident-like-token
 css_token css_tokenizer::consume_ident(tchar_t first)
 {
-    while (true) {
-        tchar_t c = stream_.consume();
-        if (is_name_code_point(c)) {
-            // Append
-        } else if (c == _t('\\')) {
-            // TODO: Handle escape sequences
-        } else {
-            stream_.replace(c);
-            break;
-        }
-    }
-    return css_token(kCSSTokenIdent);
+    css_token result(kCSSTokenIdent, consume_name(first));
+
+    // TODO: Handle URLs
+
+    return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-string-token
@@ -397,11 +389,11 @@ css_token css_tokenizer::consume_string(tchar_t ending)
     while (true) {
         tchar_t c = stream_.consume();
         if (c == ending) {
-            token = css_token(kCSSTokenString);
+            token = css_token(kCSSTokenString, value);
             break;
         } else if (c == _t('\0')) {
             // FIXME: Indicate a parse error occurred.
-            token = css_token(kCSSTokenString);
+            token = css_token(kCSSTokenString, value);
             break;
         } else if (is_newline(c)) {
             token = css_token(kCSSTokenBadString);
@@ -519,7 +511,7 @@ css_number css_tokenizer::consume_number(tchar_t first)
     }
 #endif
 
-    return css_number(type, value);
+    return css_number(type, std::stod(repr));
 }
 
 css_token css_tokenizer::next()

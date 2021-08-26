@@ -48,10 +48,27 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
         std::cout << tokens.size() << " " << testcase.tokens.size() << std::endl;
         EXPECT_EQ(testcase.tokens.size(), tokens.size() - 1);
         for (int i = 0; i < testcase.tokens.size(); i++ ) {
-            std::cout << i << " " << css_token_type_string(tokens[i].type())
-                << " " << css_token_type_string(testcase.tokens[i].type())
+            auto& token = tokens[i];
+            auto& reference = testcase.tokens[i];
+            std::cout << i << " " << css_token_type_string(token.type())
+                << " " << css_token_type_string(reference.type())
                 << std::endl;
-            EXPECT_EQ(testcase.tokens[i].type(), tokens[i].type());
+            EXPECT_EQ(reference.type(), token.type());
+
+            if (reference.type() == kCSSTokenNumber) {
+                assert(reference.numeric_value().type() == token.numeric_value().type());
+                std::cout << reference.numeric_value().value() << std::endl;
+                std::cout << token.numeric_value().value() << std::endl;
+                assert(reference.numeric_value().value() == token.numeric_value().value());
+            } else if (reference.type() == kCSSTokenIdent) {
+                std::cout << reference.value() << std::endl;
+                std::cout << token.value() << std::endl;
+                assert(reference.value() == token.value());
+            } else if (reference.type() == kCSSTokenString) {
+                std::cout << reference.value() << std::endl;
+                std::cout << token.value() << std::endl;
+                assert(reference.value() == token.value());
+            }
         }
         EXPECT_EQ(kCSSTokenEOF, tokens.back().type());
     }
@@ -60,7 +77,18 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
 } // namespace
 
 
+// Generate a CSS token of type t that does not contain a value.
 #define T(t) css_token(kCSSToken ## t)
+
+// Generate a CSS token of type t that contains a string value.  This includes
+// string tokens and identifier tokens.
+#define TS(t, v) css_token(kCSSToken ## t, v)
+
+// Generate a CSS number token that contains an integer value.
+#define TI(v) css_token(kCSSTokenNumber, css_number(kCSSIntegerValue, v))
+
+// Generate a CSS number token that contains a real number value.
+#define TN(v) css_token(kCSSTokenNumber, css_number(kCSSNumberValue, v))
 
 TEST(CSSTokenizerTest, DISABLED_BadString)
 {
@@ -91,11 +119,11 @@ TEST(CSSTokenizerTest, Number)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
         { _t(""), {} },
-        { _t("0"), { T(Number) } },
-        { _t("+0"), { T(Number) } },
-        { _t("-0"), { T(Number) } },
-        { _t("100"), { T(Number) } },
-        { _t("100.0"), { T(Number) } },
+        { _t("0"), { TI(0) } },
+        { _t("+0"), { TI(0) } },
+        { _t("-0"), { TI(0) } },
+        { _t("100"), { TI(100) } },
+        { _t("100.0"), { TN(100.0) } },
     };
 
     test(testcases);
@@ -105,14 +133,14 @@ TEST(CSSTokenizerTest, String)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
         { _t(""), {} },
-        { _t("'hi'"), { T(String) } },
-        { _t("\"hi\""), { T(String) } },
-        { _t("\"hi\\\"\""), { T(String) } },
-        { _t("'hi there'"), { T(String) } },
-        { _t("'hi' 'there'"), { T(String), T(Whitespace), T(String) } },
-        { _t("'hi\"' 'there'"), { T(String), T(Whitespace), T(String) } },
-        { _t("\"hi\'\" 'there'"), { T(String), T(Whitespace), T(String) } },
-        { _t("\"hi\\\"\" 'there'"), { T(String), T(Whitespace), T(String) } },
+        { _t("'hi'"), { TS(String, "hi") } },
+        { _t("\"hi\""), { TS(String, "hi") } },
+        { _t("\"hi\\\"\""), { TS(String, "hi\"") } },
+        { _t("'hi there'"), { TS(String, "hi there") } },
+        { _t("'hi' 'there'"), { TS(String, "hi"), T(Whitespace), TS(String, "there") } },
+        { _t("'hi\"' 'there'"), { TS(String, "hi\""), T(Whitespace), TS(String, "there") } },
+        { _t("\"hi\'\" 'there'"), { TS(String, "hi'"), T(Whitespace), TS(String, "there") } },
+        { _t("\"hi\\\"\" 'there'"), { TS(String, "hi\""), T(Whitespace), TS(String, "there") } },
     };
 
     test(testcases);
@@ -156,20 +184,23 @@ TEST(CSSTokenizerTest, Stylesheet)
       "/* A simple CSS stylesheet */\n"
       "body {\n"
       "  margin: 25px\n"
-      "  background-color: rgb(240,240,240)\n"
+      "  background-color: rgb(220,230,240)\n"
       "  font-family: roboto, arial, sans-serif\n"
       "  font-size: 14px\n"
       "}\n",
       {
         T(Whitespace),
-        T(Ident), T(Whitespace), T(OpenBrace), T(Whitespace),
-        T(Ident), T(Colon), T(Whitespace), T(Number), T(Ident), T(Whitespace),
-        T(Ident), T(Colon), T(Whitespace), T(Ident), T(OpenRoundBracket),
-          T(Number), T(Comma), T(Number), T(Comma), T(Number),
-          T(CloseRoundBracket), T(Whitespace),
-        T(Ident), T(Colon), T(Whitespace), T(Ident), T(Comma), T(Whitespace),
-          T(Ident), T(Comma), T(Whitespace), T(Ident), T(Whitespace),
-        T(Ident), T(Colon), T(Whitespace), T(Number), T(Ident), T(Whitespace),
+        TS(Ident, "body"), T(Whitespace), T(OpenBrace), T(Whitespace),
+        TS(Ident, "margin"), T(Colon), T(Whitespace), TI(25), TS(Ident, "px"),
+          T(Whitespace),
+        TS(Ident, "background-color"), T(Colon), T(Whitespace),
+          TS(Ident, "rgb"), T(OpenRoundBracket), TI(220), T(Comma), TI(230),
+          T(Comma), TI(240), T(CloseRoundBracket), T(Whitespace),
+        TS(Ident, "font-family"), T(Colon), T(Whitespace), TS(Ident, "roboto"),
+          T(Comma), T(Whitespace), TS(Ident, "arial"), T(Comma), T(Whitespace),
+          TS(Ident, "sans-serif"), T(Whitespace),
+        TS(Ident, "font-size"), T(Colon), T(Whitespace), TI(14),
+          TS(Ident, "px"), T(Whitespace),
         T(CloseBrace), T(Whitespace)
       }
     }

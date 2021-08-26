@@ -76,4 +76,16 @@ css_token::css_token(css_token_type type)
 {
 }
 
+css_token::css_token(css_token_type type, const tstring& value)
+: type_(type)
+, value_(value)
+{
+}
+
+css_token::css_token(css_token_type type, const css_number& numeric_value)
+: type_(type)
+, numeric_value_(numeric_value)
+{
+}
+
 } // namespace litehtml
