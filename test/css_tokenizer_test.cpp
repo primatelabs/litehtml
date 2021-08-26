@@ -48,7 +48,9 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
         std::cout << tokens.size() << " " << testcase.tokens.size() << std::endl;
         EXPECT_EQ(testcase.tokens.size(), tokens.size() - 1);
         for (int i = 0; i < testcase.tokens.size(); i++ ) {
-            std::cout << i << " " << tokens[i].type() << " " << testcase.tokens[i].type() << std::endl;
+            std::cout << i << " " << css_token_type_string(tokens[i].type())
+                << " " << css_token_type_string(testcase.tokens[i].type())
+                << std::endl;
             EXPECT_EQ(testcase.tokens[i].type(), tokens[i].type());
         }
         EXPECT_EQ(kCSSTokenEOF, tokens.back().type());
@@ -145,4 +147,33 @@ TEST(CSSTokenizerTest, Whitespace)
     };
 
     test(testcases);
+}
+
+TEST(CSSTokenizerTest, Stylesheet)
+{
+  std::vector<CSSTokenizerTestCase> testcases = {
+    {
+      "/* A simple CSS stylesheet */\n"
+      "body {\n"
+      "  margin: 25px\n"
+      "  background-color: rgb(240,240,240)\n"
+      "  font-family: roboto, arial, sans-serif\n"
+      "  font-size: 14px\n"
+      "}\n",
+      {
+        T(Whitespace),
+        T(Ident), T(Whitespace), T(OpenBrace), T(Whitespace),
+        T(Ident), T(Colon), T(Whitespace), T(Number), T(Ident), T(Whitespace),
+        T(Ident), T(Colon), T(Whitespace), T(Ident), T(OpenRoundBracket),
+          T(Number), T(Comma), T(Number), T(Comma), T(Number),
+          T(CloseRoundBracket), T(Whitespace),
+        T(Ident), T(Colon), T(Whitespace), T(Ident), T(Comma), T(Whitespace),
+          T(Ident), T(Comma), T(Whitespace), T(Ident), T(Whitespace),
+        T(Ident), T(Colon), T(Whitespace), T(Number), T(Ident), T(Whitespace),
+        T(CloseBrace), T(Whitespace)
+      }
+    }
+  };
+
+  test(testcases);
 }
