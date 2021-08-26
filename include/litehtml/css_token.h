@@ -62,6 +62,8 @@ enum css_token_type {
     kCSSTokenEOF,
 };
 
+std::string css_token_type_string(css_token_type type);
+
 class css_token {
 protected:
     css_token_type type_;

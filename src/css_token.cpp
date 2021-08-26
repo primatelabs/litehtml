@@ -30,6 +30,42 @@
 
 namespace litehtml {
 
+#define TOKEN_CASE(t) case kCSSToken ## t: return #t;
+
+std::string css_token_type_string(css_token_type type)
+{
+    switch (type) {
+        TOKEN_CASE(None);
+        TOKEN_CASE(Ident);
+        TOKEN_CASE(Function);
+        TOKEN_CASE(AtKeyword);
+        TOKEN_CASE(Hash);
+        TOKEN_CASE(String);
+        TOKEN_CASE(BadString);
+        TOKEN_CASE(URL);
+        TOKEN_CASE(BadURL);
+        TOKEN_CASE(Delim);
+        TOKEN_CASE(Number);
+        TOKEN_CASE(Percentage);
+        TOKEN_CASE(Dimension);
+        TOKEN_CASE(Whitespace);
+        TOKEN_CASE(CDO);
+        TOKEN_CASE(CDC);
+        TOKEN_CASE(Colon);
+        TOKEN_CASE(Semicolon);
+        TOKEN_CASE(Comma);
+        TOKEN_CASE(OpenSquareBracket);
+        TOKEN_CASE(CloseSquareBracket);
+        TOKEN_CASE(OpenRoundBracket);
+        TOKEN_CASE(CloseRoundBracket);
+        TOKEN_CASE(OpenBrace);
+        TOKEN_CASE(CloseBrace);
+        TOKEN_CASE(EOF);
+        default:
+            return "Unknown";
+    }
+}
+
 css_token::css_token()
 : type_(kCSSTokenNone)
 {
