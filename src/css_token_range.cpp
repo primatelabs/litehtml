@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -26,46 +26,20 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_CSS_NUMBER_H__
-#define LITEHTML_CSS_NUMBER_H__
-
-#include "litehtml/types.h"
+#include "litehtml/css_token_range.h"
 
 namespace litehtml {
 
-enum css_number_value_type {
-    kCSSIntegerValue,
-    kCSSNumberValue,
-};
+css_token_range::css_token_range(const std::vector<css_token>& tokens)
+: begin_(tokens.data())
+, end_(tokens.data() + tokens.size())
+{
+}
 
-class css_number {
-    css_number_value_type type_;
-    double value_;
-
-public:
-    css_number()
-    : type_(kCSSIntegerValue)
-    , value_(0.0)
-    {
-    }
-
-    css_number(css_number_value_type type, double value)
-    : type_(type)
-    , value_(value)
-    {
-    }
-
-    css_number_value_type type() const
-    {
-        return type_;
-    }
-
-    double value() const
-    {
-        return value_;
-    }
-};
+css_token& css_token_range::eof_token()
+{
+    static css_token eof(kCSSTokenEOF);
+    return eof;
+}
 
 } // namespace litehtml
-
-#endif // LITEHTML_CSS_NUMBER_H__

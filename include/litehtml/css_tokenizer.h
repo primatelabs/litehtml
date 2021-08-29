@@ -38,7 +38,10 @@ namespace litehtml {
 class css_tokenizer {
 protected:
 	css_tokenizer_input_stream stream_;
+
     std::vector<css_token> tokens_;
+
+	int offset_;
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
     css_token consume_whitespace();
@@ -96,6 +99,10 @@ public:
     const std::vector<css_token>& tokens() const {
         return tokens_;
     }
+
+    const css_token& consume();
+
+    void reconsume();
 };
 
 } // namespace litehtml

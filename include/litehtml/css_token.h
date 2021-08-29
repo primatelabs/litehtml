@@ -86,11 +86,11 @@ public:
         return type_;
     }
 
-    tstring value() const {
+    const tstring& value() const {
         return value_;
     }
 
-    css_number numeric_value() const {
+    const css_number& numeric_value() const {
         return numeric_value_;
     }
 };

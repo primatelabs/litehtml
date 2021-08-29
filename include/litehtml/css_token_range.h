@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -26,46 +26,48 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_CSS_NUMBER_H__
-#define LITEHTML_CSS_NUMBER_H__
+#ifndef LITEHTML_CSS_TOKEN_RANGE_H__
+#define LITEHTML_CSS_TOKEN_RANGE_H__
 
-#include "litehtml/types.h"
+#include "litehtml/css_token.h"
 
 namespace litehtml {
 
-enum css_number_value_type {
-    kCSSIntegerValue,
-    kCSSNumberValue,
-};
+class css_token_range {
+protected:
+    const css_token* begin_;
 
-class css_number {
-    css_number_value_type type_;
-    double value_;
+    const css_token* end_;
 
 public:
-    css_number()
-    : type_(kCSSIntegerValue)
-    , value_(0.0)
+    css_token_range() = delete;
+
+    explicit css_token_range(const std::vector<css_token>& tokens);
+
+    const css_token& consume()
     {
+        if (begin_ == end_) {
+            return eof_token();
+        }
+        return *begin_++;
     }
 
-    css_number(css_number_value_type type, double value)
-    : type_(type)
-    , value_(value)
+    const void reconsume()
     {
+        begin_--;
     }
 
-    css_number_value_type type() const
+    const css_token& peek()
     {
-        return type_;
+        if (begin_ == end_) {
+            return eof_token();
+        }
+        return *begin_;
     }
 
-    double value() const
-    {
-        return value_;
-    }
+    static css_token& eof_token();
 };
 
 } // namespace litehtml
 
-#endif // LITEHTML_CSS_NUMBER_H__
+#endif // LITEHTML_CSS_TOKEN_H__

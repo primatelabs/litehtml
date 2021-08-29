@@ -27,10 +27,12 @@ set(SOURCE_LITEHTML
     src/context.cpp
     src/css_length.cpp
     src/css_number.cpp
+    src/css_parser.cpp
     src/css_selector.cpp
     src/css_token.cpp
-    src/css_tokenizer_input_stream.cpp
+    src/css_token_range.cpp
     src/css_tokenizer.cpp
+    src/css_tokenizer_input_stream.cpp
     src/document.cpp
     src/el_anchor.cpp
     src/el_base.cpp
@@ -77,11 +79,13 @@ set(HEADER_LITEHTML
     include/litehtml/css_margins.h
     include/litehtml/css_number.h
     include/litehtml/css_offsets.h
+    include/litehtml/css_parser.h
     include/litehtml/css_position.h
     include/litehtml/css_selector.h
     include/litehtml/css_token.h
-    include/litehtml/css_tokenizer_input_stream.h
+    include/litehtml/css_token_range.h
     include/litehtml/css_tokenizer.h
+    include/litehtml/css_tokenizer_input_stream.h
     include/litehtml/document.h
     include/litehtml/el_anchor.h
     include/litehtml/el_base.h
@@ -122,6 +126,7 @@ set(TEST_LITEHTML
     containers/test/container_test.cpp
     test/contextTest.cpp
     test/cssTest.cpp
+    test/css_parser_test.cpp
     test/css_tokenizer_input_stream_test.cpp
     test/css_tokenizer_test.cpp
     test/documentTest.cpp

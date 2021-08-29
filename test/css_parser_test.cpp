@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -26,46 +26,22 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_CSS_NUMBER_H__
-#define LITEHTML_CSS_NUMBER_H__
+#include "litehtml/css_parser.h"
 
-#include "litehtml/types.h"
+#include <gtest/gtest.h>
 
-namespace litehtml {
+using namespace litehtml;
 
-enum css_number_value_type {
-    kCSSIntegerValue,
-    kCSSNumberValue,
-};
+TEST(CSSParserTest, Stylesheet)
+{
+    std::string css = "/* A simple CSS stylesheet */\n"
+        "body {\n"
+        "  margin: 25px;\n"
+        "  background-color: rgb(240,240,240);\n"
+        "  font-family: roboto, arial, sans-serif;\n"
+        "  font-size: 14px;\n"
+        "}\n";
 
-class css_number {
-    css_number_value_type type_;
-    double value_;
-
-public:
-    css_number()
-    : type_(kCSSIntegerValue)
-    , value_(0.0)
-    {
-    }
-
-    css_number(css_number_value_type type, double value)
-    : type_(type)
-    , value_(value)
-    {
-    }
-
-    css_number_value_type type() const
-    {
-        return type_;
-    }
-
-    double value() const
-    {
-        return value_;
-    }
-};
-
-} // namespace litehtml
-
-#endif // LITEHTML_CSS_NUMBER_H__
+    css_parser parser(css);
+    parser.parse_stylesheet();
+}

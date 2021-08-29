@@ -16,7 +16,7 @@ namespace litehtml
 		{
 
 		}
-		
+
 		~css()
 		{
 
@@ -49,6 +49,8 @@ namespace litehtml
 		m_selectors.push_back(selector);
 	}
 
+    class stylesheet {
+    };
 }
 
 #endif  // LH_STYLESHEET_H

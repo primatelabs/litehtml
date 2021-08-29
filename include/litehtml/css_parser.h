@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -26,46 +26,39 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_CSS_NUMBER_H__
-#define LITEHTML_CSS_NUMBER_H__
+#ifndef LITEHTML_CSS_PARSER_H__
+#define LITEHTML_CSS_PARSER_H__
 
+#include "litehtml/css_token_range.h"
+#include "litehtml/css_tokenizer.h"
+#include "litehtml/stylesheet.h"
 #include "litehtml/types.h"
 
 namespace litehtml {
 
-enum css_number_value_type {
-    kCSSIntegerValue,
-    kCSSNumberValue,
-};
+class css_parser {
+protected:
+    css_tokenizer tokenizer_;
 
-class css_number {
-    css_number_value_type type_;
-    double value_;
+    void consume_rules(css_token_range& range, bool top_level);
+
+    void consume_at_rule(css_token_range& range);
+
+    void consume_qualified_rule(css_token_range& range);
+
+    void consume_component_value(css_token_range& range);
+
+    void consume_block(css_token_range& range, const css_token& starting_token);
+
+    void consume_function(css_token_range& range);
+
 
 public:
-    css_number()
-    : type_(kCSSIntegerValue)
-    , value_(0.0)
-    {
-    }
+	explicit css_parser(const tstring& input);
 
-    css_number(css_number_value_type type, double value)
-    : type_(type)
-    , value_(value)
-    {
-    }
-
-    css_number_value_type type() const
-    {
-        return type_;
-    }
-
-    double value() const
-    {
-        return value_;
-    }
+    stylesheet parse_stylesheet();
 };
 
 } // namespace litehtml
 
-#endif // LITEHTML_CSS_NUMBER_H__
+#endif // LITEHTML_CSS_PARSER_H__
