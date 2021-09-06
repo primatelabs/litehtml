@@ -28,6 +28,8 @@
 
 #include "litehtml/css_tokenizer_input_stream.h"
 
+#include <assert.h>
+
 namespace litehtml {
 
 css_tokenizer_input_stream::css_tokenizer_input_stream(litehtml::tstring input)

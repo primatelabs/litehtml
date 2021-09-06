@@ -28,6 +28,8 @@
 
 #include "litehtml/css_tokenizer_input_stream.h"
 
+#include <gtest/gtest.h>
+
 using namespace litehtml;
 
 namespace {
@@ -38,53 +40,50 @@ std::vector<tstring> testcases = {
 	_t("html { display: none }"),
 };
 
-void AdvanceTest() {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			assert(stream.peek(0) == testcase[i]);
-			stream.advance();
-		}
-		assert(stream.peek(0) == 0); 
-	}
-} 
-
-void ConsumeTest() {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			assert(stream.consume() == testcase[i]);
-		}
-		assert(stream.consume() == 0); 
-	}
-} 
-
-void NextTest() {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			assert(stream.next() == testcase[i]);
-			stream.advance();
-		}
-		assert(stream.next() == 0); 
-	}
-} 
-
-void PeekTest() {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			assert(stream.peek(i) == testcase[i]);
-		}
-		assert(stream.peek(testcase.length()) == 0); 
-	}
-} 
-
 } // namespace
 
-void CssTokenizerInputStreamTest() {
-  AdvanceTest();
-  ConsumeTest();
-  NextTest();
-  PeekTest();
+TEST(CssTokenizerInputStreamTest, Advance)
+{
+	for (auto testcase : testcases) {
+		css_tokenizer_input_stream stream(testcase);
+		for (int i = 0; i < testcase.length(); i++) {
+			EXPECT_EQ(testcase[i], stream.peek(0));
+			stream.advance();
+		}
+		EXPECT_EQ(0, stream.peek(0));
+	}
+}
+
+TEST(CssTokenizerInputStreamTest, Consume)
+{
+	for (auto testcase : testcases) {
+		css_tokenizer_input_stream stream(testcase);
+		for (int i = 0; i < testcase.length(); i++) {
+			EXPECT_EQ(testcase[i], stream.consume());
+		}
+		EXPECT_EQ(0, stream.consume());
+	}
+}
+
+TEST(CssTokenizerInputStreamTest, Next)
+{
+	for (auto testcase : testcases) {
+		css_tokenizer_input_stream stream(testcase);
+		for (int i = 0; i < testcase.length(); i++) {
+			EXPECT_EQ(testcase[i], stream.next());
+			stream.advance();
+		}
+		EXPECT_EQ(0, stream.next());
+	}
+}
+
+TEST(CssTokenizerInputStreamTest, Peak)
+{
+	for (auto testcase : testcases) {
+		css_tokenizer_input_stream stream(testcase);
+		for (int i = 0; i < testcase.length(); i++) {
+			EXPECT_EQ(testcase[i], stream.peek(i));
+		}
+		EXPECT_EQ(0, stream.peek(testcase.length()));
+	}
 }

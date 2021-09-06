@@ -30,6 +30,8 @@
 
 #include <iostream>
 
+#include <gtest/gtest.h>
+
 using namespace litehtml;
 
 namespace {
@@ -39,23 +41,27 @@ struct CSSTokenizerTestCase {
     std::vector<css_token> tokens;
 };
 
-void Test(std::vector<CSSTokenizerTestCase>& testcases) {
+void test(std::vector<CSSTokenizerTestCase>& testcases) {
     for (auto testcase : testcases) {
         css_tokenizer tokenizer(testcase.css);
         auto tokens = tokenizer.tokens();
         std::cout << tokens.size() << " " << testcase.tokens.size() << std::endl;
-        assert((tokens.size() - 1) == testcase.tokens.size());
+        EXPECT_EQ(testcase.tokens.size(), tokens.size() - 1);
         for (int i = 0; i < testcase.tokens.size(); i++ ) {
             std::cout << i << " " << tokens[i].type() << " " << testcase.tokens[i].type() << std::endl;
-            assert(tokens[i].type() == testcase.tokens[i].type());
+            EXPECT_EQ(testcase.tokens[i].type(), tokens[i].type());
         }
-        assert(tokens.back().type() == kCSSTokenEOF);
+        EXPECT_EQ(kCSSTokenEOF, tokens.back().type());
     }
 }
 
+} // namespace
+
+
 #define T(t) css_token(kCSSToken ## t)
 
-void BadStringTest() {
+TEST(CSSTokenizerTest, DISABLED_BadString)
+{
     std::vector<CSSTokenizerTestCase> testcases = {
         { _t(""), {} },
         { _t("'hi"), { T(BadString) } },
@@ -63,10 +69,11 @@ void BadStringTest() {
         { _t("\"hi\\\""), { T(BadString) } },
     };
 
-    Test(testcases);
+    test(testcases);
 }
 
-void CommentTest() {
+TEST(CSSTokenizerTest, Comment)
+{
     std::vector<CSSTokenizerTestCase> testcases = {
         { _t(""), {} },
         { _t("/**/"), {} },
@@ -75,10 +82,11 @@ void CommentTest() {
         { _t(" /* */ "), { T(Whitespace), T(Whitespace) } },
     };
 
-    Test(testcases);
+    test(testcases);
 }
 
-void NumberTest() {
+TEST(CSSTokenizerTest, Number)
+{
     std::vector<CSSTokenizerTestCase> testcases = {
         { _t(""), {} },
         { _t("0"), { T(Number) } },
@@ -88,10 +96,11 @@ void NumberTest() {
         { _t("100.0"), { T(Number) } },
     };
 
-    Test(testcases);
+    test(testcases);
 }
 
-void StringTest() {
+TEST(CSSTokenizerTest, String)
+{
     std::vector<CSSTokenizerTestCase> testcases = {
         { _t(""), {} },
         { _t("'hi'"), { T(String) } },
@@ -104,10 +113,11 @@ void StringTest() {
         { _t("\"hi\\\"\" 'there'"), { T(String), T(Whitespace), T(String) } },
     };
 
-    Test(testcases);
+    test(testcases);
 }
 
-void WhitespaceTest() {
+TEST(CSSTokenizerTest, Whitespace)
+{
     std::vector<CSSTokenizerTestCase> testcases = {
         { _t(""), {} },
         { _t(" "), { T(Whitespace) } },
@@ -134,15 +144,5 @@ void WhitespaceTest() {
         { _t("\f  \n  \t  \r  \f  "), { T(Whitespace) } },
     };
 
-    Test(testcases);
-}
-
-} // namespace
-
-void CssTokenizerTest() {
-    // BadStringTest();
-    CommentTest();
-    NumberTest();
-    StringTest();
-    WhitespaceTest();
+    test(testcases);
 }

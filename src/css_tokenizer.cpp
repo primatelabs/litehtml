@@ -28,6 +28,8 @@
 
 #include "litehtml/css_tokenizer.h"
 
+#include <assert.h>
+
 #include <iostream>
 
 #include "litehtml/css_number.h"
