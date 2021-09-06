@@ -54,7 +54,7 @@ bool is_eof(litehtml::tchar_t c)
 bool is_digit(litehtml::tchar_t c)
 {
     static const uint32_t digit_lookup[] = { 0x00000000, 0x03ff0000, 0x00000000, 0x00000000 };
-    
+
     if (is_non_ascii_code_point(c)) {
         return false;
     }
@@ -65,7 +65,7 @@ bool is_digit(litehtml::tchar_t c)
 bool is_hex_digit(litehtml::tchar_t c)
 {
     static const uint32_t hex_digit_lookup[] = { 0x00000000, 0x03ff0000, 0x0000007e, 0x0000007e };
-    
+
     if (is_non_ascii_code_point(c)) {
         return false;
     }
@@ -109,7 +109,7 @@ bool is_newline(litehtml::tchar_t c)
 bool is_non_printable_code_point(litehtml::tchar_t c)
 {
     static const uint32_t non_printable_lookup[] = { 0xffffc9ff, 0x00000000, 0x00000000, 0x80000000 };
-    
+
     if (is_non_ascii_code_point(c)) {
         return false;
     }
@@ -118,7 +118,7 @@ bool is_non_printable_code_point(litehtml::tchar_t c)
 
 // https://www.w3.org/TR/css-syntax-3/#whitespace
 bool is_whitespace(litehtml::tchar_t c)
-{  
+{
     static const uint32_t whitespace_lookup[] = { 0x00003600, 0x00000001, 0x00000000, 0x00000000 };
 
     if (is_non_ascii_code_point(c)) {
@@ -443,7 +443,7 @@ tchar_t css_tokenizer::consume_escape()
     } else {
         result = c;;
     }
-    
+
     return c;
 }
 
