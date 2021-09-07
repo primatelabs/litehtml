@@ -21,7 +21,7 @@ void litehtml::el_anchor::on_click()
 	}
 }
 
-void litehtml::el_anchor::apply_stylesheet( const litehtml::css& stylesheet )
+void litehtml::el_anchor::apply_stylesheet( const litehtml::css_stylesheet& stylesheet )
 {
 	if( get_attr(_t("href")) )
 	{

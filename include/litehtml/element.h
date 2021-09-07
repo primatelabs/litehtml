@@ -2,7 +2,7 @@
 #define LH_ELEMENT_H
 
 #include <memory>
-#include "stylesheet.h"
+#include "litehtml/css_stylesheet.h"
 #include "css_offsets.h"
 
 namespace litehtml
@@ -30,7 +30,7 @@ namespace litehtml
 		margins						m_padding;
 		margins						m_borders;
 		bool						m_skip;
-		
+
 		virtual void select_all(const css_selector& selector, elements_vector& res);
 	public:
 		element(const std::shared_ptr<litehtml::document>& doc);
@@ -132,7 +132,7 @@ namespace litehtml
 
 		virtual void				set_attr(const tchar_t* name, const tchar_t* val);
 		virtual const tchar_t*		get_attr(const tchar_t* name, const tchar_t* def = 0) const;
-		virtual void				apply_stylesheet(const litehtml::css& stylesheet);
+		virtual void				apply_stylesheet(const css_stylesheet& stylesheet);
 		virtual void				refresh_styles();
 		virtual bool				is_white_space() const;
 		virtual bool				is_body() const;

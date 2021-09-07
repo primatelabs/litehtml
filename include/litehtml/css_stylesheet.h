@@ -1,4 +1,6 @@
-// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
+// Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (C) 2020-2021 Primate Labs Inc.
+// All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -10,7 +12,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//    * Neither the name of the copyright holder nor the names of its
+//    * Neither the name of the copyright holders nor the names of their
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -26,38 +28,54 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_CSS_PARSER_H__
-#define LITEHTML_CSS_PARSER_H__
+#ifndef LITEHTML_CSS_STYLESHEET_H__
+#define LITEHTML_CSS_STYLESHEET_H__
 
-#include "litehtml/css_token_range.h"
-#include "litehtml/css_tokenizer.h"
-#include "litehtml/css_stylesheet.h"
-#include "litehtml/types.h"
+#include "litehtml/css_selector.h"
+#include "litehtml/style.h"
 
 namespace litehtml {
 
-class css_parser {
-protected:
-    css_tokenizer tokenizer_;
-
-    void consume_rules(css_token_range& range, bool top_level);
-
-    void consume_at_rule(css_token_range& range);
-
-    void consume_qualified_rule(css_token_range& range);
-
-    void consume_component_value(css_token_range& range);
-
-    void consume_block(css_token_range& range, const css_token& starting_token);
-
-    void consume_function(css_token_range& range);
+class css_stylesheet {
+	css_selector::vector	m_selectors;
 
 public:
-	explicit css_parser(const tstring& input);
+	css_stylesheet()
+	{
+	}
 
-    css_stylesheet parse_stylesheet();
+	~css_stylesheet()
+	{
+	}
+
+	const css_selector::vector& selectors() const
+	{
+		return m_selectors;
+	}
+
+	void clear()
+	{
+		m_selectors.clear();
+	}
+
+	void	parse_stylesheet(const tchar_t* str, const tchar_t* baseurl, const std::shared_ptr <document>& doc, const media_query_list::ptr& media);
+
+	void	sort_selectors();
+
+	static void	parse_css_url(const tstring& str, tstring& url);
+
+public:
+	void	parse_atrule(const tstring& text, const tchar_t* baseurl, const std::shared_ptr<document>& doc, const media_query_list::ptr& media);
+
+	void	add_selector(css_selector::ptr selector)
+    {
+        selector->m_order = (int) m_selectors.size();
+        m_selectors.push_back(selector);
+    }
+
+	bool	parse_selectors(const tstring& txt, const litehtml::style::ptr& styles, const media_query_list::ptr& media);
 };
 
 } // namespace litehtml
 
-#endif // LITEHTML_CSS_PARSER_H__
+#endif  // LITEHTML_CSS_STYLESHEET_H__

@@ -1,6 +1,11 @@
+#include "litehtml/document.h"
+
+#include <math.h>
+#include <stdio.h>
+#include <algorithm>
+
 #include "html.h"
-#include "document.h"
-#include "stylesheet.h"
+#include "litehtml/css_stylesheet.h"
 #include "html_tag.h"
 #include "el_text.h"
 #include "el_para.h"
@@ -22,9 +27,6 @@
 #include "el_font.h"
 #include "el_tr.h"
 #include "el_li.h"
-#include <math.h>
-#include <stdio.h>
-#include <algorithm>
 #include "gumbo.h"
 #include "utf8_strings.h"
 
@@ -46,12 +48,12 @@ litehtml::document::~document()
 	}
 }
 
-litehtml::document::ptr litehtml::document::createFromString( const tchar_t* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles)
+litehtml::document::ptr litehtml::document::createFromString( const tchar_t* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css_stylesheet* user_styles)
 {
 	return createFromUTF8(litehtml_to_utf8(str), objPainter, ctx, user_styles);
 }
 
-litehtml::document::ptr litehtml::document::createFromUTF8(const char* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles)
+litehtml::document::ptr litehtml::document::createFromUTF8(const char* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css_stylesheet* user_styles)
 {
 	// parse document into GumboOutput
 	GumboOutput* output = gumbo_parse((const char*) str);
@@ -116,7 +118,7 @@ litehtml::document::ptr litehtml::document::createFromUTF8(const char* str, lite
 		doc->m_root->parse_styles();
 
 		// Now the m_tabular_elements is filled with tabular elements.
-		// We have to check the tabular elements for missing table elements 
+		// We have to check the tabular elements for missing table elements
 		// and create the anonymous boxes in visual table layout
 		doc->fix_tables_layout();
 
@@ -293,7 +295,7 @@ void litehtml::document::draw( uint_ptr hdc, int x, int y, const position* clip 
 int litehtml::document::cvt_units( const tchar_t* str, int fontSize, bool* is_percent/*= 0*/ ) const
 {
 	if(!str)	return 0;
-	
+
 	css_length val;
 	val.fromString(str);
 	if(is_percent && val.units() == css_units_percentage && !val.is_predefined())
@@ -409,9 +411,9 @@ bool litehtml::document::on_mouse_over( int x, int y, int client_x, int client_y
 		}
 		cursor = m_over_element->get_cursor();
 	}
-	
+
 	m_container->set_cursor(cursor ? cursor : _t("auto"));
-	
+
 	if(state_was_changed)
 	{
 		return m_root->find_styles_changes(redraw_boxes, 0, 0);
@@ -691,7 +693,7 @@ void litehtml::document::create_node(void* gnode, elements_vector& elements, boo
 				{
 					child.clear();
 					create_node(static_cast<GumboNode*> (node->v.element.children.data[i]), child, parseTextNode);
-					std::for_each(child.begin(), child.end(), 
+					std::for_each(child.begin(), child.end(),
 						[&ret](element::ptr& el)
 						{
 							ret->appendChild(el);
@@ -996,7 +998,7 @@ void litehtml::document::append_children_from_utf8(element& parent, const char* 
 		child->parse_styles();
 
 		// Now the m_tabular_elements is filled with tabular elements.
-		// We have to check the tabular elements for missing table elements 
+		// We have to check the tabular elements for missing table elements
 		// and create the anonymous boxes in visual table layout
 		fix_tables_layout();
 

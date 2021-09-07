@@ -7,7 +7,7 @@
 #include "css_margins.h"
 #include "borders.h"
 #include "css_selector.h"
-#include "stylesheet.h"
+#include "litehtml/css_stylesheet.h"
 #include "box.h"
 #include "table.h"
 
@@ -139,7 +139,7 @@ namespace litehtml
 
 		virtual void				set_attr(const tchar_t* name, const tchar_t* val) override;
 		virtual const tchar_t*		get_attr(const tchar_t* name, const tchar_t* def = 0) const override;
-		virtual void				apply_stylesheet(const litehtml::css& stylesheet) override;
+		virtual void				apply_stylesheet(const litehtml::css_stylesheet& stylesheet) override;
 		virtual void				refresh_styles() override;
 
 		virtual bool				is_white_space() const override;

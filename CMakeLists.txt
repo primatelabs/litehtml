@@ -29,6 +29,7 @@ set(SOURCE_LITEHTML
     src/css_number.cpp
     src/css_parser.cpp
     src/css_selector.cpp
+    src/css_stylesheet.cpp
     src/css_token.cpp
     src/css_token_range.cpp
     src/css_tokenizer.cpp
@@ -61,7 +62,6 @@ set(SOURCE_LITEHTML
     src/iterators.cpp
     src/media_query.cpp
     src/style.cpp
-    src/stylesheet.cpp
     src/table.cpp
     src/utf8_strings.cpp
     src/web_color.cpp
@@ -82,6 +82,7 @@ set(HEADER_LITEHTML
     include/litehtml/css_parser.h
     include/litehtml/css_position.h
     include/litehtml/css_selector.h
+    include/litehtml/css_stylesheet.h
     include/litehtml/css_token.h
     include/litehtml/css_token_range.h
     include/litehtml/css_tokenizer.h
@@ -114,7 +115,6 @@ set(HEADER_LITEHTML
     include/litehtml/media_query.h
     include/litehtml/os_types.h
     include/litehtml/style.h
-    include/litehtml/stylesheet.h
     include/litehtml/table.h
     include/litehtml/types.h
     include/litehtml/utf8_strings.h

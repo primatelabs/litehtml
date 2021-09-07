@@ -2,7 +2,7 @@
 #include "html_tag.h"
 #include "document.h"
 #include "iterators.h"
-#include "stylesheet.h"
+#include "litehtml/css_stylesheet.h"
 #include "table.h"
 #include <algorithm>
 #include <locale>
@@ -161,7 +161,7 @@ litehtml::element::ptr litehtml::html_tag::select_one( const css_selector& selec
 	return 0;
 }
 
-void litehtml::html_tag::apply_stylesheet( const litehtml::css& stylesheet )
+void litehtml::html_tag::apply_stylesheet( const litehtml::css_stylesheet& stylesheet )
 {
 	remove_before_after();
 
@@ -495,7 +495,7 @@ void litehtml::html_tag::parse_styles(bool is_reparse)
 		if(list_image && list_image[0])
 		{
 			tstring url;
-			css::parse_css_url(list_image, url);
+			css_stylesheet::parse_css_url(list_image, url);
 
 			const tchar_t* list_image_baseurl = get_style_property(_t("list-style-image-baseurl"), true, 0);
 			doc->container()->load_image(url.c_str(), list_image_baseurl, true);
@@ -1578,7 +1578,7 @@ void litehtml::html_tag::parse_background()
 		background_box_content);
 
 	// parse background-image
-	css::parse_css_url(get_style_property(_t("background-image"), false, _t("")), m_bg.m_image);
+	css_stylesheet::parse_css_url(get_style_property(_t("background-image"), false, _t("")), m_bg.m_image);
 	m_bg.m_baseurl = get_style_property(_t("background-image-baseurl"), false, _t(""));
 
 	if(!m_bg.m_image.empty())
@@ -2941,7 +2941,7 @@ void litehtml::html_tag::draw_list_marker( uint_ptr hdc, const position &pos )
 	size img_size;
 	if(list_image)
 	{
-		css::parse_css_url(list_image, lm.image);
+		css_stylesheet::parse_css_url(list_image, lm.image);
 		lm.baseurl = get_style_property(_t("list-style-image-baseurl"), true, 0);
 		get_document()->container()->get_image_size(lm.image.c_str(), lm.baseurl, img_size);
 	} else
@@ -4207,7 +4207,7 @@ int litehtml::html_tag::render_box(int x, int y, int max_width, bool second_pass
 		if (list_image)
 		{
 			tstring url;
-			css::parse_css_url(list_image, url);
+			css_stylesheet::parse_css_url(list_image, url);
 
 			size sz;
 			const tchar_t* list_image_baseurl = get_style_property(_t("list-style-image-baseurl"), true, 0);

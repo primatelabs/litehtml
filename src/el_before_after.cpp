@@ -194,7 +194,7 @@ litehtml::tchar_t litehtml::el_before_after_base::convert_escape( const tchar_t*
 	return (tchar_t) t_strtol(txt, &sss, 16);
 }
 
-void litehtml::el_before_after_base::apply_stylesheet( const litehtml::css& stylesheet )
+void litehtml::el_before_after_base::apply_stylesheet( const litehtml::css_stylesheet& stylesheet )
 {
 
 }
