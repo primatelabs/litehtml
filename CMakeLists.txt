@@ -162,6 +162,13 @@ endif()
 # Gumbo
 target_link_libraries(${PROJECT_NAME} PUBLIC gumbo)
 
+# JSON
+option(ENABLE_JSON "Enable internal data structure serialization to JSON" OFF)
+if (ENABLE_JSON)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_JSON)
+    target_include_directories(${PROJECT_NAME} PRIVATE third_party/json/include)
+endif()
+
 # install and export
 install(TARGETS ${PROJECT_NAME}
     EXPORT litehtmlTargets
