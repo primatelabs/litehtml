@@ -31,13 +31,20 @@
 #ifndef LITEHTML_CSS_STYLESHEET_H__
 #define LITEHTML_CSS_STYLESHEET_H__
 
+#include <vector>
+
+#include "litehtml/css_rule.h"
 #include "litehtml/css_selector.h"
+#include "litehtml/debug/json.h"
 #include "litehtml/style.h"
 
 namespace litehtml {
 
 class css_stylesheet {
 	css_selector::vector	m_selectors;
+
+public:
+    std::vector<css_rule> rules_;
 
 public:
 	css_stylesheet()
@@ -74,6 +81,13 @@ public:
     }
 
 	bool	parse_selectors(const tstring& txt, const litehtml::style::ptr& styles, const media_query_list::ptr& media);
+
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const
+    {
+        return nlohmann::json{{"rules", json_vector(rules_)}};
+    }
+#endif // ENABLE_JSON
 };
 
 } // namespace litehtml

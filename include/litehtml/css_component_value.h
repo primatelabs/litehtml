@@ -1,4 +1,5 @@
-// Copyright (C) 2020 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020-2021 Primate Labs Inc.
+// All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -10,7 +11,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//    * Neither the name of the copyright holder nor the names of its
+//    * Neither the name of the copyright holders nor the names of their
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -26,52 +27,48 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_CSS_NUMBER_H__
-#define LITEHTML_CSS_NUMBER_H__
+#ifndef LITEHTML_CSS_COMPONENT_VALUE_H__
+#define LITEHTML_CSS_COMPONENT_VALUE_H__
 
+#include "litehtml/css_block.h"
+#include "litehtml/css_function.h"
+#include "litehtml/css_token.h"
 #include "litehtml/debug/json.h"
-#include "litehtml/types.h"
 
 namespace litehtml {
 
-enum css_number_value_type {
-    kCSSIntegerValue,
-    kCSSNumberValue,
+enum css_component_value_type {
+    kCSSComponentValueNone,
+    kCSSComponentValueBlock,
+    kCSSComponentValueFunction,
+    kCSSComponentValueToken,
 };
 
-class css_number {
-    css_number_value_type type_;
-    double value_;
+std::string css_component_value_type_string(css_component_value_type type);
+
+class css_component_value {
+public:
+    css_block block_;
+
+    css_function function_;
+
+    css_token token_;
+
+    css_component_value_type type_ = kCSSComponentValueNone;
 
 public:
-    css_number()
-    : type_(kCSSIntegerValue)
-    , value_(0.0)
-    {
-    }
+    css_component_value() = default;
 
-    css_number(css_number_value_type type, double value)
-    : type_(type)
-    , value_(value)
-    {
-    }
-
-    css_number_value_type type() const
-    {
-        return type_;
-    }
-
-    double value() const
-    {
-        return value_;
-    }
+    ~css_component_value() = default;
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const
     {
         return nlohmann::json{
-            { "type", type_ },
-            { "value", value_ },
+            { "block", block_.json() },
+            { "function", function_.json() },
+            { "token", token_.json() },
+            { "type", css_component_value_type_string(type_) },
         };
     }
 #endif // ENABLE_JSON
@@ -79,4 +76,4 @@ public:
 
 } // namespace litehtml
 
-#endif // LITEHTML_CSS_NUMBER_H__
+#endif  // LITEHTML_CSS_COMPONENT_VALUE_H__

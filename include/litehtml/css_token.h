@@ -29,8 +29,9 @@
 #ifndef LITEHTML_CSS_TOKEN_H__
 #define LITEHTML_CSS_TOKEN_H__
 
-#include "litehtml/types.h"
 #include "litehtml/css_number.h"
+#include "litehtml/debug/json.h"
+#include "litehtml/types.h"
 
 namespace litehtml {
 
@@ -93,6 +94,17 @@ public:
     const css_number& numeric_value() const {
         return numeric_value_;
     }
+
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const
+    {
+        return nlohmann::json{
+            { "type", css_token_type_string(type_) },
+            { "value", value_ },
+            { "numeric_value_", numeric_value_.json() },
+        };
+    }
+#endif // ENABLE_JSON
 };
 
 } // namespace litehtml

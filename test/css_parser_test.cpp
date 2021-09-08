@@ -27,6 +27,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "litehtml/css_parser.h"
+#include "litehtml/debug/json.h"
 
 #include <gtest/gtest.h>
 
@@ -43,5 +44,19 @@ TEST(CSSParserTest, Stylesheet)
         "}\n";
 
     css_parser parser(css);
-    parser.parse_stylesheet();
+    css_stylesheet stylesheet = parser.parse_stylesheet();
+
+    nlohmann::json j = stylesheet.json();
+    std::cout << std::setw(4) << j << std::endl;
+
+    EXPECT_EQ(1, stylesheet.rules_.size());
+
+    //EXPECT_EQ(1, stylesheet.rules_[0].prelude_.values_.size());
+    EXPECT_EQ(kCSSComponentValueToken, stylesheet.rules_[0].prelude_.values_[0].type_);
+    EXPECT_EQ(kCSSTokenIdent, stylesheet.rules_[0].prelude_.values_[0].token_.type());
+    EXPECT_EQ("body", stylesheet.rules_[0].prelude_.values_[0].token_.value());
+
+    EXPECT_EQ(kCSSComponentValueToken, stylesheet.rules_[0].prelude_.values_[1].type_);
+    EXPECT_EQ(kCSSTokenIdent, stylesheet.rules_[0].prelude_.values_[1].token_.type());
+    EXPECT_EQ("body", stylesheet.rules_[0].prelude_.values_[1].token_.value());
 }

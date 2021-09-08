@@ -25,15 +25,22 @@ set(SOURCE_LITEHTML
     src/background.cpp
     src/box.cpp
     src/context.cpp
+    src/css_block.cpp
+    src/css_component_value.cpp
+    src/css_declaration.cpp
+    src/css_function.cpp
     src/css_length.cpp
     src/css_number.cpp
     src/css_parser.cpp
+    src/css_prelude.cpp
+    src/css_rule.cpp
     src/css_selector.cpp
     src/css_stylesheet.cpp
     src/css_token.cpp
     src/css_token_range.cpp
     src/css_tokenizer.cpp
     src/css_tokenizer_input_stream.cpp
+    src/css_value.cpp
     src/document.cpp
     src/el_anchor.cpp
     src/el_base.cpp
@@ -75,18 +82,25 @@ set(HEADER_LITEHTML
     include/litehtml/borders.h
     include/litehtml/box.h
     include/litehtml/context.h
+    include/litehtml/css_block.h
+    include/litehtml/css_component_value.h
+    include/litehtml/css_declaration.h
+    include/litehtml/css_function.h
     include/litehtml/css_length.h
     include/litehtml/css_margins.h
     include/litehtml/css_number.h
     include/litehtml/css_offsets.h
     include/litehtml/css_parser.h
     include/litehtml/css_position.h
+    include/litehtml/css_prelude.h
+    include/litehtml/css_rule.h
     include/litehtml/css_selector.h
     include/litehtml/css_stylesheet.h
     include/litehtml/css_token.h
     include/litehtml/css_token_range.h
     include/litehtml/css_tokenizer.h
     include/litehtml/css_tokenizer_input_stream.h
+    include/litehtml/css_value.h
     include/litehtml/document.h
     include/litehtml/el_anchor.h
     include/litehtml/el_base.h
@@ -234,6 +248,11 @@ if (BUILD_TESTING)
         ${TEST_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/containers
     )
+
+    if (ENABLE_JSON)
+        target_compile_definitions(${TEST_NAME} PRIVATE ENABLE_JSON)
+        target_include_directories(${TEST_NAME} PRIVATE third_party/json/include)
+    endif()
 
     target_link_libraries(
         ${TEST_NAME}

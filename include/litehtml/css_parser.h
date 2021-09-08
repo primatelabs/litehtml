@@ -29,9 +29,12 @@
 #ifndef LITEHTML_CSS_PARSER_H__
 #define LITEHTML_CSS_PARSER_H__
 
+#include "litehtml/css_block.h"
+#include "litehtml/css_component_value.h"
+#include "litehtml/css_function.h"
+#include "litehtml/css_stylesheet.h"
 #include "litehtml/css_token_range.h"
 #include "litehtml/css_tokenizer.h"
-#include "litehtml/css_stylesheet.h"
 #include "litehtml/types.h"
 
 namespace litehtml {
@@ -40,17 +43,17 @@ class css_parser {
 protected:
     css_tokenizer tokenizer_;
 
-    void consume_rules(css_token_range& range, bool top_level);
+    std::vector<css_rule> consume_rules(css_token_range& range, bool top_level);
 
     void consume_at_rule(css_token_range& range);
 
-    void consume_qualified_rule(css_token_range& range);
+    css_rule consume_qualified_rule(css_token_range& range);
 
-    void consume_component_value(css_token_range& range);
+    css_component_value consume_component_value(css_token_range& range);
 
-    void consume_block(css_token_range& range, const css_token& starting_token);
+    css_block consume_block(css_token_range& range, const css_token& starting_token);
 
-    void consume_function(css_token_range& range);
+    css_function consume_function(css_token_range& range);
 
 public:
 	explicit css_parser(const tstring& input);
