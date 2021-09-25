@@ -78,6 +78,7 @@ protected:
 
 public:
     headless_container();
+
     virtual ~headless_container();
 
     virtual litehtml::uint_ptr create_font(const litehtml::tchar_t* faceName,
@@ -166,8 +167,6 @@ public:
 
     virtual cairo_surface_t* get_image(const litehtml::tchar_t* url,
         bool redraw_on_ready);
-
-    void clear_images();
 
 protected:
     virtual void draw_ellipse(cairo_t* cr, int x, int y, int width, int height,

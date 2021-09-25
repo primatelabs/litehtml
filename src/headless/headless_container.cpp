@@ -33,8 +33,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include <iostream>
-
 #include <cairo-ft.h>
 #include <fontconfig/fontconfig.h>
 
@@ -54,9 +52,8 @@ headless_container::headless_container(void)
 
 headless_container::~headless_container(void)
 {
-    clear_images();
-    cairo_surface_destroy(temporary_surface_);
     cairo_destroy(temporary_cr_);
+    cairo_surface_destroy(temporary_surface_);
 }
 
 litehtml::uint_ptr headless_container::create_font(const litehtml::tchar_t* faceName,
@@ -165,8 +162,6 @@ int headless_container::text_width(const litehtml::tchar_t* text, litehtml::uint
     cairo_text_extents(temporary_cr_, text, &ext);
 
     cairo_restore(temporary_cr_);
-
-    std::cout << text << " " << ext.x_advance << std::endl;
 
     return (int)ext.x_advance;
 }
@@ -682,8 +677,10 @@ void headless_container::apply_clip(cairo_t* cr)
 void headless_container::draw_ellipse(cairo_t* cr, int x, int y, int width,
   int height, const litehtml::web_color& color, int line_width)
 {
-    if (!cr)
+    if (!cr) {
         return;
+    }
+
     cairo_save(cr);
 
     apply_clip(cr);
@@ -704,8 +701,10 @@ void headless_container::draw_ellipse(cairo_t* cr, int x, int y, int width,
 void headless_container::fill_ellipse(cairo_t* cr, int x, int y, int width,
   int height, const litehtml::web_color& color)
 {
-    if (!cr)
+    if (!cr) {
         return;
+    }
+
     cairo_save(cr);
 
     apply_clip(cr);
@@ -731,15 +730,6 @@ cairo_surface_t* headless_container::get_image(const litehtml::tchar_t* url,
 
 void headless_container::clear_images()
 {
-    /*	for(images_map::iterator i = m_images.begin(); i != m_images.end(); i++)
-            {
-                    if(i->second)
-                    {
-                            delete i->second;
-                    }
-            }
-            m_images.clear();
-    */
 }
 
 const litehtml::tchar_t* headless_container::get_default_font_name() const
