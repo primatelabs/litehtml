@@ -24,6 +24,7 @@ endif()
 set(SOURCE_LITEHTML
     src/background.cpp
     src/box.cpp
+    src/codepoint.cpp
     src/context.cpp
     src/css_block.cpp
     src/css_component_value.cpp
@@ -42,6 +43,7 @@ set(SOURCE_LITEHTML
     src/css_tokenizer_input_stream.cpp
     src/css_value.cpp
     src/document.cpp
+    src/document_container.cpp
     src/el_anchor.cpp
     src/el_base.cpp
     src/el_before_after.cpp
@@ -67,9 +69,13 @@ set(SOURCE_LITEHTML
     src/html.cpp
     src/html_tag.cpp
     src/iterators.cpp
+    src/list_marker.cpp
     src/media_query.cpp
     src/style.cpp
     src/table.cpp
+    src/tstring_view.cpp
+    src/url.cpp
+    src/url_path.cpp
     src/utf8_strings.cpp
     src/web_color.cpp
     src/num_cvt.cpp
@@ -81,6 +87,7 @@ set(HEADER_LITEHTML
     include/litehtml/background.h
     include/litehtml/borders.h
     include/litehtml/box.h
+    include/litehtml/codepoint.h
     include/litehtml/context.h
     include/litehtml/css_block.h
     include/litehtml/css_component_value.h
@@ -102,6 +109,7 @@ set(HEADER_LITEHTML
     include/litehtml/css_tokenizer_input_stream.h
     include/litehtml/css_value.h
     include/litehtml/document.h
+    include/litehtml/document_container.h
     include/litehtml/el_anchor.h
     include/litehtml/el_base.h
     include/litehtml/el_before_after.h
@@ -126,18 +134,28 @@ set(HEADER_LITEHTML
     include/litehtml/html.h
     include/litehtml/html_tag.h
     include/litehtml/iterators.h
+    include/litehtml/list_marker.h
     include/litehtml/media_query.h
     include/litehtml/os_types.h
     include/litehtml/style.h
     include/litehtml/table.h
+    include/litehtml/tstring_view.h
     include/litehtml/types.h
+    include/litehtml/url.h
+    include/litehtml/url_path.h
     include/litehtml/utf8_strings.h
     include/litehtml/web_color.h
     include/litehtml/num_cvt.h
 )
 
+set(SOURCE_HEADLESS
+    src/headless/headless.cpp
+    src/headless/headless_container.cpp
+)
+
 set(TEST_LITEHTML
     containers/test/container_test.cpp
+    test/codepoint_test.cpp
     test/contextTest.cpp
     test/cssTest.cpp
     test/css_parser_test.cpp
@@ -146,6 +164,9 @@ set(TEST_LITEHTML
     test/documentTest.cpp
     test/layoutGlobalTest.cpp
     test/mediaQueryTest.cpp
+    test/tstring_view_test.cpp
+    test/url_test.cpp
+    test/url_path_test.cpp
     test/webColorTest.cpp
 )
 
@@ -171,6 +192,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE include/${PROJECT_NAME})
 option(LITEHTML_UTF8 "Build litehtml with UTF-8 text conversion functions." OFF)
 if (LITEHTML_UTF8)
   target_compile_definitions(${PROJECT_NAME} PUBLIC LITEHTML_UTF8)
+endif()
+
+# ICU
+option(USE_ICU "Use ICU to locate word boundaries in text elements" OFF)
+if (USE_ICU)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC USE_ICU)
+    target_link_libraries(${PROJECT_NAME} PUBLIC icui18n icuuc icudata)
 endif()
 
 # Gumbo
@@ -211,6 +239,42 @@ else()
         COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/include/master.css | xxd -i > ${CMAKE_CURRENT_SOURCE_DIR}/src/master.css.inc)
 endif()
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/master.css.inc PROPERTIES GENERATED TRUE)
+
+# Headless
+option(BUILD_HEADLESS "Build headless litehtml browser" OFF)
+if (BUILD_HEADLESS)
+    find_package(PkgConfig)
+    pkg_search_module(CAIRO REQUIRED cairo>=1.12.0)
+    pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
+    set(HEADLESS_NAME headless)
+    add_executable(
+        ${HEADLESS_NAME}
+        ${SOURCE_HEADLESS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/master.css.inc
+    )
+    set_target_properties(${HEADLESS_NAME} PROPERTIES
+        CXX_STANDARD 11
+        C_STANDARD 99
+    )
+    target_include_directories(
+        ${HEADLESS_NAME}
+        PUBLIC
+        ${CAIRO_INCLUDE_DIRS}
+        ${FONTCONFIG_INCLUDE_DIRS}
+    )
+    target_link_directories(
+        ${HEADLESS_NAME}
+        PUBLIC
+        ${CAIRO_LIBRARY_DIRS}
+        ${FONTCONFIG_LIBRARY_DIRS}
+    )
+    target_link_libraries(
+        ${HEADLESS_NAME}
+        ${PROJECT_NAME}
+        ${CAIRO_LIBRARIES}
+        ${FONTCONFIG_LIBRARIES}
+    )
+endif()
 
 # Tests
 

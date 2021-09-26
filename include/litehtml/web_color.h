@@ -1,6 +1,9 @@
 #ifndef LH_WEB_COLOR_H
 #define LH_WEB_COLOR_H
 
+#include "litehtml/os_types.h"
+#include "litehtml/types.h"
+
 namespace litehtml
 {
 	struct def_color

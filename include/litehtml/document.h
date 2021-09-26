@@ -1,10 +1,11 @@
 #ifndef LH_DOCUMENT_H
 #define LH_DOCUMENT_H
 
-#include "style.h"
-#include "types.h"
-#include "context.h"
-#include "litehtml/html.h"
+#include "litehtml/context.h"
+#include "litehtml/element.h"
+#include "litehtml/style.h"
+#include "litehtml/types.h"
+#include "litehtml/web_color.h"
 
 namespace litehtml
 {

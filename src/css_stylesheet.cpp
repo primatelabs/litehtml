@@ -33,6 +33,7 @@
 #include <algorithm>
 
 #include "litehtml/document.h"
+#include "litehtml/document_container.h"
 #include "litehtml/html.h"
 
 namespace litehtml {

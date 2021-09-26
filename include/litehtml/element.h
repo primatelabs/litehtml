@@ -2,8 +2,11 @@
 #define LH_ELEMENT_H
 
 #include <memory>
+
+#include "litehtml/background.h"
+#include "litehtml/css_offsets.h"
 #include "litehtml/css_stylesheet.h"
-#include "css_offsets.h"
+#include "litehtml/web_color.h"
 
 namespace litehtml
 {

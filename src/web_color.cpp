@@ -1,8 +1,11 @@
-#include "html.h"
-#include "web_color.h"
+#include "litehtml/web_color.h"
+
 #include <string.h>
 
-litehtml::def_color litehtml::g_def_colors[] = 
+#include "litehtml/document_container.h"
+#include "litehtml/html.h"
+
+litehtml::def_color litehtml::g_def_colors[] =
 {
 	{_t("transparent"),_t("rgba(0, 0, 0, 0)")},
 	{_t("AliceBlue"),_t("#F0F8FF")},

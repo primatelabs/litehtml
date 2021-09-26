@@ -1,6 +1,7 @@
-#include "html.h"
-#include "element.h"
-#include "document.h"
+#include "litehtml/element.h"
+
+#include "litehtml/document.h"
+#include "litehtml/document_container.h"
 
 #define LITEHTML_EMPTY_FUNC			{}
 #define LITEHTML_RETURN_FUNC(ret)	{return ret;}

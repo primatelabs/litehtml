@@ -1,7 +1,8 @@
-#include "html.h"
-#include "media_query.h"
-#include "document.h"
+#include "litehtml/media_query.h"
 
+#include "litehtml/document.h"
+#include "litehtml/document_container.h"
+#include "litehtml/html.h"
 
 litehtml::media_query::media_query()
 {
@@ -153,7 +154,7 @@ litehtml::media_query_list::ptr litehtml::media_query_list::create_from_string(c
 bool litehtml::media_query_list::apply_media_features( const media_features& features )
 {
 	bool apply = false;
-	
+
 	for(media_query::vector::iterator iter = m_queries.begin(); iter != m_queries.end() && !apply; iter++)
 	{
 		if((*iter)->check(features))

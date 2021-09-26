@@ -1,6 +1,10 @@
 #ifndef LH_MEDIA_QUERY_H
 #define LH_MEDIA_QUERY_H
 
+#include <vector>
+
+#include "litehtml/types.h"
+
 namespace litehtml
 {
 	struct media_query_expression
@@ -10,7 +14,7 @@ namespace litehtml
 		int				val;
 		int				val2;
 		bool			check_as_bool;
-		
+
 		media_query_expression()
 		{
 			check_as_bool	= false;

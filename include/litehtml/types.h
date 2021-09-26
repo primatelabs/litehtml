@@ -2,12 +2,12 @@
 #define LH_TYPES_H
 
 #include <stdlib.h>
-#include <memory>
+
 #include <map>
 #include <string>
 #include <vector>
 
-#include "os_types.h"
+#include "litehtml/os_types.h"
 
 namespace litehtml
 {
@@ -39,8 +39,8 @@ namespace litehtml
 			left = right = top = bottom = 0;
 		}
 
-		int width()		const	{ return left + right; } 
-		int height()	const	{ return top + bottom; } 
+		int width()		const	{ return left + right; }
+		int height()	const	{ return top + bottom; }
 	};
 
 	struct size
@@ -119,14 +119,14 @@ namespace litehtml
 			if(!val) return true;
 
 			return (
-				left()			<= val->right()		&& 
-				right()			>= val->left()		&& 
-				bottom()		>= val->top()		&& 
+				left()			<= val->right()		&&
+				right()			>= val->left()		&&
+				bottom()		>= val->top()		&&
 				top()			<= val->bottom()	)
 				|| (
-				val->left()		<= right()			&& 
-				val->right()	>= left()			&& 
-				val->bottom()	>= top()			&& 
+				val->left()		<= right()			&&
+				val->right()	>= left()			&&
+				val->bottom()	>= top()			&&
 				val->top()		<= bottom()			);
 		}
 
