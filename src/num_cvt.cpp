@@ -1,7 +1,38 @@
-﻿#include "num_cvt.h"
-#include "types.h"
-#include "utf8_strings.h"
+﻿// Copyright (c) 2013, Yuri Kobets (tordex)
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the names of the copyright holders nor the names of their
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "litehtml/num_cvt.h"
+
 #include <vector>
+
+#include "litehtml/types.h"
+#include "litehtml/utf8_strings.h"
 
 static std::vector<litehtml::tchar_t> latin_lower = { _t('a'), _t('b'), _t('c'), _t('d'), _t('e'), _t('f'), _t('g'), _t('h'), _t('i'), _t('j'), _t('k'), _t('l'), _t('m'), _t('n'), _t('o'), _t('p'), _t('q'), _t('r'), _t('s'), _t('t'), _t('u'), _t('v'), _t('w'), _t('x'), _t('y'), _t('z') };
 static std::vector<litehtml::tchar_t> latin_upper = { _t('A'), _t('B'), _t('C'), _t('D'), _t('E'), _t('F'), _t('G'), _t('H'), _t('I'), _t('J'), _t('K'), _t('L'), _t('M'), _t('N'), _t('O'), _t('P'), _t('Q'), _t('R'), _t('S'), _t('T'), _t('U'), _t('V'), _t('W'), _t('X'), _t('Y'), _t('Z') };
