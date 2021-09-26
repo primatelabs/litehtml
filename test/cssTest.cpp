@@ -9,7 +9,7 @@ TEST(CSSTest, Parse) {
   container_test container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   media_query_list::ptr media = media_query_list::ptr();
-  css c;
+  css_stylesheet c;
   c.parse_stylesheet(_t("/*Comment*/"), nullptr, doc, nullptr);
   c.parse_stylesheet(_t("html { display: none }"), nullptr, doc, nullptr);
   // https://www.w3schools.com/cssref/pr_import_rule.asp
@@ -25,22 +25,22 @@ TEST(CSSTest, Parse) {
 TEST(CSSTest, Url) {
   tstring url;
 
-  css::parse_css_url(_t(""), url);
+  css_stylesheet::parse_css_url(_t(""), url);
   EXPECT_TRUE(url.empty());
 
-  css::parse_css_url(_t("value"), url);
+  css_stylesheet::parse_css_url(_t("value"), url);
   EXPECT_TRUE(url.empty());
 
-  css::parse_css_url(_t("url()"), url);
+  css_stylesheet::parse_css_url(_t("url()"), url);
   EXPECT_TRUE(url.empty());
 
-  css::parse_css_url(_t("url(value)"), url);
+  css_stylesheet::parse_css_url(_t("url(value)"), url);
   EXPECT_TRUE(!t_strcmp(url.c_str(), _t("value")));
 
-  css::parse_css_url(_t("url('value')"), url);
+  css_stylesheet::parse_css_url(_t("url('value')"), url);
   EXPECT_TRUE(!t_strcmp(url.c_str(), _t("value")));
 
-  css::parse_css_url(_t("url(\"value\")"), url);
+  css_stylesheet::parse_css_url(_t("url(\"value\")"), url);
   EXPECT_TRUE(!t_strcmp(url.c_str(), _t("value")));
 }
 

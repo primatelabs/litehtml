@@ -60,7 +60,7 @@ namespace litehtml
 		document_container*					m_container;
 		fonts_map							m_fonts;
 		css_text::vector					m_css;
-		litehtml::css						m_styles;
+		litehtml::css_stylesheet			m_styles;
 		litehtml::web_color					m_def_color;
 		litehtml::context*					m_context;
 		litehtml::size						m_size;
@@ -103,8 +103,8 @@ namespace litehtml
 		void                            append_children_from_string(element& parent, const tchar_t* str);
 		void                            append_children_from_utf8(element& parent, const char* str);
 
-		static litehtml::document::ptr createFromString(const tchar_t* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles = 0);
-		static litehtml::document::ptr createFromUTF8(const char* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles = 0);
+		static litehtml::document::ptr createFromString(const tchar_t* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css_stylesheet* user_styles = 0);
+		static litehtml::document::ptr createFromUTF8(const char* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css_stylesheet* user_styles = 0);
 
 	private:
 		litehtml::uint_ptr	add_font(const tchar_t* name, int size, const tchar_t* weight, const tchar_t* style, const tchar_t* decoration, font_metrics* fm);

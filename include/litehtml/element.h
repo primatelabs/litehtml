@@ -5,7 +5,7 @@
 
 #include "litehtml/background.h"
 #include "litehtml/css_offsets.h"
-#include "litehtml/stylesheet.h"
+#include "litehtml/css_stylesheet.h"
 #include "litehtml/web_color.h"
 
 namespace litehtml
@@ -135,7 +135,7 @@ namespace litehtml
 
 		virtual void				set_attr(const tchar_t* name, const tchar_t* val);
 		virtual const tchar_t*		get_attr(const tchar_t* name, const tchar_t* def = 0) const;
-		virtual void				apply_stylesheet(const litehtml::css& stylesheet);
+		virtual void				apply_stylesheet(const css_stylesheet& stylesheet);
 		virtual void				refresh_styles();
 		virtual bool				is_white_space() const;
 		virtual bool				is_body() const;

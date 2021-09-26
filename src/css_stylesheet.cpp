@@ -1,4 +1,34 @@
-#include "litehtml/stylesheet.h"
+// Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (C) 2020-2021 Primate Labs Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the name of the copyright holders nor the names of their
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "litehtml/css_stylesheet.h"
 
 #include <algorithm>
 
@@ -6,8 +36,9 @@
 #include "litehtml/document_container.h"
 #include "litehtml/html.h"
 
+namespace litehtml {
 
-void litehtml::css::parse_stylesheet(const tchar_t* str, const tchar_t* baseurl, const std::shared_ptr<document>& doc, const media_query_list::ptr& media)
+void css_stylesheet::parse_stylesheet(const tchar_t* str, const tchar_t* baseurl, const std::shared_ptr<document>& doc, const media_query_list::ptr& media)
 {
 	tstring text = str;
 
@@ -77,7 +108,7 @@ void litehtml::css::parse_stylesheet(const tchar_t* str, const tchar_t* baseurl,
 	}
 }
 
-void litehtml::css::parse_css_url( const tstring& str, tstring& url )
+void css_stylesheet::parse_css_url( const tstring& str, tstring& url )
 {
 	url = _t("");
 	size_t pos1 = str.find(_t('('));
@@ -102,7 +133,7 @@ void litehtml::css::parse_css_url( const tstring& str, tstring& url )
 	}
 }
 
-bool litehtml::css::parse_selectors( const tstring& txt, const litehtml::style::ptr& styles, const media_query_list::ptr& media )
+bool css_stylesheet::parse_selectors( const tstring& txt, const litehtml::style::ptr& styles, const media_query_list::ptr& media )
 {
 	tstring selector = txt;
 	trim(selector);
@@ -127,7 +158,7 @@ bool litehtml::css::parse_selectors( const tstring& txt, const litehtml::style::
 	return added_something;
 }
 
-void litehtml::css::sort_selectors()
+void css_stylesheet::sort_selectors()
 {
 	std::sort(m_selectors.begin(), m_selectors.end(),
 		 [](const css_selector::ptr& v1, const css_selector::ptr& v2)
@@ -137,7 +168,7 @@ void litehtml::css::sort_selectors()
 	);
 }
 
-void litehtml::css::parse_atrule(const tstring& text, const tchar_t* baseurl, const std::shared_ptr<document>& doc, const media_query_list::ptr& media)
+void css_stylesheet::parse_atrule(const tstring& text, const tchar_t* baseurl, const std::shared_ptr<document>& doc, const media_query_list::ptr& media)
 {
 	if(text.substr(0, 7) == _t("@import"))
 	{
@@ -220,3 +251,5 @@ void litehtml::css::parse_atrule(const tstring& text, const tchar_t* baseurl, co
 		}
 	}
 }
+
+} // namespace litehtml

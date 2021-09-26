@@ -1,7 +1,13 @@
+#include "litehtml/document.h"
+
+#include <math.h>
+#include <stdio.h>
+#include <algorithm>
+
 #include "html.h"
+#include "litehtml/css_stylesheet.h"
 #include "document.h"
 #include "litehtml/document_container.h"
-#include "stylesheet.h"
 #include "html_tag.h"
 #include "el_text.h"
 #include "el_para.h"
@@ -23,9 +29,6 @@
 #include "el_font.h"
 #include "el_tr.h"
 #include "el_li.h"
-#include <math.h>
-#include <stdio.h>
-#include <algorithm>
 #include "gumbo.h"
 #include "utf8_strings.h"
 
@@ -129,12 +132,12 @@ litehtml::document::~document()
 	}
 }
 
-litehtml::document::ptr litehtml::document::createFromString( const tchar_t* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles)
+litehtml::document::ptr litehtml::document::createFromString( const tchar_t* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css_stylesheet* user_styles)
 {
 	return createFromUTF8(litehtml_to_utf8(str), objPainter, ctx, user_styles);
 }
 
-litehtml::document::ptr litehtml::document::createFromUTF8(const char* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles)
+litehtml::document::ptr litehtml::document::createFromUTF8(const char* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css_stylesheet* user_styles)
 {
 	// parse document into GumboOutput
 	GumboOutput* output = gumbo_parse((const char*) str);

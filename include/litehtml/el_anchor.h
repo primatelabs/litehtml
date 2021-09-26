@@ -12,7 +12,7 @@ namespace litehtml
 		virtual ~el_anchor();
 
 		virtual void	on_click() override;
-		virtual void	apply_stylesheet(const litehtml::css& stylesheet) override;
+		virtual void	apply_stylesheet(const litehtml::css_stylesheet& stylesheet) override;
 	};
 }
 

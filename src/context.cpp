@@ -1,6 +1,6 @@
 #include "html.h"
 #include "context.h"
-#include "stylesheet.h"
+#include "litehtml/css_stylesheet.h"
 
 
 void litehtml::context::load_master_stylesheet( const tchar_t* str )

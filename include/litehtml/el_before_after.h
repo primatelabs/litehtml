@@ -12,7 +12,7 @@ namespace litehtml
 		virtual ~el_before_after_base();
 
 		virtual void add_style(const litehtml::style& st) override;
-		virtual void apply_stylesheet(const litehtml::css& stylesheet) override;
+		virtual void apply_stylesheet(const litehtml::css_stylesheet& stylesheet) override;
 	private:
 		void	add_text(const tstring& txt);
 		void	add_function(const tstring& fnc, const tstring& params);

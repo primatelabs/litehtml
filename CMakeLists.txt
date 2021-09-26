@@ -26,8 +26,22 @@ set(SOURCE_LITEHTML
     src/box.cpp
     src/codepoint.cpp
     src/context.cpp
+    src/css_block.cpp
+    src/css_component_value.cpp
+    src/css_declaration.cpp
+    src/css_function.cpp
     src/css_length.cpp
+    src/css_number.cpp
+    src/css_parser.cpp
+    src/css_prelude.cpp
+    src/css_rule.cpp
     src/css_selector.cpp
+    src/css_stylesheet.cpp
+    src/css_token.cpp
+    src/css_token_range.cpp
+    src/css_tokenizer.cpp
+    src/css_tokenizer_input_stream.cpp
+    src/css_value.cpp
     src/document.cpp
     src/document_container.cpp
     src/el_anchor.cpp
@@ -58,7 +72,6 @@ set(SOURCE_LITEHTML
     src/list_marker.cpp
     src/media_query.cpp
     src/style.cpp
-    src/stylesheet.cpp
     src/table.cpp
     src/tstring_view.cpp
     src/url.cpp
@@ -76,11 +89,25 @@ set(HEADER_LITEHTML
     include/litehtml/box.h
     include/litehtml/codepoint.h
     include/litehtml/context.h
+    include/litehtml/css_block.h
+    include/litehtml/css_component_value.h
+    include/litehtml/css_declaration.h
+    include/litehtml/css_function.h
     include/litehtml/css_length.h
     include/litehtml/css_margins.h
+    include/litehtml/css_number.h
     include/litehtml/css_offsets.h
+    include/litehtml/css_parser.h
     include/litehtml/css_position.h
+    include/litehtml/css_prelude.h
+    include/litehtml/css_rule.h
     include/litehtml/css_selector.h
+    include/litehtml/css_stylesheet.h
+    include/litehtml/css_token.h
+    include/litehtml/css_token_range.h
+    include/litehtml/css_tokenizer.h
+    include/litehtml/css_tokenizer_input_stream.h
+    include/litehtml/css_value.h
     include/litehtml/document.h
     include/litehtml/document_container.h
     include/litehtml/el_anchor.h
@@ -111,7 +138,6 @@ set(HEADER_LITEHTML
     include/litehtml/media_query.h
     include/litehtml/os_types.h
     include/litehtml/style.h
-    include/litehtml/stylesheet.h
     include/litehtml/table.h
     include/litehtml/tstring_view.h
     include/litehtml/types.h
@@ -132,6 +158,9 @@ set(TEST_LITEHTML
     test/codepoint_test.cpp
     test/contextTest.cpp
     test/cssTest.cpp
+    test/css_parser_test.cpp
+    test/css_tokenizer_input_stream_test.cpp
+    test/css_tokenizer_test.cpp
     test/documentTest.cpp
     test/layoutGlobalTest.cpp
     test/mediaQueryTest.cpp
@@ -174,6 +203,13 @@ endif()
 
 # Gumbo
 target_link_libraries(${PROJECT_NAME} PUBLIC gumbo)
+
+# JSON
+option(ENABLE_JSON "Enable internal data structure serialization to JSON" OFF)
+if (ENABLE_JSON)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_JSON)
+    target_include_directories(${PROJECT_NAME} PRIVATE third_party/json/include)
+endif()
 
 # install and export
 install(TARGETS ${PROJECT_NAME}
@@ -276,6 +312,11 @@ if (BUILD_TESTING)
         ${TEST_NAME}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/containers
     )
+
+    if (ENABLE_JSON)
+        target_compile_definitions(${TEST_NAME} PRIVATE ENABLE_JSON)
+        target_include_directories(${TEST_NAME} PRIVATE third_party/json/include)
+    endif()
 
     target_link_libraries(
         ${TEST_NAME}
