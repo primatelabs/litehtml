@@ -156,18 +156,18 @@ set(SOURCE_HEADLESS
 set(TEST_LITEHTML
     containers/test/container_test.cpp
     test/codepoint_test.cpp
-    test/contextTest.cpp
-    test/cssTest.cpp
+    test/context_test.cpp
     test/css_parser_test.cpp
+    test/css_test.cpp
     test/css_tokenizer_input_stream_test.cpp
     test/css_tokenizer_test.cpp
-    test/documentTest.cpp
-    test/layoutGlobalTest.cpp
-    test/mediaQueryTest.cpp
+    test/document_test.cpp
+    test/layout_global_test.cpp
+    test/media_query_test.cpp
     test/tstring_view_test.cpp
-    test/url_test.cpp
     test/url_path_test.cpp
-    test/webColorTest.cpp
+    test/url_test.cpp
+    test/web_color_test.cpp
 )
 
 set(PROJECT_LIB_VERSION ${PROJECT_MAJOR}.${PROJECT_MINOR}.0)
