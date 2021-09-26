@@ -154,7 +154,6 @@ set(SOURCE_HEADLESS
 )
 
 set(TEST_LITEHTML
-    containers/test/container_test.cpp
     test/codepoint_test.cpp
     test/context_test.cpp
     test/css_parser_test.cpp
@@ -164,6 +163,7 @@ set(TEST_LITEHTML
     test/document_test.cpp
     test/layout_global_test.cpp
     test/media_query_test.cpp
+    test/test_container.cpp
     test/tstring_view_test.cpp
     test/url_path_test.cpp
     test/url_test.cpp

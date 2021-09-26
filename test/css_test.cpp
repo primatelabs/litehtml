@@ -2,11 +2,11 @@
 
 #include <assert.h>
 #include "litehtml.h"
-#include "test/container_test.h"
+#include "test_container.h"
 using namespace litehtml;
 
 TEST(CSSTest, Parse) {
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   media_query_list::ptr media = media_query_list::ptr();
   css_stylesheet c;

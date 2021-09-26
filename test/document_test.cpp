@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 
 #include "litehtml.h"
-#include "test/container_test.h"
+#include "test_container.h"
 
 using namespace litehtml;
 
 TEST(DocumentTest, AddFont) {
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   font_metrics fm;
   doc->get_font(nullptr, 0, _t("normal"), _t("normal"), _t(""), &fm);
@@ -18,7 +18,7 @@ TEST(DocumentTest, AddFont) {
 
 TEST(DocumentTest, Render) {
   context ctx;
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = document::createFromString(_t("<html>Body</html>"), &container, &ctx);
   doc->render(100, render_fixed_only);
   doc->render(100, render_no_fixed);
@@ -27,14 +27,14 @@ TEST(DocumentTest, Render) {
 
 TEST(DocumentTest, Draw) {
   context ctx;
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = document::createFromString(_t("<html>Body</html>"), &container, &ctx);
   position pos(0, 0, 100, 100);
   doc->draw((uint_ptr)0, 0, 0, &pos);
 }
 
 TEST(DocumentTest, CvtUnits) {
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   bool is_percent;
   doc->cvt_units(_t(""), 10, &is_percent);
@@ -53,7 +53,7 @@ TEST(DocumentTest, CvtUnits) {
 }
 
 TEST(DocumentTest, MouseEvents) {
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   position::vector redraw_boxes;
   doc->on_mouse_over(0, 0, 0, 0, redraw_boxes);
@@ -63,7 +63,7 @@ TEST(DocumentTest, MouseEvents) {
 }
 
 TEST(DocumentTest, CreateElement) {
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   string_map map;
   doc->create_element(_t("container"), map);
@@ -86,7 +86,7 @@ TEST(DocumentTest, CreateElement) {
 }
 
 TEST(DocumentTest, DeviceChange) {
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   doc->media_changed();
   doc->lang_changed();
@@ -94,6 +94,6 @@ TEST(DocumentTest, DeviceChange) {
 
 TEST(DocumentTest, Parse) {
   context ctx;
-  container_test container;
+  test_container container;
   document::createFromString(_t(""), &container, &ctx);
 }

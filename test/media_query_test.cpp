@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "litehtml.h"
-#include "test/container_test.h"
+#include "test_container.h"
 
 using namespace litehtml;
 
@@ -243,7 +243,7 @@ TEST(MediaQueryTest, Check) {
 }
 
 TEST(MediaQueryTest, Parse) {
-  container_test container;
+  test_container container;
   litehtml::document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
   media_query::ptr q;
   q = media_query::create_from_string(_t(""), doc);
