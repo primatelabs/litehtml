@@ -46,8 +46,10 @@ TEST(CSSParserTest, Stylesheet)
     css_parser parser(css);
     css_stylesheet stylesheet = parser.parse_stylesheet();
 
+#if defined(ENABLE_JSON)
     nlohmann::json j = stylesheet.json();
     std::cout << std::setw(4) << j << std::endl;
+#endif
 
     EXPECT_EQ(1, stylesheet.rules_.size());
 
