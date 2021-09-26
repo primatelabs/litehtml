@@ -33,7 +33,7 @@
 
 using namespace litehtml;
 
-TEST(CSSParserTest, Stylesheet)
+TEST(CSSParserTest, DISABLED_Stylesheet)
 {
     std::string css = "/* A simple CSS stylesheet */\n"
         "body {\n"
