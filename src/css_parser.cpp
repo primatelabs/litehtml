@@ -28,6 +28,8 @@
 
 #include "litehtml/css_parser.h"
 
+#include <assert.h>
+
 #include <iostream>
 
 #include "litehtml/css_token_range.h"
