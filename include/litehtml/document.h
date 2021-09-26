@@ -1,9 +1,11 @@
 #ifndef LH_DOCUMENT_H
 #define LH_DOCUMENT_H
 
-#include "style.h"
-#include "types.h"
-#include "context.h"
+#include "litehtml/context.h"
+#include "litehtml/element.h"
+#include "litehtml/style.h"
+#include "litehtml/types.h"
+#include "litehtml/web_color.h"
 
 namespace litehtml
 {
@@ -14,7 +16,7 @@ namespace litehtml
 		tstring	text;
 		tstring	baseurl;
 		tstring	media;
-		
+
 		css_text()
 		{
 		}
@@ -103,7 +105,7 @@ namespace litehtml
 
 		static litehtml::document::ptr createFromString(const tchar_t* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles = 0);
 		static litehtml::document::ptr createFromUTF8(const char* str, litehtml::document_container* objPainter, litehtml::context* ctx, litehtml::css* user_styles = 0);
-	
+
 	private:
 		litehtml::uint_ptr	add_font(const tchar_t* name, int size, const tchar_t* weight, const tchar_t* style, const tchar_t* decoration, font_metrics* fm);
 

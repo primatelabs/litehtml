@@ -29,6 +29,7 @@ set(SOURCE_LITEHTML
     src/css_length.cpp
     src/css_selector.cpp
     src/document.cpp
+    src/document_container.cpp
     src/el_anchor.cpp
     src/el_base.cpp
     src/el_before_after.cpp
@@ -54,6 +55,7 @@ set(SOURCE_LITEHTML
     src/html.cpp
     src/html_tag.cpp
     src/iterators.cpp
+    src/list_marker.cpp
     src/media_query.cpp
     src/style.cpp
     src/stylesheet.cpp
@@ -80,6 +82,7 @@ set(HEADER_LITEHTML
     include/litehtml/css_position.h
     include/litehtml/css_selector.h
     include/litehtml/document.h
+    include/litehtml/document_container.h
     include/litehtml/el_anchor.h
     include/litehtml/el_base.h
     include/litehtml/el_before_after.h
@@ -104,6 +107,7 @@ set(HEADER_LITEHTML
     include/litehtml/html.h
     include/litehtml/html_tag.h
     include/litehtml/iterators.h
+    include/litehtml/list_marker.h
     include/litehtml/media_query.h
     include/litehtml/os_types.h
     include/litehtml/style.h

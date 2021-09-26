@@ -1,6 +1,8 @@
-#include "html.h"
-#include "el_text.h"
-#include "document.h"
+#include "litehtml/el_text.h"
+
+#include "litehtml/document.h"
+#include "litehtml/document_container.h"
+#include "litehtml/html.h"
 
 litehtml::el_text::el_text(const tchar_t* text, const std::shared_ptr<litehtml::document>& doc) : element(doc)
 {

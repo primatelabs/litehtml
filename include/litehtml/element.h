@@ -2,8 +2,11 @@
 #define LH_ELEMENT_H
 
 #include <memory>
-#include "stylesheet.h"
-#include "css_offsets.h"
+
+#include "litehtml/background.h"
+#include "litehtml/css_offsets.h"
+#include "litehtml/stylesheet.h"
+#include "litehtml/web_color.h"
 
 namespace litehtml
 {
@@ -30,7 +33,7 @@ namespace litehtml
 		margins						m_padding;
 		margins						m_borders;
 		bool						m_skip;
-		
+
 		virtual void select_all(const css_selector& selector, elements_vector& res);
 	public:
 		element(const std::shared_ptr<litehtml::document>& doc);

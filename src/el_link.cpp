@@ -1,7 +1,7 @@
-#include "html.h"
-#include "el_link.h"
-#include "document.h"
+#include "litehtml/el_link.h"
 
+#include "litehtml/document.h"
+#include "litehtml/document_container.h"
 
 litehtml::el_link::el_link(const std::shared_ptr<litehtml::document>& doc) : litehtml::html_tag(doc)
 {

@@ -1,13 +1,16 @@
-#include "html.h"
-#include "html_tag.h"
-#include "document.h"
-#include "iterators.h"
-#include "stylesheet.h"
-#include "table.h"
+#include "litehtml/html_tag.h"
+
 #include <algorithm>
 #include <locale>
-#include "el_before_after.h"
-#include "num_cvt.h"
+
+#include "litehtml/document.h"
+#include "litehtml/document_container.h"
+#include "litehtml/el_before_after.h"
+#include "litehtml/html.h"
+#include "litehtml/iterators.h"
+#include "litehtml/num_cvt.h"
+#include "litehtml/stylesheet.h"
+#include "litehtml/table.h"
 
 litehtml::html_tag::html_tag(const std::shared_ptr<litehtml::document>& doc) : litehtml::element(doc)
 {
@@ -110,7 +113,7 @@ litehtml::elements_vector litehtml::html_tag::select_all( const tstring& selecto
 {
 	css_selector sel(media_query_list::ptr(0));
 	sel.parse(selector);
-	
+
 	return select_all(sel);
 }
 
@@ -127,7 +130,7 @@ void litehtml::html_tag::select_all(const css_selector& selector, elements_vecto
 	{
 		res.push_back(shared_from_this());
 	}
-	
+
 	for(auto& el : m_children)
 	{
 		el->select_all(selector, res);
@@ -387,7 +390,7 @@ void litehtml::html_tag::parse_styles(bool is_reparse)
 
 	m_css_max_width.fromString(		get_style_property(_t("max-width"),		false,	_t("none")),	_t("none"));
 	m_css_max_height.fromString(	get_style_property(_t("max-height"),		false,	_t("none")),	_t("none"));
-	
+
 	doc->cvt_units(m_css_min_width, m_font_size);
 	doc->cvt_units(m_css_min_height, m_font_size);
 
@@ -706,7 +709,7 @@ int litehtml::html_tag::select(const css_element_selector& selector, bool apply_
 			if(!attr_value)
 			{
 				return select_no_match;
-			} else 
+			} else
 			{
 				if(i->attribute == _t("class"))
 				{
@@ -812,7 +815,7 @@ int litehtml::html_tag::select(const css_element_selector& selector, bool apply_
 				}
 
 				int selector = value_index(selector_name.c_str(), pseudo_class_strings);
-				
+
 				switch(selector)
 				{
 				case pseudo_class_only_child:
@@ -1555,26 +1558,26 @@ void litehtml::html_tag::parse_background()
 
 	// parse background_attachment
 	m_bg.m_attachment = (background_attachment) value_index(
-		get_style_property(_t("background-attachment"), false, _t("scroll")), 
-		background_attachment_strings, 
+		get_style_property(_t("background-attachment"), false, _t("scroll")),
+		background_attachment_strings,
 		background_attachment_scroll);
 
 	// parse background_attachment
 	m_bg.m_repeat = (background_repeat) value_index(
-		get_style_property(_t("background-repeat"), false, _t("repeat")), 
-		background_repeat_strings, 
+		get_style_property(_t("background-repeat"), false, _t("repeat")),
+		background_repeat_strings,
 		background_repeat_repeat);
 
 	// parse background_clip
 	m_bg.m_clip = (background_box) value_index(
-		get_style_property(_t("background-clip"), false, _t("border-box")), 
-		background_box_strings, 
+		get_style_property(_t("background-clip"), false, _t("border-box")),
+		background_box_strings,
 		background_box_border);
 
 	// parse background_origin
 	m_bg.m_origin = (background_box) value_index(
-		get_style_property(_t("background-origin"), false, _t("padding-box")), 
-		background_box_strings, 
+		get_style_property(_t("background-origin"), false, _t("padding-box")),
+		background_box_strings,
 		background_box_content);
 
 	// parse background-image
@@ -1965,7 +1968,7 @@ void litehtml::html_tag::init_font()
 				{
 					m_font_size = doc_font_size;
 				}
-			} else			
+			} else
 			{
 				switch(sz.predef())
 				{
@@ -2108,7 +2111,7 @@ void litehtml::html_tag::draw_background( uint_ptr hdc, int x, int y, const posi
 					bdr.radius.top_right_y		= m_css_borders.radius.top_right_y;
 				}
 
-				
+
 				bdr.top		= m_css_borders.top;
 				bdr.bottom	= m_css_borders.bottom;
 				if(box == boxes.begin())
@@ -2315,7 +2318,7 @@ int litehtml::html_tag::place_element(const element::ptr &el, int max_width)
 			case display_inline_table:
 				ret_width = el->render(line_ctx.left, line_ctx.top, line_ctx.right);
 				break;
-			case display_block:		
+			case display_block:
 				if(el->is_replaced() || el->is_floats_holder())
 				{
 					element::ptr el_parent = el->parent();
@@ -2645,10 +2648,10 @@ litehtml::element_float litehtml::html_tag::get_float() const
 
 bool litehtml::html_tag::is_floats_holder() const
 {
-	if(	m_display == display_inline_block || 
-		m_display == display_table_cell || 
+	if(	m_display == display_inline_block ||
+		m_display == display_table_cell ||
 		!have_parent() ||
-		is_body() || 
+		is_body() ||
 		m_float != float_none ||
 		m_el_position == element_position_absolute ||
 		m_el_position == element_position_fixed ||
@@ -3231,7 +3234,7 @@ void litehtml::html_tag::render_positioned(render_type rt)
 						need_render = true;
 					}
 				}
-			} else 
+			} else
 			{
 				if(!css_left.is_predefined() || !css_right.is_predefined())
 				{
@@ -3993,7 +3996,7 @@ const litehtml::background* litehtml::html_tag::get_background(bool own_only)
 		}
 		return 0;
 	}
-	
+
 	if(is_body())
 	{
 		element::ptr el_parent = parent();
@@ -4029,7 +4032,7 @@ int litehtml::html_tag::render_box(int x, int y, int max_width, bool second_pass
 	if (m_display != display_table_cell && !m_css_width.is_predefined())
 	{
 		int w = calc_width(parent_width);
-		
+
 		if (m_box_sizing == box_sizing_border_box)
 		{
 			w -= m_padding.width() + m_borders.width();
@@ -4327,10 +4330,10 @@ int litehtml::html_tag::render_table(int x, int y, int max_width, bool second_pa
 	}
 
 
-	// Calculate the minimum content width (MCW) of each cell: the formatted content may span any number of lines but may not overflow the cell box. 
-	// If the specified 'width' (W) of the cell is greater than MCW, W is the minimum cell width. A value of 'auto' means that MCW is the minimum 
+	// Calculate the minimum content width (MCW) of each cell: the formatted content may span any number of lines but may not overflow the cell box.
+	// If the specified 'width' (W) of the cell is greater than MCW, W is the minimum cell width. A value of 'auto' means that MCW is the minimum
 	// cell width.
-	// 
+	//
 	// Also, calculate the "maximum" cell width of each cell: formatting the content without breaking lines other than where explicit line breaks occur.
 
 	if (m_grid->cols_count() == 1 && !block_width.is_default())
@@ -4373,8 +4376,8 @@ int litehtml::html_tag::render_table(int x, int y, int max_width, bool second_pa
 		}
 	}
 
-	// For each column, determine a maximum and minimum column width from the cells that span only that column. 
-	// The minimum is that required by the cell with the largest minimum cell width (or the column 'width', whichever is larger). 
+	// For each column, determine a maximum and minimum column width from the cells that span only that column.
+	// The minimum is that required by the cell with the largest minimum cell width (or the column 'width', whichever is larger).
 	// The maximum is that required by the cell with the largest maximum cell width (or the column 'width', whichever is larger).
 
 	for (int col = 0; col < m_grid->cols_count(); col++)
@@ -4391,8 +4394,8 @@ int litehtml::html_tag::render_table(int x, int y, int max_width, bool second_pa
 		}
 	}
 
-	// For each cell that spans more than one column, increase the minimum widths of the columns it spans so that together, 
-	// they are at least as wide as the cell. Do the same for the maximum widths. 
+	// For each cell that spans more than one column, increase the minimum widths of the columns it spans so that together,
+	// they are at least as wide as the cell. Do the same for the maximum widths.
 	// If possible, widen all spanned columns by approximately the same amount.
 
 	for (int col = 0; col < m_grid->cols_count(); col++)
@@ -4420,12 +4423,12 @@ int litehtml::html_tag::render_table(int x, int y, int max_width, bool second_pa
 		}
 	}
 
-	// If the 'table' or 'inline-table' element's 'width' property has a computed value (W) other than 'auto', the used width is the 
-	// greater of W, CAPMIN, and the minimum width required by all the columns plus cell spacing or borders (MIN). 
+	// If the 'table' or 'inline-table' element's 'width' property has a computed value (W) other than 'auto', the used width is the
+	// greater of W, CAPMIN, and the minimum width required by all the columns plus cell spacing or borders (MIN).
 	// If the used width is greater than MIN, the extra width should be distributed over the columns.
 	//
-	// If the 'table' or 'inline-table' element has 'width: auto', the used width is the greater of the table's containing block width, 
-	// CAPMIN, and MIN. However, if either CAPMIN or the maximum width required by the columns plus cell spacing or borders (MAX) is 
+	// If the 'table' or 'inline-table' element has 'width: auto', the used width is the greater of the table's containing block width,
+	// CAPMIN, and MIN. However, if either CAPMIN or the maximum width required by the columns plus cell spacing or borders (MAX) is
 	// less than that of the containing block, use max(MAX, CAPMIN).
 
 

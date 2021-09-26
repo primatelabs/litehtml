@@ -1,6 +1,7 @@
-#include "html.h"
-#include "el_image.h"
-#include "document.h"
+#include "litehtml/el_image.h"
+
+#include "litehtml/document.h"
+#include "litehtml/document_container.h"
 
 litehtml::el_image::el_image(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
 {

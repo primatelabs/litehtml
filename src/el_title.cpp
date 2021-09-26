@@ -1,6 +1,7 @@
-#include "html.h"
-#include "el_title.h"
-#include "document.h"
+#include "litehtml/el_title.h"
+
+#include "litehtml/document.h"
+#include "litehtml/document_container.h"
 
 litehtml::el_title::el_title(const std::shared_ptr<litehtml::document>& doc) : litehtml::html_tag(doc)
 {

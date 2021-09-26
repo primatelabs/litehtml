@@ -1,5 +1,6 @@
 #include "html.h"
 #include "document.h"
+#include "litehtml/document_container.h"
 #include "stylesheet.h"
 #include "html_tag.h"
 #include "el_text.h"
