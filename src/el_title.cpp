@@ -32,6 +32,8 @@
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
 
+namespace litehtml {
+
 litehtml::el_title::el_title(const std::shared_ptr<litehtml::document>& doc) : litehtml::html_tag(doc)
 {
 
@@ -48,3 +50,5 @@ void litehtml::el_title::parse_attributes()
 	get_text(text);
 	get_document()->container()->set_caption(text.c_str());
 }
+
+} // namespace litehtml

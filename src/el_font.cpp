@@ -29,17 +29,19 @@
 
 #include "litehtml/el_font.h"
 
-litehtml::el_font::el_font(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
+namespace litehtml {
+
+el_font::el_font(const std::shared_ptr<document>& doc) : html_tag(doc)
 {
 
 }
 
-litehtml::el_font::~el_font()
+el_font::~el_font()
 {
 
 }
 
-void litehtml::el_font::parse_attributes()
+void el_font::parse_attributes()
 {
 	const tchar_t* str = get_attr(_t("color"));
 	if(str)
@@ -85,3 +87,5 @@ void litehtml::el_font::parse_attributes()
 
 	html_tag::parse_attributes();
 }
+
+} // namespace litehtml

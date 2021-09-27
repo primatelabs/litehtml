@@ -34,7 +34,9 @@
 #include "litehtml/el_text.h"
 #include "litehtml/html.h"
 
-litehtml::el_before_after_base::el_before_after_base(const std::shared_ptr<litehtml::document>& doc, bool before) : html_tag(doc)
+namespace litehtml {
+
+el_before_after_base::el_before_after_base(const std::shared_ptr<document>& doc, bool before) : html_tag(doc)
 {
 	if(before)
 	{
@@ -45,12 +47,12 @@ litehtml::el_before_after_base::el_before_after_base(const std::shared_ptr<liteh
 	}
 }
 
-litehtml::el_before_after_base::~el_before_after_base()
+el_before_after_base::~el_before_after_base()
 {
 
 }
 
-void litehtml::el_before_after_base::add_style(const litehtml::style& st)
+void el_before_after_base::add_style(const style& st)
 {
 	html_tag::add_style(st);
 
@@ -83,8 +85,8 @@ void litehtml::el_before_after_base::add_style(const litehtml::style& st)
 				} else if(content.at(i) == _t('('))
 				{
 					i++;
-					litehtml::trim(fnc);
-					litehtml::lcase(fnc);
+					trim(fnc);
+					lcase(fnc);
 					tstring::size_type pos = content.find(_t(')'), i);
 					tstring params;
 					if(pos == tstring::npos)
@@ -108,7 +110,7 @@ void litehtml::el_before_after_base::add_style(const litehtml::style& st)
 	}
 }
 
-void litehtml::el_before_after_base::add_text( const tstring& txt )
+void el_before_after_base::add_text( const tstring& txt )
 {
 	tstring word;
 	tstring esc;
@@ -160,7 +162,7 @@ void litehtml::el_before_after_base::add_text( const tstring& txt )
 	}
 }
 
-void litehtml::el_before_after_base::add_function( const tstring& fnc, const tstring& params )
+void el_before_after_base::add_function( const tstring& fnc, const tstring& params )
 {
 	int idx = value_index(fnc.c_str(), _t("attr;counter;url"));
 	switch(idx)
@@ -218,13 +220,15 @@ void litehtml::el_before_after_base::add_function( const tstring& fnc, const tst
 	}
 }
 
-litehtml::tchar_t litehtml::el_before_after_base::convert_escape( const tchar_t* txt )
+tchar_t el_before_after_base::convert_escape( const tchar_t* txt )
 {
 	tchar_t* sss = 0;
 	return (tchar_t) t_strtol(txt, &sss, 16);
 }
 
-void litehtml::el_before_after_base::apply_stylesheet( const litehtml::css_stylesheet& stylesheet )
+void el_before_after_base::apply_stylesheet( const css_stylesheet& stylesheet )
 {
 
 }
+
+} // namespace litehtml

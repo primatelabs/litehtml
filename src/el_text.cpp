@@ -33,7 +33,9 @@
 #include "litehtml/document_container.h"
 #include "litehtml/html.h"
 
-litehtml::el_text::el_text(const tchar_t* text, const std::shared_ptr<litehtml::document>& doc) : element(doc)
+namespace litehtml {
+
+el_text::el_text(const tchar_t* text, const std::shared_ptr<document>& doc) : element(doc)
 {
 	if(text)
 	{
@@ -44,22 +46,22 @@ litehtml::el_text::el_text(const tchar_t* text, const std::shared_ptr<litehtml::
 	m_draw_spaces		= true;
 }
 
-litehtml::el_text::~el_text()
+el_text::~el_text()
 {
 
 }
 
-void litehtml::el_text::get_content_size( size& sz, int max_width )
+void el_text::get_content_size( size& sz, int max_width )
 {
 	sz = m_size;
 }
 
-void litehtml::el_text::get_text( tstring& text )
+void el_text::get_text( tstring& text )
 {
 	text += m_text;
 }
 
-const litehtml::tchar_t* litehtml::el_text::get_style_property( const tchar_t* name, bool inherited, const tchar_t* def /*= 0*/ )
+const tchar_t* el_text::get_style_property( const tchar_t* name, bool inherited, const tchar_t* def /*= 0*/ )
 {
 	if(inherited)
 	{
@@ -72,7 +74,7 @@ const litehtml::tchar_t* litehtml::el_text::get_style_property( const tchar_t* n
 	return def;
 }
 
-void litehtml::el_text::parse_styles(bool is_reparse)
+void el_text::parse_styles(bool is_reparse)
 {
 	m_text_transform	= (text_transform)	value_index(get_style_property(_t("text-transform"), true,	_t("none")),	text_transform_strings,	text_transform_none);
 	if(m_text_transform != text_transform_none)
@@ -119,7 +121,7 @@ void litehtml::el_text::parse_styles(bool is_reparse)
 	m_draw_spaces = fm.draw_spaces;
 }
 
-int litehtml::el_text::get_base_line()
+int el_text::get_base_line()
 {
 	element::ptr el_parent = parent();
 	if (el_parent)
@@ -129,7 +131,7 @@ int litehtml::el_text::get_base_line()
 	return 0;
 }
 
-void litehtml::el_text::draw( uint_ptr hdc, int x, int y, const position* clip )
+void el_text::draw( uint_ptr hdc, int x, int y, const position* clip )
 {
 	if(is_white_space() && !m_draw_spaces)
 	{
@@ -148,13 +150,13 @@ void litehtml::el_text::draw( uint_ptr hdc, int x, int y, const position* clip )
 			document::ptr doc = get_document();
 
 			uint_ptr font = el_parent->get_font();
-			litehtml::web_color color = el_parent->get_color(_t("color"), true, doc->get_def_color());
+			web_color color = el_parent->get_color(_t("color"), true, doc->get_def_color());
 			doc->container()->draw_text(hdc, m_use_transformed ? m_transformed_text.c_str() : m_text.c_str(), font, color, pos);
 		}
 	}
 }
 
-int litehtml::el_text::line_height() const
+int el_text::line_height() const
 {
 	element::ptr el_parent = parent();
 	if (el_parent)
@@ -164,7 +166,7 @@ int litehtml::el_text::line_height() const
 	return 0;
 }
 
-litehtml::uint_ptr litehtml::el_text::get_font( font_metrics* fm /*= 0*/ )
+uint_ptr el_text::get_font( font_metrics* fm /*= 0*/ )
 {
 	element::ptr el_parent = parent();
 	if (el_parent)
@@ -174,19 +176,19 @@ litehtml::uint_ptr litehtml::el_text::get_font( font_metrics* fm /*= 0*/ )
 	return 0;
 }
 
-litehtml::style_display litehtml::el_text::get_display() const
+style_display el_text::get_display() const
 {
 	return display_inline_text;
 }
 
-litehtml::white_space litehtml::el_text::get_white_space() const
+white_space el_text::get_white_space() const
 {
 	element::ptr el_parent = parent();
 	if (el_parent) return el_parent->get_white_space();
 	return white_space_normal;
 }
 
-litehtml::element_position litehtml::el_text::get_element_position(css_offsets* offsets) const
+element_position el_text::get_element_position(css_offsets* offsets) const
 {
 	element::ptr p = parent();
 	while(p && p->get_display() == display_inline)
@@ -204,7 +206,7 @@ litehtml::element_position litehtml::el_text::get_element_position(css_offsets* 
 	return element_position_static;
 }
 
-litehtml::css_offsets litehtml::el_text::get_css_offsets() const
+css_offsets el_text::get_css_offsets() const
 {
 	element::ptr p = parent();
 	while(p && p->get_display() == display_inline)
@@ -217,3 +219,5 @@ litehtml::css_offsets litehtml::el_text::get_css_offsets() const
 	}
 	return css_offsets();
 }
+
+} // namespace litehtml

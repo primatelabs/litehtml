@@ -31,7 +31,9 @@
 
 #include "litehtml/html.h"
 
-void litehtml::css_length::fromString( const tstring& str, const tstring& predefs, int defValue )
+namespace litehtml {
+
+void css_length::fromString( const tstring& str, const tstring& predefs, int defValue )
 {
 	// TODO: Make support for calc
 	if(str.substr(0, 4) == _t("calc"))
@@ -82,3 +84,5 @@ void litehtml::css_length::fromString( const tstring& str, const tstring& predef
 		}
 	}
 }
+
+} // namespace litehtml

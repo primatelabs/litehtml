@@ -31,6 +31,8 @@
 
 #include "litehtml/document.h"
 
+namespace litehtml {
+
 litehtml::el_para::el_para(const std::shared_ptr<litehtml::document>& doc) : litehtml::html_tag(doc)
 {
 }
@@ -50,3 +52,5 @@ void litehtml::el_para::parse_attributes()
 
 	html_tag::parse_attributes();
 }
+
+} // namespace litehtml

@@ -31,28 +31,32 @@
 
 #include "litehtml/document.h"
 
-litehtml::el_script::el_script(const std::shared_ptr<litehtml::document>& doc) : litehtml::element(doc)
+namespace litehtml {
+
+el_script::el_script(const std::shared_ptr<document>& doc) : element(doc)
 {
 
 }
 
-litehtml::el_script::~el_script()
+el_script::~el_script()
 {
 
 }
 
-void litehtml::el_script::parse_attributes()
+void el_script::parse_attributes()
 {
 	//TODO: pass script text to document container
 }
 
-bool litehtml::el_script::appendChild(const ptr &el)
+bool el_script::appendChild(const ptr &el)
 {
 	el->get_text(m_text);
 	return true;
 }
 
-const litehtml::tchar_t* litehtml::el_script::get_tagName() const
+const tchar_t* el_script::get_tagName() const
 {
 	return _t("script");
 }
+
+} // namespace litehtml

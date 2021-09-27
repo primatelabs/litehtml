@@ -31,7 +31,9 @@
 
 #include "litehtml/html.h"
 
-litehtml::background::background(void)
+namespace litehtml {
+
+background::background(void)
 {
 	m_attachment	= background_attachment_scroll;
 	m_repeat		= background_repeat_repeat;
@@ -43,7 +45,7 @@ litehtml::background::background(void)
 	m_color.blue	= 0;
 }
 
-litehtml::background::background( const background& val )
+background::background( const background& val )
 {
 	m_image			= val.m_image;
 	m_baseurl		= val.m_baseurl;
@@ -55,11 +57,11 @@ litehtml::background::background( const background& val )
 	m_origin		= val.m_origin;
 }
 
-litehtml::background::~background(void)
+background::~background(void)
 {
 }
 
-litehtml::background& litehtml::background::operator=( const background& val )
+background& background::operator=( const background& val )
 {
 	m_image			= val.m_image;
 	m_baseurl		= val.m_baseurl;
@@ -73,7 +75,7 @@ litehtml::background& litehtml::background::operator=( const background& val )
 }
 
 
-litehtml::background_paint::background_paint() : color(0, 0, 0, 0)
+background_paint::background_paint() : color(0, 0, 0, 0)
 {
 	position_x		= 0;
 	position_y		= 0;
@@ -82,7 +84,7 @@ litehtml::background_paint::background_paint() : color(0, 0, 0, 0)
 	is_root			= false;
 }
 
-litehtml::background_paint::background_paint( const background_paint& val )
+background_paint::background_paint( const background_paint& val )
 {
 	image			= val.image;
 	baseurl			= val.baseurl;
@@ -99,7 +101,7 @@ litehtml::background_paint::background_paint( const background_paint& val )
 	is_root			= val.is_root;
 }
 
-void litehtml::background_paint::operator=( const background& val )
+void background_paint::operator=( const background& val )
 {
 	attachment	= val.m_attachment;
 	baseurl		= val.m_baseurl;
@@ -107,3 +109,5 @@ void litehtml::background_paint::operator=( const background& val )
 	repeat		= val.m_repeat;
 	color		= val.m_color;
 }
+
+} // namespace litehtml

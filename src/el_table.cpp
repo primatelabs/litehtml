@@ -35,7 +35,9 @@
 #include "litehtml/html.h"
 #include "litehtml/iterators.h"
 
-litehtml::el_table::el_table(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
+namespace litehtml {
+
+el_table::el_table(const std::shared_ptr<document>& doc) : html_tag(doc)
 {
 	m_border_spacing_x	= 0;
 	m_border_spacing_y	= 0;
@@ -43,12 +45,12 @@ litehtml::el_table::el_table(const std::shared_ptr<litehtml::document>& doc) : h
 }
 
 
-litehtml::el_table::~el_table()
+el_table::~el_table()
 {
 
 }
 
-bool litehtml::el_table::appendChild(const litehtml::element::ptr& el)
+bool el_table::appendChild(const element::ptr& el)
 {
 	if(!el)	return false;
 	if(!t_strcmp(el->get_tagName(), _t("tbody")) || !t_strcmp(el->get_tagName(), _t("thead")) || !t_strcmp(el->get_tagName(), _t("tfoot")))
@@ -58,7 +60,7 @@ bool litehtml::el_table::appendChild(const litehtml::element::ptr& el)
 	return false;
 }
 
-void litehtml::el_table::parse_styles(bool is_reparse)
+void el_table::parse_styles(bool is_reparse)
 {
 	html_tag::parse_styles(is_reparse);
 
@@ -88,7 +90,7 @@ void litehtml::el_table::parse_styles(bool is_reparse)
 	}
 }
 
-void litehtml::el_table::parse_attributes()
+void el_table::parse_attributes()
 {
 	const tchar_t* str = get_attr(_t("width"));
 	if(str)
@@ -136,3 +138,5 @@ void litehtml::el_table::parse_attributes()
 
 	html_tag::parse_attributes();
 }
+
+} // namespace litehtml

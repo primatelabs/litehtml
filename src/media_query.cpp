@@ -33,20 +33,22 @@
 #include "litehtml/document_container.h"
 #include "litehtml/html.h"
 
-litehtml::media_query::media_query()
+namespace litehtml {
+
+media_query::media_query()
 {
 	m_media_type	= media_type_all;
 	m_not			= false;
 }
 
-litehtml::media_query::media_query( const media_query& val )
+media_query::media_query( const media_query& val )
 {
 	m_not			= val.m_not;
 	m_expressions	= val.m_expressions;
 	m_media_type	= val.m_media_type;
 }
 
-litehtml::media_query::ptr litehtml::media_query::create_from_string(const tstring& str, const std::shared_ptr<document>& doc)
+media_query::ptr media_query::create_from_string(const tstring& str, const std::shared_ptr<document>& doc)
 {
 	media_query::ptr query = std::make_shared<media_query>();
 
@@ -129,7 +131,7 @@ litehtml::media_query::ptr litehtml::media_query::create_from_string(const tstri
 	return query;
 }
 
-bool litehtml::media_query::check( const media_features& features ) const
+bool media_query::check( const media_features& features ) const
 {
 	bool res = false;
 	if(m_media_type == media_type_all || m_media_type == features.type)
@@ -154,7 +156,7 @@ bool litehtml::media_query::check( const media_features& features ) const
 
 //////////////////////////////////////////////////////////////////////////
 
-litehtml::media_query_list::ptr litehtml::media_query_list::create_from_string(const tstring& str, const std::shared_ptr<document>& doc)
+media_query_list::ptr media_query_list::create_from_string(const tstring& str, const std::shared_ptr<document>& doc)
 {
 	media_query_list::ptr list = std::make_shared<media_query_list>();
 
@@ -166,7 +168,7 @@ litehtml::media_query_list::ptr litehtml::media_query_list::create_from_string(c
 		trim(*tok);
 		lcase(*tok);
 
-		litehtml::media_query::ptr query = media_query::create_from_string(*tok, doc);
+		media_query::ptr query = media_query::create_from_string(*tok, doc);
 		if(query)
 		{
 			list->m_queries.push_back(query);
@@ -180,7 +182,7 @@ litehtml::media_query_list::ptr litehtml::media_query_list::create_from_string(c
 	return list;
 }
 
-bool litehtml::media_query_list::apply_media_features( const media_features& features )
+bool media_query_list::apply_media_features( const media_features& features )
 {
 	bool apply = false;
 
@@ -197,7 +199,7 @@ bool litehtml::media_query_list::apply_media_features( const media_features& fea
 	return ret;
 }
 
-bool litehtml::media_query_expression::check( const media_features& features ) const
+bool media_query_expression::check( const media_features& features ) const
 {
 	switch(feature)
 	{
@@ -460,3 +462,5 @@ bool litehtml::media_query_expression::check( const media_features& features ) c
 
 	return false;
 }
+
+} // namespace litehtml

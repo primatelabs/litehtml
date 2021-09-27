@@ -31,16 +31,18 @@
 
 #include "litehtml/document.h"
 
-litehtml::el_space::el_space(const tchar_t* text, const std::shared_ptr<litehtml::document>& doc) : el_text(text, doc)
+namespace litehtml {
+
+el_space::el_space(const tchar_t* text, const std::shared_ptr<document>& doc) : el_text(text, doc)
 {
 }
 
-litehtml::el_space::~el_space()
+el_space::~el_space()
 {
 
 }
 
-bool litehtml::el_space::is_white_space() const
+bool el_space::is_white_space() const
 {
 	white_space ws = get_white_space();
 	if(	ws == white_space_normal ||
@@ -52,7 +54,7 @@ bool litehtml::el_space::is_white_space() const
 	return false;
 }
 
-bool litehtml::el_space::is_break() const
+bool el_space::is_break() const
 {
 	white_space ws = get_white_space();
 	if(	ws == white_space_pre ||
@@ -66,3 +68,5 @@ bool litehtml::el_space::is_break() const
 	}
 	return false;
 }
+
+} // namespace litehtml

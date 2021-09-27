@@ -32,35 +32,36 @@
 #include "litehtml/html.h"
 #include "litehtml/html_tag.h"
 
+namespace litehtml {
 
-litehtml::box_type litehtml::block_box::get_type()
+box_type block_box::get_type()
 {
 	return box_block;
 }
 
-int litehtml::block_box::height()
+int block_box::height()
 {
 	return m_element->height();
 }
 
-int litehtml::block_box::width()
+int block_box::width()
 {
 	return m_element->width();
 }
 
-void litehtml::block_box::add_element(const element::ptr &el)
+void block_box::add_element(const element::ptr &el)
 {
 	m_element = el;
 	el->m_box = this;
 }
 
-void litehtml::block_box::finish(bool last_box)
+void block_box::finish(bool last_box)
 {
 	if(!m_element) return;
 	m_element->apply_relative_shift(m_box_right - m_box_left);
 }
 
-bool litehtml::block_box::can_hold(const element::ptr &el, white_space ws)
+bool block_box::can_hold(const element::ptr &el, white_space ws)
 {
 	if(m_element || el->is_inline_box())
 	{
@@ -69,7 +70,7 @@ bool litehtml::block_box::can_hold(const element::ptr &el, white_space ws)
 	return true;
 }
 
-bool litehtml::block_box::is_empty()
+bool block_box::is_empty()
 {
 	if(m_element)
 	{
@@ -78,7 +79,7 @@ bool litehtml::block_box::is_empty()
 	return true;
 }
 
-int litehtml::block_box::baseline()
+int block_box::baseline()
 {
 	if(m_element)
 	{
@@ -87,12 +88,12 @@ int litehtml::block_box::baseline()
 	return 0;
 }
 
-void litehtml::block_box::get_elements( elements_vector& els )
+void block_box::get_elements( elements_vector& els )
 {
 	els.push_back(m_element);
 }
 
-int litehtml::block_box::top_margin()
+int block_box::top_margin()
 {
 	if(m_element && m_element->collapse_top_margin())
 	{
@@ -101,7 +102,7 @@ int litehtml::block_box::top_margin()
 	return 0;
 }
 
-int litehtml::block_box::bottom_margin()
+int block_box::bottom_margin()
 {
 	if(m_element && m_element->collapse_bottom_margin())
 	{
@@ -110,7 +111,7 @@ int litehtml::block_box::bottom_margin()
 	return 0;
 }
 
-void litehtml::block_box::y_shift( int shift )
+void block_box::y_shift( int shift )
 {
 	m_box_top += shift;
 	if(m_element)
@@ -119,29 +120,29 @@ void litehtml::block_box::y_shift( int shift )
 	}
 }
 
-void litehtml::block_box::new_width( int left, int right, elements_vector& els )
+void block_box::new_width( int left, int right, elements_vector& els )
 {
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-litehtml::box_type litehtml::line_box::get_type()
+box_type line_box::get_type()
 {
 	return box_line;
 }
 
-int litehtml::line_box::height()
+int line_box::height()
 {
 	return m_height;
 }
 
-int litehtml::line_box::width()
+int line_box::width()
 {
 	return m_width;
 }
 
-void litehtml::line_box::add_element(const element::ptr &el)
+void line_box::add_element(const element::ptr &el)
 {
 	el->m_skip	= false;
 	el->m_box	= 0;
@@ -175,7 +176,7 @@ void litehtml::line_box::add_element(const element::ptr &el)
 	}
 }
 
-void litehtml::line_box::finish(bool last_box)
+void line_box::finish(bool last_box)
 {
 	if( is_empty() || (!is_empty() && last_box && is_break_only()) )
 	{
@@ -325,7 +326,7 @@ void litehtml::line_box::finish(bool last_box)
 	m_baseline = (base_line - y1) - (m_height - line_height);
 }
 
-bool litehtml::line_box::can_hold(const element::ptr &el, white_space ws)
+bool line_box::can_hold(const element::ptr &el, white_space ws)
 {
 	if(!el->is_inline_box()) return false;
 
@@ -347,7 +348,7 @@ bool litehtml::line_box::can_hold(const element::ptr &el, white_space ws)
 	return true;
 }
 
-bool litehtml::line_box::have_last_space()
+bool line_box::have_last_space()
 {
 	bool ret = false;
 	for (auto i = m_items.rbegin(); i != m_items.rend() && !ret; i++)
@@ -363,7 +364,7 @@ bool litehtml::line_box::have_last_space()
 	return ret;
 }
 
-bool litehtml::line_box::is_empty()
+bool line_box::is_empty()
 {
 	if(m_items.empty()) return true;
 	for (auto i = m_items.rbegin(); i != m_items.rend(); i++)
@@ -376,27 +377,27 @@ bool litehtml::line_box::is_empty()
 	return true;
 }
 
-int litehtml::line_box::baseline()
+int line_box::baseline()
 {
 	return m_baseline;
 }
 
-void litehtml::line_box::get_elements( elements_vector& els )
+void line_box::get_elements( elements_vector& els )
 {
 	els.insert(els.begin(), m_items.begin(), m_items.end());
 }
 
-int litehtml::line_box::top_margin()
+int line_box::top_margin()
 {
 	return 0;
 }
 
-int litehtml::line_box::bottom_margin()
+int line_box::bottom_margin()
 {
 	return 0;
 }
 
-void litehtml::line_box::y_shift( int shift )
+void line_box::y_shift( int shift )
 {
 	m_box_top += shift;
 	for (auto& el : m_items)
@@ -405,7 +406,7 @@ void litehtml::line_box::y_shift( int shift )
 	}
 }
 
-bool litehtml::line_box::is_break_only()
+bool line_box::is_break_only()
 {
 	if(m_items.empty()) return true;
 
@@ -423,7 +424,7 @@ bool litehtml::line_box::is_break_only()
 	return false;
 }
 
-void litehtml::line_box::new_width( int left, int right, elements_vector& els )
+void line_box::new_width( int left, int right, elements_vector& els )
 {
 	int add = left - m_box_left;
 	if(add)
@@ -462,3 +463,4 @@ void litehtml::line_box::new_width( int left, int right, elements_vector& els )
 	}
 }
 
+} // namespace litehtml

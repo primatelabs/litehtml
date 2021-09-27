@@ -32,16 +32,18 @@
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
 
-litehtml::el_anchor::el_anchor(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
+namespace litehtml {
+
+el_anchor::el_anchor(const std::shared_ptr<document>& doc) : html_tag(doc)
 {
 }
 
-litehtml::el_anchor::~el_anchor()
+el_anchor::~el_anchor()
 {
 
 }
 
-void litehtml::el_anchor::on_click()
+void el_anchor::on_click()
 {
 	const tchar_t* href = get_attr(_t("href"));
 
@@ -51,7 +53,7 @@ void litehtml::el_anchor::on_click()
 	}
 }
 
-void litehtml::el_anchor::apply_stylesheet( const litehtml::css_stylesheet& stylesheet )
+void el_anchor::apply_stylesheet( const css_stylesheet& stylesheet )
 {
 	if( get_attr(_t("href")) )
 	{
@@ -59,3 +61,5 @@ void litehtml::el_anchor::apply_stylesheet( const litehtml::css_stylesheet& styl
 	}
 	html_tag::apply_stylesheet(stylesheet);
 }
+
+} // namespace litehtml

@@ -32,6 +32,8 @@
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
 
+namespace litehtml {
+
 litehtml::el_link::el_link(const std::shared_ptr<litehtml::document>& doc) : litehtml::html_tag(doc)
 {
 
@@ -71,3 +73,5 @@ void litehtml::el_link::parse_attributes()
 		doc->container()->link(doc, shared_from_this());
 	}
 }
+
+} // namespace litehtml

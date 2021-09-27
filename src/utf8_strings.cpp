@@ -31,7 +31,9 @@
 
 #include "litehtml/html.h"
 
-litehtml::utf8_to_wchar::utf8_to_wchar(const char* val)
+namespace litehtml {
+
+utf8_to_wchar::utf8_to_wchar(const char* val)
 {
 	m_utf8 = (const byte*) val;
 	while (true)
@@ -42,7 +44,7 @@ litehtml::utf8_to_wchar::utf8_to_wchar(const char* val)
 	}
 }
 
-litehtml::ucode_t litehtml::utf8_to_wchar::get_char()
+ucode_t utf8_to_wchar::get_char()
 {
 	ucode_t b1 = getb();
 
@@ -90,7 +92,7 @@ litehtml::ucode_t litehtml::utf8_to_wchar::get_char()
 	return '?';
 }
 
-litehtml::wchar_to_utf8::wchar_to_utf8(const std::wstring& val)
+wchar_to_utf8::wchar_to_utf8(const std::wstring& val)
 {
 	unsigned int code;
 	for (int i = 0; val[i]; i++)
@@ -124,3 +126,5 @@ litehtml::wchar_to_utf8::wchar_to_utf8(const std::wstring& val)
 		}
 	}
 }
+
+} // namespace litehtml

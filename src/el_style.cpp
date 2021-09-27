@@ -31,6 +31,8 @@
 
 #include "litehtml/document.h"
 
+namespace litehtml {
+
 litehtml::el_style::el_style(const std::shared_ptr<litehtml::document>& doc) : litehtml::element(doc)
 {
 
@@ -62,3 +64,5 @@ const litehtml::tchar_t* litehtml::el_style::get_tagName() const
 {
 	return _t("style");
 }
+
+} // namespace litehtml

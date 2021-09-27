@@ -32,7 +32,9 @@
 #include "litehtml/html_tag.h"
 #include "litehtml/types.h"
 
-void litehtml::trim(tstring &s)
+namespace litehtml {
+
+void trim(tstring &s)
 {
 	tstring::size_type pos = s.find_first_not_of(_t(" \n\r\t"));
 	if(pos != tstring::npos)
@@ -46,7 +48,7 @@ void litehtml::trim(tstring &s)
 	}
 }
 
-void litehtml::lcase(tstring &s)
+void lcase(tstring &s)
 {
 	for(tstring::iterator i = s.begin(); i != s.end(); i++)
 	{
@@ -54,7 +56,7 @@ void litehtml::lcase(tstring &s)
 	}
 }
 
-litehtml::tstring::size_type litehtml::find_close_bracket(const tstring &s, tstring::size_type off, tchar_t open_b, tchar_t close_b)
+tstring::size_type find_close_bracket(const tstring &s, tstring::size_type off, tchar_t open_b, tchar_t close_b)
 {
 	int cnt = 0;
 	for(tstring::size_type i = off; i < s.length(); i++)
@@ -74,7 +76,7 @@ litehtml::tstring::size_type litehtml::find_close_bracket(const tstring &s, tstr
 	return tstring::npos;
 }
 
-int litehtml::value_index( const tstring& val, const tstring& strings, int defValue, tchar_t delim )
+int value_index( const tstring& val, const tstring& strings, int defValue, tchar_t delim )
 {
 	if(val.empty() || strings.empty() || !delim)
 	{
@@ -111,7 +113,7 @@ int litehtml::value_index( const tstring& val, const tstring& strings, int defVa
 	return defValue;
 }
 
-bool litehtml::value_in_list( const tstring& val, const tstring& strings, tchar_t delim )
+bool value_in_list( const tstring& val, const tstring& strings, tchar_t delim )
 {
 	int idx = value_index(val, strings, -1, delim);
 	if(idx >= 0)
@@ -121,7 +123,7 @@ bool litehtml::value_in_list( const tstring& val, const tstring& strings, tchar_
 	return false;
 }
 
-void litehtml::split_string(const tstring& str, string_vector& tokens, const tstring& delims, const tstring& delims_preserve, const tstring& quote)
+void split_string(const tstring& str, string_vector& tokens, const tstring& delims, const tstring& delims_preserve, const tstring& quote)
 {
 	if(str.empty() || (delims.empty() && delims_preserve.empty()))
 	{
@@ -183,7 +185,7 @@ void litehtml::split_string(const tstring& str, string_vector& tokens, const tst
 	}
 }
 
-void litehtml::join_string(tstring& str, const string_vector& tokens, const tstring& delims)
+void join_string(tstring& str, const string_vector& tokens, const tstring& delims)
 {
 	tstringstream ss;
 	for(size_t i=0; i<tokens.size(); ++i)
@@ -197,3 +199,5 @@ void litehtml::join_string(tstring& str, const string_vector& tokens, const tstr
 
 	str = ss.str();
 }
+
+} // namespace litehtml

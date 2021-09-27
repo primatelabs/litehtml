@@ -31,6 +31,7 @@
 
 #include "litehtml/html.h"
 
+namespace litehtml {
 
 litehtml::el_tr::el_tr(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
 {
@@ -79,3 +80,5 @@ void litehtml::el_tr::get_inline_boxes( position::vector& boxes )
 		}
 	}
 }
+
+} // namespace litehtml

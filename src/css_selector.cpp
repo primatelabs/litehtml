@@ -32,11 +32,13 @@
 #include "litehtml/document.h"
 #include "litehtml/html.h"
 
-void litehtml::css_element_selector::parse( const tstring& txt )
+namespace litehtml {
+
+void css_element_selector::parse( const tstring& txt )
 {
 	tstring::size_type el_end = txt.find_first_of(_t(".#[:"));
 	m_tag = txt.substr(0, el_end);
-	litehtml::lcase(m_tag);
+	lcase(m_tag);
 	m_attrs.clear();
 	while(el_end != tstring::npos)
 	{
@@ -60,7 +62,7 @@ void litehtml::css_element_selector::parse( const tstring& txt )
 				tstring::size_type pos = txt.find_first_of(_t(".#[:"), el_end + 2);
 				attribute.val		= txt.substr(el_end + 2, pos - el_end - 2);
 				attribute.condition	= select_pseudo_element;
-				litehtml::lcase(attribute.val);
+				lcase(attribute.val);
 				attribute.attribute	= _t("pseudo-el");
 				m_attrs.push_back(attribute);
 				el_end = pos;
@@ -86,7 +88,7 @@ void litehtml::css_element_selector::parse( const tstring& txt )
 				{
 					attribute.val		= txt.substr(el_end + 1);
 				}
-				litehtml::lcase(attribute.val);
+				lcase(attribute.val);
 				if(attribute.val == _t("after") || attribute.val == _t("before"))
 				{
 					attribute.condition	= select_pseudo_element;
@@ -115,7 +117,7 @@ void litehtml::css_element_selector::parse( const tstring& txt )
 			tstring::size_type pos = txt.find_first_of(_t("]~=|$*^"), el_end + 1);
 			tstring attr = txt.substr(el_end + 1, pos - el_end - 1);
 			trim(attr);
-			litehtml::lcase(attr);
+			lcase(attr);
 			if(pos != tstring::npos)
 			{
 				if(txt[pos] == _t(']'))
@@ -185,7 +187,7 @@ void litehtml::css_element_selector::parse( const tstring& txt )
 }
 
 
-bool litehtml::css_selector::parse( const tstring& text )
+bool css_selector::parse( const tstring& text )
 {
 	if(text.empty())
 	{
@@ -258,7 +260,7 @@ bool litehtml::css_selector::parse( const tstring& text )
 	return true;
 }
 
-void litehtml::css_selector::calc_specificity()
+void css_selector::calc_specificity()
 {
 	if(!m_right.m_tag.empty() && m_right.m_tag != _t("*"))
 	{
@@ -287,7 +289,7 @@ void litehtml::css_selector::calc_specificity()
 	}
 }
 
-void litehtml::css_selector::add_media_to_doc( document* doc ) const
+void css_selector::add_media_to_doc( document* doc ) const
 {
 	if(m_media_query && doc)
 	{
@@ -295,3 +297,4 @@ void litehtml::css_selector::add_media_to_doc( document* doc ) const
 	}
 }
 
+} // namespace litehtml

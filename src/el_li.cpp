@@ -31,16 +31,18 @@
 
 #include "litehtml/document.h"
 
-litehtml::el_li::el_li(const std::shared_ptr<litehtml::document>& doc) : litehtml::html_tag(doc)
+namespace litehtml {
+
+el_li::el_li(const std::shared_ptr<document>& doc) : html_tag(doc)
 {
 }
 
-litehtml::el_li::~el_li()
+el_li::~el_li()
 {
 
 }
 
-int litehtml::el_li::render(int x, int y, int max_width, bool second_pass)
+int el_li::render(int x, int y, int max_width, bool second_pass)
 {
 	if (m_list_style_type >= list_style_type_armenian && !m_index_initialized)
 	{
@@ -65,3 +67,5 @@ int litehtml::el_li::render(int x, int y, int max_width, bool second_pass)
 
 	return html_tag::render(x, y, max_width, second_pass);
 }
+
+} // namespace litehtml

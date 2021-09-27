@@ -32,6 +32,8 @@
 #include "litehtml/html.h"
 #include "litehtml/html_tag.h"
 
+namespace litehtml {
+
 void litehtml::table_grid::add_cell(element::ptr& el)
 {
 	table_cell cell;
@@ -594,3 +596,5 @@ int& litehtml::table_column_accessor_width::get( table_column& col )
 {
 	return col.width;
 }
+
+} // namespace litehtml

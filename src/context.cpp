@@ -32,11 +32,14 @@
 #include "litehtml/html.h"
 #include "litehtml/css_stylesheet.h"
 
+namespace litehtml {
 
-void litehtml::context::load_master_stylesheet( const tchar_t* str )
+void context::load_master_stylesheet( const tchar_t* str )
 {
 	media_query_list::ptr media;
 
-	m_master_css.parse_stylesheet(str, 0, std::shared_ptr<litehtml::document>(), media_query_list::ptr());
+	m_master_css.parse_stylesheet(str, 0, std::shared_ptr<document>(), media_query_list::ptr());
 	m_master_css.sort_selectors();
 }
+
+} // namespace litehtml

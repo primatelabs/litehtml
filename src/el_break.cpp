@@ -29,18 +29,21 @@
 
 #include "litehtml/el_break.h"
 
-litehtml::el_break::el_break(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
+namespace litehtml {
+
+el_break::el_break(const std::shared_ptr<document>& doc) : html_tag(doc)
 {
 
 }
 
-litehtml::el_break::~el_break()
+el_break::~el_break()
 {
 
 }
 
-bool litehtml::el_break::is_break() const
+bool el_break::is_break() const
 {
 	return true;
 }
 
+} // namespace litehtml

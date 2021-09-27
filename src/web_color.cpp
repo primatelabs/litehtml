@@ -34,7 +34,9 @@
 #include "litehtml/document_container.h"
 #include "litehtml/html.h"
 
-litehtml::def_color litehtml::g_def_colors[] =
+namespace litehtml {
+
+def_color g_def_colors[] =
 {
 	{_t("transparent"),_t("rgba(0, 0, 0, 0)")},
 	{_t("AliceBlue"),_t("#F0F8FF")},
@@ -186,7 +188,7 @@ litehtml::def_color litehtml::g_def_colors[] =
 };
 
 
-litehtml::web_color litehtml::web_color::from_string(const tchar_t* str, litehtml::document_container* callback)
+web_color web_color::from_string(const tchar_t* str, document_container* callback)
 {
 	if(!str || !str[0])
 	{
@@ -257,24 +259,24 @@ litehtml::web_color litehtml::web_color::from_string(const tchar_t* str, litehtm
 	return web_color(0, 0, 0);
 }
 
-litehtml::tstring litehtml::web_color::resolve_name(const tchar_t* name, litehtml::document_container* callback)
+tstring web_color::resolve_name(const tchar_t* name, document_container* callback)
 {
 	for(int i=0; g_def_colors[i].name; i++)
 	{
 		if(!t_strcasecmp(name, g_def_colors[i].name))
 		{
-            return std::move(litehtml::tstring(g_def_colors[i].rgb));
+            return std::move(tstring(g_def_colors[i].rgb));
 		}
 	}
     if (callback)
     {
-        litehtml::tstring clr = callback->resolve_color(name);
+        tstring clr = callback->resolve_color(name);
         return std::move(clr);
     }
-    return std::move(litehtml::tstring());
+    return std::move(tstring());
 }
 
-bool litehtml::web_color::is_color(const tchar_t* str)
+bool web_color::is_color(const tchar_t* str)
 {
 	if(!t_strncasecmp(str, _t("rgb"), 3) || str[0] == _t('#'))
 	{
@@ -286,3 +288,5 @@ bool litehtml::web_color::is_color(const tchar_t* str)
 	}
 	return false;
 }
+
+} // namespace litehtml

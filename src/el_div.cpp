@@ -29,17 +29,19 @@
 
 #include "litehtml/el_div.h"
 
-litehtml::el_div::el_div(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
+namespace litehtml {
+
+el_div::el_div(const std::shared_ptr<document>& doc) : html_tag(doc)
 {
 
 }
 
-litehtml::el_div::~el_div()
+el_div::~el_div()
 {
 
 }
 
-void litehtml::el_div::parse_attributes()
+void el_div::parse_attributes()
 {
 	const tchar_t* str = get_attr(_t("align"));
 	if(str)
@@ -48,3 +50,5 @@ void litehtml::el_div::parse_attributes()
 	}
 	html_tag::parse_attributes();
 }
+
+} // namespace litehtml

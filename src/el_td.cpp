@@ -31,6 +31,8 @@
 
 #include "litehtml/html.h"
 
+namespace litehtml {
+
 litehtml::el_td::el_td(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
 {
 
@@ -76,3 +78,4 @@ void litehtml::el_td::parse_attributes()
 	html_tag::parse_attributes();
 }
 
+} // namespace litehtml

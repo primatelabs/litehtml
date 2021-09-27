@@ -35,26 +35,28 @@
 
 #include "litehtml/html.h"
 
-litehtml::string_map litehtml::style::m_valid_values =
+namespace litehtml {
+
+string_map style::m_valid_values =
 {
 	{ _t("white-space"), white_space_strings }
 };
 
-litehtml::style::style()
+style::style()
 {
 }
 
-litehtml::style::style( const style& val )
+style::style( const style& val )
 {
 	m_properties = val.m_properties;
 }
 
-litehtml::style::~style()
+style::~style()
 {
 
 }
 
-void litehtml::style::parse( const tchar_t* txt, const tchar_t* baseurl )
+void style::parse( const tchar_t* txt, const tchar_t* baseurl )
 {
 	std::vector<tstring> properties;
 	split_string(txt, properties, _t(";"), _t(""), _t("\"'"));
@@ -65,7 +67,7 @@ void litehtml::style::parse( const tchar_t* txt, const tchar_t* baseurl )
 	}
 }
 
-void litehtml::style::parse_property( const tstring& txt, const tchar_t* baseurl )
+void style::parse_property( const tstring& txt, const tchar_t* baseurl )
 {
 	tstring::size_type pos = txt.find_first_of(_t(":"));
 	if(pos != tstring::npos)
@@ -93,7 +95,7 @@ void litehtml::style::parse_property( const tstring& txt, const tchar_t* baseurl
 	}
 }
 
-void litehtml::style::combine( const litehtml::style& src )
+void style::combine( const style& src )
 {
 	for(props_map::const_iterator i = src.m_properties.begin(); i != src.m_properties.end(); i++)
 	{
@@ -101,7 +103,7 @@ void litehtml::style::combine( const litehtml::style& src )
 	}
 }
 
-void litehtml::style::add_property( const tchar_t* name, const tchar_t* val, const tchar_t* baseurl, bool important )
+void style::add_property( const tchar_t* name, const tchar_t* val, const tchar_t* baseurl, bool important )
 {
 	if(!name || !val)
 	{
@@ -478,7 +480,7 @@ void litehtml::style::add_property( const tchar_t* name, const tchar_t* val, con
 	}
 }
 
-void litehtml::style::parse_short_border( const tstring& prefix, const tstring& val, bool important )
+void style::parse_short_border( const tstring& prefix, const tstring& val, bool important )
 {
 	string_vector tokens;
 	split_string(val, tokens, _t(" "), _t(""), _t("("));
@@ -501,7 +503,7 @@ void litehtml::style::parse_short_border( const tstring& prefix, const tstring& 
 	}
 }
 
-void litehtml::style::parse_short_background( const tstring& val, const tchar_t* baseurl, bool important )
+void style::parse_short_background( const tstring& val, const tchar_t* baseurl, bool important )
 {
 	add_parsed_property(_t("background-color"),			_t("transparent"),	important);
 	add_parsed_property(_t("background-image"),			_t(""),				important);
@@ -565,7 +567,7 @@ void litehtml::style::parse_short_background( const tstring& val, const tchar_t*
 	}
 }
 
-void litehtml::style::parse_short_font( const tstring& val, bool important )
+void style::parse_short_font( const tstring& val, bool important )
 {
 	add_parsed_property(_t("font-style"),	_t("normal"),	important);
 	add_parsed_property(_t("font-variant"),	_t("normal"),	important);
@@ -634,7 +636,7 @@ void litehtml::style::parse_short_font( const tstring& val, bool important )
 	add_parsed_property(_t("font-family"), font_family, important);
 }
 
-void litehtml::style::add_parsed_property( const tstring& name, const tstring& val, bool important )
+void style::add_parsed_property( const tstring& name, const tstring& val, bool important )
 {
 	bool is_valid = true;
 	string_map::iterator vals = m_valid_values.find(name);
@@ -664,7 +666,7 @@ void litehtml::style::add_parsed_property( const tstring& name, const tstring& v
 	}
 }
 
-void litehtml::style::remove_property( const tstring& name, bool important )
+void style::remove_property( const tstring& name, bool important )
 {
 	props_map::iterator prop = m_properties.find(name);
 	if(prop != m_properties.end())
@@ -675,3 +677,5 @@ void litehtml::style::remove_property( const tstring& name, bool important )
 		}
 	}
 }
+
+} // namespace litehtml

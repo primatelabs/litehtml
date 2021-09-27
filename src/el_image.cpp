@@ -32,22 +32,24 @@
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
 
-litehtml::el_image::el_image(const std::shared_ptr<litehtml::document>& doc) : html_tag(doc)
+namespace litehtml {
+
+el_image::el_image(const std::shared_ptr<document>& doc) : html_tag(doc)
 {
 	m_display = display_inline_block;
 }
 
-litehtml::el_image::~el_image( void )
+el_image::~el_image( void )
 {
 
 }
 
-void litehtml::el_image::get_content_size( size& sz, int max_width )
+void el_image::get_content_size( size& sz, int max_width )
 {
 	get_document()->container()->get_image_size(m_src.c_str(), 0, sz);
 }
 
-int litehtml::el_image::calc_max_height(int image_height)
+int el_image::calc_max_height(int image_height)
 {
 	document::ptr doc = get_document();
 	int percentSize = 0;
@@ -65,17 +67,17 @@ int litehtml::el_image::calc_max_height(int image_height)
 	return doc->cvt_units(m_css_max_height, m_font_size, percentSize);
 }
 
-int litehtml::el_image::line_height() const
+int el_image::line_height() const
 {
 	return height();
 }
 
-bool litehtml::el_image::is_replaced() const
+bool el_image::is_replaced() const
 {
 	return true;
 }
 
-int litehtml::el_image::render( int x, int y, int max_width, bool second_pass )
+int el_image::render( int x, int y, int max_width, bool second_pass )
 {
 	int parent_width = max_width;
 
@@ -85,7 +87,7 @@ int litehtml::el_image::render( int x, int y, int max_width, bool second_pass )
 
 	document::ptr doc = get_document();
 
-	litehtml::size sz;
+	size sz;
 	doc->container()->get_image_size(m_src.c_str(), 0, sz);
 
 	m_pos.width		= sz.width;
@@ -212,7 +214,7 @@ int litehtml::el_image::render( int x, int y, int max_width, bool second_pass )
 	return m_pos.width + content_margins_left() + content_margins_right();
 }
 
-void litehtml::el_image::parse_attributes()
+void el_image::parse_attributes()
 {
 	m_src = get_attr(_t("src"), _t(""));
 
@@ -228,7 +230,7 @@ void litehtml::el_image::parse_attributes()
 	}
 }
 
-void litehtml::el_image::draw( uint_ptr hdc, int x, int y, const position* clip )
+void el_image::draw( uint_ptr hdc, int x, int y, const position* clip )
 {
 	position pos = m_pos;
 	pos.x += x;
@@ -286,7 +288,7 @@ void litehtml::el_image::draw( uint_ptr hdc, int x, int y, const position* clip 
 	}
 }
 
-void litehtml::el_image::parse_styles( bool is_reparse /*= false*/ )
+void el_image::parse_styles( bool is_reparse /*= false*/ )
 {
 	html_tag::parse_styles(is_reparse);
 
@@ -301,3 +303,5 @@ void litehtml::el_image::parse_styles( bool is_reparse /*= false*/ )
 		}
 	}
 }
+
+} // namespace litehtml
