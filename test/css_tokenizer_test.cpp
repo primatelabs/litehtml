@@ -50,24 +50,32 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
         for (int i = 0; i < testcase.tokens.size(); i++ ) {
             auto& token = tokens[i];
             auto& reference = testcase.tokens[i];
+#if defined(LITEHTML_UTF8)
             std::cout << i << " " << css_token_type_string(token.type())
                 << " " << css_token_type_string(reference.type())
                 << std::endl;
+#endif
             EXPECT_EQ(reference.type(), token.type());
 
             if (reference.type() == kCSSTokenNumber) {
-                assert(reference.numeric_value().type() == token.numeric_value().type());
+#if defined(LITEHTML_UTF8)
                 std::cout << reference.numeric_value().value() << std::endl;
                 std::cout << token.numeric_value().value() << std::endl;
-                assert(reference.numeric_value().value() == token.numeric_value().value());
+#endif
+                EXPECT_EQ(reference.numeric_value().type(), token.numeric_value().type());
+                EXPECT_EQ(reference.numeric_value().value(), token.numeric_value().value());
             } else if (reference.type() == kCSSTokenIdent) {
+#if defined(LITEHTML_UTF8)
                 std::cout << reference.value() << std::endl;
                 std::cout << token.value() << std::endl;
-                assert(reference.value() == token.value());
+#endif
+                EXPECT_EQ(reference.value(), token.value());
             } else if (reference.type() == kCSSTokenString) {
+#if defined(LITEHTML_UTF8)
                 std::cout << reference.value() << std::endl;
                 std::cout << token.value() << std::endl;
-                assert(reference.value() == token.value());
+#endif
+                EXPECT_EQ(reference.value(), token.value());
             }
         }
         EXPECT_EQ(kCSSTokenEOF, tokens.back().type());
@@ -82,7 +90,7 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
 
 // Generate a CSS token of type t that contains a string value.  This includes
 // string tokens and identifier tokens.
-#define TS(t, v) css_token(kCSSToken ## t, v)
+#define TS(t, v) css_token(kCSSToken ## t, _t(v))
 
 // Generate a CSS number token that contains an integer value.
 #define TI(v) css_token(kCSSTokenNumber, css_number(kCSSIntegerValue, v))
@@ -181,13 +189,15 @@ TEST(CSSTokenizerTest, Stylesheet)
 {
   std::vector<CSSTokenizerTestCase> testcases = {
     {
-      "/* A simple CSS stylesheet */\n"
-      "body {\n"
-      "  margin: 25px\n"
-      "  background-color: rgb(220,230,240)\n"
-      "  font-family: roboto, arial, sans-serif\n"
-      "  font-size: 14px\n"
-      "}\n",
+      _t(
+        "/* A simple CSS stylesheet */\n"
+        "body {\n"
+        "  margin: 25px\n"
+        "  background-color: rgb(220,230,240)\n"
+        "  font-family: roboto, arial, sans-serif\n"
+        "  font-size: 14px\n"
+        "}\n"
+      ),
       {
         T(Whitespace),
         TS(Ident, "body"), T(Whitespace), T(OpenBrace), T(Whitespace),

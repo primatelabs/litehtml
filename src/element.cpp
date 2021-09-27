@@ -29,6 +29,8 @@
 
 #include "litehtml/element.h"
 
+#include <algorithm>
+
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
 
