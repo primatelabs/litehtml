@@ -29,6 +29,7 @@
 
 #include "litehtml/url.h"
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 

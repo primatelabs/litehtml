@@ -29,6 +29,7 @@
 
 #ifndef LITEHTML_OS_TYPES_H__
 #define LITEHTML_OS_TYPES_H__
+
 #include <string.h>
 
 #include <string>
