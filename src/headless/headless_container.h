@@ -82,27 +82,28 @@ public:
     virtual ~headless_container();
 
     virtual litehtml::uint_ptr create_font(const litehtml::tchar_t* faceName,
-        int size, int weight,
-	    litehtml::font_style italic,
+        int size,
+        int weight,
+        litehtml::font_style italic,
         unsigned int decoration,
-	    litehtml::font_metrics* fm) override;
+        litehtml::font_metrics* fm) override;
 
     virtual void delete_font(litehtml::uint_ptr hFont) override;
 
-	virtual int text_width(const litehtml::tchar_t* text,
+    virtual int text_width(const litehtml::tchar_t* text,
         litehtml::uint_ptr hFont) override;
 
-	virtual void draw_text(litehtml::uint_ptr hdc,
+    virtual void draw_text(litehtml::uint_ptr hdc,
         const litehtml::tchar_t* text,
         litehtml::uint_ptr hFont,
         litehtml::web_color color,
         const litehtml::position& pos) override;
 
-	virtual int pt_to_px(int pt) override;
+    virtual int pt_to_px(int pt) override;
 
-	virtual int get_default_font_size() const override;
+    virtual int get_default_font_size() const override;
 
-	virtual const litehtml::tchar_t* get_default_font_name() const override;
+    virtual const litehtml::tchar_t* get_default_font_name() const override;
 
     virtual void load_image(const litehtml::tchar_t* src,
         const litehtml::tchar_t* baseurl,
@@ -133,17 +134,17 @@ public:
     virtual void get_language(litehtml::tstring& language,
         litehtml::tstring& culture) const override;
 
-	virtual	void set_caption(const litehtml::tchar_t*) override;
+    virtual void set_caption(const litehtml::tchar_t*) override;
 
-    virtual	void set_base_url(const litehtml::tchar_t* base_url) override;
+    virtual void set_base_url(const litehtml::tchar_t* base_url) override;
 
     virtual void link(const std::shared_ptr<litehtml::document>& ptr,
         const litehtml::element::ptr& el) override;
 
-	virtual void on_anchor_click(const litehtml::tchar_t* url,
+    virtual void on_anchor_click(const litehtml::tchar_t* url,
         const litehtml::element::ptr& el) override;
 
-	virtual	void set_cursor(const litehtml::tchar_t* cursor) override;
+    virtual void set_cursor(const litehtml::tchar_t* cursor) override;
 
     virtual void transform_text(litehtml::tstring& text,
         litehtml::text_transform tt) override;
@@ -169,8 +170,13 @@ public:
         bool redraw_on_ready);
 
 protected:
-    virtual void draw_ellipse(cairo_t* cr, int x, int y, int width, int height,
-        const litehtml::web_color& color, int line_width);
+    virtual void draw_ellipse(cairo_t* cr,
+        int x,
+        int y,
+        int width,
+        int height,
+        const litehtml::web_color& color,
+        int line_width);
 
     virtual void fill_ellipse(cairo_t* cr,
         int x,

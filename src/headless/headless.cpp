@@ -30,17 +30,15 @@
 #include <iostream>
 #include <string>
 
-#include "litehtml.h"
-
 #include "headless/headless_container.h"
+#include "litehtml.h"
 
 namespace {
 
-const litehtml::tchar_t master_stylesheet[] =
-{
+const litehtml::tchar_t master_stylesheet[] = {
 #include "master.css.inc"
-, 0
-};
+    ,
+    0};
 
 std::string load(const std::string& filename)
 {
@@ -70,11 +68,13 @@ int main(int argc, char** argv)
     ctx.load_master_stylesheet(master_stylesheet);
 
     headless_container container;
-    litehtml::document::ptr doc = litehtml::document::createFromString(html.c_str(), &container, &ctx);
+    litehtml::document::ptr doc =
+        litehtml::document::createFromString(html.c_str(), &container, &ctx);
 
     doc->render(1000);
 
-	cairo_surface_t* surface  = cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
+    cairo_surface_t* surface =
+        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
     cairo_t* cr = cairo_create(surface);
 
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
