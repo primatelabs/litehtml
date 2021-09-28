@@ -29,6 +29,7 @@
 
 #ifndef LITEHTML_ELEMENT_H__
 #define LITEHTML_ELEMENT_H__
+
 #include <memory>
 
 #include "litehtml/background.h"

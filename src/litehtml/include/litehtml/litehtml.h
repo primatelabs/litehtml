@@ -32,6 +32,7 @@
 
 #include <litehtml/css/css_stylesheet.h>
 #include <litehtml/document.h>
+#include <litehtml/document_container.h>
 #include <litehtml/element/element.h>
 #include <litehtml/element/html_tag.h>
 #include <litehtml/html.h>

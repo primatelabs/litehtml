@@ -29,6 +29,7 @@
 
 #ifndef LITEHTML_WEB_COLOR_H__
 #define LITEHTML_WEB_COLOR_H__
+
 #include "litehtml/os_types.h"
 #include "litehtml/types.h"
 

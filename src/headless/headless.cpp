@@ -30,15 +30,14 @@
 #include <iostream>
 #include <string>
 
-#include "headless/headless_container.h"
+#include "headless_container.h"
 #include "litehtml/litehtml.h"
 
 namespace {
 
-const litehtml::tchar_t master_stylesheet[] = {
+const char* master_stylesheet = {
 #include "master.css.inc"
-    ,
-    0};
+};
 
 std::string load(const std::string& filename)
 {

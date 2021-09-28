@@ -28,7 +28,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "headless/headless_container.h"
+#include "headless_container.h"
 
 #define _USE_MATH_DEFINES
 #include <cairo-ft.h>
@@ -872,10 +872,6 @@ cairo_surface_t* headless_container::get_image(const litehtml::tchar_t* url,
     return nullptr;
 }
 
-
-void headless_container::clear_images()
-{
-}
 
 const litehtml::tchar_t* headless_container::get_default_font_name() const
 {
