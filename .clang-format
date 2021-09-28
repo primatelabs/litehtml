@@ -1,6 +1,7 @@
 BasedOnStyle: Google
 AccessModifierOffset: -4
-AlignAfterOpenBracket: 'false'
+AlignAfterOpenBracket: DontAlign
+AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: 'false'
 AllowShortBlocksOnASingleLine: 'false'
 AllowShortCaseLabelsOnASingleLine: 'false'
@@ -10,6 +11,8 @@ AllowShortLoopsOnASingleLine: 'false'
 AlwaysBreakAfterDefinitionReturnType: 'false'
 AlwaysBreakBeforeMultilineStrings: 'true'
 AlwaysBreakTemplateDeclarations: 'true'
+BinPackArguments: false
+BinPackParameters: false
 BreakBeforeBraces: WebKit
 BreakConstructorInitializersBeforeComma: 'true'
 ColumnLimit: 80
@@ -24,9 +27,9 @@ KeepEmptyLinesAtTheStartOfBlocks: 'false'
 Language: Cpp
 MaxEmptyLinesToKeep: 2
 NamespaceIndentation: None
-PenaltyBreakBeforeFirstCallParameter: 1
+PenaltyBreakBeforeFirstCallParameter: 30
 PenaltyBreakFirstLessLess: 0
-PenaltyExcessCharacter: 1
+PenaltyExcessCharacter: 5
 PointerAlignment: Left
 SpaceBeforeAssignmentOperators: 'true'
 SpaceBeforeParens: ControlStatements
