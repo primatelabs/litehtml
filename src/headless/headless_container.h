@@ -33,7 +33,7 @@
 
 #include <cairo.h>
 
-#include "litehtml.h"
+#include "litehtml/litehtml.h"
 
 struct cairo_clip_box {
     typedef std::vector<cairo_clip_box> vector;

@@ -26,62 +26,46 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <fstream>
-#include <iostream>
-#include <string>
+#include "litehtml/css/css_parser.h"
 
-#include "headless/headless_container.h"
-#include "litehtml/litehtml.h"
+#include <gtest/gtest.h>
 
-namespace {
+#include "litehtml/debug/json.h"
+#include "litehtml/os_types.h"
 
-const litehtml::tchar_t master_stylesheet[] = {
-#include "master.css.inc"
-    ,
-    0};
+using namespace litehtml;
 
-std::string load(const std::string& filename)
+TEST(CSSParserTest, DISABLED_Stylesheet)
 {
-    std::ifstream ifs(filename);
+    tstring css =
+        _t("/* A simple CSS stylesheet */\n"
+           "body {\n"
+           "  margin: 25px;\n"
+           "  background-color: rgb(240,240,240);\n"
+           "  font-family: roboto, arial, sans-serif;\n"
+           "  font-size: 14px;\n"
+           "}\n");
 
-    if (ifs.bad()) {
-        exit(-1);
-    }
+    css_parser parser(css);
+    css_stylesheet stylesheet = parser.parse_stylesheet();
 
-    std::string data;
-    char c;
-    // TODO: Is there a better way to load a file into memory?
-    while (ifs.get(c)) {
-        data += c;
-    }
+#if defined(ENABLE_JSON)
+    nlohmann::json j = stylesheet.json();
+    std::cout << std::setw(4) << j << std::endl;
+#endif
 
-    return data;
-}
+    EXPECT_EQ(1, stylesheet.rules_.size());
 
-} // namespace
+    // EXPECT_EQ(1, stylesheet.rules_[0].prelude_.values_.size());
+    EXPECT_EQ(kCSSComponentValueToken,
+        stylesheet.rules_[0].prelude_.values_[0].type_);
+    EXPECT_EQ(kCSSTokenIdent,
+        stylesheet.rules_[0].prelude_.values_[0].token_.type());
+    EXPECT_EQ(_t("body"), stylesheet.rules_[0].prelude_.values_[0].token_.value());
 
-int main(int argc, char** argv)
-{
-    std::string html = load(argv[1]);
-
-    litehtml::context ctx;
-    ctx.load_master_stylesheet(master_stylesheet);
-
-    headless_container container;
-    litehtml::document::ptr doc =
-        litehtml::document::createFromString(html.c_str(), &container, &ctx);
-
-    doc->render(1000);
-
-    cairo_surface_t* surface =
-        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
-    cairo_t* cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_paint(cr);
-
-    doc->draw((litehtml::uint_ptr)cr, 0, 0, nullptr);
-    cairo_surface_write_to_png(surface, "headless.png");
-
-    return 0;
+    EXPECT_EQ(kCSSComponentValueToken,
+        stylesheet.rules_[0].prelude_.values_[1].type_);
+    EXPECT_EQ(kCSSTokenIdent,
+        stylesheet.rules_[0].prelude_.values_[1].token_.type());
+    EXPECT_EQ(_t("body"), stylesheet.rules_[0].prelude_.values_[1].token_.value());
 }

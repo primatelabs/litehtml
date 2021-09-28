@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020 Primate Labs Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -26,62 +26,68 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <fstream>
-#include <iostream>
-#include <string>
+#include "litehtml/css/css_token.h"
 
-#include "headless/headless_container.h"
-#include "litehtml/litehtml.h"
+namespace litehtml {
 
-namespace {
+#define TOKEN_CASE(t)  \
+    case kCSSToken##t: \
+        return #t;
 
-const litehtml::tchar_t master_stylesheet[] = {
-#include "master.css.inc"
-    ,
-    0};
-
-std::string load(const std::string& filename)
+std::string css_token_type_string(css_token_type type)
 {
-    std::ifstream ifs(filename);
-
-    if (ifs.bad()) {
-        exit(-1);
+    switch (type) {
+        TOKEN_CASE(None);
+        TOKEN_CASE(Ident);
+        TOKEN_CASE(Function);
+        TOKEN_CASE(AtKeyword);
+        TOKEN_CASE(Hash);
+        TOKEN_CASE(String);
+        TOKEN_CASE(BadString);
+        TOKEN_CASE(URL);
+        TOKEN_CASE(BadURL);
+        TOKEN_CASE(Delim);
+        TOKEN_CASE(Number);
+        TOKEN_CASE(Percentage);
+        TOKEN_CASE(Dimension);
+        TOKEN_CASE(Whitespace);
+        TOKEN_CASE(CDO);
+        TOKEN_CASE(CDC);
+        TOKEN_CASE(Colon);
+        TOKEN_CASE(Semicolon);
+        TOKEN_CASE(Comma);
+        TOKEN_CASE(OpenSquareBracket);
+        TOKEN_CASE(CloseSquareBracket);
+        TOKEN_CASE(OpenRoundBracket);
+        TOKEN_CASE(CloseRoundBracket);
+        TOKEN_CASE(OpenBrace);
+        TOKEN_CASE(CloseBrace);
+        TOKEN_CASE(EOF);
+        default:
+            return "Unknown";
     }
-
-    std::string data;
-    char c;
-    // TODO: Is there a better way to load a file into memory?
-    while (ifs.get(c)) {
-        data += c;
-    }
-
-    return data;
 }
 
-} // namespace
-
-int main(int argc, char** argv)
+css_token::css_token()
+: type_(kCSSTokenNone)
 {
-    std::string html = load(argv[1]);
-
-    litehtml::context ctx;
-    ctx.load_master_stylesheet(master_stylesheet);
-
-    headless_container container;
-    litehtml::document::ptr doc =
-        litehtml::document::createFromString(html.c_str(), &container, &ctx);
-
-    doc->render(1000);
-
-    cairo_surface_t* surface =
-        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
-    cairo_t* cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_paint(cr);
-
-    doc->draw((litehtml::uint_ptr)cr, 0, 0, nullptr);
-    cairo_surface_write_to_png(surface, "headless.png");
-
-    return 0;
 }
+
+css_token::css_token(css_token_type type)
+: type_(type)
+{
+}
+
+css_token::css_token(css_token_type type, const tstring& value)
+: type_(type)
+, value_(value)
+{
+}
+
+css_token::css_token(css_token_type type, const css_number& numeric_value)
+: type_(type)
+, numeric_value_(numeric_value)
+{
+}
+
+} // namespace litehtml

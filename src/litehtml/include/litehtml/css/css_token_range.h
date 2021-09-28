@@ -26,62 +26,48 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <fstream>
-#include <iostream>
-#include <string>
+#ifndef LITEHTML_CSS_TOKEN_RANGE_H__
+#define LITEHTML_CSS_TOKEN_RANGE_H__
 
-#include "headless/headless_container.h"
-#include "litehtml/litehtml.h"
+#include "litehtml/css/css_token.h"
 
-namespace {
+namespace litehtml {
 
-const litehtml::tchar_t master_stylesheet[] = {
-#include "master.css.inc"
-    ,
-    0};
+class css_token_range {
+protected:
+    const css_token* begin_;
 
-std::string load(const std::string& filename)
-{
-    std::ifstream ifs(filename);
+    const css_token* end_;
 
-    if (ifs.bad()) {
-        exit(-1);
+public:
+    css_token_range() = delete;
+
+    explicit css_token_range(const std::vector<css_token>& tokens);
+
+    const css_token& consume()
+    {
+        if (begin_ == end_) {
+            return eof_token();
+        }
+        return *begin_++;
     }
 
-    std::string data;
-    char c;
-    // TODO: Is there a better way to load a file into memory?
-    while (ifs.get(c)) {
-        data += c;
+    const void reconsume()
+    {
+        begin_--;
     }
 
-    return data;
-}
+    const css_token& peek()
+    {
+        if (begin_ == end_) {
+            return eof_token();
+        }
+        return *begin_;
+    }
 
-} // namespace
+    static css_token& eof_token();
+};
 
-int main(int argc, char** argv)
-{
-    std::string html = load(argv[1]);
+} // namespace litehtml
 
-    litehtml::context ctx;
-    ctx.load_master_stylesheet(master_stylesheet);
-
-    headless_container container;
-    litehtml::document::ptr doc =
-        litehtml::document::createFromString(html.c_str(), &container, &ctx);
-
-    doc->render(1000);
-
-    cairo_surface_t* surface =
-        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
-    cairo_t* cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_paint(cr);
-
-    doc->draw((litehtml::uint_ptr)cr, 0, 0, nullptr);
-    cairo_surface_write_to_png(surface, "headless.png");
-
-    return 0;
-}
+#endif // LITEHTML_CSS_TOKEN_H__

@@ -1,4 +1,5 @@
-// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
+// Copyright (c) 2013, Yuri Kobets (tordex)
+// All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -10,7 +11,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//    * Neither the name of the copyright holder nor the names of its
+//    * Neither the names of the copyright holders nor the names of their
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -26,62 +27,59 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <fstream>
-#include <iostream>
-#include <string>
+#ifndef LITEHTML_BACKGROUND_H__
+#define LITEHTML_BACKGROUND_H__
 
-#include "headless/headless_container.h"
-#include "litehtml/litehtml.h"
+#include "litehtml/attributes.h"
+#include "litehtml/borders.h"
+#include "litehtml/css/css_length.h"
+#include "litehtml/css/css_position.h"
+#include "litehtml/types.h"
+#include "litehtml/web_color.h"
 
-namespace {
+namespace litehtml {
+class background {
+public:
+    tstring m_image;
+    tstring m_baseurl;
+    web_color m_color;
+    background_attachment m_attachment;
+    css_position m_position;
+    background_repeat m_repeat;
+    background_box m_clip;
+    background_box m_origin;
+    css_border_radius m_radius;
 
-const litehtml::tchar_t master_stylesheet[] = {
-#include "master.css.inc"
-    ,
-    0};
+public:
+    background(void);
+    background(const background& val);
+    ~background(void);
 
-std::string load(const std::string& filename)
-{
-    std::ifstream ifs(filename);
+    background& operator=(const background& val);
+};
 
-    if (ifs.bad()) {
-        exit(-1);
-    }
+class background_paint {
+public:
+    tstring image;
+    tstring baseurl;
+    background_attachment attachment;
+    background_repeat repeat;
+    web_color color;
+    position clip_box;
+    position origin_box;
+    position border_box;
+    border_radiuses border_radius;
+    size image_size;
+    int position_x;
+    int position_y;
+    bool is_root;
 
-    std::string data;
-    char c;
-    // TODO: Is there a better way to load a file into memory?
-    while (ifs.get(c)) {
-        data += c;
-    }
+public:
+    background_paint();
+    background_paint(const background_paint& val);
+    void operator=(const background& val);
+};
 
-    return data;
-}
+} // namespace litehtml
 
-} // namespace
-
-int main(int argc, char** argv)
-{
-    std::string html = load(argv[1]);
-
-    litehtml::context ctx;
-    ctx.load_master_stylesheet(master_stylesheet);
-
-    headless_container container;
-    litehtml::document::ptr doc =
-        litehtml::document::createFromString(html.c_str(), &container, &ctx);
-
-    doc->render(1000);
-
-    cairo_surface_t* surface =
-        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
-    cairo_t* cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_paint(cr);
-
-    doc->draw((litehtml::uint_ptr)cr, 0, 0, nullptr);
-    cairo_surface_write_to_png(surface, "headless.png");
-
-    return 0;
-}
+#endif // LITEHTML_BACKGROUND_H__

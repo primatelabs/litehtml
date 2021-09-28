@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020 Primate Labs Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -26,62 +26,64 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <fstream>
-#include <iostream>
-#include <string>
+#include "litehtml/css/css_tokenizer_input_stream.h"
 
-#include "headless/headless_container.h"
-#include "litehtml/litehtml.h"
+#include <gtest/gtest.h>
+
+using namespace litehtml;
 
 namespace {
 
-const litehtml::tchar_t master_stylesheet[] = {
-#include "master.css.inc"
-    ,
-    0};
-
-std::string load(const std::string& filename)
-{
-    std::ifstream ifs(filename);
-
-    if (ifs.bad()) {
-        exit(-1);
-    }
-
-    std::string data;
-    char c;
-    // TODO: Is there a better way to load a file into memory?
-    while (ifs.get(c)) {
-        data += c;
-    }
-
-    return data;
-}
+std::vector<tstring> testcases = {
+    _t(""),
+    _t("/* Comment */"),
+    _t("html { display: none }"),
+};
 
 } // namespace
 
-int main(int argc, char** argv)
+TEST(CssTokenizerInputStreamTest, Advance)
 {
-    std::string html = load(argv[1]);
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.peek(0));
+            stream.advance();
+        }
+        EXPECT_EQ(0, stream.peek(0));
+    }
+}
 
-    litehtml::context ctx;
-    ctx.load_master_stylesheet(master_stylesheet);
+TEST(CssTokenizerInputStreamTest, Consume)
+{
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.consume());
+        }
+        EXPECT_EQ(0, stream.consume());
+    }
+}
 
-    headless_container container;
-    litehtml::document::ptr doc =
-        litehtml::document::createFromString(html.c_str(), &container, &ctx);
+TEST(CssTokenizerInputStreamTest, Next)
+{
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.next());
+            stream.advance();
+        }
+        EXPECT_EQ(0, stream.next());
+    }
+}
 
-    doc->render(1000);
-
-    cairo_surface_t* surface =
-        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
-    cairo_t* cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_paint(cr);
-
-    doc->draw((litehtml::uint_ptr)cr, 0, 0, nullptr);
-    cairo_surface_write_to_png(surface, "headless.png");
-
-    return 0;
+TEST(CssTokenizerInputStreamTest, Peak)
+{
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.peek(i));
+        }
+        EXPECT_EQ(0, stream.peek(testcase.length()));
+    }
 }

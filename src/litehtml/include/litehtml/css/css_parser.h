@@ -26,62 +26,42 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <fstream>
-#include <iostream>
-#include <string>
+#ifndef LITEHTML_CSS_PARSER_H__
+#define LITEHTML_CSS_PARSER_H__
 
-#include "headless/headless_container.h"
-#include "litehtml/litehtml.h"
+#include "litehtml/css/css_block.h"
+#include "litehtml/css/css_component_value.h"
+#include "litehtml/css/css_function.h"
+#include "litehtml/css/css_stylesheet.h"
+#include "litehtml/css/css_token_range.h"
+#include "litehtml/css/css_tokenizer.h"
+#include "litehtml/types.h"
 
-namespace {
+namespace litehtml {
 
-const litehtml::tchar_t master_stylesheet[] = {
-#include "master.css.inc"
-    ,
-    0};
+class css_parser {
+protected:
+    css_tokenizer tokenizer_;
 
-std::string load(const std::string& filename)
-{
-    std::ifstream ifs(filename);
+    std::vector<css_rule> consume_rules(css_token_range& range, bool top_level);
 
-    if (ifs.bad()) {
-        exit(-1);
-    }
+    void consume_at_rule(css_token_range& range);
 
-    std::string data;
-    char c;
-    // TODO: Is there a better way to load a file into memory?
-    while (ifs.get(c)) {
-        data += c;
-    }
+    css_rule consume_qualified_rule(css_token_range& range);
 
-    return data;
-}
+    css_component_value consume_component_value(css_token_range& range);
 
-} // namespace
+    css_block consume_block(css_token_range& range,
+        const css_token& starting_token);
 
-int main(int argc, char** argv)
-{
-    std::string html = load(argv[1]);
+    css_function consume_function(css_token_range& range);
 
-    litehtml::context ctx;
-    ctx.load_master_stylesheet(master_stylesheet);
+public:
+    explicit css_parser(const tstring& input);
 
-    headless_container container;
-    litehtml::document::ptr doc =
-        litehtml::document::createFromString(html.c_str(), &container, &ctx);
+    css_stylesheet parse_stylesheet();
+};
 
-    doc->render(1000);
+} // namespace litehtml
 
-    cairo_surface_t* surface =
-        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
-    cairo_t* cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_paint(cr);
-
-    doc->draw((litehtml::uint_ptr)cr, 0, 0, nullptr);
-    cairo_surface_write_to_png(surface, "headless.png");
-
-    return 0;
-}
+#endif // LITEHTML_CSS_PARSER_H__
