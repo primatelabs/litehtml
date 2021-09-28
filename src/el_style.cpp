@@ -33,36 +33,34 @@
 
 namespace litehtml {
 
-litehtml::el_style::el_style(const std::shared_ptr<litehtml::document>& doc) : litehtml::element(doc)
+litehtml::el_style::el_style(const std::shared_ptr<litehtml::document>& doc)
+: litehtml::element(doc)
 {
-
 }
 
 litehtml::el_style::~el_style()
 {
-
 }
 
 void litehtml::el_style::parse_attributes()
 {
-	tstring text;
+    tstring text;
 
-	for(auto& el : m_children)
-	{
-		el->get_text(text);
-	}
-	get_document()->add_stylesheet( text.c_str(), 0, get_attr(_t("media")) );
+    for (auto& el : m_children) {
+        el->get_text(text);
+    }
+    get_document()->add_stylesheet(text.c_str(), 0, get_attr(_t("media")));
 }
 
-bool litehtml::el_style::appendChild(const ptr &el)
+bool litehtml::el_style::appendChild(const ptr& el)
 {
-	m_children.push_back(el);
-	return true;
+    m_children.push_back(el);
+    return true;
 }
 
 const litehtml::tchar_t* litehtml::el_style::get_tagName() const
 {
-	return _t("style");
+    return _t("style");
 }
 
 } // namespace litehtml

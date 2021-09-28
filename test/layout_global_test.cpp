@@ -34,9 +34,11 @@
 
 using namespace litehtml;
 
-TEST(LayoutGlobal, Smoke) {
-  context ctx;
-  test_container container;
-  litehtml::document::ptr doc = document::createFromString(_t("<html>Body</html>"), &container, &ctx);
-  doc->render(50, render_all);
+TEST(LayoutGlobal, Smoke)
+{
+    context ctx;
+    test_container container;
+    litehtml::document::ptr doc =
+        document::createFromString(_t("<html>Body</html>"), &container, &ctx);
+    doc->render(50, render_all);
 }

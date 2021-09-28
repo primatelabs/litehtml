@@ -31,16 +31,14 @@
 #define LITEHTML_EL_BREAK_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_break : public html_tag
-	{
-	public:
-		el_break(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_break();
+namespace litehtml {
+class el_break : public html_tag {
+public:
+    el_break(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_break();
 
-		virtual bool is_break() const override;
-	};
-}
+    virtual bool is_break() const override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_BREAK_H__
+#endif // LITEHTML_EL_BREAK_H__

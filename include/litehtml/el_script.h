@@ -31,19 +31,18 @@
 #define LITEHTML_EL_SCRIPT_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_script : public element
-	{
-		tstring m_text;
-	public:
-		el_script(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_script();
+namespace litehtml {
+class el_script : public element {
+    tstring m_text;
 
-		virtual void			parse_attributes() override;
-		virtual bool			appendChild(const ptr &el) override;
-		virtual const tchar_t*	get_tagName() const override;
-	};
-}
+public:
+    el_script(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_script();
 
-#endif  // LITEHTML_EL_SCRIPT_H__
+    virtual void parse_attributes() override;
+    virtual bool appendChild(const ptr& el) override;
+    virtual const tchar_t* get_tagName() const override;
+};
+} // namespace litehtml
+
+#endif // LITEHTML_EL_SCRIPT_H__

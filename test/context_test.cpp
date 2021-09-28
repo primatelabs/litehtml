@@ -27,9 +27,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "litehtml/context.h"
+
 #include <gtest/gtest.h>
 
-#include "litehtml/context.h"
 #include "litehtml/utf8_strings.h"
 
 using namespace litehtml;

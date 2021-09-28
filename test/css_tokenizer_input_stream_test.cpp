@@ -35,55 +35,55 @@ using namespace litehtml;
 namespace {
 
 std::vector<tstring> testcases = {
-	_t(""),
-	_t("/* Comment */"),
-	_t("html { display: none }"),
+    _t(""),
+    _t("/* Comment */"),
+    _t("html { display: none }"),
 };
 
 } // namespace
 
 TEST(CssTokenizerInputStreamTest, Advance)
 {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			EXPECT_EQ(testcase[i], stream.peek(0));
-			stream.advance();
-		}
-		EXPECT_EQ(0, stream.peek(0));
-	}
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.peek(0));
+            stream.advance();
+        }
+        EXPECT_EQ(0, stream.peek(0));
+    }
 }
 
 TEST(CssTokenizerInputStreamTest, Consume)
 {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			EXPECT_EQ(testcase[i], stream.consume());
-		}
-		EXPECT_EQ(0, stream.consume());
-	}
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.consume());
+        }
+        EXPECT_EQ(0, stream.consume());
+    }
 }
 
 TEST(CssTokenizerInputStreamTest, Next)
 {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			EXPECT_EQ(testcase[i], stream.next());
-			stream.advance();
-		}
-		EXPECT_EQ(0, stream.next());
-	}
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.next());
+            stream.advance();
+        }
+        EXPECT_EQ(0, stream.next());
+    }
 }
 
 TEST(CssTokenizerInputStreamTest, Peak)
 {
-	for (auto testcase : testcases) {
-		css_tokenizer_input_stream stream(testcase);
-		for (int i = 0; i < testcase.length(); i++) {
-			EXPECT_EQ(testcase[i], stream.peek(i));
-		}
-		EXPECT_EQ(0, stream.peek(testcase.length()));
-	}
+    for (auto testcase : testcases) {
+        css_tokenizer_input_stream stream(testcase);
+        for (int i = 0; i < testcase.length(); i++) {
+            EXPECT_EQ(testcase[i], stream.peek(i));
+        }
+        EXPECT_EQ(0, stream.peek(testcase.length()));
+    }
 }

@@ -31,16 +31,14 @@
 #define LITEHTML_EL_FONT_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_font : public html_tag
-	{
-	public:
-		el_font(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_font();
+namespace litehtml {
+class el_font : public html_tag {
+public:
+    el_font(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_font();
 
-		virtual void parse_attributes() override;
-	};
-}
+    virtual void parse_attributes() override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_FONT_H__
+#endif // LITEHTML_EL_FONT_H__

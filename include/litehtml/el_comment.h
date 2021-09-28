@@ -31,18 +31,17 @@
 #define LITEHTML_EL_COMMENT_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_comment : public element
-	{
-		tstring	m_text;
-	public:
-		el_comment(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_comment();
+namespace litehtml {
+class el_comment : public element {
+    tstring m_text;
 
-		virtual void	get_text(tstring& text) override;
-		virtual void	set_data(const tchar_t* data) override;
-	};
-}
+public:
+    el_comment(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_comment();
 
-#endif  // LITEHTML_EL_COMMENT_H__
+    virtual void get_text(tstring& text) override;
+    virtual void set_data(const tchar_t* data) override;
+};
+} // namespace litehtml
+
+#endif // LITEHTML_EL_COMMENT_H__

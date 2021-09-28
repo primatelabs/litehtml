@@ -51,12 +51,13 @@ protected:
 
     css_component_value consume_component_value(css_token_range& range);
 
-    css_block consume_block(css_token_range& range, const css_token& starting_token);
+    css_block consume_block(css_token_range& range,
+        const css_token& starting_token);
 
     css_function consume_function(css_token_range& range);
 
 public:
-	explicit css_parser(const tstring& input);
+    explicit css_parser(const tstring& input);
 
     css_stylesheet parse_stylesheet();
 };

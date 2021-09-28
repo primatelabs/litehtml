@@ -31,7 +31,9 @@
 
 namespace litehtml {
 
-#define TOKEN_CASE(t) case kCSSComponentValue ## t: return #t;
+#define TOKEN_CASE(t)           \
+    case kCSSComponentValue##t: \
+        return #t;
 
 std::string css_component_value_type_string(css_component_value_type type)
 {

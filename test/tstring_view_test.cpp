@@ -29,9 +29,9 @@
 
 #include "litehtml/tstring_view.h"
 
-#include <iostream>
-
 #include <gtest/gtest.h>
+
+#include <iostream>
 
 using namespace litehtml;
 

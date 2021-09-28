@@ -138,7 +138,6 @@ url resolve(const url& b, const url& r)
     } else if (r.has_authority()) {
         return url(b.scheme(), r.authority(), r.path(), r.query(), r.fragment());
     } else if (r.has_path()) {
-
         // The relative URL path is either an absolute path or a relative
         // path. If it is an absolute path, build the URL using only the
         // relative path.  If it is a relative path, resolve the relative path

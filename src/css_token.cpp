@@ -30,7 +30,9 @@
 
 namespace litehtml {
 
-#define TOKEN_CASE(t) case kCSSToken ## t: return #t;
+#define TOKEN_CASE(t)  \
+    case kCSSToken##t: \
+        return #t;
 
 std::string css_token_type_string(css_token_type type)
 {

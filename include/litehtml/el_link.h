@@ -31,17 +31,15 @@
 #define LITEHTML_EL_LINK_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_link : public html_tag
-	{
-	public:
-		el_link(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_link();
+namespace litehtml {
+class el_link : public html_tag {
+public:
+    el_link(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_link();
 
-	protected:
-		virtual void	parse_attributes() override;
-	};
-}
+protected:
+    virtual void parse_attributes() override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_LINK_H__
+#endif // LITEHTML_EL_LINK_H__

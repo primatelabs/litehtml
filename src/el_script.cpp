@@ -33,30 +33,29 @@
 
 namespace litehtml {
 
-el_script::el_script(const std::shared_ptr<document>& doc) : element(doc)
+el_script::el_script(const std::shared_ptr<document>& doc)
+: element(doc)
 {
-
 }
 
 el_script::~el_script()
 {
-
 }
 
 void el_script::parse_attributes()
 {
-	//TODO: pass script text to document container
+    // TODO: pass script text to document container
 }
 
-bool el_script::appendChild(const ptr &el)
+bool el_script::appendChild(const ptr& el)
 {
-	el->get_text(m_text);
-	return true;
+    el->get_text(m_text);
+    return true;
 }
 
 const tchar_t* el_script::get_tagName() const
 {
-	return _t("script");
+    return _t("script");
 }
 
 } // namespace litehtml

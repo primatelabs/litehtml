@@ -44,12 +44,11 @@ public:
 #if defined(ENABLE_JSON)
     nlohmann::json json() const
     {
-        return nlohmann::json{
-        };
+        return nlohmann::json{};
     }
 #endif // ENABLE_JSON
 };
 
 } // namespace litehtml
 
-#endif  // LITEHTML_CSS_VALUE_H__
+#endif // LITEHTML_CSS_VALUE_H__

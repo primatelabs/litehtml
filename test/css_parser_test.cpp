@@ -37,13 +37,14 @@ using namespace litehtml;
 
 TEST(CSSParserTest, DISABLED_Stylesheet)
 {
-    tstring css = _t("/* A simple CSS stylesheet */\n"
-        "body {\n"
-        "  margin: 25px;\n"
-        "  background-color: rgb(240,240,240);\n"
-        "  font-family: roboto, arial, sans-serif;\n"
-        "  font-size: 14px;\n"
-        "}\n");
+    tstring css =
+        _t("/* A simple CSS stylesheet */\n"
+           "body {\n"
+           "  margin: 25px;\n"
+           "  background-color: rgb(240,240,240);\n"
+           "  font-family: roboto, arial, sans-serif;\n"
+           "  font-size: 14px;\n"
+           "}\n");
 
     css_parser parser(css);
     css_stylesheet stylesheet = parser.parse_stylesheet();
@@ -55,12 +56,16 @@ TEST(CSSParserTest, DISABLED_Stylesheet)
 
     EXPECT_EQ(1, stylesheet.rules_.size());
 
-    //EXPECT_EQ(1, stylesheet.rules_[0].prelude_.values_.size());
-    EXPECT_EQ(kCSSComponentValueToken, stylesheet.rules_[0].prelude_.values_[0].type_);
-    EXPECT_EQ(kCSSTokenIdent, stylesheet.rules_[0].prelude_.values_[0].token_.type());
+    // EXPECT_EQ(1, stylesheet.rules_[0].prelude_.values_.size());
+    EXPECT_EQ(kCSSComponentValueToken,
+        stylesheet.rules_[0].prelude_.values_[0].type_);
+    EXPECT_EQ(kCSSTokenIdent,
+        stylesheet.rules_[0].prelude_.values_[0].token_.type());
     EXPECT_EQ(_t("body"), stylesheet.rules_[0].prelude_.values_[0].token_.value());
 
-    EXPECT_EQ(kCSSComponentValueToken, stylesheet.rules_[0].prelude_.values_[1].type_);
-    EXPECT_EQ(kCSSTokenIdent, stylesheet.rules_[0].prelude_.values_[1].token_.type());
+    EXPECT_EQ(kCSSComponentValueToken,
+        stylesheet.rules_[0].prelude_.values_[1].type_);
+    EXPECT_EQ(kCSSTokenIdent,
+        stylesheet.rules_[0].prelude_.values_[1].token_.type());
     EXPECT_EQ(_t("body"), stylesheet.rules_[0].prelude_.values_[1].token_.value());
 }

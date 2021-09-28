@@ -31,19 +31,18 @@
 #define LITEHTML_EL_STYLE_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_style : public element
-	{
-		elements_vector		m_children;
-	public:
-		el_style(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_style();
+namespace litehtml {
+class el_style : public element {
+    elements_vector m_children;
 
-		virtual void			parse_attributes() override;
-		virtual bool			appendChild(const ptr &el) override;
-		virtual const tchar_t*	get_tagName() const override;
-	};
-}
+public:
+    el_style(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_style();
 
-#endif  // LITEHTML_EL_STYLE_H__
+    virtual void parse_attributes() override;
+    virtual bool appendChild(const ptr& el) override;
+    virtual const tchar_t* get_tagName() const override;
+};
+} // namespace litehtml
+
+#endif // LITEHTML_EL_STYLE_H__

@@ -83,15 +83,18 @@ public:
 
     css_token(css_token_type type, const css_number& numeric_value);
 
-    css_token_type type() const {
+    css_token_type type() const
+    {
         return type_;
     }
 
-    const tstring& value() const {
+    const tstring& value() const
+    {
         return value_;
     }
 
-    const css_number& numeric_value() const {
+    const css_number& numeric_value() const
+    {
         return numeric_value_;
     }
 
@@ -99,9 +102,9 @@ public:
     nlohmann::json json() const
     {
         return nlohmann::json{
-            { "type", css_token_type_string(type_) },
-            { "value", value_ },
-            { "numeric_value_", numeric_value_.json() },
+            {"type", css_token_type_string(type_)},
+            {"value", value_},
+            {"numeric_value_", numeric_value_.json()},
         };
     }
 #endif // ENABLE_JSON

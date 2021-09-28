@@ -33,18 +33,18 @@
 
 namespace litehtml {
 
-el_body::el_body(const std::shared_ptr<document>& doc) : html_tag(doc)
+el_body::el_body(const std::shared_ptr<document>& doc)
+: html_tag(doc)
 {
 }
 
 el_body::~el_body()
 {
-
 }
 
-bool el_body::is_body()  const
+bool el_body::is_body() const
 {
-	return true;
+    return true;
 }
 
 } // namespace litehtml

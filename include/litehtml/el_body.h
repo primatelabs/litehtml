@@ -31,16 +31,14 @@
 #define LITEHTML_EL_BODY_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_body : public html_tag
-	{
-	public:
-		el_body(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_body();
+namespace litehtml {
+class el_body : public html_tag {
+public:
+    el_body(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_body();
 
-		virtual bool is_body() const override;
-	};
-}
+    virtual bool is_body() const override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_BODY_H__
+#endif // LITEHTML_EL_BODY_H__

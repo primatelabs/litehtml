@@ -31,17 +31,14 @@
 #define LITEHTML_EL_PARA_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_para : public html_tag
-	{
-	public:
-		el_para(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_para();
+namespace litehtml {
+class el_para : public html_tag {
+public:
+    el_para(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_para();
 
-		virtual void	parse_attributes() override;
+    virtual void parse_attributes() override;
+};
+} // namespace litehtml
 
-	};
-}
-
-#endif  // LITEHTML_EL_PARA_H__
+#endif // LITEHTML_EL_PARA_H__

@@ -55,4 +55,4 @@ public:
 
 } // namespace litehtml
 
-#endif  // LITEHTML_CSS_RULE_H__
+#endif // LITEHTML_CSS_RULE_H__

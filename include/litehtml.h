@@ -30,10 +30,10 @@
 #ifndef LITEHTML_H__
 #define LITEHTML_H__
 
-#include <litehtml/html.h>
-#include <litehtml/document.h>
-#include <litehtml/html_tag.h>
 #include <litehtml/css_stylesheet.h>
+#include <litehtml/document.h>
 #include <litehtml/element.h>
+#include <litehtml/html.h>
+#include <litehtml/html_tag.h>
 
 #endif // LITEHTML_H__

@@ -50,12 +50,10 @@ bool is_ascii_codepoint(litehtml::tchar_t c)
 // https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
 bool is_url_reserved_codepoint(litehtml::tchar_t c)
 {
-    static const uint32_t reserved_lookup[] = {
-        0x00000000,
+    static const uint32_t reserved_lookup[] = {0x00000000,
         0xac009fda,
         0x28000001,
-        0x00000000
-    };
+        0x00000000};
 
     if (!is_ascii_codepoint(c)) {
         return false;

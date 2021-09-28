@@ -73,7 +73,6 @@ tstring url_path_append(const tstring& base, const tstring& path)
 
 tstring url_path_resolve(const tstring& base, const tstring& path)
 {
-
     // If the possibly relative path is an absolute path then it is not
     // relative and the base path is irrelevant.
     if (is_url_path_absolute(path)) {

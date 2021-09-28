@@ -31,16 +31,14 @@
 #define LITEHTML_EL_DIV_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_div : public html_tag
-	{
-	public:
-		el_div(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_div();
+namespace litehtml {
+class el_div : public html_tag {
+public:
+    el_div(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_div();
 
-		virtual void parse_attributes() override;
-	};
-}
+    virtual void parse_attributes() override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_DIV_H__
+#endif // LITEHTML_EL_DIV_H__

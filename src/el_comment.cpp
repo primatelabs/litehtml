@@ -31,27 +31,26 @@
 
 namespace litehtml {
 
-el_comment::el_comment(const std::shared_ptr<document>& doc) : element(doc)
+el_comment::el_comment(const std::shared_ptr<document>& doc)
+: element(doc)
 {
-	m_skip = true;
+    m_skip = true;
 }
 
 el_comment::~el_comment()
 {
-
 }
 
-void el_comment::get_text( tstring& text )
+void el_comment::get_text(tstring& text)
 {
-	text += m_text;
+    text += m_text;
 }
 
-void el_comment::set_data( const tchar_t* data )
+void el_comment::set_data(const tchar_t* data)
 {
-	if(data)
-	{
-		m_text += data;
-	}
+    if (data) {
+        m_text += data;
+    }
 }
 
 } // namespace litehtml

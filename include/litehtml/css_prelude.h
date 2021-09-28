@@ -50,7 +50,7 @@ public:
     nlohmann::json json() const
     {
         return nlohmann::json{
-            { "values", json_vector(values_) },
+            {"values", json_vector(values_)},
         };
     }
 #endif // ENABLE_JSON
@@ -58,4 +58,4 @@ public:
 
 } // namespace litehtml
 
-#endif  // LITEHTML_CSS_PRELUDE_H__
+#endif // LITEHTML_CSS_PRELUDE_H__

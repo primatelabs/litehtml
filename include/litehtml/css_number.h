@@ -70,8 +70,8 @@ public:
     nlohmann::json json() const
     {
         return nlohmann::json{
-            { "type", type_ },
-            { "value", value_ },
+            {"type", type_},
+            {"value", value_},
         };
     }
 #endif // ENABLE_JSON

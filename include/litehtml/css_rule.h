@@ -30,8 +30,8 @@
 #ifndef LITEHTML_CSS_RULE_H__
 #define LITEHTML_CSS_RULE_H__
 
-#include "litehtml/css_prelude.h"
 #include "litehtml/css_block.h"
+#include "litehtml/css_prelude.h"
 #include "litehtml/debug/json.h"
 
 namespace litehtml {
@@ -60,4 +60,4 @@ public:
 
 } // namespace litehtml
 
-#endif  // LITEHTML_CSS_RULE_H__
+#endif // LITEHTML_CSS_RULE_H__

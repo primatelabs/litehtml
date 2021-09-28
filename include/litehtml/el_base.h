@@ -31,16 +31,14 @@
 #define LITEHTML_EL_BASE_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_base : public html_tag
-	{
-	public:
-		el_base(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_base();
+namespace litehtml {
+class el_base : public html_tag {
+public:
+    el_base(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_base();
 
-		virtual void	parse_attributes() override;
-	};
-}
+    virtual void parse_attributes() override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_BASE_H__
+#endif // LITEHTML_EL_BASE_H__

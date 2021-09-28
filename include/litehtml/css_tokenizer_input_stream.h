@@ -35,21 +35,21 @@ namespace litehtml {
 
 class css_tokenizer_input_stream {
 protected:
-	litehtml::tstring input_;
-	int offset_;
+    litehtml::tstring input_;
+    int offset_;
 
 public:
-	explicit css_tokenizer_input_stream(litehtml::tstring input);
+    explicit css_tokenizer_input_stream(litehtml::tstring input);
 
-	void advance(int offset = 1);
+    void advance(int offset = 1);
 
-	tchar_t consume();
+    tchar_t consume();
 
-	tchar_t next();
+    tchar_t next();
 
-	tchar_t peek(int);
+    tchar_t peek(int);
 
-	void replace(tchar_t c);
+    void replace(tchar_t c);
 };
 
 } // namespace litehtml

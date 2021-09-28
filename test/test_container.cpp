@@ -57,7 +57,8 @@ void test_container::delete_font(litehtml::uint_ptr hFont)
 {
 }
 
-int test_container::text_width(const litehtml::tchar_t* text, litehtml::uint_ptr hFont)
+int test_container::text_width(const litehtml::tchar_t* text,
+    litehtml::uint_ptr hFont)
 {
     return 0;
 }
@@ -102,8 +103,7 @@ void test_container::get_image_size(const litehtml::tchar_t* src,
 {
 }
 
-void test_container::draw_background(
-    litehtml::uint_ptr hdc,
+void test_container::draw_background(litehtml::uint_ptr hdc,
     const litehtml::background_paint& bg)
 {
 }
@@ -124,7 +124,6 @@ void test_container::draw_borders(litehtml::uint_ptr hdc,
 
 void test_container::set_caption(const litehtml::tchar_t* caption)
 {
-
 }
 
 void test_container::set_base_url(const litehtml::tchar_t* base_url)
@@ -144,7 +143,8 @@ void test_container::set_cursor(const litehtml::tchar_t* cursor)
 {
 }
 
-void test_container::transform_text(litehtml::tstring& text, litehtml::text_transform tt)
+void test_container::transform_text(litehtml::tstring& text,
+    litehtml::text_transform tt)
 {
 }
 
@@ -192,7 +192,8 @@ void test_container::get_media_features(litehtml::media_features& media) const
     media.resolution = 96;
 }
 
-void test_container::get_language(litehtml::tstring& language, litehtml::tstring& culture) const
+void test_container::get_language(litehtml::tstring& language,
+    litehtml::tstring& culture) const
 {
     language = _t("en");
     culture = _t("");

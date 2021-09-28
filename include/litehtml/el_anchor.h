@@ -31,17 +31,16 @@
 #define LITEHTML_EL_ANCHOR_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_anchor : public html_tag
-	{
-	public:
-		el_anchor(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_anchor();
+namespace litehtml {
+class el_anchor : public html_tag {
+public:
+    el_anchor(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_anchor();
 
-		virtual void	on_click() override;
-		virtual void	apply_stylesheet(const litehtml::css_stylesheet& stylesheet) override;
-	};
-}
+    virtual void on_click() override;
+    virtual void apply_stylesheet(
+        const litehtml::css_stylesheet& stylesheet) override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_ANCHOR_H__
+#endif // LITEHTML_EL_ANCHOR_H__

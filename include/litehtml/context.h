@@ -31,18 +31,17 @@
 #define LITEHTML_CONTEXT_H__
 #include "litehtml/css_stylesheet.h"
 
-namespace litehtml
-{
-	class context
-	{
-		litehtml::css_stylesheet m_master_css;
-	public:
-		void			load_master_stylesheet(const tchar_t* str);
-		litehtml::css_stylesheet&	master_css()
-		{
-			return m_master_css;
-		}
-	};
-}
+namespace litehtml {
+class context {
+    litehtml::css_stylesheet m_master_css;
 
-#endif  // LITEHTML_CONTEXT_H__
+public:
+    void load_master_stylesheet(const tchar_t* str);
+    litehtml::css_stylesheet& master_css()
+    {
+        return m_master_css;
+    }
+};
+} // namespace litehtml
+
+#endif // LITEHTML_CONTEXT_H__

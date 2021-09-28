@@ -55,7 +55,10 @@ bool is_eof(litehtml::tchar_t c)
 // https://www.w3.org/TR/css-syntax-3/#digit
 bool is_digit(litehtml::tchar_t c)
 {
-    static const uint32_t digit_lookup[] = { 0x00000000, 0x03ff0000, 0x00000000, 0x00000000 };
+    static const uint32_t digit_lookup[] = {0x00000000,
+        0x03ff0000,
+        0x00000000,
+        0x00000000};
 
     if (is_non_ascii_code_point(c)) {
         return false;
@@ -66,7 +69,10 @@ bool is_digit(litehtml::tchar_t c)
 // https://www.w3.org/TR/css-syntax-3/#hex-digit
 bool is_hex_digit(litehtml::tchar_t c)
 {
-    static const uint32_t hex_digit_lookup[] = { 0x00000000, 0x03ff0000, 0x0000007e, 0x0000007e };
+    static const uint32_t hex_digit_lookup[] = {0x00000000,
+        0x03ff0000,
+        0x0000007e,
+        0x0000007e};
 
     if (is_non_ascii_code_point(c)) {
         return false;
@@ -77,7 +83,10 @@ bool is_hex_digit(litehtml::tchar_t c)
 // https://www.w3.org/TR/css-syntax-3/#name-start-code-point
 bool is_name_start_code_point(litehtml::tchar_t c)
 {
-    static const uint32_t start_lookup[] = { 0x00000000, 0x00000000, 0x87fffffe, 0x07fffffe };
+    static const uint32_t start_lookup[] = {0x00000000,
+        0x00000000,
+        0x87fffffe,
+        0x07fffffe};
 
     if (is_non_ascii_code_point(c)) {
         return true;
@@ -88,7 +97,10 @@ bool is_name_start_code_point(litehtml::tchar_t c)
 // https://www.w3.org/TR/css-syntax-3/#name-code-point
 bool is_name_code_point(litehtml::tchar_t c)
 {
-    static const uint32_t name_lookup[] = { 0x00000000, 0x03ff2000, 0x87fffffe, 0x07fffffe };
+    static const uint32_t name_lookup[] = {0x00000000,
+        0x03ff2000,
+        0x87fffffe,
+        0x07fffffe};
 
     if (is_non_ascii_code_point(c)) {
         return true;
@@ -99,7 +111,10 @@ bool is_name_code_point(litehtml::tchar_t c)
 // https://www.w3.org/TR/css-syntax-3/#newline
 bool is_newline(litehtml::tchar_t c)
 {
-    static const uint32_t newline_lookup[] = { 0x00003400, 0x00000000, 0x00000000, 0x00000000 };
+    static const uint32_t newline_lookup[] = {0x00003400,
+        0x00000000,
+        0x00000000,
+        0x00000000};
 
     if (is_non_ascii_code_point(c)) {
         return false;
@@ -110,7 +125,10 @@ bool is_newline(litehtml::tchar_t c)
 // https://www.w3.org/TR/css-syntax-3/#non-printable-code-point
 bool is_non_printable_code_point(litehtml::tchar_t c)
 {
-    static const uint32_t non_printable_lookup[] = { 0xffffc9ff, 0x00000000, 0x00000000, 0x80000000 };
+    static const uint32_t non_printable_lookup[] = {0xffffc9ff,
+        0x00000000,
+        0x00000000,
+        0x80000000};
 
     if (is_non_ascii_code_point(c)) {
         return false;
@@ -121,7 +139,10 @@ bool is_non_printable_code_point(litehtml::tchar_t c)
 // https://www.w3.org/TR/css-syntax-3/#whitespace
 bool is_whitespace(litehtml::tchar_t c)
 {
-    static const uint32_t whitespace_lookup[] = { 0x00003600, 0x00000001, 0x00000000, 0x00000000 };
+    static const uint32_t whitespace_lookup[] = {0x00003600,
+        0x00000001,
+        0x00000000,
+        0x00000000};
 
     if (is_non_ascii_code_point(c)) {
         return false;
@@ -144,10 +165,13 @@ bool is_valid_escape(litehtml::tchar_t c0, litehtml::tchar_t c1)
 
 // Returns true if the three code points would start an identifier.
 // https://www.w3.org/TR/css-syntax-3/#would-start-an-identifier
-bool would_start_identifier(litehtml::tchar_t c0, litehtml::tchar_t c1, litehtml::tchar_t c2)
+bool would_start_identifier(litehtml::tchar_t c0,
+    litehtml::tchar_t c1,
+    litehtml::tchar_t c2)
 {
     if (c0 == _t('-')) {
-        if (is_name_start_code_point(c1) || c1 == _t('-') || is_valid_escape(c1, c2)) {
+        if (is_name_start_code_point(c1) || c1 == _t('-') ||
+            is_valid_escape(c1, c2)) {
             return true;
         } else {
             return false;
@@ -163,7 +187,9 @@ bool would_start_identifier(litehtml::tchar_t c0, litehtml::tchar_t c1, litehtml
 
 // Returns true if the three code points would start a number.
 // https://www.w3.org/TR/css-syntax-3/#starts-with-a-number
-bool would_start_number(litehtml::tchar_t c0, litehtml::tchar_t c1, litehtml::tchar_t c2)
+bool would_start_number(litehtml::tchar_t c0,
+    litehtml::tchar_t c1,
+    litehtml::tchar_t c2)
 {
     if (c0 == _t('+') || c0 == _t('-')) {
         if (is_digit(c1)) {
@@ -435,7 +461,7 @@ tchar_t css_tokenizer::consume_escape()
         // FIXME: Parse error
         // FIXME: Return replacement character
     } else {
-        result = c;;
+        result = c;
     }
 
     return c;

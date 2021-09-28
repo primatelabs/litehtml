@@ -31,19 +31,17 @@
 #define LITEHTML_EL_LI_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_li : public html_tag
-	{
-	public:
-		el_li(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_li();
+namespace litehtml {
+class el_li : public html_tag {
+public:
+    el_li(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_li();
 
-		virtual int render(int x, int y, int max_width, bool second_pass = false) override;
+    virtual int render(int x, int y, int max_width, bool second_pass = false) override;
 
-	private:
-		bool m_index_initialized = false;
-	};
-}
+private:
+    bool m_index_initialized = false;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_LI_H__
+#endif // LITEHTML_EL_LI_H__

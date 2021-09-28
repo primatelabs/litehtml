@@ -28,9 +28,9 @@
 
 #include "litehtml/css_tokenizer.h"
 
-#include <iostream>
-
 #include <gtest/gtest.h>
+
+#include <iostream>
 
 using namespace litehtml;
 
@@ -41,19 +41,19 @@ struct CSSTokenizerTestCase {
     std::vector<css_token> tokens;
 };
 
-void test(std::vector<CSSTokenizerTestCase>& testcases) {
+void test(std::vector<CSSTokenizerTestCase>& testcases)
+{
     for (auto testcase : testcases) {
         css_tokenizer tokenizer(testcase.css);
         auto tokens = tokenizer.tokens();
         std::cout << tokens.size() << " " << testcase.tokens.size() << std::endl;
         EXPECT_EQ(testcase.tokens.size(), tokens.size() - 1);
-        for (int i = 0; i < testcase.tokens.size(); i++ ) {
+        for (int i = 0; i < testcase.tokens.size(); i++) {
             auto& token = tokens[i];
             auto& reference = testcase.tokens[i];
 #if defined(LITEHTML_UTF8)
-            std::cout << i << " " << css_token_type_string(token.type())
-                << " " << css_token_type_string(reference.type())
-                << std::endl;
+            std::cout << i << " " << css_token_type_string(token.type()) << " "
+                      << css_token_type_string(reference.type()) << std::endl;
 #endif
             EXPECT_EQ(reference.type(), token.type());
 
@@ -62,8 +62,10 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
                 std::cout << reference.numeric_value().value() << std::endl;
                 std::cout << token.numeric_value().value() << std::endl;
 #endif
-                EXPECT_EQ(reference.numeric_value().type(), token.numeric_value().type());
-                EXPECT_EQ(reference.numeric_value().value(), token.numeric_value().value());
+                EXPECT_EQ(reference.numeric_value().type(),
+                    token.numeric_value().type());
+                EXPECT_EQ(reference.numeric_value().value(),
+                    token.numeric_value().value());
             } else if (reference.type() == kCSSTokenIdent) {
 #if defined(LITEHTML_UTF8)
                 std::cout << reference.value() << std::endl;
@@ -86,11 +88,11 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
 
 
 // Generate a CSS token of type t that does not contain a value.
-#define T(t) css_token(kCSSToken ## t)
+#define T(t) css_token(kCSSToken##t)
 
 // Generate a CSS token of type t that contains a string value.  This includes
 // string tokens and identifier tokens.
-#define TS(t, v) css_token(kCSSToken ## t, _t(v))
+#define TS(t, v) css_token(kCSSToken##t, _t(v))
 
 // Generate a CSS number token that contains an integer value.
 #define TI(v) css_token(kCSSTokenNumber, css_number(kCSSIntegerValue, v))
@@ -101,10 +103,10 @@ void test(std::vector<CSSTokenizerTestCase>& testcases) {
 TEST(CSSTokenizerTest, DISABLED_BadString)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        { _t(""), {} },
-        { _t("'hi"), { T(BadString) } },
-        { _t("\"hi\\"), { T(BadString) } },
-        { _t("\"hi\\\""), { T(BadString) } },
+        {_t(""), {}},
+        {_t("'hi"), {T(BadString)}},
+        {_t("\"hi\\"), {T(BadString)}},
+        {_t("\"hi\\\""), {T(BadString)}},
     };
 
     test(testcases);
@@ -113,11 +115,11 @@ TEST(CSSTokenizerTest, DISABLED_BadString)
 TEST(CSSTokenizerTest, Comment)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        { _t(""), {} },
-        { _t("/**/"), {} },
-        { _t(" /* */"), { T(Whitespace) } },
-        { _t("/* */ "), { T(Whitespace) } },
-        { _t(" /* */ "), { T(Whitespace), T(Whitespace) } },
+        {_t(""), {}},
+        {_t("/**/"), {}},
+        {_t(" /* */"), {T(Whitespace)}},
+        {_t("/* */ "), {T(Whitespace)}},
+        {_t(" /* */ "), {T(Whitespace), T(Whitespace)}},
     };
 
     test(testcases);
@@ -126,12 +128,12 @@ TEST(CSSTokenizerTest, Comment)
 TEST(CSSTokenizerTest, Number)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        { _t(""), {} },
-        { _t("0"), { TI(0) } },
-        { _t("+0"), { TI(0) } },
-        { _t("-0"), { TI(0) } },
-        { _t("100"), { TI(100) } },
-        { _t("100.0"), { TN(100.0) } },
+        {_t(""), {}},
+        {_t("0"), {TI(0)}},
+        {_t("+0"), {TI(0)}},
+        {_t("-0"), {TI(0)}},
+        {_t("100"), {TI(100)}},
+        {_t("100.0"), {TN(100.0)}},
     };
 
     test(testcases);
@@ -140,15 +142,19 @@ TEST(CSSTokenizerTest, Number)
 TEST(CSSTokenizerTest, String)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        { _t(""), {} },
-        { _t("'hi'"), { TS(String, "hi") } },
-        { _t("\"hi\""), { TS(String, "hi") } },
-        { _t("\"hi\\\"\""), { TS(String, "hi\"") } },
-        { _t("'hi there'"), { TS(String, "hi there") } },
-        { _t("'hi' 'there'"), { TS(String, "hi"), T(Whitespace), TS(String, "there") } },
-        { _t("'hi\"' 'there'"), { TS(String, "hi\""), T(Whitespace), TS(String, "there") } },
-        { _t("\"hi\'\" 'there'"), { TS(String, "hi'"), T(Whitespace), TS(String, "there") } },
-        { _t("\"hi\\\"\" 'there'"), { TS(String, "hi\""), T(Whitespace), TS(String, "there") } },
+        {_t(""), {}},
+        {_t("'hi'"), {TS(String, "hi")}},
+        {_t("\"hi\""), {TS(String, "hi")}},
+        {_t("\"hi\\\"\""), {TS(String, "hi\"")}},
+        {_t("'hi there'"), {TS(String, "hi there")}},
+        {_t("'hi' 'there'"),
+            {TS(String, "hi"), T(Whitespace), TS(String, "there")}},
+        {_t("'hi\"' 'there'"),
+            {TS(String, "hi\""), T(Whitespace), TS(String, "there")}},
+        {_t("\"hi\'\" 'there'"),
+            {TS(String, "hi'"), T(Whitespace), TS(String, "there")}},
+        {_t("\"hi\\\"\" 'there'"),
+            {TS(String, "hi\""), T(Whitespace), TS(String, "there")}},
     };
 
     test(testcases);
@@ -157,29 +163,29 @@ TEST(CSSTokenizerTest, String)
 TEST(CSSTokenizerTest, Whitespace)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        { _t(""), {} },
-        { _t(" "), { T(Whitespace) } },
-        { _t("\t"), { T(Whitespace) } },
-        { _t("\n"), { T(Whitespace) } },
-        { _t("\r"), { T(Whitespace) } },
-        { _t("\f"), { T(Whitespace) } },
-        { _t("  "), { T(Whitespace) } },
-        { _t("  \t"), { T(Whitespace) } },
-        { _t("  \n"), { T(Whitespace) } },
-        { _t("  \r"), { T(Whitespace) } },
-        { _t("  \f"), { T(Whitespace) } },
-        { _t(" \t "), { T(Whitespace) } },
-        { _t(" \n "), { T(Whitespace) } },
-        { _t(" \r "), { T(Whitespace) } },
-        { _t(" \f "), { T(Whitespace) } },
-        { _t("\t  "), { T(Whitespace) } },
-        { _t("\n  "), { T(Whitespace) } },
-        { _t("\r  "), { T(Whitespace) } },
-        { _t("\f  "), { T(Whitespace) } },
-        { _t("\t  \n  \t  \r  \f  "), { T(Whitespace) } },
-        { _t("\n  \n  \t  \r  \f  "), { T(Whitespace) } },
-        { _t("\r  \n  \t  \r  \f  "), { T(Whitespace) } },
-        { _t("\f  \n  \t  \r  \f  "), { T(Whitespace) } },
+        {_t(""), {}},
+        {_t(" "), {T(Whitespace)}},
+        {_t("\t"), {T(Whitespace)}},
+        {_t("\n"), {T(Whitespace)}},
+        {_t("\r"), {T(Whitespace)}},
+        {_t("\f"), {T(Whitespace)}},
+        {_t("  "), {T(Whitespace)}},
+        {_t("  \t"), {T(Whitespace)}},
+        {_t("  \n"), {T(Whitespace)}},
+        {_t("  \r"), {T(Whitespace)}},
+        {_t("  \f"), {T(Whitespace)}},
+        {_t(" \t "), {T(Whitespace)}},
+        {_t(" \n "), {T(Whitespace)}},
+        {_t(" \r "), {T(Whitespace)}},
+        {_t(" \f "), {T(Whitespace)}},
+        {_t("\t  "), {T(Whitespace)}},
+        {_t("\n  "), {T(Whitespace)}},
+        {_t("\r  "), {T(Whitespace)}},
+        {_t("\f  "), {T(Whitespace)}},
+        {_t("\t  \n  \t  \r  \f  "), {T(Whitespace)}},
+        {_t("\n  \n  \t  \r  \f  "), {T(Whitespace)}},
+        {_t("\r  \n  \t  \r  \f  "), {T(Whitespace)}},
+        {_t("\f  \n  \t  \r  \f  "), {T(Whitespace)}},
     };
 
     test(testcases);
@@ -187,34 +193,56 @@ TEST(CSSTokenizerTest, Whitespace)
 
 TEST(CSSTokenizerTest, Stylesheet)
 {
-  std::vector<CSSTokenizerTestCase> testcases = {
-    {
-      _t(
-        "/* A simple CSS stylesheet */\n"
-        "body {\n"
-        "  margin: 25px\n"
-        "  background-color: rgb(220,230,240)\n"
-        "  font-family: roboto, arial, sans-serif\n"
-        "  font-size: 14px\n"
-        "}\n"
-      ),
-      {
-        T(Whitespace),
-        TS(Ident, "body"), T(Whitespace), T(OpenBrace), T(Whitespace),
-        TS(Ident, "margin"), T(Colon), T(Whitespace), TI(25), TS(Ident, "px"),
-          T(Whitespace),
-        TS(Ident, "background-color"), T(Colon), T(Whitespace),
-          TS(Ident, "rgb"), T(OpenRoundBracket), TI(220), T(Comma), TI(230),
-          T(Comma), TI(240), T(CloseRoundBracket), T(Whitespace),
-        TS(Ident, "font-family"), T(Colon), T(Whitespace), TS(Ident, "roboto"),
-          T(Comma), T(Whitespace), TS(Ident, "arial"), T(Comma), T(Whitespace),
-          TS(Ident, "sans-serif"), T(Whitespace),
-        TS(Ident, "font-size"), T(Colon), T(Whitespace), TI(14),
-          TS(Ident, "px"), T(Whitespace),
-        T(CloseBrace), T(Whitespace)
-      }
-    }
-  };
+    std::vector<CSSTokenizerTestCase> testcases = {
+        {_t("/* A simple CSS stylesheet */\n"
+            "body {\n"
+            "  margin: 25px\n"
+            "  background-color: rgb(220,230,240)\n"
+            "  font-family: roboto, arial, sans-serif\n"
+            "  font-size: 14px\n"
+            "}\n"),
+            {T(Whitespace),
+                TS(Ident, "body"),
+                T(Whitespace),
+                T(OpenBrace),
+                T(Whitespace),
+                TS(Ident, "margin"),
+                T(Colon),
+                T(Whitespace),
+                TI(25),
+                TS(Ident, "px"),
+                T(Whitespace),
+                TS(Ident, "background-color"),
+                T(Colon),
+                T(Whitespace),
+                TS(Ident, "rgb"),
+                T(OpenRoundBracket),
+                TI(220),
+                T(Comma),
+                TI(230),
+                T(Comma),
+                TI(240),
+                T(CloseRoundBracket),
+                T(Whitespace),
+                TS(Ident, "font-family"),
+                T(Colon),
+                T(Whitespace),
+                TS(Ident, "roboto"),
+                T(Comma),
+                T(Whitespace),
+                TS(Ident, "arial"),
+                T(Comma),
+                T(Whitespace),
+                TS(Ident, "sans-serif"),
+                T(Whitespace),
+                TS(Ident, "font-size"),
+                T(Colon),
+                T(Whitespace),
+                TI(14),
+                TS(Ident, "px"),
+                T(Whitespace),
+                T(CloseBrace),
+                T(Whitespace)}}};
 
-  test(testcases);
+    test(testcases);
 }

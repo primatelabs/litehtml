@@ -65,10 +65,10 @@ public:
     nlohmann::json json() const
     {
         return nlohmann::json{
-            { "block", block_.json() },
-            { "function", function_.json() },
-            { "token", token_.json() },
-            { "type", css_component_value_type_string(type_) },
+            {"block", block_.json()},
+            {"function", function_.json()},
+            {"token", token_.json()},
+            {"type", css_component_value_type_string(type_)},
         };
     }
 #endif // ENABLE_JSON
@@ -76,4 +76,4 @@ public:
 
 } // namespace litehtml
 
-#endif  // LITEHTML_CSS_COMPONENT_VALUE_H__
+#endif // LITEHTML_CSS_COMPONENT_VALUE_H__

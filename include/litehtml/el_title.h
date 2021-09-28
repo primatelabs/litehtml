@@ -31,17 +31,15 @@
 #define LITEHTML_EL_TITLE_H__
 #include "html_tag.h"
 
-namespace litehtml
-{
-	class el_title : public html_tag
-	{
-	public:
-		el_title(const std::shared_ptr<litehtml::document>& doc);
-		virtual ~el_title();
+namespace litehtml {
+class el_title : public html_tag {
+public:
+    el_title(const std::shared_ptr<litehtml::document>& doc);
+    virtual ~el_title();
 
-	protected:
-		virtual void	parse_attributes() override;
-	};
-}
+protected:
+    virtual void parse_attributes() override;
+};
+} // namespace litehtml
 
-#endif  // LITEHTML_EL_TITLE_H__
+#endif // LITEHTML_EL_TITLE_H__

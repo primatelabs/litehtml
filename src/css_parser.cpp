@@ -47,7 +47,8 @@ css_parser::css_parser(const tstring& input)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-list-of-rules
-std::vector<css_rule> css_parser::consume_rules(css_token_range& range, bool top_level)
+std::vector<css_rule> css_parser::consume_rules(css_token_range& range,
+    bool top_level)
 {
     std::vector<css_rule> rules;
 
@@ -135,7 +136,8 @@ css_component_value css_parser::consume_component_value(css_token_range& range)
     const css_token& token = range.consume();
     css_token_type type = token.type();
 
-    std::cout << "consume_component_value " << css_token_type_string(type) << std::endl;
+    std::cout << "consume_component_value " << css_token_type_string(type)
+              << std::endl;
 
     css_component_value value;
 
@@ -162,7 +164,8 @@ css_component_value css_parser::consume_component_value(css_token_range& range)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-simple-block
-css_block css_parser::consume_block(css_token_range& range, const css_token& starting_token)
+css_block css_parser::consume_block(css_token_range& range,
+    const css_token& starting_token)
 {
     css_token_type ending_token_type = kCSSTokenNone;
     switch (starting_token.type()) {
@@ -210,7 +213,8 @@ css_function css_parser::consume_function(css_token_range& range)
         const css_token& token = range.consume();
         css_token_type type = token.type();
 
-        std::cout << "consume_function " << css_token_type_string(type) << std::endl;
+        std::cout << "consume_function " << css_token_type_string(type)
+                  << std::endl;
 
         if (type == kCSSTokenCloseRoundBracket) {
             break;

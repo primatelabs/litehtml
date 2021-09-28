@@ -40,33 +40,33 @@ css_tokenizer_input_stream::css_tokenizer_input_stream(litehtml::tstring input)
 
 void css_tokenizer_input_stream::advance(int offset)
 {
-	offset_ += offset;
+    offset_ += offset;
 }
 
 tchar_t css_tokenizer_input_stream::consume()
 {
-	tchar_t c = peek(0);
-	advance(1);
+    tchar_t c = peek(0);
+    advance(1);
 
-	return c;
+    return c;
 }
 
 tchar_t css_tokenizer_input_stream::next()
 {
-	return peek(0);
+    return peek(0);
 }
 
 tchar_t css_tokenizer_input_stream::peek(int lookahead)
 {
-	if (lookahead + offset_ >= input_.length()) {
-		return 0;
-	}
-	return input_[lookahead + offset_];
+    if (lookahead + offset_ >= input_.length()) {
+        return 0;
+    }
+    return input_[lookahead + offset_];
 }
 
 void css_tokenizer_input_stream::replace(tchar_t c)
 {
-	offset_--;
+    offset_--;
 }
 
 } // namespace litehtml

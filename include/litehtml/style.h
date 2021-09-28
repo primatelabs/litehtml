@@ -29,95 +29,98 @@
 
 #ifndef LITEHTML_STYLE_H__
 #define LITEHTML_STYLE_H__
-#include "attributes.h"
 #include <string>
 
-namespace litehtml
-{
-	class property_value
-	{
-	public:
-		tstring	m_value;
-		bool			m_important;
+#include "attributes.h"
 
-		property_value()
-		{
-			m_important = false;
-		}
-		property_value(const tchar_t* val, bool imp)
-		{
-			m_important = imp;
-			m_value		= val;
-		}
-		property_value(const property_value& val)
-		{
-			m_value		= val.m_value;
-			m_important	= val.m_important;
-		}
+namespace litehtml {
+class property_value {
+public:
+    tstring m_value;
+    bool m_important;
 
-		property_value& operator=(const property_value& val)
-		{
-			m_value		= val.m_value;
-			m_important	= val.m_important;
-			return *this;
-		}
-	};
+    property_value()
+    {
+        m_important = false;
+    }
+    property_value(const tchar_t* val, bool imp)
+    {
+        m_important = imp;
+        m_value = val;
+    }
+    property_value(const property_value& val)
+    {
+        m_value = val.m_value;
+        m_important = val.m_important;
+    }
 
-	typedef std::map<tstring, property_value>	props_map;
+    property_value& operator=(const property_value& val)
+    {
+        m_value = val.m_value;
+        m_important = val.m_important;
+        return *this;
+    }
+};
 
-	class style
-	{
-	public:
-		typedef std::shared_ptr<style>		ptr;
-		typedef std::vector<style::ptr>		vector;
-	private:
-		props_map			m_properties;
-		static string_map	m_valid_values;
-	public:
-		style();
-		style(const style& val);
-		virtual ~style();
+typedef std::map<tstring, property_value> props_map;
 
-		void operator=(const style& val)
-		{
-			m_properties = val.m_properties;
-		}
+class style {
+public:
+    typedef std::shared_ptr<style> ptr;
+    typedef std::vector<style::ptr> vector;
 
-		void add(const tchar_t* txt, const tchar_t* baseurl)
-		{
-			parse(txt, baseurl);
-		}
+private:
+    props_map m_properties;
+    static string_map m_valid_values;
 
-		void add_property(const tchar_t* name, const tchar_t* val, const tchar_t* baseurl, bool important);
+public:
+    style();
+    style(const style& val);
+    virtual ~style();
 
-		const tchar_t* get_property(const tchar_t* name) const
-		{
-			if(name)
-			{
-				props_map::const_iterator f = m_properties.find(name);
-				if(f != m_properties.end())
-				{
-					return f->second.m_value.c_str();
-				}
-			}
-			return 0;
-		}
+    void operator=(const style& val)
+    {
+        m_properties = val.m_properties;
+    }
 
-		void combine(const litehtml::style& src);
-		void clear()
-		{
-			m_properties.clear();
-		}
+    void add(const tchar_t* txt, const tchar_t* baseurl)
+    {
+        parse(txt, baseurl);
+    }
 
-	private:
-		void parse_property(const tstring& txt, const tchar_t* baseurl);
-		void parse(const tchar_t* txt, const tchar_t* baseurl);
-		void parse_short_border(const tstring& prefix, const tstring& val, bool important);
-		void parse_short_background(const tstring& val, const tchar_t* baseurl, bool important);
-		void parse_short_font(const tstring& val, bool important);
-		void add_parsed_property(const tstring& name, const tstring& val, bool important);
-		void remove_property(const tstring& name, bool important);
-	};
-}
+    void add_property(const tchar_t* name,
+        const tchar_t* val,
+        const tchar_t* baseurl,
+        bool important);
 
-#endif  // LITEHTML_STYLE_H__
+    const tchar_t* get_property(const tchar_t* name) const
+    {
+        if (name) {
+            props_map::const_iterator f = m_properties.find(name);
+            if (f != m_properties.end()) {
+                return f->second.m_value.c_str();
+            }
+        }
+        return 0;
+    }
+
+    void combine(const litehtml::style& src);
+    void clear()
+    {
+        m_properties.clear();
+    }
+
+private:
+    void parse_property(const tstring& txt, const tchar_t* baseurl);
+    void parse(const tchar_t* txt, const tchar_t* baseurl);
+    void parse_short_border(const tstring& prefix, const tstring& val, bool important);
+    void parse_short_background(const tstring& val,
+        const tchar_t* baseurl,
+        bool important);
+    void parse_short_font(const tstring& val, bool important);
+    void add_parsed_property(const tstring& name, const tstring& val, bool important);
+    void remove_property(const tstring& name, bool important);
+};
+} // namespace litehtml
+
+#endif // LITEHTML_STYLE_H__

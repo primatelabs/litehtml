@@ -41,46 +41,54 @@
 namespace litehtml {
 
 class css_stylesheet {
-	css_selector::vector	m_selectors;
+    css_selector::vector m_selectors;
 
 public:
     std::vector<css_rule> rules_;
 
 public:
-	css_stylesheet()
-	{
-	}
+    css_stylesheet()
+    {
+    }
 
-	~css_stylesheet()
-	{
-	}
+    ~css_stylesheet()
+    {
+    }
 
-	const css_selector::vector& selectors() const
-	{
-		return m_selectors;
-	}
+    const css_selector::vector& selectors() const
+    {
+        return m_selectors;
+    }
 
-	void clear()
-	{
-		m_selectors.clear();
-	}
+    void clear()
+    {
+        m_selectors.clear();
+    }
 
-	void	parse_stylesheet(const tchar_t* str, const tchar_t* baseurl, const std::shared_ptr <document>& doc, const media_query_list::ptr& media);
+    void parse_stylesheet(const tchar_t* str,
+        const tchar_t* baseurl,
+        const std::shared_ptr<document>& doc,
+        const media_query_list::ptr& media);
 
-	void	sort_selectors();
+    void sort_selectors();
 
-	static void	parse_css_url(const tstring& str, tstring& url);
+    static void parse_css_url(const tstring& str, tstring& url);
 
 public:
-	void	parse_atrule(const tstring& text, const tchar_t* baseurl, const std::shared_ptr<document>& doc, const media_query_list::ptr& media);
+    void parse_atrule(const tstring& text,
+        const tchar_t* baseurl,
+        const std::shared_ptr<document>& doc,
+        const media_query_list::ptr& media);
 
-	void	add_selector(css_selector::ptr selector)
+    void add_selector(css_selector::ptr selector)
     {
-        selector->m_order = (int) m_selectors.size();
+        selector->m_order = (int)m_selectors.size();
         m_selectors.push_back(selector);
     }
 
-	bool	parse_selectors(const tstring& txt, const litehtml::style::ptr& styles, const media_query_list::ptr& media);
+    bool parse_selectors(const tstring& txt,
+        const litehtml::style::ptr& styles,
+        const media_query_list::ptr& media);
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const
@@ -92,4 +100,4 @@ public:
 
 } // namespace litehtml
 
-#endif  // LITEHTML_CSS_STYLESHEET_H__
+#endif // LITEHTML_CSS_STYLESHEET_H__
