@@ -196,10 +196,10 @@ TEST(CSSTokenizerTest, Stylesheet)
     std::vector<CSSTokenizerTestCase> testcases = {
         {_t("/* A simple CSS stylesheet */\n"
             "body {\n"
-            "  margin: 25px\n"
-            "  background-color: rgb(220,230,240)\n"
-            "  font-family: roboto, arial, sans-serif\n"
-            "  font-size: 14px\n"
+            "  margin: 25px;\n"
+            "  background-color: rgb(220,230,240);\n"
+            "  font-family: roboto, arial, sans-serif;\n"
+            "  font-size: 14px;\n"
             "}\n"),
             {T(Whitespace),
                 TS(Ident, "body"),
@@ -211,6 +211,7 @@ TEST(CSSTokenizerTest, Stylesheet)
                 T(Whitespace),
                 TI(25),
                 TS(Ident, "px"),
+                T(Semicolon),
                 T(Whitespace),
                 TS(Ident, "background-color"),
                 T(Colon),
@@ -223,6 +224,7 @@ TEST(CSSTokenizerTest, Stylesheet)
                 T(Comma),
                 TI(240),
                 T(CloseRoundBracket),
+                T(Semicolon),
                 T(Whitespace),
                 TS(Ident, "font-family"),
                 T(Colon),
@@ -234,12 +236,14 @@ TEST(CSSTokenizerTest, Stylesheet)
                 T(Comma),
                 T(Whitespace),
                 TS(Ident, "sans-serif"),
+                T(Semicolon),
                 T(Whitespace),
                 TS(Ident, "font-size"),
                 T(Colon),
                 T(Whitespace),
                 TI(14),
                 TS(Ident, "px"),
+                T(Semicolon),
                 T(Whitespace),
                 T(CloseBrace),
                 T(Whitespace)}}};

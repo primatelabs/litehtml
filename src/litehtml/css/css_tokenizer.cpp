@@ -586,7 +586,7 @@ css_token css_tokenizer::next()
             return css_token(kCSSTokenColon);
 
         case _t(';'):
-            return css_token(kCSSTokenColon);
+            return css_token(kCSSTokenSemicolon);
 
         case _t('<'):
             return consume_less_than(c);
