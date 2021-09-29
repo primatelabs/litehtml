@@ -196,7 +196,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC gumbo)
 # JSON
 if (ENABLE_JSON)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_JSON)
-    target_include_directories(${PROJECT_NAME} PRIVATE third_party/json/include)
+    target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/json/include)
 endif()
 
 # install and export
@@ -262,7 +262,7 @@ if (BUILD_TESTING)
 
     if (ENABLE_JSON)
         target_compile_definitions(${TEST_NAME} PRIVATE ENABLE_JSON)
-        target_include_directories(${TEST_NAME} PRIVATE third_party/json/include)
+        target_include_directories(${TEST_NAME} PRIVATE ../../third_party/json/include)
     endif()
 
     target_link_libraries(
