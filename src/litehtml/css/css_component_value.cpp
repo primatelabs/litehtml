@@ -29,6 +29,10 @@
 
 #include "litehtml/css/css_component_value.h"
 
+#include "litehtml/css/css_block.h"
+#include "litehtml/css/css_function.h"
+#include "litehtml/css/css_token.h"
+
 namespace litehtml {
 
 #define TOKEN_CASE(t)           \
@@ -47,5 +51,36 @@ std::string css_component_value_type_string(css_component_value_type type)
     }
 }
 
+#if defined(ENABLE_JSON)
+
+nlohmann::json css_component_value::json() const
+{
+    nlohmann::json result{
+        {"type", css_component_value_type_string(type_)}
+    };
+
+    switch (type_) {
+        case kCSSComponentValueBlock:
+            result["block"] = block_->json();
+            break;
+
+        case kCSSComponentValueFunction:
+            assert(function_);
+            result["function"] = function_->json();
+            break;
+
+        case kCSSComponentValueToken:
+            assert(token_);
+            result["token"] = token_->json();
+            break;
+
+        default:
+            break;
+    }
+
+    return result;
+}
+
+#endif
 
 } // namespace litehtml

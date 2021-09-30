@@ -44,7 +44,7 @@ class css_stylesheet {
     css_selector::vector m_selectors;
 
 public:
-    std::vector<css_rule> rules_;
+    std::vector<css_rule*> rules_;
 
 public:
     css_stylesheet()

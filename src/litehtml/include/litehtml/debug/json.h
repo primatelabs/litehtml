@@ -46,6 +46,16 @@ nlohmann::json json_vector(const std::vector<T>& v)
     return json_vector;
 }
 
+template <typename T>
+nlohmann::json json_vector(const std::vector<T*>& v)
+{
+    nlohmann::json json_vector = nlohmann::json::array();
+    for (auto& u : v) {
+        json_vector.emplace_back(u->json());
+    }
+    return json_vector;
+}
+
 } // namespace litehtml
 
 #endif // ENABLE_JSON

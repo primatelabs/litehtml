@@ -30,12 +30,13 @@
 #ifndef LITEHTML_CSS_COMPONENT_VALUE_H__
 #define LITEHTML_CSS_COMPONENT_VALUE_H__
 
-#include "litehtml/css/css_block.h"
-#include "litehtml/css/css_function.h"
-#include "litehtml/css/css_token.h"
 #include "litehtml/debug/json.h"
 
 namespace litehtml {
+
+class css_block;
+class css_function;
+class css_token;
 
 enum css_component_value_type {
     kCSSComponentValueNone,
@@ -48,11 +49,11 @@ std::string css_component_value_type_string(css_component_value_type type);
 
 class css_component_value {
 public:
-    css_block block_;
+    css_block* block_ = nullptr;
 
-    css_function function_;
+    css_function* function_ = nullptr;
 
-    css_token token_;
+    css_token* token_ = nullptr;
 
     css_component_value_type type_ = kCSSComponentValueNone;
 
@@ -62,15 +63,7 @@ public:
     ~css_component_value() = default;
 
 #if defined(ENABLE_JSON)
-    nlohmann::json json() const
-    {
-        return nlohmann::json{
-            {"block", block_.json()},
-            {"function", function_.json()},
-            {"token", token_.json()},
-            {"type", css_component_value_type_string(type_)},
-        };
-    }
+    nlohmann::json json() const;
 #endif // ENABLE_JSON
 };
 

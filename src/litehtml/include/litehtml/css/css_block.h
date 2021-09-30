@@ -30,13 +30,15 @@
 #ifndef LITEHTML_CSS_BLOCK_H__
 #define LITEHTML_CSS_BLOCK_H__
 
-#include "litehtml/css/css_declaration.h"
 #include "litehtml/debug/json.h"
 
 namespace litehtml {
 
+class css_component_value;
+
 class css_block {
-    std::vector<css_declaration> declarations_;
+public:
+    std::vector<css_component_value*> values_;
 
 public:
     css_block() = default;
@@ -44,12 +46,7 @@ public:
     ~css_block() = default;
 
 #if defined(ENABLE_JSON)
-    nlohmann::json json() const
-    {
-        return nlohmann::json{
-            {"declarations", json_vector(declarations_)},
-        };
-    }
+    nlohmann::json json() const;
 #endif // ENABLE_JSON
 };
 

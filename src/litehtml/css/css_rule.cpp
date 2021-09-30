@@ -29,6 +29,24 @@
 
 #include "litehtml/css/css_rule.h"
 
+#include "litehtml/css/css_block.h"
+#include "litehtml/css/css_prelude.h"
+
 namespace litehtml {
+
+nlohmann::json css_rule::json() const
+{
+    nlohmann::json result{};
+
+    if (prelude_) {
+        result["prelude"] = prelude_->json();
+    }
+    if (block_) {
+        result["block"] = block_->json();
+    }
+
+    return result;
+}
+
 
 } // namespace litehtml

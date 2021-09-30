@@ -47,10 +47,10 @@ css_parser::css_parser(const tstring& input)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-list-of-rules
-std::vector<css_rule> css_parser::consume_rules(css_token_range& range,
+std::vector<css_rule*> css_parser::consume_rules(css_token_range& range,
     bool top_level)
 {
-    std::vector<css_rule> rules;
+    std::vector<css_rule*> rules;
 
     while (range.peek().type() != kCSSTokenEOF) {
         const css_token& token = range.consume();
@@ -71,7 +71,7 @@ std::vector<css_rule> css_parser::consume_rules(css_token_range& range,
 
                 if (!top_level) {
                     range.reconsume();
-                    css_rule rule = consume_qualified_rule(range);
+                    css_rule* rule = consume_qualified_rule(range);
                     rules.push_back(rule);
                 }
                 break;
@@ -82,7 +82,7 @@ std::vector<css_rule> css_parser::consume_rules(css_token_range& range,
 
             default: {
                 range.reconsume();
-                css_rule rule = consume_qualified_rule(range);
+                css_rule* rule = consume_qualified_rule(range);
                 rules.push_back(rule);
                 break;
             }
@@ -101,9 +101,10 @@ void css_parser::consume_at_rule(css_token_range&)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-qualified-rule
-css_rule css_parser::consume_qualified_rule(css_token_range& range)
+css_rule* css_parser::consume_qualified_rule(css_token_range& range)
 {
-    css_rule rule;
+    css_rule* rule = new css_rule();
+    rule->prelude_ = new css_prelude();
 
     while (true) {
         const css_token& token = range.consume();
@@ -117,13 +118,13 @@ css_rule css_parser::consume_qualified_rule(css_token_range& range)
         } else if (type == kCSSTokenOpenBrace) {
             // Consume a simple block and assign it to the qualified rule's
             // block.  Return the qualified rule.
-            rule.block_ = consume_block(range, token);
+            rule->block_ = consume_block(range, token);
             break;
         } else {
             // Reconsume the current input token.  Consume a component value.
             // Append the returned value to the qualified rule’s prelude.
             range.reconsume();
-            rule.prelude_.values_.push_back(consume_component_value(range));
+            rule->prelude_->append(consume_component_value(range));
         }
     }
 
@@ -131,7 +132,7 @@ css_rule css_parser::consume_qualified_rule(css_token_range& range)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-component-value
-css_component_value css_parser::consume_component_value(css_token_range& range)
+css_component_value* css_parser::consume_component_value(css_token_range& range)
 {
     const css_token& token = range.consume();
     css_token_type type = token.type();
@@ -139,24 +140,24 @@ css_component_value css_parser::consume_component_value(css_token_range& range)
     std::cout << "consume_component_value " << css_token_type_string(type)
               << std::endl;
 
-    css_component_value value;
+    css_component_value* value = new css_component_value();
 
     switch (type) {
         case kCSSTokenOpenBrace:
         case kCSSTokenOpenSquareBracket:
         case kCSSTokenOpenRoundBracket:
-            value.block_ = consume_block(range, token);
-            value.type_ = kCSSComponentValueBlock;
+            value->block_ = consume_block(range, token);
+            value->type_ = kCSSComponentValueBlock;
             break;
 
         case kCSSTokenFunction:
-            value.function_ = consume_function(range);
-            value.type_ = kCSSComponentValueFunction;
+            value->function_ = consume_function(range);
+            value->type_ = kCSSComponentValueFunction;
             break;
 
         default:
-            value.token_ = token;
-            value.type_ = kCSSComponentValueToken;
+            value->token_ = new css_token(token);
+            value->type_ = kCSSComponentValueToken;
             break;
     }
 
@@ -164,7 +165,7 @@ css_component_value css_parser::consume_component_value(css_token_range& range)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-simple-block
-css_block css_parser::consume_block(css_token_range& range,
+css_block* css_parser::consume_block(css_token_range& range,
     const css_token& starting_token)
 {
     css_token_type ending_token_type = kCSSTokenNone;
@@ -185,6 +186,8 @@ css_block css_parser::consume_block(css_token_range& range,
             break;
     }
 
+    css_block* block = new css_block();
+
     while (true) {
         const css_token& token = range.consume();
         css_token_type type = token.type();
@@ -199,15 +202,15 @@ css_block css_parser::consume_block(css_token_range& range,
             break;
         } else {
             range.reconsume();
-            consume_component_value(range);
+            block->values_.push_back(consume_component_value(range));
         }
     }
 
-    return css_block();
+    return block;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-function
-css_function css_parser::consume_function(css_token_range& range)
+css_function* css_parser::consume_function(css_token_range& range)
 {
     while (true) {
         const css_token& token = range.consume();
@@ -228,7 +231,7 @@ css_function css_parser::consume_function(css_token_range& range)
         }
     }
 
-    return css_function();
+    return new css_function();
 }
 
 // https://www.w3.org/TR/css-syntax-3/#parse-stylesheet

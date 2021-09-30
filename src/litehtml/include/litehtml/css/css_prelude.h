@@ -32,27 +32,28 @@
 
 #include <vector>
 
-#include "litehtml/css/css_component_value.h"
 #include "litehtml/debug/json.h"
 
 namespace litehtml {
 
+class css_component_value;
+
 class css_prelude {
 public:
-    std::vector<css_component_value> values_;
+    std::vector<css_component_value*> values_;
 
 public:
     css_prelude() = default;
 
     ~css_prelude() = default;
 
-#if defined(ENABLE_JSON)
-    nlohmann::json json() const
+    void append(css_component_value* value)
     {
-        return nlohmann::json{
-            {"values", json_vector(values_)},
-        };
+        values_.push_back(value);
     }
+
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const;
 #endif // ENABLE_JSON
 };
 

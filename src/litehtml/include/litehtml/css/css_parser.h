@@ -32,6 +32,7 @@
 #include "litehtml/css/css_block.h"
 #include "litehtml/css/css_component_value.h"
 #include "litehtml/css/css_function.h"
+#include "litehtml/css/css_prelude.h"
 #include "litehtml/css/css_stylesheet.h"
 #include "litehtml/css/css_token_range.h"
 #include "litehtml/css/css_tokenizer.h"
@@ -43,18 +44,18 @@ class css_parser {
 protected:
     css_tokenizer tokenizer_;
 
-    std::vector<css_rule> consume_rules(css_token_range& range, bool top_level);
+    std::vector<css_rule*> consume_rules(css_token_range& range, bool top_level);
 
     void consume_at_rule(css_token_range& range);
 
-    css_rule consume_qualified_rule(css_token_range& range);
+    css_rule* consume_qualified_rule(css_token_range& range);
 
-    css_component_value consume_component_value(css_token_range& range);
+    css_component_value* consume_component_value(css_token_range& range);
 
-    css_block consume_block(css_token_range& range,
+    css_block* consume_block(css_token_range& range,
         const css_token& starting_token);
 
-    css_function consume_function(css_token_range& range);
+    css_function* consume_function(css_token_range& range);
 
 public:
     explicit css_parser(const tstring& input);

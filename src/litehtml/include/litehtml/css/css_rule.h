@@ -30,17 +30,21 @@
 #ifndef LITEHTML_CSS_RULE_H__
 #define LITEHTML_CSS_RULE_H__
 
-#include "litehtml/css/css_block.h"
-#include "litehtml/css/css_prelude.h"
+#include <vector>
+
 #include "litehtml/debug/json.h"
 
 namespace litehtml {
 
+class css_block;
+class css_component_value;
+class css_prelude;
+
 class css_rule {
 public:
-    css_prelude prelude_;
+    css_prelude* prelude_;
 
-    css_block block_;
+    css_block* block_;
 
 public:
     css_rule() = default;
@@ -48,13 +52,7 @@ public:
     ~css_rule() = default;
 
 #if defined(ENABLE_JSON)
-    nlohmann::json json() const
-    {
-        return nlohmann::json{
-            {"prelude", prelude_.json()},
-            {"block", block_.json()},
-        };
-    }
+    nlohmann::json json() const;
 #endif // ENABLE_JSON
 };
 

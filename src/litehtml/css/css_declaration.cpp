@@ -29,6 +29,16 @@
 
 #include "litehtml/css/css_declaration.h"
 
+#include "litehtml/css/css_component_value.h"
+
 namespace litehtml {
+
+nlohmann::json css_declaration::json() const
+{
+    return nlohmann::json{
+        {"name", name_},
+        {"values", json_vector(values_)},
+    };
+}
 
 } // namespace litehtml

@@ -30,16 +30,18 @@
 #ifndef LITEHTML_CSS_DECLARATION_H__
 #define LITEHTML_CSS_DECLARATION_H__
 
-#include "litehtml/css/css_value.h"
 #include "litehtml/debug/json.h"
 #include "litehtml/types.h"
 
 namespace litehtml {
 
+class css_component_value;
+
 class css_declaration {
+public:
     tstring name_;
 
-    css_value value_;
+    std::vector<css_component_value*> values_;
 
 public:
     css_declaration() = default;
@@ -47,13 +49,7 @@ public:
     ~css_declaration() = default;
 
 #if defined(ENABLE_JSON)
-    nlohmann::json json() const
-    {
-        return nlohmann::json{
-            {"name", name_},
-            {"value", value_.json()},
-        };
-    }
+    nlohmann::json json() const;
 #endif // ENABLE_JSON
 };
 
