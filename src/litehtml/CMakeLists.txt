@@ -145,6 +145,7 @@ set(TEST_LITEHTML
     codepoint_test.cpp
     context_test.cpp
     css/css_parser_test.cpp
+    css/css_stylesheet_test.cpp
     css/css_test.cpp
     css/css_tokenizer_input_stream_test.cpp
     css/css_tokenizer_test.cpp
