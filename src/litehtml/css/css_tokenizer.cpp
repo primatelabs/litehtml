@@ -399,11 +399,43 @@ css_token css_tokenizer::consume_numeric(tchar_t first)
 // https://www.w3.org/TR/css-syntax-3/#consume-ident-like-token
 css_token css_tokenizer::consume_ident(tchar_t first)
 {
-    css_token result(kCSSTokenIdent, consume_name(first));
+    tstring name = consume_name(first);
 
-    // TODO: Handle URLs
+    if (name == _t("url") && stream_.peek(0) == _t('(')) {
+        stream_.consume();
+        while (is_whitespace(stream_.peek(0)) && is_whitespace(stream_.peek(1))) {
+            stream_.consume();
+        }
 
-    return result;
+        // This part of the CSS tokenization specification is confusing:
+        //
+        //   If the next one or two input code points are U+0022 QUOTATION
+        //   MARK ("), U+0027 APOSTROPHE ('), or whitespace followed by U+0022
+        //   QUOTATION MARK (") or U+0027 APOSTROPHE ('), then create a
+        //   <function-token> with its value set to string and return it.
+        //   Otherwise, consume a url token, and return it.
+        //
+        // The part about "the next one or two input code points" is unclear.
+        // The code below should implement this but without good test cases
+        // that demonstrate the edge cases I can't be certain.
+
+        if ((stream_.peek(0) == _t('\"') || stream_.peek(0) == _t('\'')) {
+            return css_token(kCSSTokenFunction, name);
+        }
+
+        if (is_whitespace(stream_.peek(0)) && (stream_.peek(1) == _t('\"') || stream_.peek(1) == _t('\'')) {
+            return css_token(kCSSTokenFunction, name);
+        }
+
+        return consume_url();
+    }
+
+    if (stream_.peek(0) == _t('(')) {
+        stream_.consume();
+        return css_token(kCSSTokenFunction, name);
+    }
+
+    return css_token(kCSSTokenIdent, name);
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-string-token
@@ -443,9 +475,11 @@ css_token css_tokenizer::consume_string(tchar_t ending)
     return token;
 }
 
-// https://www.w3.org/TR/css-syntax-3/#consume-escaped-code-point
+// https://www.w3.org/TR/css-syntax-3/#consume-url-token
 css_token css_tokenizer::consume_url()
 {
+    // TODO: Implement
+    assert(false);
     return css_token(kCSSTokenURL);
 }
 
