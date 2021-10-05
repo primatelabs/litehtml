@@ -44,7 +44,7 @@ el_image::~el_image(void)
 {
 }
 
-void el_image::get_content_size(size& sz, int max_width)
+void el_image::get_content_size(size& sz, int)
 {
     get_document()->container()->get_image_size(m_src.c_str(), 0, sz);
 }
@@ -74,10 +74,8 @@ bool el_image::is_replaced() const
     return true;
 }
 
-int el_image::render(int x, int y, int max_width, bool second_pass)
+int el_image::render(int x, int y, int parent_width, bool /* second_pass */)
 {
-    int parent_width = max_width;
-
     calc_outlines(parent_width);
 
     m_pos.move_to(x, y);

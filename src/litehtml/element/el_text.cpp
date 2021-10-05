@@ -50,7 +50,7 @@ el_text::~el_text()
 {
 }
 
-void el_text::get_content_size(size& sz, int max_width)
+void el_text::get_content_size(size& sz, int /* max_width */)
 {
     sz = m_size;
 }
@@ -73,7 +73,7 @@ const tchar_t* el_text::get_style_property(const tchar_t* name,
     return def;
 }
 
-void el_text::parse_styles(bool is_reparse)
+void el_text::parse_styles(bool /* is_reparse */)
 {
     m_text_transform = (text_transform)value_index(
         get_style_property(_t("text-transform"), true, _t("none")),

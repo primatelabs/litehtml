@@ -64,7 +64,7 @@ tchar_t css_tokenizer_input_stream::peek(int lookahead)
     return input_[lookahead + offset_];
 }
 
-void css_tokenizer_input_stream::replace(tchar_t c)
+void css_tokenizer_input_stream::replace(tchar_t)
 {
     offset_--;
 }

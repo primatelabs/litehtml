@@ -55,14 +55,15 @@ void block_box::add_element(const element::ptr& el)
     el->m_box = this;
 }
 
-void block_box::finish(bool last_box)
+void block_box::finish(bool)
 {
-    if (!m_element)
+    if (!m_element) {
         return;
+    }
     m_element->apply_relative_shift(m_box_right - m_box_left);
 }
 
-bool block_box::can_hold(const element::ptr& el, white_space ws)
+bool block_box::can_hold(const element::ptr& el, white_space)
 {
     if (m_element || el->is_inline_box()) {
         return false;
@@ -115,7 +116,7 @@ void block_box::y_shift(int shift)
     }
 }
 
-void block_box::new_width(int left, int right, elements_vector& els)
+void block_box::new_width(int, int, elements_vector&)
 {
 }
 

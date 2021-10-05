@@ -151,10 +151,10 @@ struct position {
         height = sz.height;
     }
 
-    void move_to(int x, int y)
+    void move_to(int new_x, int new_y)
     {
-        this->x = x;
-        this->y = y;
+        x = new_x;
+        y = new_y;
     }
 
     bool does_intersect(const position* val) const
@@ -176,9 +176,9 @@ struct position {
         return false;
     }
 
-    bool is_point_inside(int x, int y) const
+    bool is_point_inside(int other_x, int other_y) const
     {
-        if (x >= left() && x <= right() && y >= top() && y <= bottom()) {
+        if (other_x >= left() && other_x <= right() && other_y >= top() && other_y <= bottom()) {
             return true;
         }
         return false;

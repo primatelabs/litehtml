@@ -93,7 +93,7 @@ std::vector<css_rule> css_parser::consume_rules(css_token_range& range,
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-at-rule
-void css_parser::consume_at_rule(css_token_range& range)
+void css_parser::consume_at_rule(css_token_range&)
 {
     // TODO: Implement support for @import and @media (the only two at-rules
     // litehtml currently supports).

@@ -116,7 +116,7 @@ void split_text_node(document* document, elements_vector& elements, const char* 
                         document->shared_from_this()));
                 str.clear();
             }
-            str += c;
+            str += (wchar_t)c;
             elements.push_back(
                 std::make_shared<el_space>(litehtml_from_wchar(str.c_str()),
                     document->shared_from_this()));
@@ -130,13 +130,13 @@ void split_text_node(document* document, elements_vector& elements, const char* 
                         document->shared_from_this()));
                 str.clear();
             }
-            str += c;
+            str += (wchar_t)c;
             elements.push_back(
                 std::make_shared<el_text>(litehtml_from_wchar(str.c_str()),
                     document->shared_from_this()));
             str.clear();
         } else {
-            str += c;
+            str += (wchar_t)c;
         }
     }
     if (!str.empty()) {
@@ -592,10 +592,10 @@ bool document::on_lbutton_down(int x,
     return false;
 }
 
-bool document::on_lbutton_up(int x,
-    int y,
-    int client_x,
-    int client_y,
+bool document::on_lbutton_up(int,
+    int,
+    int,
+    int,
     position::vector& redraw_boxes)
 {
     if (!m_root) {

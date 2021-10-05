@@ -315,7 +315,7 @@ css_token css_tokenizer::consume_full_stop(tchar_t c0)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_less_than(tchar_t c0)
+css_token css_tokenizer::consume_less_than(tchar_t)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
@@ -335,7 +335,7 @@ css_token css_tokenizer::consume_less_than(tchar_t c0)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_at(tchar_t c0)
+css_token css_tokenizer::consume_at(tchar_t)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
@@ -491,7 +491,6 @@ tstring css_tokenizer::consume_name(tchar_t first)
 // https://www.w3.org/TR/css-syntax-3/#consume-number
 css_number css_tokenizer::consume_number(tchar_t first)
 {
-    double value = 0.0;
     css_number_value_type type = kCSSIntegerValue;
     tstring repr;
 

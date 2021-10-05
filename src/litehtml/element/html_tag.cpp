@@ -855,10 +855,10 @@ int html_tag::select(const css_element_selector& selector, bool apply_pseudo)
                         selector_name = i->val;
                     }
 
-                    int selector =
+                    int other_selector =
                         value_index(selector_name.c_str(), pseudo_class_strings);
 
-                    switch (selector) {
+                    switch (other_selector) {
                         case pseudo_class_only_child:
                             if (!el_parent->is_only_child(shared_from_this(),
                                     false)) {
@@ -912,7 +912,7 @@ int html_tag::select(const css_element_selector& selector, bool apply_pseudo)
                             parse_nth_child_params(selector_param, num, off);
                             if (!num && !off)
                                 return select_no_match;
-                            switch (selector) {
+                            switch (other_selector) {
                                 case pseudo_class_nth_child:
                                     if (!el_parent->is_nth_child(shared_from_this(),
                                             num,
@@ -1268,9 +1268,9 @@ int html_tag::fix_line_width(int max_width, element_float flt)
                 }
             }
 
-            elements_vector els;
-            m_boxes.back()->new_width(line_left, line_right, els);
-            for (auto& el : els) {
+            elements_vector elements;
+            m_boxes.back()->new_width(line_left, line_right, elements);
+            for (auto& el : elements) {
                 int rw = place_element(el, max_width);
                 if (rw > ret_width) {
                     ret_width = rw;
@@ -1625,7 +1625,7 @@ bool html_tag::is_body() const
     return false;
 }
 
-void html_tag::set_data(const tchar_t* data)
+void html_tag::set_data(const tchar_t*)
 {
 }
 
@@ -4006,7 +4006,7 @@ int html_tag::render_box(int x, int y, int max_width, bool second_pass /*= false
     return ret_width;
 }
 
-int html_tag::render_table(int x, int y, int max_width, bool second_pass /*= false*/)
+int html_tag::render_table(int x, int y, int max_width, bool /* second_pass *//*= false*/)
 {
     if (!m_grid)
         return 0;
@@ -4290,7 +4290,6 @@ int html_tag::render_table(int x, int y, int max_width, bool second_pass /*= fal
         min_height = (int)m_css_min_height.val();
     }
 
-    int extra_row_height = 0;
     int minimum_table_height = std::max(block_height, min_height);
 
     m_grid->calc_rows_height(minimum_table_height - table_height_spacing,

@@ -302,89 +302,89 @@ void element::apply_relative_shift(int parent_width)
     }
 }
 
-void element::calc_auto_margins(int parent_width)
+void element::calc_auto_margins(int)
 {
 }
 
-const background* element::get_background(bool own_only)
-{
-    return 0;
-}
-
-element::ptr element::get_element_by_point(int x, int y, int client_x, int client_y)
+const background* element::get_background(bool)
 {
     return 0;
 }
 
-element::ptr element::get_child_by_point(int x,
-    int y,
-    int client_x,
-    int client_y,
-    draw_flag flag,
-    int zindex)
+element::ptr element::get_element_by_point(int, int, int, int )
 {
     return 0;
 }
 
-void element::get_line_left_right(int y, int def_right, int& ln_left, int& ln_right)
+element::ptr element::get_child_by_point(int,
+    int,
+    int,
+    int,
+    draw_flag,
+    int)
+{
+    return 0;
+}
+
+void element::get_line_left_right(int, int, int&, int&)
 {
 }
 
-void element::add_style(const style& st)
+void element::add_style(const style&)
 {
 }
 
-void element::select_all(const css_selector& selector, elements_vector& res)
+void element::select_all(const css_selector&, elements_vector&)
 {
 }
 
-elements_vector element::select_all(const css_selector& selector)
+elements_vector element::select_all(const css_selector&)
 {
     return elements_vector();
 }
 
-elements_vector element::select_all(const tstring& selector)
+elements_vector element::select_all(const tstring&)
 {
     return elements_vector();
 }
 
-element::ptr element::select_one(const css_selector& selector)
+element::ptr element::select_one(const css_selector&)
 {
     return 0;
 }
 
-element::ptr element::select_one(const tstring& selector)
+element::ptr element::select_one(const tstring&)
 {
     return 0;
 }
 
-element::ptr element::find_adjacent_sibling(const element::ptr& el,
-    const css_selector& selector,
-    bool apply_pseudo /*= true*/,
-    bool* is_pseudo /*= 0*/)
+element::ptr element::find_adjacent_sibling(const element::ptr&,
+    const css_selector&,
+    bool,
+    bool*)
 {
     return 0;
 }
 
-element::ptr element::find_sibling(const element::ptr& el,
-    const css_selector& selector,
-    bool apply_pseudo /*= true*/,
-    bool* is_pseudo /*= 0*/)
+element::ptr element::find_sibling(const element::ptr&,
+    const css_selector&,
+    bool,
+    bool*)
 {
     return 0;
 }
 
-bool element::is_nth_last_child(const element::ptr& el, int num, int off, bool of_type) const
+bool element::is_nth_last_child(const element::ptr&, int, int, bool) const
 {
     return false;
 }
 
-bool element::is_nth_child(const element::ptr&, int num, int off, bool of_type) const
+bool element::is_nth_child(const element::ptr&, int, int, bool) const
 {
     return false;
 }
 
-bool element::is_only_child(const element::ptr& el, bool of_type) const
+bool element::is_only_child(const element::ptr&, bool) const
 {
     return false;
 }
@@ -394,24 +394,24 @@ overflow element::get_overflow() const
     return overflow_visible;
 }
 
-void element::draw_children(uint_ptr hdc,
-    int x,
-    int y,
-    const position* clip,
-    draw_flag flag,
-    int zindex)
+void element::draw_children(uint_ptr,
+    int,
+    int,
+    const position*,
+    draw_flag,
+    int)
 {
 }
 
-void element::draw_stacking_context(uint_ptr hdc,
-    int x,
-    int y,
-    const position* clip,
-    bool with_positioned)
+void element::draw_stacking_context(uint_ptr,
+    int,
+    int,
+    const position*,
+    bool)
 {
 }
 
-void element::render_positioned(render_type rt)
+void element::render_positioned(render_type)
 {
 }
 
@@ -434,11 +434,11 @@ void element::apply_vertical_align()
 {
 }
 
-void element::set_css_width(css_length& w)
+void element::set_css_width(css_length&)
 {
 }
 
-element::ptr element::get_child(int idx) const
+element::ptr element::get_child(int) const
 {
     return 0;
 }
@@ -448,7 +448,7 @@ size_t element::get_children_count() const
     return 0;
 }
 
-void element::calc_outlines(int parent_width)
+void element::calc_outlines(int)
 {
 }
 
@@ -497,21 +497,21 @@ vertical_align element::get_vertical_align() const
     return va_baseline;
 }
 
-int element::place_element(const ptr& el, int max_width)
+int element::place_element(const ptr&, int)
 {
     return 0;
 }
 
-int element::render_inline(const ptr& container, int max_width)
+int element::render_inline(const ptr&, int)
 {
     return 0;
 }
 
-void element::add_positioned(const ptr& el)
+void element::add_positioned(const ptr&)
 {
 }
 
-int element::find_next_line_top(int top, int width, int def_right)
+int element::find_next_line_top(int, int, int)
 {
     return 0;
 }
@@ -521,20 +521,20 @@ element_float element::get_float() const
     return float_none;
 }
 
-void element::add_float(const ptr& el, int x, int y)
+void element::add_float(const ptr&, int, int)
 {
 }
 
-void element::update_floats(int dy, const ptr& parent)
+void element::update_floats(int, const ptr&)
 {
 }
 
-int element::get_line_left(int y)
+int element::get_line_left(int)
 {
     return 0;
 }
 
-int element::get_line_right(int y, int def_right)
+int element::get_line_right(int, int def_right)
 {
     return def_right;
 }
@@ -549,7 +549,7 @@ int element::get_right_floats_height() const
     return 0;
 }
 
-int element::get_floats_height(element_float el_float) const
+int element::get_floats_height(element_float) const
 {
     return 0;
 }
@@ -559,7 +559,7 @@ bool element::is_floats_holder() const
     return false;
 }
 
-void element::get_content_size(size& sz, int max_width)
+void element::get_content_size(size&, int)
 {
 }
 
@@ -567,17 +567,17 @@ void element::init()
 {
 }
 
-int element::render(int x, int y, int max_width, bool second_pass)
+int element::render(int, int, int, bool)
 {
     return 0;
 }
 
-bool element::appendChild(const ptr& el)
+bool element::appendChild(const ptr&)
 {
     return false;
 }
 
-bool element::removeChild(const ptr& el)
+bool element::removeChild(const ptr&)
 {
     return false;
 }
@@ -591,19 +591,19 @@ const tchar_t* element::get_tagName() const
     return _t("");
 }
 
-void element::set_tagName(const tchar_t* tag)
+void element::set_tagName(const tchar_t*)
 {
 }
 
-void element::set_data(const tchar_t* data)
+void element::set_data(const tchar_t*)
 {
 }
 
-void element::set_attr(const tchar_t* name, const tchar_t* val)
+void element::set_attr(const tchar_t*, const tchar_t*)
 {
 }
 
-void element::apply_stylesheet(const css_stylesheet& stylesheet)
+void element::apply_stylesheet(const css_stylesheet&)
 {
 }
 
@@ -619,15 +619,15 @@ void element::init_font()
 {
 }
 
-void element::get_inline_boxes(position::vector& boxes)
+void element::get_inline_boxes(position::vector&)
 {
 }
 
-void element::parse_styles(bool is_reparse /*= false*/)
+void element::parse_styles(bool)
 {
 }
 
-const tchar_t* element::get_attr(const tchar_t* name,
+const tchar_t* element::get_attr(const tchar_t*,
     const tchar_t* def /*= 0*/) const
 {
     return def;
@@ -673,7 +673,7 @@ bool element::on_lbutton_up()
     return false;
 }
 
-bool element::find_styles_changes(position::vector& redraw_boxes, int x, int y)
+bool element::find_styles_changes(position::vector&, int, int)
 {
     return false;
 }
@@ -693,17 +693,17 @@ style_display element::get_display() const
     return display_none;
 }
 
-bool element::set_pseudo_class(const tchar_t* pclass, bool add)
+bool element::set_pseudo_class(const tchar_t*, bool)
 {
     return false;
 }
 
-bool element::set_class(const tchar_t* pclass, bool add)
+bool element::set_class(const tchar_t*, bool)
 {
     return false;
 }
 
-element_position element::get_element_position(css_offsets* offsets) const
+element_position element::get_element_position(css_offsets*) const
 {
     return element_position_static;
 }
@@ -718,22 +718,22 @@ int element::line_height() const
     return 0;
 }
 
-void element::draw(uint_ptr hdc, int x, int y, const position* clip)
+void element::draw(uint_ptr, int, int, const position*)
 {
 }
 
-void element::draw_background(uint_ptr hdc, int x, int y, const position* clip)
+void element::draw_background(uint_ptr, int, int, const position*)
 {
 }
 
-const tchar_t* element::get_style_property(const tchar_t* name,
-    bool inherited,
-    const tchar_t* def /*= 0*/)
+const tchar_t* element::get_style_property(const tchar_t*,
+    bool,
+    const tchar_t* /*= 0*/)
 {
-    return 0;
+    return nullptr;
 }
 
-uint_ptr element::get_font(font_metrics* fm /*= 0*/)
+uint_ptr element::get_font(font_metrics*)
 {
     return 0;
 }
@@ -743,7 +743,7 @@ int element::get_font_size() const
     return 0;
 }
 
-void element::get_text(tstring& text)
+void element::get_text(tstring&)
 {
 }
 
@@ -751,30 +751,30 @@ void element::parse_attributes()
 {
 }
 
-int element::select(const css_selector& selector, bool apply_pseudo)
+int element::select(const css_selector&, bool)
 {
     return select_no_match;
 }
 
-int element::select(const css_element_selector& selector,
-    bool apply_pseudo /*= true*/)
+int element::select(const css_element_selector&,
+    bool)
 {
     return select_no_match;
 }
 
-element::ptr element::find_ancestor(const css_selector& selector,
-    bool apply_pseudo,
-    bool* is_pseudo)
+element::ptr element::find_ancestor(const css_selector&,
+    bool,
+    bool*)
 {
     return 0;
 }
 
-bool element::is_first_child_inline(const element::ptr& el) const
+bool element::is_first_child_inline(const element::ptr&) const
 {
     return false;
 }
 
-bool element::is_last_child_inline(const element::ptr& el)
+bool element::is_last_child_inline(const element::ptr&)
 {
     return false;
 }

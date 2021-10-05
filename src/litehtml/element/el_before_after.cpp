@@ -197,7 +197,7 @@ tchar_t el_before_after_base::convert_escape(const tchar_t* txt)
     return (tchar_t)t_strtol(txt, &sss, 16);
 }
 
-void el_before_after_base::apply_stylesheet(const css_stylesheet& stylesheet)
+void el_before_after_base::apply_stylesheet(const css_stylesheet&)
 {
 }
 

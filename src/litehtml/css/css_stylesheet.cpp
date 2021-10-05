@@ -133,12 +133,12 @@ bool css_stylesheet::parse_selectors(const tstring& txt,
     bool added_something = false;
 
     for (string_vector::iterator tok = tokens.begin(); tok != tokens.end(); tok++) {
-        css_selector::ptr selector = std::make_shared<css_selector>(media);
-        selector->m_style = styles;
+        css_selector::ptr new_selector = std::make_shared<css_selector>(media);
+        new_selector->m_style = styles;
         trim(*tok);
-        if (selector->parse(*tok)) {
-            selector->calc_specificity();
-            add_selector(selector);
+        if (new_selector->parse(*tok)) {
+            new_selector->calc_specificity();
+            add_selector(new_selector);
             added_something = true;
         }
     }
