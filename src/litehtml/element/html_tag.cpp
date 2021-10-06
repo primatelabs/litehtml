@@ -2960,13 +2960,13 @@ void html_tag::render_positioned(render_type rt)
         if (process) {
             int parent_height = 0;
             int parent_width = 0;
-            int client_x = 0;
-            int client_y = 0;
+            //int client_x = 0;
+            //int client_y = 0;
             if (el_position == element_position_fixed) {
                 parent_height = wnd_position.height;
                 parent_width = wnd_position.width;
-                client_x = wnd_position.left();
-                client_y = wnd_position.top();
+                //client_x = wnd_position.left();
+                //client_y = wnd_position.top();
             } else {
                 element::ptr el_parent = el->parent();
                 if (el_parent) {
