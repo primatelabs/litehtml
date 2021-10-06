@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(litehtml LANGUAGES C CXX)
+include(CTest)
+enable_testing()
 
 option(BUILD_HEADLESS "Build headless litehtml browser" OFF)
 option(EXTERNAL_GUMBO "Link against external gumbo instead of shipping a bundled copy" OFF)
