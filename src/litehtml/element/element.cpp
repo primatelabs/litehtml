@@ -39,7 +39,7 @@ namespace litehtml {
 element::element(const std::shared_ptr<document>& doc)
 : m_doc(doc)
 {
-    m_box = 0;
+    m_box = nullptr;
     m_skip = false;
 }
 
@@ -74,7 +74,7 @@ web_color element::get_color(const tchar_t* prop_name,
     bool inherited,
     const web_color& def_color)
 {
-    const tchar_t* clrstr = get_style_property(prop_name, inherited, 0);
+    const tchar_t* clrstr = get_style_property(prop_name, inherited, nullptr);
     if (!clrstr) {
         return def_color;
     }
@@ -308,12 +308,12 @@ void element::calc_auto_margins(int)
 
 const background* element::get_background(bool)
 {
-    return 0;
+    return nullptr;
 }
 
 element::ptr element::get_element_by_point(int, int, int, int )
 {
-    return 0;
+    return nullptr;
 }
 
 element::ptr element::get_child_by_point(int,
@@ -323,7 +323,7 @@ element::ptr element::get_child_by_point(int,
     draw_flag,
     int)
 {
-    return 0;
+    return nullptr;
 }
 
 void element::get_line_left_right(int, int, int&, int&)
@@ -350,12 +350,12 @@ elements_vector element::select_all(const tstring&)
 
 element::ptr element::select_one(const css_selector&)
 {
-    return 0;
+    return nullptr;
 }
 
 element::ptr element::select_one(const tstring&)
 {
-    return 0;
+    return nullptr;
 }
 
 element::ptr element::find_adjacent_sibling(const element::ptr&,
@@ -363,7 +363,7 @@ element::ptr element::find_adjacent_sibling(const element::ptr&,
     bool,
     bool*)
 {
-    return 0;
+    return nullptr;
 }
 
 element::ptr element::find_sibling(const element::ptr&,
@@ -371,7 +371,7 @@ element::ptr element::find_sibling(const element::ptr&,
     bool,
     bool*)
 {
-    return 0;
+    return nullptr;
 }
 
 bool element::is_nth_last_child(const element::ptr&, int, int, bool) const
@@ -440,7 +440,7 @@ void element::set_css_width(css_length&)
 
 element::ptr element::get_child(int) const
 {
-    return 0;
+    return nullptr;
 }
 
 size_t element::get_children_count() const
@@ -680,7 +680,7 @@ bool element::find_styles_changes(position::vector&, int, int)
 
 const tchar_t* element::get_cursor()
 {
-    return 0;
+    return nullptr;
 }
 
 white_space element::get_white_space() const
@@ -766,7 +766,7 @@ element::ptr element::find_ancestor(const css_selector&,
     bool,
     bool*)
 {
-    return 0;
+    return nullptr;
 }
 
 bool element::is_first_child_inline(const element::ptr&) const

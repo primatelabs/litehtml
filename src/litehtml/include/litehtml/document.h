@@ -116,7 +116,7 @@ public:
     {
         return m_def_color;
     }
-    int cvt_units(const tchar_t* str, int fontSize, bool* is_percent = 0) const;
+    int cvt_units(const tchar_t* str, int fontSize, bool* is_percent = nullptr) const;
     int cvt_units(css_length& val, int fontSize, int size = 0) const;
     int width() const;
     int height() const;
@@ -160,11 +160,11 @@ public:
     static litehtml::document::ptr createFromString(const tchar_t* str,
         litehtml::document_container* objPainter,
         litehtml::context* ctx,
-        litehtml::css_stylesheet* user_styles = 0);
+        litehtml::css_stylesheet* user_styles = nullptr);
     static litehtml::document::ptr createFromUTF8(const char* str,
         litehtml::document_container* objPainter,
         litehtml::context* ctx,
-        litehtml::css_stylesheet* user_styles = 0);
+        litehtml::css_stylesheet* user_styles = nullptr);
 
 private:
     litehtml::uint_ptr add_font(const tchar_t* name,

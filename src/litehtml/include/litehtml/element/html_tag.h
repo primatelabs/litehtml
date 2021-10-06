@@ -128,7 +128,7 @@ protected:
 
 public:
     html_tag(const std::shared_ptr<litehtml::document>& doc);
-    virtual ~html_tag();
+    virtual ~html_tag() override;
 
     /* render functions */
 
@@ -164,12 +164,12 @@ public:
     virtual size_t get_children_count() const override;
     virtual element::ptr get_child(int idx) const override;
     virtual element_position get_element_position(
-        css_offsets* offsets = 0) const override;
+        css_offsets* offsets = nullptr) const override;
     virtual overflow get_overflow() const override;
 
     virtual void set_attr(const tchar_t* name, const tchar_t* val) override;
     virtual const tchar_t* get_attr(const tchar_t* name,
-        const tchar_t* def = 0) const override;
+        const tchar_t* def = nullptr) const override;
     virtual void apply_stylesheet(
         const litehtml::css_stylesheet& stylesheet) override;
     virtual void refresh_styles() override;
@@ -201,8 +201,8 @@ public:
 
     virtual const tchar_t* get_style_property(const tchar_t* name,
         bool inherited,
-        const tchar_t* def = 0) override;
-    virtual uint_ptr get_font(font_metrics* fm = 0) override;
+        const tchar_t* def = nullptr) override;
+    virtual uint_ptr get_font(font_metrics* fm = nullptr) override;
     virtual int get_font_size() const override;
 
     elements_vector& children();
@@ -222,15 +222,15 @@ public:
 
     virtual element::ptr find_ancestor(const css_selector& selector,
         bool apply_pseudo = true,
-        bool* is_pseudo = 0) override;
+        bool* is_pseudo = nullptr) override;
     virtual element::ptr find_adjacent_sibling(const element::ptr& el,
         const css_selector& selector,
         bool apply_pseudo = true,
-        bool* is_pseudo = 0) override;
+        bool* is_pseudo = nullptr) override;
     virtual element::ptr find_sibling(const element::ptr& el,
         const css_selector& selector,
         bool apply_pseudo = true,
-        bool* is_pseudo = 0) override;
+        bool* is_pseudo = nullptr) override;
     virtual void get_text(tstring& text) override;
     virtual void parse_attributes() override;
 

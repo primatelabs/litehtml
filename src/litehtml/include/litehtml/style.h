@@ -34,9 +34,11 @@
 #include "attributes.h"
 
 namespace litehtml {
+
 class property_value {
 public:
     tstring m_value;
+
     bool m_important;
 
     property_value()
@@ -101,10 +103,11 @@ public:
                 return f->second.m_value.c_str();
             }
         }
-        return 0;
+        return nullptr;
     }
 
     void combine(const litehtml::style& src);
+
     void clear()
     {
         m_properties.clear();

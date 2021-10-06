@@ -36,6 +36,8 @@
 namespace litehtml {
 class iterator_selector {
 public:
+    virtual ~iterator_selector();
+
     virtual bool select(const element::ptr& el) = 0;
 };
 

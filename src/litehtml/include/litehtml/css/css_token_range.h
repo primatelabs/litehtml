@@ -52,7 +52,7 @@ public:
         return *begin_++;
     }
 
-    const void reconsume()
+    void reconsume()
     {
         begin_--;
     }

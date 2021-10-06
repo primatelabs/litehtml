@@ -154,7 +154,7 @@ litehtml::table_cell* litehtml::table_grid::cell(int t_col, int t_row)
     if (t_col >= 0 && t_col < m_cols_count && t_row >= 0 && t_row < m_rows_count) {
         return &m_cells[t_row][t_col];
     }
-    return 0;
+    return nullptr;
 }
 
 void litehtml::table_grid::distribute_max_width(int width, int start, int end)
@@ -508,6 +508,10 @@ void litehtml::table_grid::calc_rows_height(int blockHeight, int /* borderSpacin
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+litehtml::table_column_accessor::~table_column_accessor()
+{
+}
 
 int& litehtml::table_column_accessor_max_width::get(table_column& col)
 {

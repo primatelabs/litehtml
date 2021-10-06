@@ -49,7 +49,7 @@ void trim(tstring& s)
 void lcase(tstring& s)
 {
     for (tstring::iterator i = s.begin(); i != s.end(); i++) {
-        (*i) = t_tolower(*i);
+        (*i) = (tchar_t)t_tolower(*i);
     }
 }
 

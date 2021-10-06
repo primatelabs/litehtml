@@ -212,7 +212,7 @@ public:
         if (val.m_left) {
             m_left = std::make_shared<css_selector>(*val.m_left);
         } else {
-            m_left = 0;
+            m_left = nullptr;
         }
         m_combinator = val.m_combinator;
         m_specificity = val.m_specificity;

@@ -49,7 +49,7 @@ html_tag::html_tag(const std::shared_ptr<document>& doc)
     m_box_sizing = box_sizing_content_box;
     m_z_index = 0;
     m_overflow = overflow_visible;
-    m_box = 0;
+    m_box = nullptr;
     m_text_align = text_align_left;
     m_el_position = element_position_static;
     m_display = display_inline;
@@ -136,7 +136,7 @@ const tchar_t* html_tag::get_attr(const tchar_t* name, const tchar_t* def) const
 
 elements_vector html_tag::select_all(const tstring& selector)
 {
-    css_selector sel(media_query_list::ptr(0));
+    css_selector sel(media_query_list::ptr(nullptr));
     sel.parse(selector);
 
     return select_all(sel);
@@ -163,7 +163,7 @@ void html_tag::select_all(const css_selector& selector, elements_vector& res)
 
 element::ptr html_tag::select_one(const tstring& selector)
 {
-    css_selector sel(media_query_list::ptr(0));
+    css_selector sel(media_query_list::ptr(nullptr));
     sel.parse(selector);
 
     return select_one(sel);
@@ -181,7 +181,7 @@ element::ptr html_tag::select_one(const css_selector& selector)
             return res;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 void html_tag::apply_stylesheet(const css_stylesheet& stylesheet)
@@ -314,7 +314,7 @@ void html_tag::parse_styles(bool is_reparse)
     const tchar_t* style = get_attr(_t("style"));
 
     if (style) {
-        m_style.add(style, NULL);
+        m_style.add(style, nullptr);
     }
 
     init_font();
@@ -350,7 +350,7 @@ void html_tag::parse_styles(bool is_reparse)
         box_sizing_content_box);
 
     if (m_el_position != element_position_static) {
-        const tchar_t* val = get_style_property(_t("z-index"), false, 0);
+        const tchar_t* val = get_style_property(_t("z-index"), false, nullptr);
         if (val) {
             m_z_index = t_atoi(val);
         }
@@ -581,13 +581,13 @@ void html_tag::parse_styles(bool is_reparse)
             list_style_position_outside);
 
         const tchar_t* list_image =
-            get_style_property(_t("list-style-image"), true, 0);
+            get_style_property(_t("list-style-image"), true, nullptr);
         if (list_image && list_image[0]) {
             tstring url;
             css_stylesheet::parse_css_url(list_image, url);
 
             const tchar_t* list_image_baseurl =
-                get_style_property(_t("list-style-image-baseurl"), true, 0);
+                get_style_property(_t("list-style-image-baseurl"), true, nullptr);
             doc->container()->load_image(url.c_str(), list_image_baseurl, true);
         }
     }
@@ -1252,7 +1252,7 @@ int html_tag::fix_line_width(int max_width, element_float flt)
                     line_left += sz_font;
                 }
 
-                if (m_css_text_indent.val() != 0) {
+                if (m_css_text_indent.val() != 0.0f) {
                     bool line_box_found = false;
                     for (box::vector::iterator iter = m_boxes.begin();
                          iter < m_boxes.end();
@@ -1538,7 +1538,7 @@ void html_tag::parse_background()
 
     if (!m_bg.m_image.empty()) {
         doc->container()->load_image(m_bg.m_image.c_str(),
-            m_bg.m_baseurl.empty() ? 0 : m_bg.m_baseurl.c_str(),
+            m_bg.m_baseurl.empty() ? nullptr : m_bg.m_baseurl.c_str(),
             true);
     }
 }
@@ -1631,7 +1631,7 @@ void html_tag::set_data(const tchar_t*)
 
 void html_tag::get_inline_boxes(position::vector& boxes)
 {
-    box* old_box = 0;
+    box* old_box = nullptr;
     position pos;
     for (auto& el : m_children) {
         if (!el->skip()) {
@@ -1831,7 +1831,7 @@ void html_tag::on_click()
 
 const tchar_t* html_tag::get_cursor()
 {
-    return get_style_property(_t("cursor"), true, 0);
+    return get_style_property(_t("cursor"), true, nullptr);
 }
 
 static const int font_size_table[8][7] = {{9, 9, 9, 9, 11, 14, 18},
@@ -1847,7 +1847,7 @@ static const int font_size_table[8][7] = {{9, 9, 9, 9, 11, 14, 18},
 void html_tag::init_font()
 {
     // initialize font size
-    const tchar_t* str = get_style_property(_t("font-size"), false, 0);
+    const tchar_t* str = get_style_property(_t("font-size"), false, nullptr);
 
     int parent_sz = 0;
     int doc_font_size = get_document()->container()->get_default_font_size();
@@ -2411,7 +2411,7 @@ int html_tag::new_box(const element::ptr& el, int max_width, line_context& line_
 
     if (el->is_inline_box()) {
         int text_indent = 0;
-        if (m_css_text_indent.val() != 0) {
+        if (m_css_text_indent.val() != 0.0f) {
             bool line_box_found = false;
             for (box::vector::iterator iter = m_boxes.begin();
                  iter != m_boxes.end();
@@ -2721,7 +2721,7 @@ void html_tag::init_background_paint(position pos,
                                       img_ar_width);
                         }
                         break;
-                        break;
+
                     case background_size_auto:
                         if (!bg->m_position.height.is_predefined()) {
                             img_new_sz.height = bg->m_position.height.calc_percent(
@@ -2771,16 +2771,16 @@ void html_tag::draw_list_marker(uint_ptr hdc, const position& pos)
     list_marker lm;
 
     const tchar_t* list_image =
-        get_style_property(_t("list-style-image"), true, 0);
+        get_style_property(_t("list-style-image"), true, nullptr);
     size img_size;
     if (list_image) {
         css_stylesheet::parse_css_url(list_image, lm.image);
-        lm.baseurl = get_style_property(_t("list-style-image-baseurl"), true, 0);
+        lm.baseurl = get_style_property(_t("list-style-image-baseurl"), true, nullptr);
         get_document()->container()->get_image_size(lm.image.c_str(),
             lm.baseurl,
             img_size);
     } else {
-        lm.baseurl = 0;
+        lm.baseurl = nullptr;
     }
 
     int ln_height = line_height();
@@ -3352,13 +3352,13 @@ element::ptr html_tag::find_adjacent_sibling(const element::ptr& el,
                         return ret;
                     }
                 }
-                return 0;
+                return nullptr;
             } else {
                 ret = e;
             }
         }
     }
-    return 0;
+    return nullptr;
 }
 
 element::ptr html_tag::find_sibling(const element::ptr& el,
@@ -3366,7 +3366,7 @@ element::ptr html_tag::find_sibling(const element::ptr& el,
     bool apply_pseudo /*= true*/,
     bool* is_pseudo /*= 0*/)
 {
-    element::ptr ret = 0;
+    element::ptr ret = nullptr;
     for (auto& e : m_children) {
         if (e->get_display() != display_inline_text) {
             if (e == el) {
@@ -3386,7 +3386,7 @@ element::ptr html_tag::find_sibling(const element::ptr& el,
             }
         }
     }
-    return 0;
+    return nullptr;
 }
 
 bool html_tag::is_only_child(const element::ptr& el, bool of_type) const
@@ -3561,7 +3561,7 @@ element::ptr html_tag::get_child_by_point(int x,
     draw_flag flag,
     int zindex)
 {
-    element::ptr ret = 0;
+    element::ptr ret = nullptr;
 
     if (m_overflow > overflow_visible) {
         if (!m_pos.is_point_inside(x, y)) {
@@ -3599,7 +3599,7 @@ element::ptr html_tag::get_child_by_point(int x,
                                 ret = (*i);
                             }
                         }
-                        el = 0;
+                        el = nullptr;
                     }
                     break;
                 case draw_block:
@@ -3617,7 +3617,7 @@ element::ptr html_tag::get_child_by_point(int x,
                         if (!ret && (*i)->is_point_inside(pos.x, pos.y)) {
                             ret = (*i);
                         }
-                        el = 0;
+                        el = nullptr;
                     }
                     break;
                 case draw_inlines:
@@ -3628,7 +3628,7 @@ element::ptr html_tag::get_child_by_point(int x,
                                 pos.y,
                                 client_x,
                                 client_y);
-                            el = 0;
+                            el = nullptr;
                         }
                         if (!ret && (*i)->is_point_inside(pos.x, pos.y)) {
                             ret = (*i);
@@ -3673,8 +3673,9 @@ element::ptr html_tag::get_child_by_point(int x,
 
 element::ptr html_tag::get_element_by_point(int x, int y, int client_x, int client_y)
 {
-    if (!is_visible())
-        return 0;
+    if (!is_visible()) {
+        return nullptr;
+    }
 
     element::ptr ret;
 
@@ -3750,7 +3751,7 @@ const background* html_tag::get_background(bool own_only)
     if (own_only) {
         // return own background with check for empty one
         if (m_bg.m_image.empty() && !m_bg.m_color.alpha) {
-            return 0;
+            return nullptr;
         }
         return &m_bg;
     }
@@ -3765,7 +3766,7 @@ const background* html_tag::get_background(bool own_only)
                 }
             }
         }
-        return 0;
+        return nullptr;
     }
 
     if (is_body()) {
@@ -3773,7 +3774,7 @@ const background* html_tag::get_background(bool own_only)
         if (el_parent) {
             if (!el_parent->get_background(true)) {
                 // parent of body will draw background for body
-                return 0;
+                return nullptr;
             }
         }
     }
@@ -3944,14 +3945,14 @@ int html_tag::render_box(int x, int y, int max_width, bool second_pass /*= false
 
     if (m_display == display_list_item) {
         const tchar_t* list_image =
-            get_style_property(_t("list-style-image"), true, 0);
+            get_style_property(_t("list-style-image"), true, nullptr);
         if (list_image) {
             tstring url;
             css_stylesheet::parse_css_url(list_image, url);
 
             size sz;
             const tchar_t* list_image_baseurl =
-                get_style_property(_t("list-style-image-baseurl"), true, 0);
+                get_style_property(_t("list-style-image-baseurl"), true, nullptr);
             get_document()->container()->get_image_size(url.c_str(),
                 list_image_baseurl,
                 sz);
@@ -4392,7 +4393,7 @@ void html_tag::draw_children_box(uint_ptr hdc,
                             el->draw(hdc, pos.x, pos.y, clip);
                             el->draw_stacking_context(hdc, pos.x, pos.y, clip, true);
                         }
-                        el = 0;
+                        el = nullptr;
                     }
                     break;
                 case draw_block:
@@ -4405,7 +4406,7 @@ void html_tag::draw_children_box(uint_ptr hdc,
                     if (el->get_float() != float_none && !el->is_positioned()) {
                         el->draw(hdc, pos.x, pos.y, clip);
                         el->draw_stacking_context(hdc, pos.x, pos.y, clip, false);
-                        el = 0;
+                        el = nullptr;
                     }
                     break;
                 case draw_inlines:
@@ -4414,7 +4415,7 @@ void html_tag::draw_children_box(uint_ptr hdc,
                         el->draw(hdc, pos.x, pos.y, clip);
                         if (el->get_display() == display_inline_block) {
                             el->draw_stacking_context(hdc, pos.x, pos.y, clip, false);
-                            el = 0;
+                            el = nullptr;
                         }
                     }
                     break;

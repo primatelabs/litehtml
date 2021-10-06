@@ -37,7 +37,7 @@ class el_cdata : public element {
 
 public:
     el_cdata(const std::shared_ptr<litehtml::document>& doc);
-    virtual ~el_cdata();
+    virtual ~el_cdata() override;
 
     virtual void get_text(tstring& text) override;
     virtual void set_data(const tchar_t* data) override;

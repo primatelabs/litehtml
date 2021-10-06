@@ -164,7 +164,7 @@ media_query_list::ptr media_query_list::create_from_string(const tstring& str,
         }
     }
     if (list->m_queries.empty()) {
-        list = 0;
+        list = nullptr;
     }
 
     return list;

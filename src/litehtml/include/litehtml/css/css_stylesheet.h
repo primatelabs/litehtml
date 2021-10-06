@@ -47,13 +47,9 @@ public:
     std::vector<css_rule*> rules_;
 
 public:
-    css_stylesheet()
-    {
-    }
+    css_stylesheet() = default;
 
-    ~css_stylesheet()
-    {
-    }
+    ~css_stylesheet() = default;
 
     const css_selector::vector& selectors() const
     {

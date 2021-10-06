@@ -193,11 +193,19 @@ void el_before_after_base::add_function(const tstring& fnc, const tstring& param
 
 tchar_t el_before_after_base::convert_escape(const tchar_t* txt)
 {
-    tchar_t* sss = 0;
+    tchar_t* sss = nullptr;
     return (tchar_t)t_strtol(txt, &sss, 16);
 }
 
 void el_before_after_base::apply_stylesheet(const css_stylesheet&)
+{
+}
+
+el_before::~el_before()
+{
+}
+
+el_after::~el_after()
 {
 }
 

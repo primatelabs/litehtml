@@ -182,7 +182,7 @@ def_color g_def_colors[] = {{_t("transparent"), _t("rgba(0, 0, 0, 0)")},
     {_t("WhiteSmoke"), _t("#F5F5F5")},
     {_t("Yellow"), _t("#FFFF00")},
     {_t("YellowGreen"), _t("#9ACD32")},
-    {0, 0}};
+    {nullptr, nullptr}};
 
 
 web_color web_color::from_string(const tchar_t* str, document_container* callback)
@@ -209,7 +209,7 @@ web_color web_color::from_string(const tchar_t* str, document_container* callbac
             blue += str[5];
             blue += str[6];
         }
-        tchar_t* sss = 0;
+        tchar_t* sss = nullptr;
         web_color clr;
         clr.red = (byte)t_strtol(red.c_str(), &sss, 16);
         clr.green = (byte)t_strtol(green.c_str(), &sss, 16);
@@ -239,7 +239,7 @@ web_color web_color::from_string(const tchar_t* str, document_container* callbac
         if (tokens.size() >= 3)
             clr.blue = (byte)t_atoi(tokens[2].c_str());
         if (tokens.size() >= 4)
-            clr.alpha = (byte)(t_strtod(tokens[3].c_str(), 0) * 255.0);
+            clr.alpha = (byte)(t_strtod(tokens[3].c_str(), nullptr) * 255.0);
 
         return clr;
     } else {

@@ -158,7 +158,7 @@ document::document(document_container* objContainer, context* ctx)
 
 document::~document()
 {
-    m_over_element = 0;
+    m_over_element = nullptr;
     if (m_container) {
         for (fonts_map::iterator f = m_fonts.begin(); f != m_fonts.end(); f++) {
             m_container->delete_font(f->second.font);
@@ -212,7 +212,7 @@ document::ptr document::createFromUTF8(const char* str,
             if (!css->media.empty()) {
                 media = media_query_list::create_from_string(css->media, doc);
             } else {
-                media = 0;
+                media = nullptr;
             }
             doc->m_styles.parse_stylesheet(css->text.c_str(),
                 css->baseurl.c_str(),
@@ -516,7 +516,7 @@ bool document::on_mouse_over(int x,
         m_over_element = over_el;
     }
 
-    const tchar_t* cursor = 0;
+    const tchar_t* cursor = nullptr;
 
     if (m_over_element) {
         if (m_over_element->on_mouse_over()) {
@@ -574,7 +574,7 @@ bool document::on_lbutton_down(int x,
         }
     }
 
-    const tchar_t* cursor = 0;
+    const tchar_t* cursor = nullptr;
 
     if (m_over_element) {
         if (m_over_element->on_lbutton_down()) {
@@ -865,7 +865,7 @@ void document::fix_table_children(element::ptr& el_ptr,
     auto flush_elements = [&]() {
         element::ptr annon_tag = std::make_shared<html_tag>(shared_from_this());
         style st;
-        st.add_property(_t("display"), disp_str, 0, false);
+        st.add_property(_t("display"), disp_str, nullptr, false);
         annon_tag->add_style(st);
         annon_tag->parent(el_ptr);
         annon_tag->parse_styles();
@@ -955,7 +955,7 @@ void document::fix_table_parent(element::ptr& el_ptr,
             element::ptr annon_tag =
                 std::make_shared<html_tag>(shared_from_this());
             style st;
-            st.add_property(_t("display"), disp_str, 0, false);
+            st.add_property(_t("display"), disp_str, nullptr, false);
             annon_tag->add_style(st);
             annon_tag->parent(parent);
             annon_tag->parse_styles();

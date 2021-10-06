@@ -72,7 +72,7 @@ void join_string(tstring& str, const string_vector& tokens, const tstring& delim
 inline int round_f(float val)
 {
     int int_val = (int)val;
-    if (val - int_val >= 0.5) {
+    if (val - int_val >= 0.5f) {
         int_val++;
     }
     return int_val;

@@ -58,7 +58,7 @@ tchar_t css_tokenizer_input_stream::next()
 
 tchar_t css_tokenizer_input_stream::peek(int lookahead)
 {
-    if (lookahead + offset_ >= input_.length()) {
+    if (static_cast<size_t>(lookahead + offset_) >= input_.length()) {
         return 0;
     }
     return input_[lookahead + offset_];

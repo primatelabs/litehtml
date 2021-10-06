@@ -42,6 +42,8 @@ namespace litehtml {
 // call back interface to draw text, images and other elements
 class document_container {
 public:
+    virtual ~document_container() = default;
+
     virtual litehtml::uint_ptr create_font(const litehtml::tchar_t* faceName,
         int size,
         int weight,

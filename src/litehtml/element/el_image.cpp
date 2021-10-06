@@ -46,7 +46,7 @@ el_image::~el_image(void)
 
 void el_image::get_content_size(size& sz, int)
 {
-    get_document()->container()->get_image_size(m_src.c_str(), 0, sz);
+    get_document()->container()->get_image_size(m_src.c_str(), nullptr, sz);
 }
 
 int el_image::calc_max_height(int image_height)
@@ -83,7 +83,7 @@ int el_image::render(int x, int y, int parent_width, bool /* second_pass */)
     document::ptr doc = get_document();
 
     size sz;
-    doc->container()->get_image_size(m_src.c_str(), 0, sz);
+    doc->container()->get_image_size(m_src.c_str(), nullptr, sz);
 
     m_pos.width = sz.width;
     m_pos.height = sz.height;
@@ -195,11 +195,11 @@ void el_image::parse_attributes()
 
     const tchar_t* attr_height = get_attr(_t("height"));
     if (attr_height) {
-        m_style.add_property(_t("height"), attr_height, 0, false);
+        m_style.add_property(_t("height"), attr_height, nullptr, false);
     }
     const tchar_t* attr_width = get_attr(_t("width"));
     if (attr_width) {
-        m_style.add_property(_t("width"), attr_width, 0, false);
+        m_style.add_property(_t("width"), attr_width, nullptr, false);
     }
 }
 
@@ -269,9 +269,9 @@ void el_image::parse_styles(bool is_reparse /*= false*/)
 
     if (!m_src.empty()) {
         if (!m_css_height.is_predefined() && !m_css_width.is_predefined()) {
-            get_document()->container()->load_image(m_src.c_str(), 0, true);
+            get_document()->container()->load_image(m_src.c_str(), nullptr, true);
         } else {
-            get_document()->container()->load_image(m_src.c_str(), 0, false);
+            get_document()->container()->load_image(m_src.c_str(), nullptr, false);
         }
     }
 }

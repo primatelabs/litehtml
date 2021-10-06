@@ -57,22 +57,24 @@ public:
         m_box_left = left;
         m_box_right = right;
     }
-    virtual ~box()
-    {
-    }
+
+    virtual ~box();
 
     int bottom()
     {
         return m_box_top + height();
     }
+
     int top()
     {
         return m_box_top;
     }
+
     int right()
     {
         return m_box_left + width();
     }
+
     int left()
     {
         return m_box_left;
@@ -102,7 +104,7 @@ public:
     block_box(int top, int left, int right)
     : box(top, left, right)
     {
-        m_element = 0;
+        m_element = nullptr;
     }
 
     virtual litehtml::box_type get_type();

@@ -36,7 +36,7 @@ class el_before_after_base : public html_tag {
 public:
     el_before_after_base(const std::shared_ptr<litehtml::document>& doc,
         bool before);
-    virtual ~el_before_after_base();
+    virtual ~el_before_after_base() override;
 
     virtual void add_style(const litehtml::style& st) override;
     virtual void apply_stylesheet(
@@ -54,6 +54,8 @@ public:
     : el_before_after_base(doc, true)
     {
     }
+
+    virtual ~el_before();
 };
 
 class el_after : public el_before_after_base {
@@ -62,6 +64,8 @@ public:
     : el_before_after_base(doc, false)
     {
     }
+
+    virtual ~el_after();
 };
 } // namespace litehtml
 

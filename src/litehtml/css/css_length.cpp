@@ -66,7 +66,7 @@ void css_length::fromString(const tstring& str, const tstring& predefs, int defV
             }
         }
         if (!num.empty()) {
-            m_value = (float)t_strtod(num.c_str(), 0);
+            m_value = (float)t_strtod(num.c_str(), nullptr);
             m_units = (css_units)value_index(un.c_str(),
                 css_units_strings,
                 css_units_none);

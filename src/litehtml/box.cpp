@@ -34,6 +34,10 @@
 
 namespace litehtml {
 
+box::~box()
+{
+}
+
 box_type block_box::get_type()
 {
     return box_block;
@@ -140,7 +144,7 @@ int line_box::width()
 void line_box::add_element(const element::ptr& el)
 {
     el->m_skip = false;
-    el->m_box = 0;
+    el->m_box = nullptr;
     bool add = true;
     if ((m_items.empty() && el->is_white_space()) || el->is_break()) {
         el->m_skip = true;
@@ -425,7 +429,7 @@ void line_box::new_width(int left, int right, elements_vector& els)
             m_items.erase(remove_begin, m_items.end());
 
             for (const auto& el : els) {
-                el->m_box = 0;
+                el->m_box = nullptr;
             }
         }
     }

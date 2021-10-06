@@ -35,7 +35,7 @@ namespace litehtml {
 class el_div : public html_tag {
 public:
     el_div(const std::shared_ptr<litehtml::document>& doc);
-    virtual ~el_div();
+    virtual ~el_div() override;
 
     virtual void parse_attributes() override;
 };

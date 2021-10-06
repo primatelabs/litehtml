@@ -37,7 +37,7 @@ class el_script : public element {
 
 public:
     el_script(const std::shared_ptr<litehtml::document>& doc);
-    virtual ~el_script();
+    virtual ~el_script() override;
 
     virtual void parse_attributes() override;
     virtual bool appendChild(const ptr& el) override;

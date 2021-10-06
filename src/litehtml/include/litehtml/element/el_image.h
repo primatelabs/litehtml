@@ -38,7 +38,7 @@ class el_image : public html_tag {
 
 public:
     el_image(const std::shared_ptr<litehtml::document>& doc);
-    virtual ~el_image(void);
+    virtual ~el_image(void) override;
 
     virtual int line_height() const override;
     virtual bool is_replaced() const override;

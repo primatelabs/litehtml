@@ -34,6 +34,10 @@
 
 namespace litehtml {
 
+iterator_selector::~iterator_selector()
+{
+}
+
 element::ptr elements_iterator::next(bool ret_parent)
 {
     next_idx();
@@ -61,7 +65,7 @@ element::ptr elements_iterator::next(bool ret_parent)
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 void elements_iterator::next_idx()

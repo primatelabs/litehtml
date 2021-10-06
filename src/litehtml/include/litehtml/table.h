@@ -150,6 +150,7 @@ struct table_column {
 
 class table_column_accessor {
 public:
+    virtual ~table_column_accessor();
     virtual int& get(table_column& col) = 0;
 };
 
