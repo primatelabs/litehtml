@@ -500,7 +500,7 @@ tchar_t css_tokenizer::consume_escape()
         result = c;
     }
 
-    return c;
+    return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-name
