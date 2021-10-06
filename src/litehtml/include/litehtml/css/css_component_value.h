@@ -30,6 +30,8 @@
 #ifndef LITEHTML_CSS_COMPONENT_VALUE_H__
 #define LITEHTML_CSS_COMPONENT_VALUE_H__
 
+#include <string>
+
 #include "litehtml/debug/json.h"
 
 namespace litehtml {

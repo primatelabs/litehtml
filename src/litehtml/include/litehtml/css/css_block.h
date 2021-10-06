@@ -30,6 +30,8 @@
 #ifndef LITEHTML_CSS_BLOCK_H__
 #define LITEHTML_CSS_BLOCK_H__
 
+#include <vector>
+
 #include "litehtml/debug/json.h"
 
 namespace litehtml {

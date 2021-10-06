@@ -34,6 +34,8 @@
 
 namespace litehtml {
 
+#if defined(ENABLE_JSON)
+
 nlohmann::json css_rule::json() const
 {
     nlohmann::json result{};
@@ -48,5 +50,6 @@ nlohmann::json css_rule::json() const
     return result;
 }
 
+#endif
 
 } // namespace litehtml

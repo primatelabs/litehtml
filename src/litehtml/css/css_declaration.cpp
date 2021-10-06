@@ -33,6 +33,8 @@
 
 namespace litehtml {
 
+#if defined(ENABLE_JSON)
+
 nlohmann::json css_declaration::json() const
 {
     return nlohmann::json{
@@ -40,5 +42,7 @@ nlohmann::json css_declaration::json() const
         {"values", json_vector(values_)},
     };
 }
+
+#endif
 
 } // namespace litehtml
