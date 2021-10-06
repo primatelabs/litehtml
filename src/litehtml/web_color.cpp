@@ -255,14 +255,14 @@ tstring web_color::resolve_name(const tchar_t* name, document_container* callbac
 {
     for (int i = 0; g_def_colors[i].name; i++) {
         if (!t_strcasecmp(name, g_def_colors[i].name)) {
-            return std::move(tstring(g_def_colors[i].rgb));
+            return tstring(g_def_colors[i].rgb);
         }
     }
     if (callback) {
         tstring clr = callback->resolve_color(name);
-        return std::move(clr);
+        return clr;
     }
-    return std::move(tstring());
+    return tstring();
 }
 
 bool web_color::is_color(const tchar_t* str)

@@ -1039,7 +1039,7 @@ int html_tag::get_floats_height(element_float el_float) const
         }
 
 
-        for (const auto fb : m_floats_right) {
+        for (const auto& fb : m_floats_right) {
             process = false;
             switch (el_float) {
                 case float_none:
@@ -2884,6 +2884,8 @@ tstring html_tag::get_list_marker_text(int index)
         case list_style_type_katakana:
             break;
         case list_style_type_katakana_iroha:
+            break;
+        default:
             break;
     }
     return _t("");

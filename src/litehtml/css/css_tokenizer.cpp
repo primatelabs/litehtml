@@ -122,6 +122,7 @@ bool is_newline(litehtml::tchar_t c)
     return lookup(newline_lookup, c);
 }
 
+#if 0
 // https://www.w3.org/TR/css-syntax-3/#non-printable-code-point
 bool is_non_printable_code_point(litehtml::tchar_t c)
 {
@@ -135,6 +136,7 @@ bool is_non_printable_code_point(litehtml::tchar_t c)
     }
     return lookup(non_printable_lookup, c);
 }
+#endif
 
 // https://www.w3.org/TR/css-syntax-3/#whitespace
 bool is_whitespace(litehtml::tchar_t c)
@@ -419,11 +421,11 @@ css_token css_tokenizer::consume_ident(tchar_t first)
         // The code below should implement this but without good test cases
         // that demonstrate the edge cases I can't be certain.
 
-        if ((stream_.peek(0) == _t('\"') || stream_.peek(0) == _t('\'')) {
+        if (stream_.peek(0) == _t('\"') || stream_.peek(0) == _t('\'')) {
             return css_token(kCSSTokenFunction, name);
         }
 
-        if (is_whitespace(stream_.peek(0)) && (stream_.peek(1) == _t('\"') || stream_.peek(1) == _t('\'')) {
+        if (is_whitespace(stream_.peek(0)) && (stream_.peek(1) == _t('\"') || stream_.peek(1) == _t('\''))) {
             return css_token(kCSSTokenFunction, name);
         }
 
