@@ -8,11 +8,15 @@ find_package(PkgConfig)
 pkg_search_module(CAIRO REQUIRED cairo>=1.12.0)
 pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
 
+find_library(FOUNDATION Foundation)
+
 set(HEADLESS_NAME headless)
 
 set(SOURCE_HEADLESS
     headless.cpp
     headless_container.cpp
+    http_darwin.mm
+    http.cpp
 )
 
 add_executable(
@@ -49,4 +53,5 @@ target_link_libraries(
     litehtml
     ${CAIRO_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
+    ${FOUNDATION}
 )
