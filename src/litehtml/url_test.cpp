@@ -56,7 +56,7 @@ struct url_resolve_testcase {
 
 TEST(URLTest, DefaultConstructor)
 {
-    url u;
+    URL u;
 
     EXPECT_TRUE(u.scheme().empty());
     EXPECT_TRUE(u.authority().empty());
@@ -154,7 +154,7 @@ TEST(URLTest, Parse)
     };
 
     for (auto& testcase : testcases) {
-        url u(testcase.str);
+        URL u(testcase.str);
 
         EXPECT_EQ(testcase.scheme, u.scheme());
         EXPECT_EQ(testcase.authority, u.authority());
@@ -256,7 +256,7 @@ TEST(URLTest, Build)
     };
 
     for (auto& testcase : testcases) {
-        url u(testcase.scheme,
+        URL u(testcase.scheme,
             testcase.authority,
             testcase.path,
             testcase.query,
@@ -280,8 +280,8 @@ TEST(URLTest, Resolve)
     };
 
     for (auto& testcase : testcases) {
-        url u = resolve(url(testcase.base), url(testcase.reference));
-        url expected(testcase.expected);
+        URL u = resolve(URL(testcase.base), URL(testcase.reference));
+        URL expected(testcase.expected);
 
         EXPECT_EQ(expected.scheme(), u.scheme());
         EXPECT_EQ(expected.authority(), u.authority());

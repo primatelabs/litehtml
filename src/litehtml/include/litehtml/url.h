@@ -38,17 +38,22 @@
 
 namespace litehtml {
 
-class url {
+class URL {
 public:
-    url() = default;
+    URL() = default;
 
-    explicit url(const tstring& str);
+    explicit URL(const tstring& str);
 
-    url(const tstring& scheme,
+    URL(const tstring& scheme,
         const tstring& authority,
         const tstring& path,
         const tstring& query,
         const tstring& fragment);
+
+    bool empty() const
+    {
+        return str_.empty();
+    }
 
     const tstring& string() const
     {
@@ -132,7 +137,7 @@ protected:
 // the base URL and </foo> as the relative URL, resolve() will return the URL
 // <https://www.twitter.com/foo>.
 
-url resolve(const url& base, const url& reference);
+URL resolve(const URL& base, const URL& reference);
 
 } // namespace litehtml
 

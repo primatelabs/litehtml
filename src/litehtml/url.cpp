@@ -38,7 +38,7 @@
 
 namespace litehtml {
 
-url::url(const tstring& str)
+URL::URL(const tstring& str)
 : str_(str)
 {
     // TODO: Rewrite using tstring_view to avoid unnecessary allocations.
@@ -95,7 +95,7 @@ url::url(const tstring& str)
     path_ = tmp;
 }
 
-url::url(const tstring& scheme,
+URL::URL(const tstring& scheme,
     const tstring& authority,
     const tstring& path,
     const tstring& query,
@@ -126,7 +126,7 @@ url::url(const tstring& scheme,
     str_ = tss.str();
 }
 
-url resolve(const url& b, const url& r)
+URL resolve(const URL& b, const URL& r)
 {
     // The resolution algorithm roughly follows the resolution algorithm
     // outlined in Section 5.2 (in particular Section 5.2.2) of RFC 3986.  The
@@ -136,7 +136,7 @@ url resolve(const url& b, const url& r)
     if (r.has_scheme()) {
         return r;
     } else if (r.has_authority()) {
-        return url(b.scheme(), r.authority(), r.path(), r.query(), r.fragment());
+        return URL(b.scheme(), r.authority(), r.path(), r.query(), r.fragment());
     } else if (r.has_path()) {
         // The relative URL path is either an absolute path or a relative
         // path. If it is an absolute path, build the URL using only the
@@ -144,18 +144,18 @@ url resolve(const url& b, const url& r)
         // against the base path and build the URL using the resolved path.
 
         if (is_url_path_absolute(r.path())) {
-            return url(b.scheme(), b.authority(), r.path(), r.query(), r.fragment());
+            return URL(b.scheme(), b.authority(), r.path(), r.query(), r.fragment());
         } else {
             tstring path = url_path_resolve(b.path(), r.path());
-            return url(b.scheme(), b.authority(), path, r.query(), r.fragment());
+            return URL(b.scheme(), b.authority(), path, r.query(), r.fragment());
         }
 
     } else if (r.has_query()) {
-        return url(b.scheme(), b.authority(), b.path(), r.query(), r.fragment());
+        return URL(b.scheme(), b.authority(), b.path(), r.query(), r.fragment());
     } else {
         // The resolved URL never includes the base URL fragment (i.e., it
         // always includes the reference URL fragment).
-        return url(b.scheme(), b.authority(), b.path(), b.query(), r.fragment());
+        return URL(b.scheme(), b.authority(), b.path(), b.query(), r.fragment());
     }
 }
 
