@@ -52,7 +52,7 @@ style::~style()
 {
 }
 
-void style::parse(const tchar_t* txt, const tchar_t* baseurl)
+void style::parse(const tstring& txt, const URL& baseurl)
 {
     std::vector<tstring> properties;
     split_string(txt, properties, _t(";"), _t(""), _t("\"'"));
@@ -64,7 +64,7 @@ void style::parse(const tchar_t* txt, const tchar_t* baseurl)
     }
 }
 
-void style::parse_property(const tstring& txt, const tchar_t* baseurl)
+void style::parse_property(const tstring& txt, const URL& baseurl)
 {
     tstring::size_type pos = txt.find_first_of(_t(":"));
     if (pos != tstring::npos) {
@@ -105,7 +105,7 @@ void style::combine(const style& src)
 
 void style::add_property(const tchar_t* name,
     const tchar_t* val,
-    const tchar_t* baseurl,
+    const URL& url,
     bool important)
 {
     if (!name || !val) {
@@ -115,8 +115,8 @@ void style::add_property(const tchar_t* name,
     // Add baseurl for background image
     if (!t_strcmp(name, _t("background-image"))) {
         add_parsed_property(name, val, important);
-        if (baseurl) {
-            add_parsed_property(_t("background-image-baseurl"), baseurl, important);
+        if (!url.empty()) {
+            add_parsed_property(_t("background-image-baseurl"), url.string(), important);
         }
     } else
 
@@ -153,45 +153,45 @@ void style::add_property(const tchar_t* name,
              tok++) {
             idx = value_index(tok->c_str(), border_style_strings, -1);
             if (idx >= 0) {
-                add_property(_t("border-left-style"), tok->c_str(), baseurl, important);
-                add_property(_t("border-right-style"), tok->c_str(), baseurl, important);
-                add_property(_t("border-top-style"), tok->c_str(), baseurl, important);
-                add_property(_t("border-bottom-style"), tok->c_str(), baseurl, important);
+                add_property(_t("border-left-style"), tok->c_str(), url, important);
+                add_property(_t("border-right-style"), tok->c_str(), url, important);
+                add_property(_t("border-top-style"), tok->c_str(), url, important);
+                add_property(_t("border-bottom-style"), tok->c_str(), url, important);
             } else {
                 if (t_isdigit((*tok)[0]) || (*tok)[0] == _t('.') ||
                     value_in_list((*tok), _t("thin;medium;thick"))) {
                     add_property(_t("border-left-width"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                     add_property(_t("border-right-width"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                     add_property(_t("border-top-width"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                     add_property(_t("border-bottom-width"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                 } else {
                     add_property(_t("border-left-color"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                     add_property(_t("border-right-color"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                     add_property(_t("border-top-color"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                     add_property(_t("border-bottom-color"),
                         tok->c_str(),
-                        baseurl,
+                        url,
                         important);
                 }
             }
@@ -211,16 +211,16 @@ void style::add_property(const tchar_t* name,
             if (idx >= 0) {
                 str = name;
                 str += _t("-style");
-                add_property(str.c_str(), tok->c_str(), baseurl, important);
+                add_property(str.c_str(), tok->c_str(), url, important);
             } else {
                 if (web_color::is_color(tok->c_str())) {
                     str = name;
                     str += _t("-color");
-                    add_property(str.c_str(), tok->c_str(), baseurl, important);
+                    add_property(str.c_str(), tok->c_str(), url, important);
                 } else {
                     str = name;
                     str += _t("-width");
-                    add_property(str.c_str(), tok->c_str(), baseurl, important);
+                    add_property(str.c_str(), tok->c_str(), url, important);
                 }
             }
         }
@@ -233,20 +233,20 @@ void style::add_property(const tchar_t* name,
         if (tokens.size() >= 2) {
             add_property(_t("border-bottom-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 1) {
             add_property(_t("border-bottom-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
         }
 
@@ -256,20 +256,20 @@ void style::add_property(const tchar_t* name,
         if (tokens.size() >= 2) {
             add_property(_t("border-bottom-right-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 1) {
             add_property(_t("border-bottom-right-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
         }
 
@@ -279,20 +279,20 @@ void style::add_property(const tchar_t* name,
         if (tokens.size() >= 2) {
             add_property(_t("border-top-right-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 1) {
             add_property(_t("border-top-right-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
         }
 
@@ -302,20 +302,20 @@ void style::add_property(const tchar_t* name,
         if (tokens.size() >= 2) {
             add_property(_t("border-top-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-left-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 1) {
             add_property(_t("border-top-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-left-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
         }
 
@@ -326,11 +326,11 @@ void style::add_property(const tchar_t* name,
         string_vector tokens;
         split_string(val, tokens, _t("/"));
         if (tokens.size() == 1) {
-            add_property(_t("border-radius-x"), tokens[0].c_str(), baseurl, important);
-            add_property(_t("border-radius-y"), tokens[0].c_str(), baseurl, important);
+            add_property(_t("border-radius-x"), tokens[0].c_str(), url, important);
+            add_property(_t("border-radius-y"), tokens[0].c_str(), url, important);
         } else if (tokens.size() >= 2) {
-            add_property(_t("border-radius-x"), tokens[0].c_str(), baseurl, important);
-            add_property(_t("border-radius-y"), tokens[1].c_str(), baseurl, important);
+            add_property(_t("border-radius-x"), tokens[0].c_str(), url, important);
+            add_property(_t("border-radius-y"), tokens[1].c_str(), url, important);
         }
     } else if (!t_strcmp(name, _t("border-radius-x"))) {
         string_vector tokens;
@@ -338,70 +338,70 @@ void style::add_property(const tchar_t* name,
         if (tokens.size() == 1) {
             add_property(_t("border-top-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 2) {
             add_property(_t("border-top-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-x"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-x"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 3) {
             add_property(_t("border-top-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-x"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-x"),
                 tokens[2].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-x"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 4) {
             add_property(_t("border-top-left-radius-x"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-x"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-x"),
                 tokens[2].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-x"),
                 tokens[3].c_str(),
-                baseurl,
+                url,
                 important);
         }
     } else if (!t_strcmp(name, _t("border-radius-y"))) {
@@ -410,70 +410,70 @@ void style::add_property(const tchar_t* name,
         if (tokens.size() == 1) {
             add_property(_t("border-top-left-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 2) {
             add_property(_t("border-top-left-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 3) {
             add_property(_t("border-top-left-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-y"),
                 tokens[2].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
         } else if (tokens.size() == 4) {
             add_property(_t("border-top-left-radius-y"),
                 tokens[0].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-top-right-radius-y"),
                 tokens[1].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-right-radius-y"),
                 tokens[2].c_str(),
-                baseurl,
+                url,
                 important);
             add_property(_t("border-bottom-left-radius-y"),
                 tokens[3].c_str(),
-                baseurl,
+                url,
                 important);
         }
     } else
@@ -498,9 +498,9 @@ void style::add_property(const tchar_t* name,
                     add_parsed_property(_t("list-style-position"), *tok, important);
                 } else if (!t_strncmp(val, _t("url"), 3)) {
                     add_parsed_property(_t("list-style-image"), *tok, important);
-                    if (baseurl) {
+                    if (!url.empty()) {
                         add_parsed_property(_t("list-style-image-baseurl"),
-                            baseurl,
+                            url.string(),
                             important);
                     }
                 }
@@ -511,14 +511,14 @@ void style::add_property(const tchar_t* name,
         // Add baseurl for background image
         if (!t_strcmp(name, _t("list-style-image"))) {
         add_parsed_property(name, val, important);
-        if (baseurl) {
-            add_parsed_property(_t("list-style-image-baseurl"), baseurl, important);
+        if (!url.empty()) {
+            add_parsed_property(_t("list-style-image-baseurl"), url.string(), important);
         }
     } else
 
         // Parse background shorthand properties
         if (!t_strcmp(name, _t("background"))) {
-        parse_short_background(val, baseurl, important);
+        parse_short_background(val, url, important);
 
     } else
 
@@ -651,7 +651,7 @@ void style::parse_short_border(const tstring& prefix, const tstring& val, bool i
 }
 
 void style::parse_short_background(const tstring& val,
-    const tchar_t* baseurl,
+    const URL& baseurl,
     bool important)
 {
     add_parsed_property(_t("background-color"), _t("transparent"), important);
@@ -672,9 +672,9 @@ void style::parse_short_background(const tstring& val,
     for (string_vector::iterator tok = tokens.begin(); tok != tokens.end(); tok++) {
         if (tok->substr(0, 3) == _t("url")) {
             add_parsed_property(_t("background-image"), *tok, important);
-            if (baseurl) {
+            if (!baseurl.empty()) {
                 add_parsed_property(_t("background-image-baseurl"),
-                    baseurl,
+                    baseurl.string(),
                     important);
             }
 

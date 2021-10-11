@@ -314,7 +314,7 @@ void html_tag::parse_styles(bool is_reparse)
     const tchar_t* style = get_attr(_t("style"));
 
     if (style) {
-        m_style.add(style, nullptr);
+        m_style.add(style, URL());
     }
 
     init_font();
@@ -586,9 +586,14 @@ void html_tag::parse_styles(bool is_reparse)
             tstring url;
             css_stylesheet::parse_css_url(list_image, url);
 
-            const tchar_t* list_image_baseurl =
-                get_style_property(_t("list-style-image-baseurl"), true, nullptr);
-            doc->container()->load_image(url.c_str(), list_image_baseurl, true);
+            const tchar_t* list_image_baseurl = get_style_property(
+                _t("list-style-image-baseurl"),
+                true,
+                nullptr);
+
+            assert(list_image_baseurl != nullptr);
+            assert(false);
+            // doc->container()->load_image(url.c_str(), list_image_baseurl, true);
         }
     }
 
@@ -1537,9 +1542,8 @@ void html_tag::parse_background()
         get_style_property(_t("background-image-baseurl"), false, _t(""));
 
     if (!m_bg.m_image.empty()) {
-        doc->container()->load_image(m_bg.m_image.c_str(),
-            m_bg.m_baseurl.empty() ? nullptr : m_bg.m_baseurl.c_str(),
-            true);
+        URL scratch = resolve(URL(m_bg.m_baseurl), URL(m_bg.m_image));
+        doc->container()->load_image(scratch, true);
     }
 }
 
@@ -2680,9 +2684,8 @@ void html_tag::init_background_paint(position pos,
     }
 
     if (!bg_paint.image.empty()) {
-        get_document()->container()->get_image_size(bg_paint.image.c_str(),
-            bg_paint.baseurl.c_str(),
-            bg_paint.image_size);
+        URL scratch = resolve(URL(bg_paint.baseurl), URL(bg_paint.image));
+        bg_paint.image_size = get_document()->container()->get_image_size(scratch);
         if (bg_paint.image_size.width && bg_paint.image_size.height) {
             size img_new_sz = bg_paint.image_size;
             double img_ar_width = (double)bg_paint.image_size.width /
@@ -3950,12 +3953,12 @@ int html_tag::render_box(int x, int y, int max_width, bool second_pass /*= false
             tstring url;
             css_stylesheet::parse_css_url(list_image, url);
 
-            size sz;
             const tchar_t* list_image_baseurl =
                 get_style_property(_t("list-style-image-baseurl"), true, nullptr);
-            get_document()->container()->get_image_size(url.c_str(),
-                list_image_baseurl,
-                sz);
+
+            URL list_image_url = resolve(URL(list_image_baseurl), URL(url));
+            size sz = get_document()->container()->get_image_size(list_image_url);
+
             if (min_height < sz.height) {
                 min_height = sz.height;
             }

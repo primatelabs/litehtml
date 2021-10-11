@@ -44,34 +44,34 @@ void el_font::parse_attributes()
 {
     const tchar_t* str = get_attr(_t("color"));
     if (str) {
-        m_style.add_property(_t("color"), str, nullptr, false);
+        m_style.add_property(_t("color"), str, URL(), false);
     }
 
     str = get_attr(_t("face"));
     if (str) {
-        m_style.add_property(_t("font-face"), str, nullptr, false);
+        m_style.add_property(_t("font-face"), str, URL(), false);
     }
 
     str = get_attr(_t("size"));
     if (str) {
         int sz = t_atoi(str);
         if (sz <= 1) {
-            m_style.add_property(_t("font-size"), _t("x-small"), nullptr, false);
+            m_style.add_property(_t("font-size"), _t("x-small"), URL(), false);
         } else if (sz >= 6) {
-            m_style.add_property(_t("font-size"), _t("xx-large"), nullptr, false);
+            m_style.add_property(_t("font-size"), _t("xx-large"), URL(), false);
         } else {
             switch (sz) {
                 case 2:
-                    m_style.add_property(_t("font-size"), _t("small"), nullptr, false);
+                    m_style.add_property(_t("font-size"), _t("small"), URL(), false);
                     break;
                 case 3:
-                    m_style.add_property(_t("font-size"), _t("medium"), nullptr, false);
+                    m_style.add_property(_t("font-size"), _t("medium"), URL(), false);
                     break;
                 case 4:
-                    m_style.add_property(_t("font-size"), _t("large"), nullptr, false);
+                    m_style.add_property(_t("font-size"), _t("large"), URL(), false);
                     break;
                 case 5:
-                    m_style.add_property(_t("font-size"), _t("x-large"), nullptr, false);
+                    m_style.add_property(_t("font-size"), _t("x-large"), URL(), false);
                     break;
             }
         }

@@ -31,7 +31,8 @@
 #define LITEHTML_STYLE_H__
 #include <string>
 
-#include "attributes.h"
+#include "litehtml/attributes.h"
+#include "litehtml/url.h"
 
 namespace litehtml {
 
@@ -85,14 +86,14 @@ public:
         m_properties = val.m_properties;
     }
 
-    void add(const tchar_t* txt, const tchar_t* baseurl)
+    void add(const tchar_t* txt, const URL& baseurl)
     {
         parse(txt, baseurl);
     }
 
     void add_property(const tchar_t* name,
         const tchar_t* val,
-        const tchar_t* baseurl,
+        const URL& baseurl,
         bool important);
 
     const tchar_t* get_property(const tchar_t* name) const
@@ -114,11 +115,11 @@ public:
     }
 
 private:
-    void parse_property(const tstring& txt, const tchar_t* baseurl);
-    void parse(const tchar_t* txt, const tchar_t* baseurl);
+    void parse_property(const tstring& txt, const URL& url);
+    void parse(const tstring& txt, const URL& url);
     void parse_short_border(const tstring& prefix, const tstring& val, bool important);
     void parse_short_background(const tstring& val,
-        const tchar_t* baseurl,
+        const URL& url,
         bool important);
     void parse_short_font(const tstring& val, bool important);
     void add_parsed_property(const tstring& name, const tstring& val, bool important);

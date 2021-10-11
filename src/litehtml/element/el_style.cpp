@@ -49,7 +49,7 @@ void litehtml::el_style::parse_attributes()
     for (auto& el : m_children) {
         el->get_text(text);
     }
-    get_document()->add_stylesheet(text.c_str(), nullptr, get_attr(_t("media")));
+    get_document()->add_stylesheet(text.c_str(), URL(), get_attr(_t("media")));
 }
 
 bool litehtml::el_style::appendChild(const ptr& el)

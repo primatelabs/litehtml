@@ -53,6 +53,6 @@ TEST(CSSStylesheetTest, Parse)
     css_stylesheet s;
     media_query_list::ptr media;
 
-    s.parse_stylesheet(css.c_str(), "", doc, media);
+    s.parse_stylesheet(css.c_str(), URL(), doc, media);
 
 }

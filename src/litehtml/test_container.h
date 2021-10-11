@@ -62,13 +62,14 @@ public:
 
     virtual const litehtml::tchar_t* get_default_font_name() const override;
 
-    virtual void load_image(const litehtml::tchar_t* src,
-        const litehtml::tchar_t* baseurl,
+    virtual void load_image(const litehtml::URL& src,
         bool redraw_on_ready) override;
 
     virtual void get_image_size(const litehtml::tchar_t* src,
         const litehtml::tchar_t* baseurl,
         litehtml::size& sz) override;
+
+    virtual litehtml::size get_image_size(const litehtml::URL& src) override;
 
     virtual void draw_background(litehtml::uint_ptr hdc,
         const litehtml::background_paint& bg) override;
@@ -108,10 +109,7 @@ public:
         const litehtml::tchar_t* basepath,
         litehtml::tstring& out);
 
-
     virtual void set_caption(const litehtml::tchar_t* caption) override;
-
-    virtual void set_base_url(const litehtml::tchar_t* base_url) override;
 
     virtual void on_anchor_click(const litehtml::tchar_t* url,
         const litehtml::element::ptr& el) override;
@@ -121,6 +119,8 @@ public:
     virtual void import_css(litehtml::tstring& text,
         const litehtml::tstring& url,
         litehtml::tstring& baseurl) override;
+
+    virtual litehtml::tstring import_css(const litehtml::URL& url) override;
 
     virtual void get_client_rect(litehtml::position& client) const override;
 };

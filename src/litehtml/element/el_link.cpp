@@ -48,17 +48,17 @@ void litehtml::el_link::parse_attributes()
     bool processed = false;
 
     document::ptr doc = get_document();
+    document_container* ctr = doc->container();
 
     const tchar_t* rel = get_attr(_t("rel"));
     if (rel && !t_strcmp(rel, _t("stylesheet"))) {
         const tchar_t* media = get_attr(_t("media"));
         const tchar_t* href = get_attr(_t("href"));
         if (href && href[0]) {
-            tstring css_text;
-            tstring css_baseurl;
-            doc->container()->import_css(css_text, href, css_baseurl);
+            URL css_url = resolve(doc->base_url(), URL(href));
+            tstring css_text = ctr->import_css(css_url);
             if (!css_text.empty()) {
-                doc->add_stylesheet(css_text.c_str(), css_baseurl.c_str(), media);
+                doc->add_stylesheet(css_text, css_url, media);
                 processed = true;
             }
         }

@@ -81,9 +81,9 @@ int el_image::render(int x, int y, int parent_width, bool /* second_pass */)
     m_pos.move_to(x, y);
 
     document::ptr doc = get_document();
+    document_container* ctr = doc->container();
 
-    size sz;
-    doc->container()->get_image_size(m_src.c_str(), nullptr, sz);
+    size sz = ctr->get_image_size(URL(m_src));
 
     m_pos.width = sz.width;
     m_pos.height = sz.height;
@@ -195,11 +195,11 @@ void el_image::parse_attributes()
 
     const tchar_t* attr_height = get_attr(_t("height"));
     if (attr_height) {
-        m_style.add_property(_t("height"), attr_height, nullptr, false);
+        m_style.add_property(_t("height"), attr_height, URL(), false);
     }
     const tchar_t* attr_width = get_attr(_t("width"));
     if (attr_width) {
-        m_style.add_property(_t("width"), attr_width, nullptr, false);
+        m_style.add_property(_t("width"), attr_width, URL(), false);
     }
 }
 
@@ -269,9 +269,9 @@ void el_image::parse_styles(bool is_reparse /*= false*/)
 
     if (!m_src.empty()) {
         if (!m_css_height.is_predefined() && !m_css_width.is_predefined()) {
-            get_document()->container()->load_image(m_src.c_str(), nullptr, true);
+            get_document()->container()->load_image(URL(m_src), true);
         } else {
-            get_document()->container()->load_image(m_src.c_str(), nullptr, false);
+            get_document()->container()->load_image(URL(m_src), false);
         }
     }
 }

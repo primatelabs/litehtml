@@ -46,7 +46,7 @@ void litehtml::el_para::parse_attributes()
 {
     const tchar_t* str = get_attr(_t("align"));
     if (str) {
-        m_style.add_property(_t("text-align"), str, nullptr, false);
+        m_style.add_property(_t("text-align"), str, URL(), false);
     }
 
     html_tag::parse_attributes();

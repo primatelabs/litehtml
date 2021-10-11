@@ -31,6 +31,7 @@
 #include <string>
 
 #include "headless_container.h"
+#include "http.h"
 #include "litehtml/litehtml.h"
 
 namespace {
@@ -61,19 +62,30 @@ std::string load(const std::string& filename)
 
 int main(int argc, char** argv)
 {
-    std::string html = load(argv[1]);
+    litehtml::URL url(argv[1]);
+
+    http_response response = http_request(url);
+
+    std::cout << response.code << std::endl;
+    std::cout << response.body << std::endl;
 
     litehtml::context ctx;
     ctx.load_master_stylesheet(master_stylesheet);
 
     headless_container container;
-    litehtml::document::ptr doc =
-        litehtml::document::createFromString(html.c_str(), &container, &ctx);
+
+    litehtml::document::ptr doc = litehtml::document::create(
+        response.body,
+        url,
+        &container,
+        &ctx);
 
     doc->render(1000);
 
-    cairo_surface_t* surface =
-        cairo_image_surface_create(CAIRO_FORMAT_RGB24, doc->width(), doc->height());
+    cairo_surface_t* surface = cairo_image_surface_create(
+        CAIRO_FORMAT_RGB24,
+        doc->width(),
+        doc->height());
     cairo_t* cr = cairo_create(surface);
 
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);

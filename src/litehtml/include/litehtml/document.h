@@ -29,10 +29,12 @@
 
 #ifndef LITEHTML_DOCUMENT_H__
 #define LITEHTML_DOCUMENT_H__
+
 #include "litehtml/context.h"
 #include "litehtml/element/element.h"
 #include "litehtml/style.h"
 #include "litehtml/types.h"
+#include "litehtml/url.h"
 #include "litehtml/web_color.h"
 
 namespace litehtml {
@@ -40,17 +42,17 @@ struct css_text {
     typedef std::vector<css_text> vector;
 
     tstring text;
-    tstring baseurl;
+    URL baseurl;
     tstring media;
 
     css_text()
     {
     }
 
-    css_text(const tchar_t* txt, const tchar_t* url, const tchar_t* media_str)
+    css_text(const tstring& txt, const URL& url, const tchar_t* media_str)
+    : text(txt)
+    , baseurl(url)
     {
-        text = txt ? txt : _t("");
-        baseurl = url ? url : _t("");
         media = media_str ? media_str : _t("");
     }
 
@@ -96,8 +98,15 @@ private:
     tstring m_lang;
     tstring m_culture;
 
+    URL base_url_;
+
 public:
     document(litehtml::document_container* objContainer, litehtml::context* ctx);
+
+    document(const URL& base_url,
+        litehtml::document_container* objContainer,
+        litehtml::context* ctx);
+
     virtual ~document();
 
     litehtml::document_container* container()
@@ -120,9 +129,11 @@ public:
     int cvt_units(css_length& val, int fontSize, int size = 0) const;
     int width() const;
     int height() const;
-    void add_stylesheet(const tchar_t* str,
-        const tchar_t* baseurl,
+
+    void add_stylesheet(const tstring& str,
+        const URL& url,
         const tchar_t* media);
+
     bool on_mouse_over(int x,
         int y,
         int client_x,
@@ -154,6 +165,16 @@ public:
         return m_over_element;
     }
 
+    const URL& base_url() const
+    {
+        return base_url_;
+    }
+
+    void base_url(const URL& base_url)
+    {
+        base_url_ = base_url;
+    }
+
     void append_children_from_string(element& parent, const tchar_t* str);
     void append_children_from_utf8(element& parent, const char* str);
 
@@ -161,7 +182,14 @@ public:
         litehtml::document_container* objPainter,
         litehtml::context* ctx,
         litehtml::css_stylesheet* user_styles = nullptr);
+
     static litehtml::document::ptr createFromUTF8(const char* str,
+        litehtml::document_container* objPainter,
+        litehtml::context* ctx,
+        litehtml::css_stylesheet* user_styles = nullptr);
+
+    static ptr create(const std::string& str,
+        const URL& base_url,
         litehtml::document_container* objPainter,
         litehtml::context* ctx,
         litehtml::css_stylesheet* user_styles = nullptr);

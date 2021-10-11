@@ -37,6 +37,7 @@
 #include "litehtml/css/css_selector.h"
 #include "litehtml/debug/json.h"
 #include "litehtml/style.h"
+#include "litehtml/url.h"
 
 namespace litehtml {
 
@@ -61,8 +62,8 @@ public:
         m_selectors.clear();
     }
 
-    void parse_stylesheet(const tchar_t* str,
-        const tchar_t* baseurl,
+    void parse_stylesheet(const tstring& str,
+        const URL& url,
         const std::shared_ptr<document>& doc,
         const media_query_list::ptr& media);
 
@@ -72,7 +73,7 @@ public:
 
 public:
     void parse_atrule(const tstring& text,
-        const tchar_t* baseurl,
+        const URL& url,
         const std::shared_ptr<document>& doc,
         const media_query_list::ptr& media);
 

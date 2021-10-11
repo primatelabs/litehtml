@@ -99,7 +99,7 @@ void el_table::parse_attributes()
 {
     const tchar_t* str = get_attr(_t("width"));
     if (str) {
-        m_style.add_property(_t("width"), str, nullptr, false);
+        m_style.add_property(_t("width"), str, URL(), false);
     }
 
     str = get_attr(_t("align"));
@@ -107,12 +107,12 @@ void el_table::parse_attributes()
         int align = value_index(str, _t("left;center;right"));
         switch (align) {
             case 1:
-                m_style.add_property(_t("margin-left"), _t("auto"), nullptr, false);
-                m_style.add_property(_t("margin-right"), _t("auto"), nullptr, false);
+                m_style.add_property(_t("margin-left"), _t("auto"), URL(), false);
+                m_style.add_property(_t("margin-right"), _t("auto"), URL(), false);
                 break;
             case 2:
-                m_style.add_property(_t("margin-left"), _t("auto"), nullptr, false);
-                m_style.add_property(_t("margin-right"), _t("0"), nullptr, false);
+                m_style.add_property(_t("margin-left"), _t("auto"), URL(), false);
+                m_style.add_property(_t("margin-right"), _t("0"), URL(), false);
                 break;
         }
     }
@@ -122,17 +122,17 @@ void el_table::parse_attributes()
         tstring val = str;
         val += _t(" ");
         val += str;
-        m_style.add_property(_t("border-spacing"), val.c_str(), nullptr, false);
+        m_style.add_property(_t("border-spacing"), val.c_str(), URL(), false);
     }
 
     str = get_attr(_t("border"));
     if (str) {
-        m_style.add_property(_t("border-width"), str, nullptr, false);
+        m_style.add_property(_t("border-width"), str, URL(), false);
     }
 
     str = get_attr(_t("bgcolor"));
     if (str) {
-        m_style.add_property(_t("background-color"), str, nullptr, false);
+        m_style.add_property(_t("background-color"), str, URL(), false);
     }
 
     html_tag::parse_attributes();

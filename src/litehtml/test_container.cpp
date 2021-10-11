@@ -91,8 +91,7 @@ void test_container::draw_list_marker(litehtml::uint_ptr hdc,
 {
 }
 
-void test_container::load_image(const litehtml::tchar_t* src,
-    const litehtml::tchar_t* baseurl,
+void test_container::load_image(const litehtml::URL& src,
     bool redraw_on_ready)
 {
 }
@@ -101,6 +100,11 @@ void test_container::get_image_size(const litehtml::tchar_t* src,
     const litehtml::tchar_t* baseurl,
     litehtml::size& sz)
 {
+}
+
+litehtml::size test_container::get_image_size(const litehtml::URL& src)
+{
+    return litehtml::size();
 }
 
 void test_container::draw_background(litehtml::uint_ptr hdc,
@@ -126,10 +130,6 @@ void test_container::set_caption(const litehtml::tchar_t* caption)
 {
 }
 
-void test_container::set_base_url(const litehtml::tchar_t* base_url)
-{
-}
-
 void test_container::link(const std::shared_ptr<litehtml::document>& ptr,
     const litehtml::element::ptr& el)
 {
@@ -152,6 +152,11 @@ void test_container::import_css(litehtml::tstring& text,
     const litehtml::tstring& url,
     litehtml::tstring& baseurl)
 {
+}
+
+litehtml::tstring test_container::import_css(const litehtml::URL& url)
+{
+    return "";
 }
 
 void test_container::set_clip(const litehtml::position& pos,

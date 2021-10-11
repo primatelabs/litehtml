@@ -35,6 +35,7 @@
 
 #include "litehtml/element/element.h"
 #include "litehtml/list_marker.h"
+#include "litehtml/url.h"
 #include "litehtml/web_color.h"
 
 namespace litehtml {
@@ -71,13 +72,14 @@ public:
     virtual void draw_list_marker(litehtml::uint_ptr hdc,
         const litehtml::list_marker& marker) = 0;
 
-    virtual void load_image(const litehtml::tchar_t* src,
-        const litehtml::tchar_t* baseurl,
+    virtual void load_image(const litehtml::URL& url,
         bool redraw_on_ready) = 0;
 
     virtual void get_image_size(const litehtml::tchar_t* src,
         const litehtml::tchar_t* baseurl,
         litehtml::size& sz) = 0;
+
+    virtual litehtml::size get_image_size(const URL& url) = 0;
 
     virtual void draw_background(litehtml::uint_ptr hdc,
         const litehtml::background_paint& bg) = 0;
@@ -88,8 +90,6 @@ public:
         bool root) = 0;
 
     virtual void set_caption(const litehtml::tchar_t* caption) = 0;
-
-    virtual void set_base_url(const litehtml::tchar_t* base_url) = 0;
 
     virtual void link(const std::shared_ptr<litehtml::document>& doc,
         const litehtml::element::ptr& el) = 0;
@@ -105,6 +105,8 @@ public:
     virtual void import_css(litehtml::tstring& text,
         const litehtml::tstring& url,
         litehtml::tstring& baseurl) = 0;
+
+    virtual tstring import_css(const URL& css_url) = 0;
 
     virtual void set_clip(const litehtml::position& pos,
         const litehtml::border_radiuses& bdr_radius,

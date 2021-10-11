@@ -34,6 +34,7 @@
 #include <cairo.h>
 
 #include "litehtml/litehtml.h"
+#include "litehtml/url.h"
 
 struct cairo_clip_box {
     typedef std::vector<cairo_clip_box> vector;
@@ -105,13 +106,14 @@ public:
 
     virtual const litehtml::tchar_t* get_default_font_name() const override;
 
-    virtual void load_image(const litehtml::tchar_t* src,
-        const litehtml::tchar_t* baseurl,
+    virtual void load_image(const litehtml::URL& url,
         bool redraw_on_ready) override;
 
     virtual void get_image_size(const litehtml::tchar_t* src,
         const litehtml::tchar_t* baseurl,
         litehtml::size& sz) override;
+
+    virtual litehtml::size get_image_size(const litehtml::URL& url) override;
 
     virtual void draw_background(litehtml::uint_ptr hdc,
         const litehtml::background_paint& bg) override;
@@ -136,8 +138,6 @@ public:
 
     virtual void set_caption(const litehtml::tchar_t*) override;
 
-    virtual void set_base_url(const litehtml::tchar_t* base_url) override;
-
     virtual void link(const std::shared_ptr<litehtml::document>& ptr,
         const litehtml::element::ptr& el) override;
 
@@ -153,6 +153,8 @@ public:
         const litehtml::tstring& url,
         litehtml::tstring& baseurl) override;
 
+    virtual litehtml::tstring import_css(const litehtml::URL& url) override;
+
     virtual void set_clip(const litehtml::position& pos,
         const litehtml::border_radiuses& bdr_radius,
         bool valid_x,
@@ -162,11 +164,7 @@ public:
 
     virtual void get_client_rect(litehtml::position& client) const override;
 
-    virtual void make_url(const litehtml::tchar_t* url,
-        const litehtml::tchar_t* basepath,
-        litehtml::tstring& out);
-
-    virtual cairo_surface_t* get_image(const litehtml::tchar_t* url,
+    virtual cairo_surface_t* get_image(const litehtml::URL& url,
         bool redraw_on_ready);
 
 protected:

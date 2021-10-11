@@ -38,8 +38,8 @@
 
 namespace litehtml {
 
-void css_stylesheet::parse_stylesheet(const tchar_t* str,
-    const tchar_t* baseurl,
+void css_stylesheet::parse_stylesheet(const tstring& str,
+    const URL& url,
     const std::shared_ptr<document>& doc,
     const media_query_list::ptr& media)
 {
@@ -62,9 +62,9 @@ void css_stylesheet::parse_stylesheet(const tchar_t* str,
                 pos = find_close_bracket(text, pos, _t('{'), _t('}'));
             }
             if (pos != tstring::npos) {
-                parse_atrule(text.substr(sPos, pos - sPos + 1), baseurl, doc, media);
+                parse_atrule(text.substr(sPos, pos - sPos + 1), url, doc, media);
             } else {
-                parse_atrule(text.substr(sPos), baseurl, doc, media);
+                parse_atrule(text.substr(sPos), url, doc, media);
             }
 
             if (pos != tstring::npos) {
@@ -80,8 +80,7 @@ void css_stylesheet::parse_stylesheet(const tchar_t* str,
         tstring::size_type style_end = text.find(_t("}"), pos);
         if (style_start != tstring::npos && style_end != tstring::npos) {
             style::ptr st = std::make_shared<style>();
-            st->add(text.substr(style_start + 1, style_end - style_start - 1).c_str(),
-                baseurl);
+            st->add(text.substr(style_start + 1, style_end - style_start - 1).c_str(), url);
 
             parse_selectors(text.substr(pos, style_start - pos), st, media);
 
@@ -156,7 +155,7 @@ void css_stylesheet::sort_selectors()
 }
 
 void css_stylesheet::parse_atrule(const tstring& text,
-    const tchar_t* baseurl,
+    const URL& baseurl,
     const std::shared_ptr<document>& doc,
     const media_query_list::ptr& media)
 {
@@ -178,14 +177,10 @@ void css_stylesheet::parse_atrule(const tstring& text,
             }
             tokens.erase(tokens.begin());
             if (doc) {
-                document_container* doc_cont = doc->container();
-                if (doc_cont) {
-                    tstring css_text;
-                    tstring css_baseurl;
-                    if (baseurl) {
-                        css_baseurl = baseurl;
-                    }
-                    doc_cont->import_css(css_text, url, css_baseurl);
+                document_container* ctr = doc->container();
+                if (ctr) {
+                    URL css_url = resolve(baseurl, URL(url));
+                    tstring css_text = ctr->import_css(css_url);
                     if (!css_text.empty()) {
                         media_query_list::ptr new_media = media;
                         if (!tokens.empty()) {
@@ -198,17 +193,14 @@ void css_stylesheet::parse_atrule(const tstring& text,
                                 }
                                 media_str += (*iter);
                             }
-                            new_media =
-                                media_query_list::create_from_string(media_str,
-                                    doc);
+                            new_media = media_query_list::create_from_string(
+                                media_str,
+                                doc);
                             if (!new_media) {
                                 new_media = media;
                             }
                         }
-                        parse_stylesheet(css_text.c_str(),
-                            css_baseurl.c_str(),
-                            doc,
-                            new_media);
+                        parse_stylesheet(css_text, css_url, doc, new_media);
                     }
                 }
             }
@@ -229,7 +221,7 @@ void css_stylesheet::parse_atrule(const tstring& text,
                 media_style = text.substr(b1 + 1);
             }
 
-            parse_stylesheet(media_style.c_str(), baseurl, doc, new_media);
+            parse_stylesheet(media_style, baseurl, doc, new_media);
         }
     }
 }

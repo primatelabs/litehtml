@@ -156,6 +156,15 @@ document::document(document_container* objContainer, context* ctx)
     m_context = ctx;
 }
 
+document::document(const URL& base_url,
+    litehtml::document_container* objContainer,
+    litehtml::context* ctx)
+: m_container(objContainer)
+, m_context(ctx)
+, base_url_(base_url)
+{
+}
+
 document::~document()
 {
     m_over_element = nullptr;
@@ -171,7 +180,7 @@ document::ptr document::createFromString(const tchar_t* str,
     context* ctx,
     css_stylesheet* user_styles)
 {
-    return createFromUTF8(litehtml_to_utf8(str), objPainter, ctx, user_styles);
+    return create(litehtml_to_utf8(str), URL(), objPainter, ctx, user_styles);
 }
 
 document::ptr document::createFromUTF8(const char* str,
@@ -179,11 +188,20 @@ document::ptr document::createFromUTF8(const char* str,
     context* ctx,
     css_stylesheet* user_styles)
 {
+    return create(str, URL(), objPainter, ctx, user_styles);
+}
+
+document::ptr document::create(const std::string& str,
+    const URL& url,
+    document_container* objPainter,
+    context* ctx,
+    css_stylesheet* user_styles)
+{
     // parse document into GumboOutput
-    GumboOutput* output = gumbo_parse((const char*)str);
+    GumboOutput* output = gumbo_parse(str.c_str());
 
     // Create document
-    document::ptr doc = std::make_shared<document>(objPainter, ctx);
+    document::ptr doc = std::make_shared<document>(url, objPainter, ctx);
 
     // Create elements.
     elements_vector root_elements;
@@ -206,6 +224,14 @@ document::ptr document::createFromUTF8(const char* str,
 
         // parse style sheets linked in document
         media_query_list::ptr media;
+        for (auto& css : doc->m_css) {
+            media_query_list::ptr media = nullptr;
+            if (!css.media.empty()) {
+                media = media_query_list::create_from_string(css.media, doc);
+            }
+
+            doc->m_styles.parse_stylesheet(css.text, css.baseurl, doc, media);
+        }
         for (css_text::vector::iterator css = doc->m_css.begin();
              css != doc->m_css.end();
              css++) {
@@ -214,8 +240,8 @@ document::ptr document::createFromUTF8(const char* str,
             } else {
                 media = nullptr;
             }
-            doc->m_styles.parse_stylesheet(css->text.c_str(),
-                css->baseurl.c_str(),
+            doc->m_styles.parse_stylesheet(css->text,
+                css->baseurl,
                 doc,
                 media);
         }
@@ -484,12 +510,12 @@ int document::height() const
     return m_size.height;
 }
 
-void document::add_stylesheet(const tchar_t* str,
-    const tchar_t* baseurl,
+void document::add_stylesheet(const tstring& str,
+    const URL& url,
     const tchar_t* media)
 {
-    if (str && str[0]) {
-        m_css.push_back(css_text(str, baseurl, media));
+    if (!str.empty()) {
+        m_css.push_back(css_text(str, url, media));
     }
 }
 
@@ -865,7 +891,7 @@ void document::fix_table_children(element::ptr& el_ptr,
     auto flush_elements = [&]() {
         element::ptr annon_tag = std::make_shared<html_tag>(shared_from_this());
         style st;
-        st.add_property(_t("display"), disp_str, nullptr, false);
+        st.add_property(_t("display"), disp_str, URL(), false);
         annon_tag->add_style(st);
         annon_tag->parent(el_ptr);
         annon_tag->parse_styles();
@@ -955,7 +981,7 @@ void document::fix_table_parent(element::ptr& el_ptr,
             element::ptr annon_tag =
                 std::make_shared<html_tag>(shared_from_this());
             style st;
-            st.add_property(_t("display"), disp_str, nullptr, false);
+            st.add_property(_t("display"), disp_str, URL(), false);
             annon_tag->add_style(st);
             annon_tag->parent(parent);
             annon_tag->parse_styles();

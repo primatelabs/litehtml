@@ -31,9 +31,14 @@
 #include "headless_container.h"
 
 #define _USE_MATH_DEFINES
+#include <math.h>
+
+#include <iostream>
+
 #include <cairo-ft.h>
 #include <fontconfig/fontconfig.h>
-#include <math.h>
+
+#include "http.h"
 
 namespace {
 
@@ -66,6 +71,16 @@ litehtml::uint_ptr headless_container::create_font(const litehtml::tchar_t* face
 {
     litehtml::string_vector fonts;
     litehtml::split_string(faceName, fonts, ",");
+
+    // TODO: What do we do if the font list is empty?  For now we substitute
+    // in the default font but is that the correct thing to do here?  Does
+    // this indicate an error in the CSS code where fonts were not propagated
+    // correctly?
+    if (fonts.size() == 0) {
+        fonts.push_back(get_default_font_name());
+    }
+
+    // TODO: Why do we only trim the first element of the vector?
     litehtml::trim(fonts[0]);
 
     cairo_font_face_t* fnt = 0;
@@ -294,17 +309,14 @@ void headless_container::draw_list_marker(litehtml::uint_ptr hdc,
     }
 }
 
-void headless_container::load_image(const litehtml::tchar_t* src,
-    const litehtml::tchar_t* baseurl,
+void headless_container::load_image(const litehtml::URL& url,
     bool redraw_on_ready)
 {
-    litehtml::tstring url;
-    make_url(src, baseurl, url);
-    if (m_images.find(url.c_str()) == m_images.end()) {
+    if (m_images.find(url.string()) == m_images.end()) {
         try {
-            cairo_surface_t* img = get_image(url.c_str(), true);
+            cairo_surface_t* img = get_image(url, true);
             if (img) {
-                m_images[url.c_str()] = img;
+                m_images[url.string()] = img;
             }
         } catch (...) {
             int iii = 0;
@@ -317,17 +329,12 @@ void headless_container::get_image_size(const litehtml::tchar_t* src,
     const litehtml::tchar_t* baseurl,
     litehtml::size& sz)
 {
-    litehtml::tstring url;
-    make_url(src, baseurl, url);
+    assert(false);
+}
 
-    images_map::iterator img = m_images.find(url.c_str());
-    if (img != m_images.end()) {
-        sz.width = cairo_image_surface_get_width(img->second);
-        sz.height = cairo_image_surface_get_height(img->second);
-    } else {
-        sz.width = 0;
-        sz.height = 0;
-    }
+litehtml::size headless_container::get_image_size(const litehtml::URL& url)
+{
+    return litehtml::size();
 }
 
 void headless_container::draw_background(litehtml::uint_ptr hdc,
@@ -353,7 +360,8 @@ void headless_container::draw_background(litehtml::uint_ptr hdc,
     }
 
     litehtml::tstring url;
-    make_url(bg.image.c_str(), bg.baseurl.c_str(), url);
+    // TODO: Fix URL
+    // make_url(bg.image.c_str(), bg.baseurl.c_str(), url);
 
     // lock_images_cache();
     images_map::iterator img_i = m_images.find(url.c_str());
@@ -410,13 +418,6 @@ void headless_container::draw_background(litehtml::uint_ptr hdc,
     }
     //	unlock_images_cache();
     cairo_restore(cr);
-}
-
-void headless_container::make_url(const litehtml::tchar_t* url,
-    const litehtml::tchar_t* basepath,
-    litehtml::tstring& out)
-{
-    out = url;
 }
 
 void headless_container::add_path_arc(cairo_t* cr,
@@ -768,6 +769,13 @@ void headless_container::import_css(litehtml::tstring& text,
     const litehtml::tstring& url,
     litehtml::tstring& baseurl)
 {
+    assert(false);
+}
+
+litehtml::tstring headless_container::import_css(const litehtml::URL& url)
+{
+    http_response response = http_request(url);
+    return response.body;
 }
 
 void headless_container::set_clip(const litehtml::position& pos,
@@ -866,7 +874,7 @@ void headless_container::fill_ellipse(cairo_t* cr,
     cairo_restore(cr);
 }
 
-cairo_surface_t* headless_container::get_image(const litehtml::tchar_t* url,
+cairo_surface_t* headless_container::get_image(const litehtml::URL& url,
     bool redraw_on_ready)
 {
     return nullptr;
@@ -959,10 +967,6 @@ void headless_container::get_language(litehtml::tstring& language,
 }
 
 void headless_container::set_caption(const litehtml::tchar_t*)
-{
-}
-
-void headless_container::set_base_url(const litehtml::tchar_t* base_url)
 {
 }
 
