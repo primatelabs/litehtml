@@ -47,8 +47,6 @@ String css_property_string(CSSProperty property)
         default:
             return "unknown";
     }
-
-    return "unknown";
 }
 
 CSSProperty css_property_from_string(const String& name)
@@ -75,8 +73,6 @@ const tchar_t* css_property_default(CSSProperty property)
         default:
             return nullptr;
     }
-
-    return nullptr;
 }
 
 const CSSValue* css_property_default_value(CSSProperty property)
@@ -94,8 +90,6 @@ const CSSValue* css_property_default_value(CSSProperty property)
         default:
             return nullptr;
     }
-
-    return nullptr;
 }
 
 
