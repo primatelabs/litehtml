@@ -44,8 +44,11 @@ String css_property_string(CSSProperty property)
             return "{{property_name}}";
 {{/properties}}
         case kCSSPropertyUnknown:
+        default:
             return "unknown";
     }
+
+    return "unknown";
 }
 
 CSSProperty css_property_from_string(const String& name)
@@ -69,8 +72,11 @@ const tchar_t* css_property_default(CSSProperty property)
             return {{{property_default}}};
 {{/properties}}
         case kCSSPropertyUnknown:
+        default:
             return nullptr;
     }
+
+    return nullptr;
 }
 
 const CSSValue* css_property_default_value(CSSProperty property)
@@ -85,8 +91,11 @@ const CSSValue* css_property_default_value(CSSProperty property)
         }
 {{/properties}}
         case kCSSPropertyUnknown:
+        default:
             return nullptr;
     }
+
+    return nullptr;
 }
 
 
@@ -100,6 +109,7 @@ bool css_property_inherited(CSSProperty property)
             return {{property_inherited}};
 {{/properties}}
         case kCSSPropertyUnknown:
+        default:
             return false;
     }
 }
@@ -114,6 +124,7 @@ CSSValueType css_property_value_type(CSSProperty property)
             return {{property_value_type}};
 {{/properties}}
         case kCSSPropertyUnknown:
+        default:
             return kCSSValueString;
     }
 }
@@ -135,7 +146,8 @@ const KeywordVector& css_property_keywords(CSSProperty property)
             return keywords;
         }
 {{/properties}}
-        case kCSSPropertyUnknown: {
+        case kCSSPropertyUnknown:
+        default: {
             static const KeywordVector keywords;
             return keywords;
         }
