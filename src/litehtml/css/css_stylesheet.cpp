@@ -41,9 +41,9 @@
 namespace litehtml {
 
 void CSSStylesheet::parse(const tstring& str,
-    const URL& url,
-    const Document* doc,
-    const MediaQueryList::ptr& media)
+    const URL&,
+    const Document*,
+    const MediaQueryList::ptr&)
 {
     CSSParser parser(str);
     parser.parse_stylesheet(this);
