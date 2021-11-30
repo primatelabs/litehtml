@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "os_types.h"
+#include "string.h"
 
 namespace litehtml {
 namespace num_cvt {

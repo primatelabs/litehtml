@@ -31,7 +31,7 @@
 #include <gtest/gtest.h>
 
 #include "litehtml/document.h"
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 #include "test_container.h"
 
 using namespace litehtml;

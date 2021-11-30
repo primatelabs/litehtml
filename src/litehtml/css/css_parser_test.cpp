@@ -31,7 +31,7 @@
 #include <gtest/gtest.h>
 
 #include "litehtml/debug/json.h"
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 
 using namespace litehtml;
 

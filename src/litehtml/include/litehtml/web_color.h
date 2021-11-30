@@ -31,7 +31,7 @@
 #ifndef LITEHTML_WEBCOLOR_H__
 #define LITEHTML_WEBCOLOR_H__
 
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 #include "litehtml/types.h"
 
 namespace litehtml {

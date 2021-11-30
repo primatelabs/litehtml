@@ -1,4 +1,5 @@
-// Copyright (C) 2020-2021 Primate Labs Inc.
+// Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,25 +28,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_URL_PATH_H__
-#define LITEHTML_URL_PATH_H__
-
-#include <ostream>
-
 #include "litehtml/string.h"
 
 namespace litehtml {
 
-bool is_url_path_absolute(const tstring& path);
-
-tstring url_path_directory_name(const tstring& path);
-
-tstring url_path_base_name(const tstring& path);
-
-tstring url_path_append(const tstring& base, const tstring& path);
-
-tstring url_path_resolve(const tstring& base, const tstring& path);
-
 } // namespace litehtml
-
-#endif // LITEHTML_URL_PATH_H__

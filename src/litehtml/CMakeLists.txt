@@ -5,7 +5,6 @@ include(CTest)
 enable_testing()
 
 option(ENABLE_JSON "Enable internal data structure serialization to JSON" OFF)
-option(LITEHTML_UTF8 "Build litehtml with UTF-8 text conversion functions." ON)
 option(USE_ICU "Use ICU to locate word boundaries in text elements" OFF)
 
 # Soname
@@ -143,7 +142,7 @@ set(HEADER_LITEHTML
     include/litehtml/media_query_expression.h
     include/litehtml/media_query_list.h
     include/litehtml/num_cvt.h
-    include/litehtml/os_types.h
+    include/litehtml/string.h
     include/litehtml/table.h
     include/litehtml/tstring_view.h
     include/litehtml/types.h
@@ -199,12 +198,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-
-# UTF8
-
-if (LITEHTML_UTF8)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC LITEHTML_UTF8)
-endif()
 
 # ICU
 

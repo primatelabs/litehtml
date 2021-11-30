@@ -33,7 +33,7 @@
 
 #include "litehtml/css/css_length.h"
 #include "litehtml/debug/json.h"
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 #include "litehtml/web_color.h"
 
 namespace litehtml {

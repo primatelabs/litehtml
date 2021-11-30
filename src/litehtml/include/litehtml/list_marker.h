@@ -32,7 +32,7 @@
 #define LITEHTML_LIST_MARKER_H__
 
 #include "litehtml/background.h"
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 #include "litehtml/types.h"
 #include "litehtml/web_color.h"
 

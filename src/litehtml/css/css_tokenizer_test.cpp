@@ -50,26 +50,20 @@ void test(std::vector<CSSTokenizerTestCase>& testcases)
         for (int i = 0; i < testcase.tokens.size(); i++) {
             auto& token = tokens[i];
             auto& reference = testcase.tokens[i];
-#if defined(LITEHTML_UTF8)
             LOG(INFO) << i << " " << css_token_type_string(token->type()) << " "
                       << css_token_type_string(reference.type());
-#endif
             EXPECT_EQ(reference.type(), token->type());
 
             if (reference.type() == kCSSTokenNumber) {
-#if defined(LITEHTML_UTF8)
                 LOG(INFO) << reference.numeric_value().value();
                 LOG(INFO) << token->numeric_value().value();
-#endif
                 EXPECT_EQ(reference.numeric_value().type(),
                     token->numeric_value().type());
                 EXPECT_EQ(reference.numeric_value().value(),
                     token->numeric_value().value());
             } else if (!reference.value().empty()) {
-#if defined(LITEHTML_UTF8)
                 LOG(INFO) << reference.value();
                 LOG(INFO) << token->value();
-#endif
                 EXPECT_EQ(reference.value(), token->value());
             }
         }

@@ -32,7 +32,7 @@
 
 #include <ostream>
 
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 
 // https://datatracker.ietf.org/doc/html/rfc3986
 

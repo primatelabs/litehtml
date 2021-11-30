@@ -43,7 +43,7 @@
 #include "litehtml/borders.h"
 #include "litehtml/element/html_element.h"
 #include "litehtml/media_query.h"
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 #include "litehtml/types.h"
 #include "litehtml/web_color.h"
 

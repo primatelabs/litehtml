@@ -36,7 +36,7 @@
 #include "litehtml/css/css_block.h"
 #include "litehtml/css/css_prelude.h"
 #include "litehtml/debug/json.h"
-#include "litehtml/os_types.h"
+#include "litehtml/string.h"
 
 namespace litehtml {
 
