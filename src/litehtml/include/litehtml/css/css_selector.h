@@ -228,7 +228,7 @@ public:
     CSSSelector::ptr m_left;
     css_combinator m_combinator;
     CSSStyle::ptr m_style;
-    int m_order;
+    size_t m_order;
     MediaQueryList::ptr media_query_list_;
 
 public:
