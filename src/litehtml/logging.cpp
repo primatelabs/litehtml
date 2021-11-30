@@ -60,7 +60,7 @@ int GetMinLogLevel()
     return min_log_level;
 }
 
-LogMessage::LogMessage(const char* file, int line, LogSeverity severity, int ctr)
+LogMessage::LogMessage(const char* file, int line, LogSeverity severity, int)
 : severity_(severity)
 {
     Init(file, line);
