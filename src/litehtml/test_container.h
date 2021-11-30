@@ -38,21 +38,21 @@ public:
 
     virtual ~test_container();
 
-    virtual litehtml::uint_ptr create_font(const litehtml::tchar_t* faceName,
+    virtual uintptr_t create_font(const litehtml::tchar_t* faceName,
         int size,
         int weight,
         litehtml::font_style italic,
         unsigned int decoration,
         litehtml::FontMetrics* fm) override;
 
-    virtual void delete_font(litehtml::uint_ptr hFont) override;
+    virtual void delete_font(uintptr_t hFont) override;
 
     virtual int text_width(const litehtml::tchar_t* text,
-        litehtml::uint_ptr hFont) override;
+        uintptr_t hFont) override;
 
-    virtual void draw_text(litehtml::uint_ptr hdc,
+    virtual void draw_text(uintptr_t hdc,
         const litehtml::tchar_t* text,
-        litehtml::uint_ptr hFont,
+        uintptr_t hFont,
         litehtml::WebColor color,
         const litehtml::Position& pos) override;
 
@@ -71,15 +71,15 @@ public:
 
     virtual litehtml::Size get_image_size(const litehtml::URL& src) override;
 
-    virtual void draw_background(litehtml::uint_ptr hdc,
+    virtual void draw_background(uintptr_t hdc,
         const litehtml::BackgroundPaint& bg) override;
 
-    virtual void draw_borders(litehtml::uint_ptr hdc,
+    virtual void draw_borders(uintptr_t hdc,
         const litehtml::borders& borders,
         const litehtml::Position& draw_pos,
         bool root) override;
 
-    virtual void draw_list_marker(litehtml::uint_ptr hdc,
+    virtual void draw_list_marker(uintptr_t hdc,
         const litehtml::list_marker& marker) override;
 
     virtual void get_media_features(litehtml::MediaFeatures& media) const override;

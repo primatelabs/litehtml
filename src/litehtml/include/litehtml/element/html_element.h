@@ -94,7 +94,7 @@ protected:
     string_vector m_pseudo_classes;
     used_selector::vector m_used_styles;
 
-    uint_ptr font_;
+    uintptr_t font_;
     int font_size_;
     FontMetrics font_metrics_;
 
@@ -199,14 +199,14 @@ public:
     virtual Display get_display() const override;
     virtual Visibility get_visibility() const override;
     virtual void parse_styles(bool is_reparse = false) override;
-    virtual void draw(uint_ptr hdc, int x, int y, const Position* clip) override;
-    virtual void draw_background(uint_ptr hdc, int x, int y, const Position* clip) override;
+    virtual void draw(uintptr_t hdc, int x, int y, const Position* clip) override;
+    virtual void draw_background(uintptr_t hdc, int x, int y, const Position* clip) override;
 
     virtual const tchar_t* get_style_property(CSSProperty name) override;
 
     virtual const CSSValue* get_style_property_value(CSSProperty property) const override;
 
-    virtual uint_ptr get_font(FontMetrics* fm = nullptr) override;
+    virtual uintptr_t get_font(FontMetrics* fm = nullptr) override;
     virtual int get_font_size() const override;
 
     virtual void calc_outlines(int parent_width) override;
@@ -258,14 +258,14 @@ public:
     virtual void add_positioned(const Element::ptr& el) override;
     virtual int find_next_line_top(int top, int width, int def_right) override;
     virtual void apply_vertical_align() override;
-    virtual void draw_children(uint_ptr hdc,
+    virtual void draw_children(uintptr_t hdc,
         int x,
         int y,
         const Position* clip,
         DrawFlag flag,
         int zindex) override;
     virtual int get_zindex() const override;
-    virtual void draw_stacking_context(uint_ptr hdc,
+    virtual void draw_stacking_context(uintptr_t hdc,
         int x,
         int y,
         const Position* clip,
@@ -296,13 +296,13 @@ public:
     virtual const Background* get_background(bool own_only = false) override;
 
 protected:
-    void draw_children_box(uint_ptr hdc,
+    void draw_children_box(uintptr_t hdc,
         int x,
         int y,
         const Position* clip,
         DrawFlag flag,
         int zindex);
-    void draw_children_table(uint_ptr hdc,
+    void draw_children_table(uintptr_t hdc,
         int x,
         int y,
         const Position* clip,
@@ -315,7 +315,7 @@ protected:
     void init_BackgroundPaint(Position pos,
         BackgroundPaint& bg_paint,
         const Background* bg);
-    void draw_list_marker(uint_ptr hdc, const Position& pos);
+    void draw_list_marker(uintptr_t hdc, const Position& pos);
     tstring get_list_marker_text(int index);
     void parse_nth_child_params(tstring param, int& num, int& off);
     void remove_before_after();

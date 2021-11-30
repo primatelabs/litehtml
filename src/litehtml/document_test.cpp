@@ -64,7 +64,7 @@ TEST(DocumentTest, Draw)
     Document* doc =
         Document::createFromString(_t("<html>Body</html>"), &container, &ctx);
     Position pos(0, 0, 100, 100);
-    doc->draw((uint_ptr)0, 0, 0, &pos);
+    doc->draw((uintptr_t)0, 0, 0, &pos);
 }
 
 TEST(DocumentTest, CvtUnits)

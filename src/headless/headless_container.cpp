@@ -153,7 +153,7 @@ HeadlessContainer::~HeadlessContainer()
 {
 }
 
-litehtml::uint_ptr HeadlessContainer::create_font(const litehtml::tchar_t* faceName,
+uintptr_t HeadlessContainer::create_font(const litehtml::tchar_t* faceName,
     int size,
     int weight,
     litehtml::font_style italic,
@@ -193,13 +193,13 @@ litehtml::uint_ptr HeadlessContainer::create_font(const litehtml::tchar_t* faceN
         // Calculate x_height using the width of the lower-case x character in
         // the current font.  It's not clear how litehtml uses this variable
         // but other containers compute this value in the same way.
-        fm->x_height = text_width("x", (uint_ptr)face);
+        fm->x_height = text_width("x", (uintptr_t)face);
     }
 
-    return (uint_ptr)(face);
+    return (uintptr_t)(face);
 }
 
-void HeadlessContainer::delete_font(litehtml::uint_ptr hFont)
+void HeadlessContainer::delete_font(uintptr_t hFont)
 {
     HEADLESS_TRACE1(HeadlessContainer::delete_font, hFont);
 
@@ -208,7 +208,7 @@ void HeadlessContainer::delete_font(litehtml::uint_ptr hFont)
 }
 
 int HeadlessContainer::text_width(const litehtml::tchar_t* text,
-    litehtml::uint_ptr hFont)
+    uintptr_t hFont)
 {
     // Don't bother tracing this function as it's called once per token (where
     // a token is a discrete unit of text like a word).  See also draw_text().
@@ -234,9 +234,9 @@ int HeadlessContainer::text_width(const litehtml::tchar_t* text,
     return width;
 }
 
-void HeadlessContainer::draw_text(litehtml::uint_ptr hdc,
+void HeadlessContainer::draw_text(uintptr_t hdc,
     const litehtml::tchar_t* text,
-    litehtml::uint_ptr hFont,
+    uintptr_t hFont,
     litehtml::WebColor color,
     const litehtml::Position& pos)
 {
@@ -357,7 +357,7 @@ litehtml::Size HeadlessContainer::get_image_size(const litehtml::URL& src)
     return litehtml::Size(iterator->second.width(), iterator->second.height());
 }
 
-void HeadlessContainer::draw_background(litehtml::uint_ptr hdc,
+void HeadlessContainer::draw_background(uintptr_t hdc,
     const litehtml::BackgroundPaint& bg)
 {
     HEADLESS_TRACE1(HeadlessContainer::draw_background, bg.image.string());
@@ -426,7 +426,7 @@ void HeadlessContainer::draw_background(litehtml::uint_ptr hdc,
     }
 }
 
-void HeadlessContainer::draw_borders(litehtml::uint_ptr hdc,
+void HeadlessContainer::draw_borders(uintptr_t hdc,
     const litehtml::borders& borders,
     const litehtml::Position& draw_pos,
     bool root)
@@ -435,7 +435,7 @@ void HeadlessContainer::draw_borders(litehtml::uint_ptr hdc,
     // HEADLESS_TRACE0(HeadlessContainer::draw_borders);
 }
 
-void HeadlessContainer::draw_list_marker(litehtml::uint_ptr hdc,
+void HeadlessContainer::draw_list_marker(uintptr_t hdc,
     const litehtml::list_marker& marker)
 {
     HEADLESS_TRACE0(HeadlessContainer::draw_list_marker);

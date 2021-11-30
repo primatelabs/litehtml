@@ -37,7 +37,7 @@ test_container::~test_container()
 {
 }
 
-litehtml::uint_ptr test_container::create_font(const litehtml::tchar_t* faceName,
+uintptr_t test_container::create_font(const litehtml::tchar_t* faceName,
     int size,
     int weight,
     litehtml::font_style italic,
@@ -50,22 +50,22 @@ litehtml::uint_ptr test_container::create_font(const litehtml::tchar_t* faceName
         fm->height = 10 + 5;
         fm->x_height = 3;
     }
-    return (litehtml::uint_ptr)0;
+    return (uintptr_t)0;
 }
 
-void test_container::delete_font(litehtml::uint_ptr hFont)
+void test_container::delete_font(uintptr_t hFont)
 {
 }
 
 int test_container::text_width(const litehtml::tchar_t* text,
-    litehtml::uint_ptr hFont)
+    uintptr_t hFont)
 {
     return 0;
 }
 
-void test_container::draw_text(litehtml::uint_ptr hdc,
+void test_container::draw_text(uintptr_t hdc,
     const litehtml::tchar_t* text,
-    litehtml::uint_ptr hFont,
+    uintptr_t hFont,
     litehtml::WebColor color,
     const litehtml::Position& pos)
 {
@@ -86,7 +86,7 @@ const litehtml::tchar_t* test_container::get_default_font_name() const
     return _t("Times New Roman");
 }
 
-void test_container::draw_list_marker(litehtml::uint_ptr hdc,
+void test_container::draw_list_marker(uintptr_t hdc,
     const litehtml::list_marker& marker)
 {
 }
@@ -107,12 +107,12 @@ litehtml::Size test_container::get_image_size(const litehtml::URL& src)
     return litehtml::Size();
 }
 
-void test_container::draw_background(litehtml::uint_ptr hdc,
+void test_container::draw_background(uintptr_t hdc,
     const litehtml::BackgroundPaint& bg)
 {
 }
 
-void test_container::draw_borders(litehtml::uint_ptr hdc,
+void test_container::draw_borders(uintptr_t hdc,
     const litehtml::borders& borders,
     const litehtml::Position& draw_pos,
     bool root)

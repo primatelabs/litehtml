@@ -210,7 +210,7 @@ void ImageElement::parse_attributes()
     }
 }
 
-void ImageElement::draw(uint_ptr hdc, int x, int y, const Position* clip)
+void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
 {
     Position pos = position_;
     pos.x += x;

@@ -113,7 +113,7 @@ void TextElement::parse_styles(bool /* is_reparse */)
     }
 
     FontMetrics fm;
-    uint_ptr font = 0;
+    uintptr_t font = 0;
     Element::ptr el_parent = parent();
     if (el_parent) {
         font = el_parent->get_font(&fm);
@@ -139,7 +139,7 @@ int TextElement::get_baseline()
     return 0;
 }
 
-void TextElement::draw(uint_ptr hdc, int x, int y, const Position* clip)
+void TextElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
 {
     if (is_white_space() && !draw_spaces_) {
         return;
@@ -154,7 +154,7 @@ void TextElement::draw(uint_ptr hdc, int x, int y, const Position* clip)
         if (el_parent) {
             Document* doc = get_document();
 
-            uint_ptr font = el_parent->get_font();
+            uintptr_t font = el_parent->get_font();
             WebColor color =
                 el_parent->get_color(kCSSPropertyColor, doc->get_default_color());
             doc->container()->draw_text(hdc,
@@ -175,7 +175,7 @@ int TextElement::line_height() const
     return 0;
 }
 
-uint_ptr TextElement::get_font(FontMetrics* fm /*= 0*/)
+uintptr_t TextElement::get_font(FontMetrics* fm /*= 0*/)
 {
     Element::ptr el_parent = parent();
     if (el_parent) {

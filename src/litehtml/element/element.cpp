@@ -410,7 +410,7 @@ Overflow Element::get_overflow() const
     return kOverflowVisible;
 }
 
-void Element::draw_children(uint_ptr,
+void Element::draw_children(uintptr_t,
     int,
     int,
     const Position*,
@@ -419,7 +419,7 @@ void Element::draw_children(uint_ptr,
 {
 }
 
-void Element::draw_stacking_context(uint_ptr,
+void Element::draw_stacking_context(uintptr_t,
     int,
     int,
     const Position*,
@@ -734,11 +734,11 @@ int Element::line_height() const
     return 0;
 }
 
-void Element::draw(uint_ptr, int, int, const Position*)
+void Element::draw(uintptr_t, int, int, const Position*)
 {
 }
 
-void Element::draw_background(uint_ptr, int, int, const Position*)
+void Element::draw_background(uintptr_t, int, int, const Position*)
 {
 }
 
@@ -752,7 +752,7 @@ const CSSValue* Element::get_style_property_value(CSSProperty) const
     return nullptr;
 }
 
-uint_ptr Element::get_font(FontMetrics*)
+uintptr_t Element::get_font(FontMetrics*)
 {
     return 0;
 }

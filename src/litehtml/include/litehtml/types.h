@@ -216,7 +216,7 @@ struct FontMetrics {
 };
 
 struct FontItem {
-    uint_ptr font;
+    uintptr_t font;
     FontMetrics metrics;
 };
 

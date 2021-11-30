@@ -266,14 +266,14 @@ Document* Document::create(const std::string& str,
     return doc;
 }
 
-uint_ptr Document::add_font(const tchar_t* name,
+uintptr_t Document::add_font(const tchar_t* name,
     int size,
     const tchar_t* weight,
     const tchar_t* style,
     const tchar_t* decoration,
     FontMetrics* fm)
 {
-    uint_ptr ret = 0;
+    uintptr_t ret = 0;
 
     if (!name || (name && !t_strcasecmp(name, _t("inherit")))) {
         name = container_->get_default_font_name();
@@ -352,7 +352,7 @@ uint_ptr Document::add_font(const tchar_t* name,
     return ret;
 }
 
-uint_ptr Document::get_font(const tchar_t* name,
+uintptr_t Document::get_font(const tchar_t* name,
     int size,
     const tchar_t* weight,
     const tchar_t* style,
@@ -412,7 +412,7 @@ int Document::render(int max_width, RenderType rt)
     return ret;
 }
 
-void Document::draw(uint_ptr hdc, int x, int y, const Position* clip)
+void Document::draw(uintptr_t hdc, int x, int y, const Position* clip)
 {
     if (root_) {
         root_->draw(hdc, x, y, clip);

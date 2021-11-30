@@ -371,14 +371,14 @@ public:
     virtual ElementPosition get_element_position(CSSOffsets* offsets = nullptr) const;
     virtual void get_inline_boxes(std::vector<Position>& boxes);
     virtual void parse_styles(bool is_reparse = false);
-    virtual void draw(uint_ptr hdc, int x, int y, const Position* clip);
-    virtual void draw_background(uint_ptr hdc, int x, int y, const Position* clip);
+    virtual void draw(uintptr_t hdc, int x, int y, const Position* clip);
+    virtual void draw_background(uintptr_t hdc, int x, int y, const Position* clip);
 
     virtual const tchar_t* get_style_property(CSSProperty name);
 
     virtual const CSSValue* get_style_property_value(CSSProperty property) const;
 
-    virtual uint_ptr get_font(FontMetrics* fm = nullptr);
+    virtual uintptr_t get_font(FontMetrics* fm = nullptr);
     virtual int get_font_size() const;
     virtual void get_text(tstring& text);
     virtual void parse_attributes();
@@ -414,12 +414,12 @@ public:
     virtual void add_positioned(const ptr& el);
     virtual int find_next_line_top(int top, int width, int def_right);
     virtual int get_zindex() const;
-    virtual void draw_stacking_context(uint_ptr hdc,
+    virtual void draw_stacking_context(uintptr_t hdc,
         int x,
         int y,
         const Position* clip,
         bool with_positioned);
-    virtual void draw_children(uint_ptr hdc,
+    virtual void draw_children(uintptr_t hdc,
         int x,
         int y,
         const Position* clip,

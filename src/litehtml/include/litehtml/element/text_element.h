@@ -61,9 +61,9 @@ public:
 
     virtual void parse_styles(bool is_reparse) override;
     virtual int get_baseline() override;
-    virtual void draw(uint_ptr hdc, int x, int y, const Position* clip) override;
+    virtual void draw(uintptr_t hdc, int x, int y, const Position* clip) override;
     virtual int line_height() const override;
-    virtual uint_ptr get_font(FontMetrics* fm = nullptr) override;
+    virtual uintptr_t get_font(FontMetrics* fm = nullptr) override;
     virtual Display get_display() const override;
     virtual WhiteSpace get_white_space() const override;
     virtual ElementPosition get_element_position(

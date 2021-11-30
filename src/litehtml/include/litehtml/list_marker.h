@@ -45,7 +45,7 @@ struct list_marker {
     WebColor color;
     Position pos;
     int index;
-    uint_ptr font;
+    uintptr_t font;
 };
 
 } // namespace litehtml

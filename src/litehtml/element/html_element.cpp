@@ -251,7 +251,7 @@ void HTMLElement::get_content_size(Size& sz, int max_width)
     }
 }
 
-void HTMLElement::draw(uint_ptr hdc, int x, int y, const Position* clip)
+void HTMLElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
 {
     Position pos = position_;
     pos.x += x;
@@ -284,7 +284,7 @@ void HTMLElement::draw(uint_ptr hdc, int x, int y, const Position* clip)
     }
 }
 
-uint_ptr HTMLElement::get_font(FontMetrics* fm)
+uintptr_t HTMLElement::get_font(FontMetrics* fm)
 {
     if (fm) {
         *fm = font_metrics_;
@@ -1860,7 +1860,7 @@ void HTMLElement::set_tagName(const tchar_t* tag)
     m_tag = s_val;
 }
 
-void HTMLElement::draw_background(uint_ptr hdc, int x, int y, const Position* clip)
+void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* clip)
 {
     Position pos = position_;
     pos.x += x;
@@ -2681,7 +2681,7 @@ Visibility HTMLElement::get_visibility() const
     return m_visibility;
 }
 
-void HTMLElement::draw_list_marker(uint_ptr hdc, const Position& pos)
+void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
 {
     list_marker lm;
 
@@ -2805,7 +2805,7 @@ tstring HTMLElement::get_list_marker_text(int index)
     return _t("");
 }
 
-void HTMLElement::draw_children(uint_ptr hdc,
+void HTMLElement::draw_children(uintptr_t hdc,
     int x,
     int y,
     const Position* clip,
@@ -3062,7 +3062,7 @@ void HTMLElement::render_positioned(RenderType rt)
     }
 }
 
-void HTMLElement::draw_stacking_context(uint_ptr hdc,
+void HTMLElement::draw_stacking_context(uintptr_t hdc,
     int x,
     int y,
     const Position* clip,
@@ -4258,7 +4258,7 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
     return max_table_width;
 }
 
-void HTMLElement::draw_children_box(uint_ptr hdc,
+void HTMLElement::draw_children_box(uintptr_t hdc,
     int x,
     int y,
     const Position* clip,
@@ -4357,7 +4357,7 @@ void HTMLElement::draw_children_box(uint_ptr hdc,
     }
 }
 
-void HTMLElement::draw_children_table(uint_ptr hdc,
+void HTMLElement::draw_children_table(uintptr_t hdc,
     int x,
     int y,
     const Position* clip,

@@ -46,21 +46,21 @@ class DocumentContainer {
 public:
     virtual ~DocumentContainer() = default;
 
-    virtual litehtml::uint_ptr create_font(const litehtml::tchar_t* faceName,
+    virtual uintptr_t create_font(const litehtml::tchar_t* faceName,
         int size,
         int weight,
         litehtml::font_style italic,
         unsigned int decoration,
         litehtml::FontMetrics* fm) = 0;
 
-    virtual void delete_font(litehtml::uint_ptr hFont) = 0;
+    virtual void delete_font(uintptr_t hFont) = 0;
 
     virtual int text_width(const litehtml::tchar_t* text,
-        litehtml::uint_ptr hFont) = 0;
+        uintptr_t hFont) = 0;
 
-    virtual void draw_text(litehtml::uint_ptr hdc,
+    virtual void draw_text(uintptr_t hdc,
         const litehtml::tchar_t* text,
-        litehtml::uint_ptr hFont,
+        uintptr_t hFont,
         litehtml::WebColor color,
         const litehtml::Position& pos) = 0;
 
@@ -70,7 +70,7 @@ public:
 
     virtual const litehtml::tchar_t* get_default_font_name() const = 0;
 
-    virtual void draw_list_marker(litehtml::uint_ptr hdc,
+    virtual void draw_list_marker(uintptr_t hdc,
         const litehtml::list_marker& marker) = 0;
 
     virtual void load_image(const litehtml::URL& url,
@@ -82,10 +82,10 @@ public:
 
     virtual litehtml::Size get_image_size(const URL& url) = 0;
 
-    virtual void draw_background(litehtml::uint_ptr hdc,
+    virtual void draw_background(uintptr_t hdc,
         const litehtml::BackgroundPaint& bg) = 0;
 
-    virtual void draw_borders(litehtml::uint_ptr hdc,
+    virtual void draw_borders(uintptr_t hdc,
         const litehtml::borders& borders,
         const litehtml::Position& draw_pos,
         bool root) = 0;

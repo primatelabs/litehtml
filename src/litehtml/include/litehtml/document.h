@@ -143,7 +143,7 @@ public:
         return stylesheet_;
     }
 
-    uint_ptr get_font(const tchar_t* name,
+    uintptr_t get_font(const tchar_t* name,
         int size,
         const tchar_t* weight,
         const tchar_t* style,
@@ -152,7 +152,7 @@ public:
 
     int render(int max_width, RenderType rt = kRenderAll);
 
-    void draw(uint_ptr hdc, int x, int y, const Position* clip);
+    void draw(uintptr_t hdc, int x, int y, const Position* clip);
 
     WebColor get_default_color()
     {
@@ -232,7 +232,7 @@ public:
         litehtml::CSSStylesheet* user_styles = nullptr);
 
 private:
-    litehtml::uint_ptr add_font(const tchar_t* name,
+    uintptr_t add_font(const tchar_t* name,
         int size,
         const tchar_t* weight,
         const tchar_t* style,

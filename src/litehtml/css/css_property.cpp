@@ -238,6 +238,7 @@ String css_property_string(CSSProperty property)
         case kCSSPropertyZIndex:
             return "z-index";
         case kCSSPropertyUnknown:
+        default:
             return "unknown";
     }
 }
@@ -749,6 +750,7 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyZIndex:
             return nullptr;
         case kCSSPropertyUnknown:
+        default:
             return nullptr;
     }
 }
@@ -1155,6 +1157,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyUnknown:
+        default:
             return nullptr;
     }
 }
@@ -1364,6 +1367,7 @@ bool css_property_inherited(CSSProperty property)
         case kCSSPropertyZIndex:
             return false;
         case kCSSPropertyUnknown:
+        default:
             return false;
     }
 }
@@ -1572,6 +1576,7 @@ CSSValueType css_property_value_type(CSSProperty property)
         case kCSSPropertyZIndex:
             return kCSSValueString;
         case kCSSPropertyUnknown:
+        default:
             return kCSSValueString;
     }
 }
@@ -2236,7 +2241,8 @@ const KeywordVector& css_property_keywords(CSSProperty property)
             };
             return keywords;
         }
-        case kCSSPropertyUnknown: {
+        case kCSSPropertyUnknown:
+        default: {
             static const KeywordVector keywords;
             return keywords;
         }

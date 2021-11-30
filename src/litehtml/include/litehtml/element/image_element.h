@@ -47,7 +47,7 @@ public:
     virtual int render(int x, int y, int max_width, bool second_pass = false) override;
     virtual void parse_attributes() override;
     virtual void parse_styles(bool is_reparse = false) override;
-    virtual void draw(uint_ptr hdc, int x, int y, const Position* clip) override;
+    virtual void draw(uintptr_t hdc, int x, int y, const Position* clip) override;
     virtual void get_content_size(Size& sz, int max_width) override;
 
 private:

@@ -83,12 +83,6 @@ typedef std::stringstream tstringstream;
 
 #endif
 
-#ifdef _WIN64
-typedef unsigned __int64 uint_ptr;
-#else
-typedef unsigned int uint_ptr;
-#endif
-
 #else
 
 #ifndef LITEHTML_UTF8
@@ -97,7 +91,6 @@ typedef unsigned int uint_ptr;
 
 typedef std::string tstring;
 typedef char tchar_t;
-typedef std::uintptr_t uint_ptr;
 typedef std::stringstream tstringstream;
 
 #define _t(quote) quote

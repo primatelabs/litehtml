@@ -97,7 +97,7 @@ int main(int argc, char** argv)
     ras.auto_close(false);
 
 
-    document->draw(reinterpret_cast<litehtml::uint_ptr>(&orc), 0, 0, nullptr);
+    document->draw(reinterpret_cast<uintptr_t>(&orc), 0, 0, nullptr);
     orc.canvas.save<PNGCodec>("headless.png");
 
 #if defined(ENABLE_JSON)
