@@ -214,9 +214,8 @@ Document* Document::create(const std::string& str,
         doc->root_->parse_attributes();
 
         // parse style sheets linked in document
-        MediaQueryList::ptr media;
+        MediaQueryList::ptr media = nullptr;
         for (auto& css : doc->m_css) {
-            MediaQueryList::ptr media = nullptr;
             if (!css.media.empty()) {
                 media = MediaQueryList::create_from_string(css.media, doc);
             }
