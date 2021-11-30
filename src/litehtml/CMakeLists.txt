@@ -5,7 +5,7 @@ include(CTest)
 enable_testing()
 
 option(ENABLE_JSON "Enable internal data structure serialization to JSON" OFF)
-option(LITEHTML_UTF8 "Build litehtml with UTF-8 text conversion functions." OFF)
+option(LITEHTML_UTF8 "Build litehtml with UTF-8 text conversion functions." ON)
 option(USE_ICU "Use ICU to locate word boundaries in text elements" OFF)
 
 # Soname
