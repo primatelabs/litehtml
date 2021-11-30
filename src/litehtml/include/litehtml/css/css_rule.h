@@ -30,6 +30,7 @@
 #ifndef LITEHTML_CSS_RULE_H__
 #define LITEHTML_CSS_RULE_H__
 
+#include <memory>
 #include <vector>
 
 #include "litehtml/css/css_block.h"

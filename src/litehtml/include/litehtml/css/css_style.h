@@ -31,7 +31,10 @@
 #ifndef LITEHTML_STYLE_H__
 #define LITEHTML_STYLE_H__
 
+#include <assert.h>
+
 #include <iostream>
+#include <memory>
 #include <string>
 #include <unordered_map>
 

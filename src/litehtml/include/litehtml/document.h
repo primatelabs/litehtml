@@ -31,6 +31,9 @@
 #ifndef LITEHTML_DOCUMENT_H__
 #define LITEHTML_DOCUMENT_H__
 
+#include <memory>
+#include <vector>
+
 #include "litehtml/context.h"
 #include "litehtml/element/element.h"
 #include "litehtml/css/css_style.h"

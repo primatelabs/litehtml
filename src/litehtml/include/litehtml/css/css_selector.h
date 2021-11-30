@@ -31,6 +31,8 @@
 #ifndef LITEHTML_CSS_SELECTOR_H__
 #define LITEHTML_CSS_SELECTOR_H__
 
+#include <memory>
+
 #include "litehtml/css/css_style.h"
 #include "litehtml/media_query_list.h"
 
