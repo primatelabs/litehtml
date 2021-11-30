@@ -90,7 +90,10 @@ typedef unsigned int uint_ptr;
 #endif
 
 #else
+
+#ifndef LITEHTML_UTF8
 #define LITEHTML_UTF8
+#endif
 
 typedef std::string tstring;
 typedef char tchar_t;
