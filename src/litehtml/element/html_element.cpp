@@ -3249,7 +3249,7 @@ Element::ptr HTMLElement::find_adjacent_sibling(const Element::ptr& el,
     bool apply_pseudo /*= true*/,
     bool* is_pseudo /*= 0*/)
 {
-    Element::ptr ret;
+    Element* ret = nullptr;
     for (auto& e : m_children) {
         if (e->get_display() != kDisplayInlineText) {
             if (e == el) {
@@ -3591,7 +3591,7 @@ Element::ptr HTMLElement::get_element_by_point(int x, int y, int client_x, int c
         return nullptr;
     }
 
-    Element::ptr ret;
+    Element* ret = nullptr;
 
     std::map<int, bool> zindexes;
 
