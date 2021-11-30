@@ -4,9 +4,14 @@ project(headless LANGUAGES C CXX)
 include(CTest)
 enable_testing()
 
+include(FindJPEG)
+
 find_package(PkgConfig)
 pkg_search_module(CAIRO REQUIRED cairo>=1.12.0)
+pkg_search_module(FMT REQUIRED fmt)
 pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
+pkg_search_module(FREETYPE REQUIRED freetype2)
+pkg_search_module(LIBPNG REQUIRED libpng>=1.6.0)
 
 find_library(FOUNDATION Foundation)
 
@@ -17,6 +22,12 @@ set(SOURCE_HEADLESS
     headless_container.cpp
     http_darwin.mm
     http.cpp
+    image/composite.cpp
+    image/convert.cpp
+    image/image.cpp
+    image/jpeg_codec.cpp
+    image/png_codec.cpp
+    orion_render_context.cpp
 )
 
 add_executable(
@@ -28,17 +39,32 @@ add_executable(
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/../litehtml/master.css.inc PROPERTIES GENERATED TRUE)
 
 set_target_properties(${HEADLESS_NAME} PROPERTIES
-    CXX_STANDARD 11
+    CXX_STANDARD 14
     C_STANDARD 99
 )
+
+# target_compile_options(
+#     ${HEADLESS_NAME}
+#     PRIVATE
+#     -fsanitize=address
+# )
+#
+# target_link_options(
+#     ${HEADLESS_NAME}
+#     PRIVATE
+#     -fsanitize=address
+# )
 
 target_include_directories(
     ${HEADLESS_NAME}
     PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../litehtml/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../litehtml
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../third_party/orion/include
     ${CAIRO_INCLUDE_DIRS}
     ${FONTCONFIG_INCLUDE_DIRS}
+    ${JPEG_INCLUDE_DIRS}
 )
 
 target_link_directories(
@@ -46,6 +72,8 @@ target_link_directories(
     PUBLIC
     ${CAIRO_LIBRARY_DIRS}
     ${FONTCONFIG_LIBRARY_DIRS}
+    ${FMT_LIBRARY_DIRS}
+    ${LIBPNG_LIBRARY_DIRS}
 )
 
 target_link_libraries(
@@ -53,5 +81,14 @@ target_link_libraries(
     litehtml
     ${CAIRO_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
+    ${JPEG_LIBRARIES}
+    ${LIBPNG_LIBRARIES}
+    ${FMT_LIBRARIES}
     ${FOUNDATION}
 )
+
+# JSON
+if (ENABLE_JSON)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_JSON)
+    target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/json/include)
+endif()

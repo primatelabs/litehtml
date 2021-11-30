@@ -27,50 +27,16 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "http_darwin.h"
+#include "orion_render_context.h"
 
-#import <Foundation/Foundation.h>
+namespace headless {
 
-#include "http.h"
-
-http_response http_request(const litehtml::URL& url)
+OrionRenderContext::OrionRenderContext(int width, int height)
+: canvas(width, height, kImageFormatRGBA)
 {
-  // TODO: Figure out how to enable ARC using CMake for Objective-C and
-  // Objective-C++ files on macOS.
-  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
-  NSURL* u = [NSURL URLWithString:[NSString stringWithUTF8String:url.string().c_str()]];
-  NSURLRequest* req = [NSURLRequest requestWithURL:u];
-
-  // Send the request to the server.
-
-  NSURLResponse* res = nullptr;
-  NSError* error = nullptr;
-  NSData* data = [NSURLConnection sendSynchronousRequest:req returningResponse:&res error:&error];
-
-  // Parse the response from the server.
-
-  http_response response;
-
-  // Determine the HTTP status code (if available).
-
-  if (res && [res respondsToSelector:@selector(statusCode)]) {
-    response.code = [res statusCode];
-  }
-
-  response.mime_type = [[res MIMEType] UTF8String];
-
-  // Determine if the request returned any data.  If it did, make sure we
-  // didn't receive an HTTP error code (in which case the data is probably the
-  // contents or the error page).  If it didn't, report the error message (if
-  // available).
-
-  if (data) {
-    response.body.append((char*)[data bytes], [data length]);
-  }
-
-  [pool release];
-
-  return response;
+  render_buffer.attach(canvas.data(), canvas.width(), canvas.height(), canvas.stride());
+  pixel_format.attach(render_buffer);
+  render_base.attach(pixel_format);
 }
 
+} // namespace headless

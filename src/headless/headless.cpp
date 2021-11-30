@@ -33,6 +33,12 @@
 #include "headless_container.h"
 #include "http.h"
 #include "litehtml/litehtml.h"
+#include "litehtml/logging.h"
+#include "image/png_codec.h"
+#include "orion_render_context.h"
+
+using namespace headless;
+using namespace litehtml;
 
 namespace {
 
@@ -63,36 +69,40 @@ std::string load(const std::string& filename)
 int main(int argc, char** argv)
 {
     litehtml::URL url(argv[1]);
+    std::string html;
 
-    http_response response = http_request(url);
+    if (url.scheme() == "file") {
+        html = load(url.path());
+    } else {
+        http_response response = http_request(url);
+        html = response.body;
+    }
 
-    std::cout << response.code << std::endl;
-    std::cout << response.body << std::endl;
+    litehtml::Context ctx(master_stylesheet);
 
-    litehtml::context ctx;
-    ctx.load_master_stylesheet(master_stylesheet);
+    HeadlessContainer container;
 
-    headless_container container;
-
-    litehtml::document::ptr doc = litehtml::document::create(
-        response.body,
+    std::unique_ptr<Document> document(Document::create(
+        html,
         url,
         &container,
-        &ctx);
+        &ctx));
 
-    doc->render(1000);
+    document->render(1000);
 
-    cairo_surface_t* surface = cairo_image_surface_create(
-        CAIRO_FORMAT_RGB24,
-        doc->width(),
-        doc->height());
-    cairo_t* cr = cairo_create(surface);
+    OrionRenderContext orc(document->width(), document->height());
 
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_paint(cr);
+    orion::rasterizer_scanline_aa<> ras;
+    orion::scanline_p8 scanline;
+    ras.auto_close(false);
 
-    doc->draw((litehtml::uint_ptr)cr, 0, 0, nullptr);
-    cairo_surface_write_to_png(surface, "headless.png");
+
+    document->draw(reinterpret_cast<litehtml::uint_ptr>(&orc), 0, 0, nullptr);
+    orc.canvas.save<PNGCodec>("headless.png");
+
+#if defined(ENABLE_JSON)
+    LOG(INFO) << document->stylesheet().json();
+#endif
 
     return 0;
 }

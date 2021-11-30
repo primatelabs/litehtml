@@ -27,50 +27,71 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "http_darwin.h"
+#include "image/image.h"
 
-#import <Foundation/Foundation.h>
+#include <string.h>
 
-#include "http.h"
+#include <algorithm>
+#include <fstream>
+#include <iostream>
 
-http_response http_request(const litehtml::URL& url)
+#include "image/jpeg_codec.h"
+#include "image/png_codec.h"
+
+namespace headless {
+
+// Returns the number of channels for the given image format.
+int format_channels(ImageFormat format)
 {
-  // TODO: Figure out how to enable ARC using CMake for Objective-C and
-  // Objective-C++ files on macOS.
-  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
-  NSURL* u = [NSURL URLWithString:[NSString stringWithUTF8String:url.string().c_str()]];
-  NSURLRequest* req = [NSURLRequest requestWithURL:u];
-
-  // Send the request to the server.
-
-  NSURLResponse* res = nullptr;
-  NSError* error = nullptr;
-  NSData* data = [NSURLConnection sendSynchronousRequest:req returningResponse:&res error:&error];
-
-  // Parse the response from the server.
-
-  http_response response;
-
-  // Determine the HTTP status code (if available).
-
-  if (res && [res respondsToSelector:@selector(statusCode)]) {
-    response.code = [res statusCode];
+  switch (format) {
+    case kImageFormatGrayscale:
+      return 1;
+    case kImageFormatGrayscaleAlpha:
+      return 2;
+    case kImageFormatRGB:
+      return 3;
+    case kImageFormatRGBA:
+      return 4;
+    default:
+      return 0;
   }
-
-  response.mime_type = [[res MIMEType] UTF8String];
-
-  // Determine if the request returned any data.  If it did, make sure we
-  // didn't receive an HTTP error code (in which case the data is probably the
-  // contents or the error page).  If it didn't, report the error message (if
-  // available).
-
-  if (data) {
-    response.body.append((char*)[data bytes], [data length]);
-  }
-
-  [pool release];
-
-  return response;
 }
 
+// Returns the image format for the given number of channels.  This function
+// will become problematic once there are multiple image formats with the same
+// number of channels (e.g., if we add support for BGR images).
+ImageFormat channels_format(int channels)
+{
+  switch (channels) {
+    case 1:
+      return kImageFormatGrayscale;
+    case 2:
+      return kImageFormatGrayscaleAlpha;
+    case 3:
+      return kImageFormatRGB;
+    case 4:
+      return kImageFormatRGBA;
+    default:
+      return kImageFormatNone;
+  }
+}
+
+template<>
+uint8_t Image<uint8_t>::maximum() const
+{
+  return 255;
+}
+
+template<>
+uint16_t Image<uint16_t>::maximum() const
+{
+  return 65535;
+}
+
+template <>
+float Image<float>::maximum() const
+{
+  return 1.0f;
+}
+
+} // namespace headless

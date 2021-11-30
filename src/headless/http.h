@@ -36,7 +36,13 @@
 struct http_response
 {
   int code;
+  std::string mime_type;
   std::string body;
+
+  bool success()
+  {
+    return code == 200;
+  }
 };
 
 http_response http_request(const litehtml::URL& url);

@@ -27,50 +27,31 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "http_darwin.h"
+#ifndef HEADLESS_ORION_RENDER_CONTEXT_H__
+#define HEADLESS_ORION_RENDER_CONTEXT_H__
 
-#import <Foundation/Foundation.h>
+#include <orion/pixfmt_rgba.h>
+#include <orion/rasterizer_scanline_aa.h>
+#include <orion/renderer_base.h>
+#include <orion/renderer_scanline.h>
+#include <orion/scanline_p.h>
 
-#include "http.h"
+#include "image/image.h"
 
-http_response http_request(const litehtml::URL& url)
-{
-  // TODO: Figure out how to enable ARC using CMake for Objective-C and
-  // Objective-C++ files on macOS.
-  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+namespace headless {
 
-  NSURL* u = [NSURL URLWithString:[NSString stringWithUTF8String:url.string().c_str()]];
-  NSURLRequest* req = [NSURLRequest requestWithURL:u];
+typedef orion::pixfmt_rgba32 PixelFormat;
+typedef orion::renderer_base<PixelFormat> RendererBaseType;
 
-  // Send the request to the server.
+struct OrionRenderContext {
+  orion::rendering_buffer render_buffer;
+  PixelFormat pixel_format;
+  RendererBaseType render_base;
+  Image<uint8_t> canvas;
 
-  NSURLResponse* res = nullptr;
-  NSError* error = nullptr;
-  NSData* data = [NSURLConnection sendSynchronousRequest:req returningResponse:&res error:&error];
+  OrionRenderContext(int width, int height);
+};
 
-  // Parse the response from the server.
+} // namespace headless
 
-  http_response response;
-
-  // Determine the HTTP status code (if available).
-
-  if (res && [res respondsToSelector:@selector(statusCode)]) {
-    response.code = [res statusCode];
-  }
-
-  response.mime_type = [[res MIMEType] UTF8String];
-
-  // Determine if the request returned any data.  If it did, make sure we
-  // didn't receive an HTTP error code (in which case the data is probably the
-  // contents or the error page).  If it didn't, report the error message (if
-  // available).
-
-  if (data) {
-    response.body.append((char*)[data bytes], [data length]);
-  }
-
-  [pool release];
-
-  return response;
-}
-
+#endif // HEADLESS_HEADLESS_CONTAINER_H__

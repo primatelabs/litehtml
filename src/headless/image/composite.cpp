@@ -27,50 +27,38 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "http_darwin.h"
+#include "image/composite.h"
 
-#import <Foundation/Foundation.h>
+#include "litehtml/logging.h"
 
-#include "http.h"
+namespace headless {
 
-http_response http_request(const litehtml::URL& url)
+void composite(Image<uint8_t>& u, const Image<uint8_t>& v)
 {
-  // TODO: Figure out how to enable ARC using CMake for Objective-C and
-  // Objective-C++ files on macOS.
-  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+  // The other image must have an alpha channel.
+  assert(v.format() == kImageFormatRGBA);
 
-  NSURL* u = [NSURL URLWithString:[NSString stringWithUTF8String:url.string().c_str()]];
-  NSURLRequest* req = [NSURLRequest requestWithURL:u];
+  const int width = std::min(u.width(), v.width());
+  const int height = std::min(u.height(), v.height());
+  const int channels = u.channels();
+  const int other_channels = v.channels();
 
-  // Send the request to the server.
+  for (int y = 0; y < height; y++) {
+    const uint8_t* other_row = v.row(y);
+    uint8_t* this_row = u.row(y);
 
-  NSURLResponse* res = nullptr;
-  NSError* error = nullptr;
-  NSData* data = [NSURLConnection sendSynchronousRequest:req returningResponse:&res error:&error];
+    for (int x = 0; x < width; x++) {
+      unsigned int alpha = other_row[3];
+      unsigned int inverse_alpha = 255 - alpha;
+      for (int c = 0; c < std::min(channels, 3); c++) {
+        unsigned int tmp = (other_row[c] * alpha + this_row[c] * inverse_alpha) / 255;
+        this_row[c] = tmp;
+      }
 
-  // Parse the response from the server.
-
-  http_response response;
-
-  // Determine the HTTP status code (if available).
-
-  if (res && [res respondsToSelector:@selector(statusCode)]) {
-    response.code = [res statusCode];
+      this_row += channels;
+      other_row += other_channels;
+    }
   }
-
-  response.mime_type = [[res MIMEType] UTF8String];
-
-  // Determine if the request returned any data.  If it did, make sure we
-  // didn't receive an HTTP error code (in which case the data is probably the
-  // contents or the error page).  If it didn't, report the error message (if
-  // available).
-
-  if (data) {
-    response.body.append((char*)[data bytes], [data length]);
-  }
-
-  [pool release];
-
-  return response;
 }
 
+} // namespace headless

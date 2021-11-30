@@ -1,4 +1,3 @@
-// Copyright (c) 2013, Yuri Kobets (tordex)
 // Copyright (C) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
@@ -30,956 +29,498 @@
 
 #include "headless_container.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <fstream>
 
-#include <iostream>
-
-#include <cairo-ft.h>
-#include <fontconfig/fontconfig.h>
+#include <fmt/format.h>
 
 #include "http.h"
+#include "image/jpeg_codec.h"
+#include "image/png_codec.h"
+#include "litehtml/logging.h"
+#include "orion_render_context.h"
+
+using namespace litehtml;
+
+#if defined(ENABLE_TRACE)
+
+#define HEADLESS_TRACE0(fn) LOG(INFO) << #fn;
+
+#define HEADLESS_TRACE1(fn, p0) LOG(INFO) << fmt::format("{} {}", #fn, (p0));
+
+#define HEADLESS_TRACE2(fn, p0, p1) \
+    LOG(INFO) << fmt::format("{} {} {}", #fn, (p0), (p1));
+
+#define HEADLESS_TRACE3(fn, p0, p1, p2) \
+    LOG(INFO) << fmt::format("{} {} {} {}", #fn, (p0), (p1), (p2));
+
+#define HEADLESS_TRACE4(fn, p0, p1, p2, p3) \
+    LOG(INFO) << fmt::format("{} {} {} {} {}", #fn, (p0), (p1), (p2), (p3));
+
+#define HEADLESS_TRACE5(fn, p0, p1, p2, p3, p4) \
+    LOG(INFO) << fmt::format("{} {} {} {} {} {}", #fn, (p0), (p1), (p2), (p3), (p4));
+
+#else
+
+#define HEADLESS_TRACE0(fn)
+
+#define HEADLESS_TRACE1(fn, p0)
+
+#define HEADLESS_TRACE2(fn, p0, p1)
+
+#define HEADLESS_TRACE3(fn, p0, p1, p2)
+
+#define HEADLESS_TRACE4(fn, p0, p1, p2, p3)
+
+#define HEADLESS_TRACE5(fn, p0, p1, p2, p3, p4)
+
+#endif
+
+
+namespace headless {
 
 namespace {
 
 constexpr int kDefaultWidth = 1000;
 constexpr int kDefaultHeight = 1000;
-constexpr int kDefaultDPI = 144;
+
+// We cannot use a higher DPI setting until media queries are implemented.
+constexpr int kDefaultDPI = 72;
+
+void draw_bitmap(Image<uint8_t>& canvas, FT_Bitmap* bitmap, WebColor color, FT_Int x, FT_Int y)
+{
+    FT_Int x_max = x + bitmap->width;
+    FT_Int y_max = y + bitmap->rows;
+
+    // For simplicity, assume that `bitmap->pixel_mode` is `FT_PIXEL_MODE_GRAY`
+    // (i.e., not a bitmap font).
+
+    for (FT_Int i = x, p = 0; i < x_max; i++, p++) {
+        for (FT_Int j = y, q = 0; j < y_max; j++, q++) {
+            if (i < 0 || j < 0 || i >= canvas.width() || j >= canvas.height()) {
+                continue;
+            }
+
+            uint8_t* pixel = canvas.pixel(i, j);
+            uint8_t level = bitmap->buffer[q * bitmap->width + p];
+
+            // TODO: Optimize with SIMD?
+            // TODO: Figure out what this actually does -- are we blending here?
+            pixel[0] = ((pixel[0] * (255 - level)) + (level * color.red)) / 255;
+            pixel[1] = ((pixel[1] * (255 - level)) + (level * color.green)) / 255;
+            pixel[2] = ((pixel[2] * (255 - level)) + (level * color.blue)) / 255;
+            pixel[3] = pixel[3];
+        }
+    }
+}
+
+class Path {
+protected:
+  std::vector<int> points_;
+  int offset_;
+
+public:
+  Path(const std::vector<int>& points)
+  : points_(points)
+  {
+  }
+
+  void rewind(int path = 0)
+  {
+    offset_ = 0;
+  }
+
+  unsigned vertex(double* x, double* y)
+  {
+    if (offset_ < points_.size()) {
+      *x = static_cast<double>(points_[offset_++]);
+      *y = static_cast<double>(points_[offset_++]);
+      return (offset_ == 2 ? orion::path_cmd_move_to : orion::path_cmd_line_to);
+    }
+    return orion::path_cmd_stop;
+  }
+};
 
 } // namespace
 
-headless_container::headless_container(void)
+HeadlessContainer::HeadlessContainer()
+: DocumentContainer()
+, dpi_(kDefaultDPI)
 {
-    temporary_surface_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-        kDefaultWidth,
-        kDefaultHeight);
-    temporary_cr_ = cairo_create(temporary_surface_);
+    FT_CALL(FT_Init_FreeType(&library_));
 }
 
-headless_container::~headless_container(void)
+HeadlessContainer::~HeadlessContainer()
 {
-    cairo_destroy(temporary_cr_);
-    cairo_surface_destroy(temporary_surface_);
 }
 
-litehtml::uint_ptr headless_container::create_font(const litehtml::tchar_t* faceName,
+litehtml::uint_ptr HeadlessContainer::create_font(const litehtml::tchar_t* faceName,
     int size,
     int weight,
     litehtml::font_style italic,
     unsigned int decoration,
-    litehtml::font_metrics* fm)
+    litehtml::FontMetrics* fm)
 {
-    litehtml::string_vector fonts;
-    litehtml::split_string(faceName, fonts, ",");
+    HEADLESS_TRACE5(HeadlessContainer::create_font,
+        faceName,
+        size,
+        weight,
+        italic,
+        decoration);
 
-    // TODO: What do we do if the font list is empty?  For now we substitute
-    // in the default font but is that the correct thing to do here?  Does
-    // this indicate an error in the CSS code where fonts were not propagated
-    // correctly?
-    if (fonts.size() == 0) {
-        fonts.push_back(get_default_font_name());
+    // TODO: Is this the correct way to allocate FT_Face structures?
+    FT_Face face = nullptr;
+
+    FT_CALL(FT_New_Face(library_,
+        "Roboto-Regular.ttf",
+        0,
+        &face));
+
+    FT_CALL(FT_Set_Char_Size(face, size * 64, 0, dpi_, 0));
+
+    if (fm) {
+        // Freetype descender is usually negative, while litehtml expects it
+        // to be positive.
+        fm->ascent = face->size->metrics.ascender / 64;
+        fm->descent = abs(face->size->metrics.descender / 64);
+
+        // The height fields should be equal to the sum of the ascent and
+        // descent fields.  During testing it is but we've only tested on a
+        // handful of fonts.  Does litehtml break anywhere if this
+        // relationship doesn't hold?  Other containers compute height using
+        // ascent and descent.
+        fm->height = face->size->metrics.height / 64;
+
+        // Calculate x_height using the width of the lower-case x character in
+        // the current font.  It's not clear how litehtml uses this variable
+        // but other containers compute this value in the same way.
+        fm->x_height = text_width("x", (uint_ptr)face);
     }
 
-    // TODO: Why do we only trim the first element of the vector?
-    litehtml::trim(fonts[0]);
-
-    cairo_font_face_t* fnt = 0;
-
-    FcPattern* pattern = FcPatternCreate();
-    bool found = false;
-    for (litehtml::string_vector::iterator i = fonts.begin(); i != fonts.end();
-         i++) {
-        if (FcPatternAddString(pattern, FC_FAMILY, (unsigned char*)i->c_str())) {
-            found = true;
-            break;
-        }
-    }
-    if (found) {
-        if (italic == litehtml::fontStyleItalic) {
-            FcPatternAddInteger(pattern, FC_SLANT, FC_SLANT_ITALIC);
-        } else {
-            FcPatternAddInteger(pattern, FC_SLANT, FC_SLANT_ROMAN);
-        }
-
-        int fc_weight = FC_WEIGHT_NORMAL;
-        if (weight >= 0 && weight < 150)
-            fc_weight = FC_WEIGHT_THIN;
-        else if (weight >= 150 && weight < 250)
-            fc_weight = FC_WEIGHT_EXTRALIGHT;
-        else if (weight >= 250 && weight < 350)
-            fc_weight = FC_WEIGHT_LIGHT;
-        else if (weight >= 350 && weight < 450)
-            fc_weight = FC_WEIGHT_NORMAL;
-        else if (weight >= 450 && weight < 550)
-            fc_weight = FC_WEIGHT_MEDIUM;
-        else if (weight >= 550 && weight < 650)
-            fc_weight = FC_WEIGHT_SEMIBOLD;
-        else if (weight >= 650 && weight < 750)
-            fc_weight = FC_WEIGHT_BOLD;
-        else if (weight >= 750 && weight < 850)
-            fc_weight = FC_WEIGHT_EXTRABOLD;
-        else if (weight >= 950)
-            fc_weight = FC_WEIGHT_BLACK;
-
-        FcPatternAddInteger(pattern, FC_WEIGHT, fc_weight);
-
-        fnt = cairo_ft_font_face_create_for_pattern(pattern);
-    }
-
-    FcPatternDestroy(pattern);
-
-    cairo_font* ret = 0;
-
-    if (fm && fnt) {
-        cairo_save(temporary_cr_);
-
-        cairo_set_font_face(temporary_cr_, fnt);
-        cairo_set_font_size(temporary_cr_, size);
-        cairo_font_extents_t ext;
-        cairo_font_extents(temporary_cr_, &ext);
-
-        cairo_text_extents_t tex;
-        cairo_text_extents(temporary_cr_, "x", &tex);
-
-        fm->ascent = (int)ext.ascent;
-        fm->descent = (int)ext.descent;
-        fm->height = (int)(ext.ascent + ext.descent);
-        fm->x_height = (int)tex.height;
-
-        cairo_restore(temporary_cr_);
-
-        ret = new cairo_font;
-        ret->font = fnt;
-        ret->size = size;
-        ret->strikeout =
-            (decoration & litehtml::font_decoration_linethrough) ? true : false;
-        ret->underline =
-            (decoration & litehtml::font_decoration_underline) ? true : false;
-    }
-
-    return (litehtml::uint_ptr)ret;
+    return (uint_ptr)(face);
 }
 
-void headless_container::delete_font(litehtml::uint_ptr hFont)
+void HeadlessContainer::delete_font(litehtml::uint_ptr hFont)
 {
-    cairo_font* fnt = (cairo_font*)hFont;
-    if (fnt) {
-        cairo_font_face_destroy(fnt->font);
-        delete fnt;
-    }
+    HEADLESS_TRACE1(HeadlessContainer::delete_font, hFont);
+
+    FT_Face face = (FT_Face)(hFont);
+    FT_CALL(FT_Done_Face(face));
 }
 
-int headless_container::text_width(const litehtml::tchar_t* text,
+int HeadlessContainer::text_width(const litehtml::tchar_t* text,
     litehtml::uint_ptr hFont)
 {
-    cairo_font* fnt = (cairo_font*)hFont;
+    // Don't bother tracing this function as it's called once per token (where
+    // a token is a discrete unit of text like a word).  See also draw_text().
+    //
+    // That said, it can be useful to enable this function to see how litehtml
+    // is tokenizing the text on the page.
+    //
+    // HEADLESS_TRACE1(HeadlessContainer::text_width, text);
 
-    cairo_save(temporary_cr_);
+    FT_Face face = (FT_Face)(hFont);
+    FT_GlyphSlot glyph = face->glyph;
+    int width = 0;
 
-    cairo_set_font_size(temporary_cr_, fnt->size);
-    cairo_set_font_face(temporary_cr_, fnt->font);
-    cairo_text_extents_t ext;
-    cairo_text_extents(temporary_cr_, text, &ext);
+    for (int i = 0; i < strlen(text); i++) {
+        FT_CALL(FT_Load_Char(face, text[i], FT_LOAD_DEFAULT));
+        width += glyph->advance.x;
+    }
 
-    cairo_restore(temporary_cr_);
+    // Convert from fractional pixels to whole pixels.
+    // TODO: Should we round the result rather than truncating the result?
+    width = width / 64;
 
-    return (int)ext.x_advance;
+    return width;
 }
 
-void headless_container::draw_text(litehtml::uint_ptr hdc,
+void HeadlessContainer::draw_text(litehtml::uint_ptr hdc,
     const litehtml::tchar_t* text,
     litehtml::uint_ptr hFont,
-    litehtml::web_color color,
-    const litehtml::position& pos)
+    litehtml::WebColor color,
+    const litehtml::Position& pos)
 {
-    cairo_font* fnt = (cairo_font*)hFont;
-    cairo_t* cr = (cairo_t*)hdc;
-    cairo_save(cr);
+    // Don't bother tracing this function as it's called once per token (where
+    // a token is a discrete unit of text like a word).  See also text_width().
+    //
+    // That said, it can be useful to enable this function to see how litehtml
+    // is tokenizing the text on the page.
+    //
+    // HEADLESS_TRACE1(HeadlessContainer::draw_text, text);
 
-    apply_clip(cr);
+    OrionRenderContext* orc = reinterpret_cast<OrionRenderContext*>(hdc);
+    Image<uint8_t>& canvas = orc->canvas;
 
-    cairo_set_font_face(cr, fnt->font);
-    cairo_set_font_size(cr, fnt->size);
-    cairo_font_extents_t ext;
-    cairo_font_extents(cr, &ext);
+    FT_Face face = (FT_Face)(hFont);
+    FT_GlyphSlot glyph = face->glyph;
 
-    int x = pos.left();
-    int y = pos.bottom() - ext.descent;
+    // TODO: Should we round the result rather than truncating the result?
+    int target_height = face->size->metrics.height / 64;
 
-    set_color(cr, color);
+    FT_Vector pen;
+    pen.x = pos.x * 64;
+    pen.y = -pos.y * 64;
 
-    cairo_move_to(cr, x, y);
-    cairo_show_text(cr, text);
+    // pos.x and pos.y represent the upper left corner where the text should render
 
-    int tw = 0;
+    // TODO: UNICODE
+    for (int i = 0; i < strlen(text); i++) {
+        char c = text[i];
 
-    if (fnt->underline || fnt->strikeout) {
-        tw = text_width(text, hFont);
+        // Stop rendering text if the pen falls outside the image bounds.
+        // Otherwise FreeType may return a "raster overflow" error.  Given
+        // that the FreeType documentation doesn't provide guidance on how to
+        // deal with this error it's easiest to just avoid it all together.
+        if (abs(pen.x) >= (canvas.width() * 64) || abs(pen.y) >= (canvas.height() * 64)) {
+            break;
+        }
+
+        FT_Set_Transform(face, nullptr, &pen);
+        FT_CALL(FT_Load_Char(face, c, FT_LOAD_RENDER));
+
+        // target_height - glyph->bitmap_top effectively move the pen from the top
+        // of the line to the bottom of the line then backtrack to where the glyph starts.
+
+        draw_bitmap(canvas,
+            &glyph->bitmap,
+            color,
+            glyph->bitmap_left,
+            target_height - glyph->bitmap_top);
+
+        pen.x += glyph->advance.x;
+        pen.y += glyph->advance.y;
     }
-
-    if (fnt->underline) {
-        cairo_set_line_width(cr, 1);
-        cairo_move_to(cr, x, y + 1.5);
-        cairo_line_to(cr, x + tw, y + 1.5);
-        cairo_stroke(cr);
-    }
-    if (fnt->strikeout) {
-        cairo_text_extents_t tex;
-        cairo_text_extents(cr, "x", &tex);
-
-        int ln_y = y - tex.height / 2.0;
-
-        cairo_set_line_width(cr, 1);
-        cairo_move_to(cr, x, (double)ln_y - 0.5);
-        cairo_line_to(cr, x + tw, (double)ln_y - 0.5);
-        cairo_stroke(cr);
-    }
-
-    cairo_restore(cr);
 }
 
-int headless_container::pt_to_px(int pt)
+
+int HeadlessContainer::pt_to_px(int pt)
 {
-    return (int)((double)pt * kDefaultDPI / 72.0);
+    return (int)((double)pt * dpi_ / 72.0);
 }
 
-int headless_container::get_default_font_size() const
+int HeadlessContainer::get_default_font_size() const
 {
     return 16;
 }
 
-void headless_container::draw_list_marker(litehtml::uint_ptr hdc,
-    const litehtml::list_marker& marker)
+const litehtml::tchar_t* HeadlessContainer::get_default_font_name() const
 {
-    if (!marker.image.empty()) {
-        /*litehtml::tstring url;
-        make_url(marker.image.c_str(), marker.baseurl, url);
+    return "Roboto";
+}
 
-        lock_images_cache();
-        images_map::iterator img_i = m_images.find(url.c_str());
-        if(img_i != m_images.end())
-        {
-                if(img_i->second)
-                {
-                        draw_txdib((cairo_t*) hdc, img_i->second, marker.pos.x,
-        marker.pos.y, marker.pos.width, marker.pos.height);
-                }
-        }
-        unlock_images_cache();*/
-    } else {
-        switch (marker.marker_type) {
-            case litehtml::list_style_type_circle: {
-                draw_ellipse((cairo_t*)hdc,
-                    marker.pos.x,
-                    marker.pos.y,
-                    marker.pos.width,
-                    marker.pos.height,
-                    marker.color,
-                    0.5);
-            } break;
-            case litehtml::list_style_type_disc: {
-                fill_ellipse((cairo_t*)hdc,
-                    marker.pos.x,
-                    marker.pos.y,
-                    marker.pos.width,
-                    marker.pos.height,
-                    marker.color);
-            } break;
-            case litehtml::list_style_type_square:
-                if (hdc) {
-                    cairo_t* cr = (cairo_t*)hdc;
-                    cairo_save(cr);
+void HeadlessContainer::load_image(const litehtml::URL& src, bool redraw_on_ready)
+{
+    HEADLESS_TRACE1(HeadlessContainer::load_image, src.string());
 
-                    cairo_new_path(cr);
-                    cairo_rectangle(cr,
-                        marker.pos.x,
-                        marker.pos.y,
-                        marker.pos.width,
-                        marker.pos.height);
+    std::string key = src.string();
+    auto iterator = image_cache_.find(key);
+    if (iterator != image_cache_.end()) {
+        return;
+    }
 
-                    set_color(cr, marker.color);
-                    cairo_fill(cr);
-                    cairo_restore(cr);
-                }
-                break;
-            default:
-                /*do nothing*/
-                break;
+    http_response response = http_request(src);
+
+    if (response.success()) {
+
+        // TODO: Find a way to log responses to disk for further inspection
+        // if necessary (e.g., to find out why our Image classes cannot decode
+        // certain images).
+
+        if (response.mime_type == "image/png") {
+            image_cache_[key] = PNGCodec::decompress((uint8_t*)response.body.data(), response.body.length(), kImageFormatRGBA);
+        } else if (response.mime_type == "image/jpeg") {
+            image_cache_[key] = JPEGCodec::decompress((uint8_t*)response.body.data(), response.body.length(), kImageFormatRGBA);
+        } else {
+            image_cache_[key] = Image<uint8_t>(16, 16, kImageFormatRGBA);
         }
     }
 }
 
-void headless_container::load_image(const litehtml::URL& url,
-    bool redraw_on_ready)
-{
-    if (m_images.find(url.string()) == m_images.end()) {
-        try {
-            cairo_surface_t* img = get_image(url, true);
-            if (img) {
-                m_images[url.string()] = img;
-            }
-        } catch (...) {
-            int iii = 0;
-            iii++;
-        }
-    }
-}
-
-void headless_container::get_image_size(const litehtml::tchar_t* src,
+void HeadlessContainer::get_image_size(const litehtml::tchar_t* src,
     const litehtml::tchar_t* baseurl,
-    litehtml::size& sz)
+    litehtml::Size& sz)
 {
+    HEADLESS_TRACE0(HeadlessContainer::get_image_size)
     assert(false);
 }
 
-litehtml::size headless_container::get_image_size(const litehtml::URL& url)
+litehtml::Size HeadlessContainer::get_image_size(const litehtml::URL& src)
 {
-    return litehtml::size();
-}
+    HEADLESS_TRACE1(HeadlessContainer::get_image_size, src.string());
 
-void headless_container::draw_background(litehtml::uint_ptr hdc,
-    const litehtml::background_paint& bg)
-{
-    cairo_t* cr = (cairo_t*)hdc;
-    cairo_save(cr);
-    apply_clip(cr);
-
-    rounded_rectangle(cr, bg.border_box, bg.border_radius);
-    cairo_clip(cr);
-
-    cairo_rectangle(cr,
-        bg.clip_box.x,
-        bg.clip_box.y,
-        bg.clip_box.width,
-        bg.clip_box.height);
-    cairo_clip(cr);
-
-    if (bg.color.alpha) {
-        set_color(cr, bg.color);
-        cairo_paint(cr);
+    std::string key = src.string();
+    auto iterator = image_cache_.find(key);
+    if (iterator == image_cache_.end()) {
+        return litehtml::Size();
     }
 
-    litehtml::tstring url;
-    // TODO: Fix URL
-    // make_url(bg.image.c_str(), bg.baseurl.c_str(), url);
+    return litehtml::Size(iterator->second.width(), iterator->second.height());
+}
 
-    // lock_images_cache();
-    images_map::iterator img_i = m_images.find(url.c_str());
-    if (img_i != m_images.end() && img_i->second) {
-        // Glib::RefPtr<Gdk::Pixbuf> bgbmp = img_i->second;
+void HeadlessContainer::draw_background(litehtml::uint_ptr hdc,
+    const litehtml::BackgroundPaint& bg)
+{
+    HEADLESS_TRACE1(HeadlessContainer::draw_background, bg.image.string());
 
-        // Glib::RefPtr<Gdk::Pixbuf> new_img;
-        // if(bg.image_size.width != bgbmp->get_width() || bg.image_size.height
-        // != bgbmp->get_height())
-        //{
-        //	new_img = bgbmp->scale_simple(bg.image_size.width,
-        // bg.image_size.height, Gdk::INTERP_BILINEAR);
-        //	bgbmp = new_img;
-        //}
+    OrionRenderContext* orc = reinterpret_cast<OrionRenderContext*>(hdc);
+    Image<uint8_t>& canvas = orc->canvas;
 
-        cairo_surface_t* img = img_i->second;
-        cairo_pattern_t* pattern = cairo_pattern_create_for_surface(img);
-        cairo_matrix_t flib_m;
-        cairo_matrix_init_identity(&flib_m);
-        cairo_matrix_translate(&flib_m, -bg.position_x, -bg.position_y);
-        cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
-        cairo_pattern_set_matrix(pattern, &flib_m);
+    orion::rasterizer_scanline_aa<> ras;
+    orion::scanline_p8 scanline;
 
-        switch (bg.repeat) {
-            case litehtml::background_repeat_no_repeat:
-                // draw_pixbuf(cr, bgbmp, bg.position_x, bg.position_y,
-                //  bgbmp->get_width(), bgbmp->get_height());
-                break;
+    ras.auto_close(false);
 
-            case litehtml::background_repeat_repeat_x:
-                // cairo_set_source(cr, pattern);
-                // cairo_rectangle(cr, bg.clip_box.left(), bg.position_y,
-                //  bg.clip_box.width, bgbmp->get_height());
-                cairo_fill(cr);
-                break;
+    // Draw the background.
+    {
+      Path path({
+        // clang-format off
+        bg.clip_box.x,                     bg.clip_box.y,
+        bg.clip_box.x + bg.clip_box.width, bg.clip_box.y,
+        bg.clip_box.x + bg.clip_box.width, bg.clip_box.y + bg.clip_box.height,
+        bg.clip_box.x,                     bg.clip_box.y + bg.clip_box.height,
+        bg.clip_box.x,                     bg.clip_box.y,
+        // clang-format on
+      });
 
-            case litehtml::background_repeat_repeat_y:
-                // cairo_set_source(cr, pattern);
-                // cairo_rectangle(cr, bg.position_x, bg.clip_box.top(),
-                //  bgbmp->get_width(), bg.clip_box.height);
-                // cairo_fill(cr);
-                break;
+      ras.reset();
+      ras.add_path(path);
 
-            case litehtml::background_repeat_repeat:
-                // cairo_set_source(cr, pattern);
-                // cairo_rectangle(cr, bg.clip_box.left(), bg.clip_box.top(),
-                //  bg.clip_box.width, bg.clip_box.height);
-                // cairo_fill(cr);
-                break;
+      const orion::rgba8 color(bg.color.red, bg.color.green, bg.color.blue, bg.color.alpha);
+      orion::render_scanlines_aa_solid(ras, scanline, orc->render_base, color);
+    }
+
+    if (bg.image.empty()) {
+        return;
+    }
+
+    std::string key = bg.image.string();
+    auto iterator = image_cache_.find(key);
+    if (iterator == image_cache_.end()) {
+        // TODO: Return a "broken image" placeholder (as other browsers do).
+        return;
+    }
+
+    // TODO: Check that all of the images are RGBA images.
+    // TODO: Use composite() here to draw the background image.
+    constexpr int channels = 4;
+
+    Image<uint8_t>& image = iterator->second;
+
+    // It's not clear how we should use the current clip_box variable when
+    // rendering the image.  For example, sometimes the background position
+    // variables (i.e., position_x and position_y) appear to be relative to
+    // clip_box.  Other times they appear to be absolute.  Other container
+    // implementations do not provide much guidance.
+
+    // For now assume the positions are absolute, not relative, as that seems
+    // to work well for most web pages.
+
+    for (int y = 0; y < image.height(); y++) {
+        const uint8_t* src_row = image.row(y);
+        uint8_t* dst_row = canvas.row(y + bg.position_y) + (bg.position_x) * channels;
+        for (int x = 0; x < image.width(); x++) {
+            for (int c = 0; c < channels; c++) {
+                *dst_row++ = *src_row++;
+            }
         }
-
-        cairo_pattern_destroy(pattern);
-        cairo_surface_destroy(img);
-    }
-    //	unlock_images_cache();
-    cairo_restore(cr);
-}
-
-void headless_container::add_path_arc(cairo_t* cr,
-    double x,
-    double y,
-    double rx,
-    double ry,
-    double a1,
-    double a2,
-    bool neg)
-{
-    if (rx > 0 && ry > 0) {
-        cairo_save(cr);
-
-        cairo_translate(cr, x, y);
-        cairo_scale(cr, 1, ry / rx);
-        cairo_translate(cr, -x, -y);
-
-        if (neg) {
-            cairo_arc_negative(cr, x, y, rx, a1, a2);
-        } else {
-            cairo_arc(cr, x, y, rx, a1, a2);
-        }
-
-        cairo_restore(cr);
-    } else {
-        cairo_move_to(cr, x, y);
     }
 }
 
-void headless_container::draw_borders(litehtml::uint_ptr hdc,
+void HeadlessContainer::draw_borders(litehtml::uint_ptr hdc,
     const litehtml::borders& borders,
-    const litehtml::position& draw_pos,
+    const litehtml::Position& draw_pos,
     bool root)
 {
-    cairo_t* cr = (cairo_t*)hdc;
-    cairo_save(cr);
-    apply_clip(cr);
-
-    cairo_new_path(cr);
-
-    int bdr_top = 0;
-    int bdr_bottom = 0;
-    int bdr_left = 0;
-    int bdr_right = 0;
-
-    if (borders.top.width != 0 &&
-        borders.top.style > litehtml::border_style_hidden) {
-        bdr_top = (int)borders.top.width;
-    }
-    if (borders.bottom.width != 0 &&
-        borders.bottom.style > litehtml::border_style_hidden) {
-        bdr_bottom = (int)borders.bottom.width;
-    }
-    if (borders.left.width != 0 &&
-        borders.left.style > litehtml::border_style_hidden) {
-        bdr_left = (int)borders.left.width;
-    }
-    if (borders.right.width != 0 &&
-        borders.right.style > litehtml::border_style_hidden) {
-        bdr_right = (int)borders.right.width;
-    }
-
-    // draw right border
-    if (bdr_right) {
-        set_color(cr, borders.right.color);
-
-        double r_top = borders.radius.top_right_x;
-        double r_bottom = borders.radius.bottom_right_x;
-
-        if (r_top) {
-            double end_angle = 2 * M_PI;
-            double start_angle =
-                end_angle - M_PI / 2.0 / ((double)bdr_top / (double)bdr_right + 1);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_top,
-                draw_pos.top() + r_top,
-                r_top - bdr_right,
-                r_top - bdr_right + (bdr_right - bdr_top),
-                end_angle,
-                start_angle,
-                true);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_top,
-                draw_pos.top() + r_top,
-                r_top,
-                r_top,
-                start_angle,
-                end_angle,
-                false);
-        } else {
-            cairo_move_to(cr, draw_pos.right() - bdr_right, draw_pos.top() + bdr_top);
-            cairo_line_to(cr, draw_pos.right(), draw_pos.top());
-        }
-
-        if (r_bottom) {
-            cairo_line_to(cr, draw_pos.right(), draw_pos.bottom() - r_bottom);
-
-            double start_angle = 0;
-            double end_angle =
-                start_angle +
-                M_PI / 2.0 / ((double)bdr_bottom / (double)bdr_right + 1);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_bottom,
-                draw_pos.bottom() - r_bottom,
-                r_bottom,
-                r_bottom,
-                start_angle,
-                end_angle,
-                false);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_bottom,
-                draw_pos.bottom() - r_bottom,
-                r_bottom - bdr_right,
-                r_bottom - bdr_right + (bdr_right - bdr_bottom),
-                end_angle,
-                start_angle,
-                true);
-        } else {
-            cairo_line_to(cr, draw_pos.right(), draw_pos.bottom());
-            cairo_line_to(cr,
-                draw_pos.right() - bdr_right,
-                draw_pos.bottom() - bdr_bottom);
-        }
-
-        cairo_fill(cr);
-    }
-
-    // draw bottom border
-    if (bdr_bottom) {
-        set_color(cr, borders.bottom.color);
-
-        double r_left = borders.radius.bottom_left_x;
-        double r_right = borders.radius.bottom_right_x;
-
-        if (r_left) {
-            double start_angle = M_PI / 2.0;
-            double end_angle =
-                start_angle +
-                M_PI / 2.0 / ((double)bdr_left / (double)bdr_bottom + 1);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_left,
-                draw_pos.bottom() - r_left,
-                r_left - bdr_bottom + (bdr_bottom - bdr_left),
-                r_left - bdr_bottom,
-                start_angle,
-                end_angle,
-                false);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_left,
-                draw_pos.bottom() - r_left,
-                r_left,
-                r_left,
-                end_angle,
-                start_angle,
-                true);
-        } else {
-            cairo_move_to(cr, draw_pos.left(), draw_pos.bottom());
-            cairo_line_to(cr,
-                draw_pos.left() + bdr_left,
-                draw_pos.bottom() - bdr_bottom);
-        }
-
-        if (r_right) {
-            cairo_line_to(cr, draw_pos.right() - r_right, draw_pos.bottom());
-
-            double end_angle = M_PI / 2.0;
-            double start_angle =
-                end_angle -
-                M_PI / 2.0 / ((double)bdr_right / (double)bdr_bottom + 1);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_right,
-                draw_pos.bottom() - r_right,
-                r_right,
-                r_right,
-                end_angle,
-                start_angle,
-                true);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_right,
-                draw_pos.bottom() - r_right,
-                r_right - bdr_bottom + (bdr_bottom - bdr_right),
-                r_right - bdr_bottom,
-                start_angle,
-                end_angle,
-                false);
-        } else {
-            cairo_line_to(cr,
-                draw_pos.right() - bdr_right,
-                draw_pos.bottom() - bdr_bottom);
-            cairo_line_to(cr, draw_pos.right(), draw_pos.bottom());
-        }
-
-        cairo_fill(cr);
-    }
-
-    // draw top border
-    if (bdr_top) {
-        set_color(cr, borders.top.color);
-
-        double r_left = borders.radius.top_left_x;
-        double r_right = borders.radius.top_right_x;
-
-        if (r_left) {
-            double end_angle = M_PI * 3.0 / 2.0;
-            double start_angle =
-                end_angle - M_PI / 2.0 / ((double)bdr_left / (double)bdr_top + 1);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_left,
-                draw_pos.top() + r_left,
-                r_left,
-                r_left,
-                end_angle,
-                start_angle,
-                true);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_left,
-                draw_pos.top() + r_left,
-                r_left - bdr_top + (bdr_top - bdr_left),
-                r_left - bdr_top,
-                start_angle,
-                end_angle,
-                false);
-        } else {
-            cairo_move_to(cr, draw_pos.left(), draw_pos.top());
-            cairo_line_to(cr, draw_pos.left() + bdr_left, draw_pos.top() + bdr_top);
-        }
-
-        if (r_right) {
-            cairo_line_to(cr, draw_pos.right() - r_right, draw_pos.top() + bdr_top);
-
-            double start_angle = M_PI * 3.0 / 2.0;
-            double end_angle =
-                start_angle +
-                M_PI / 2.0 / ((double)bdr_right / (double)bdr_top + 1);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_right,
-                draw_pos.top() + r_right,
-                r_right - bdr_top + (bdr_top - bdr_right),
-                r_right - bdr_top,
-                start_angle,
-                end_angle,
-                false);
-
-            add_path_arc(cr,
-                draw_pos.right() - r_right,
-                draw_pos.top() + r_right,
-                r_right,
-                r_right,
-                end_angle,
-                start_angle,
-                true);
-        } else {
-            cairo_line_to(cr, draw_pos.right() - bdr_right, draw_pos.top() + bdr_top);
-            cairo_line_to(cr, draw_pos.right(), draw_pos.top());
-        }
-
-        cairo_fill(cr);
-    }
-
-    // draw left border
-    if (bdr_left) {
-        set_color(cr, borders.left.color);
-
-        double r_top = borders.radius.top_left_x;
-        double r_bottom = borders.radius.bottom_left_x;
-
-        if (r_top) {
-            double start_angle = M_PI;
-            double end_angle =
-                start_angle + M_PI / 2.0 / ((double)bdr_top / (double)bdr_left + 1);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_top,
-                draw_pos.top() + r_top,
-                r_top - bdr_left,
-                r_top - bdr_left + (bdr_left - bdr_top),
-                start_angle,
-                end_angle,
-                false);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_top,
-                draw_pos.top() + r_top,
-                r_top,
-                r_top,
-                end_angle,
-                start_angle,
-                true);
-        } else {
-            cairo_move_to(cr, draw_pos.left() + bdr_left, draw_pos.top() + bdr_top);
-            cairo_line_to(cr, draw_pos.left(), draw_pos.top());
-        }
-
-        if (r_bottom) {
-            cairo_line_to(cr, draw_pos.left(), draw_pos.bottom() - r_bottom);
-
-            double end_angle = M_PI;
-            double start_angle =
-                end_angle -
-                M_PI / 2.0 / ((double)bdr_bottom / (double)bdr_left + 1);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_bottom,
-                draw_pos.bottom() - r_bottom,
-                r_bottom,
-                r_bottom,
-                end_angle,
-                start_angle,
-                true);
-
-            add_path_arc(cr,
-                draw_pos.left() + r_bottom,
-                draw_pos.bottom() - r_bottom,
-                r_bottom - bdr_left,
-                r_bottom - bdr_left + (bdr_left - bdr_bottom),
-                start_angle,
-                end_angle,
-                false);
-        } else {
-            cairo_line_to(cr, draw_pos.left(), draw_pos.bottom());
-            cairo_line_to(cr,
-                draw_pos.left() + bdr_left,
-                draw_pos.bottom() - bdr_bottom);
-        }
-
-        cairo_fill(cr);
-    }
-    cairo_restore(cr);
+    // Don't bother tracing this function as it's called frequently.
+    // HEADLESS_TRACE0(HeadlessContainer::draw_borders);
 }
 
-void headless_container::transform_text(litehtml::tstring& text,
-    litehtml::text_transform tt)
+void HeadlessContainer::draw_list_marker(litehtml::uint_ptr hdc,
+    const litehtml::list_marker& marker)
 {
+    HEADLESS_TRACE0(HeadlessContainer::draw_list_marker);
 }
 
-void headless_container::import_css(litehtml::tstring& text,
-    const litehtml::tstring& url,
-    litehtml::tstring& baseurl)
+void HeadlessContainer::get_media_features(litehtml::MediaFeatures& media) const
 {
-    assert(false);
-}
-
-litehtml::tstring headless_container::import_css(const litehtml::URL& url)
-{
-    http_response response = http_request(url);
-    return response.body;
-}
-
-void headless_container::set_clip(const litehtml::position& pos,
-    const litehtml::border_radiuses& bdr_radius,
-    bool valid_x,
-    bool valid_y)
-{
-    litehtml::position clip_pos = pos;
-    litehtml::position client_pos;
-    get_client_rect(client_pos);
-    if (!valid_x) {
-        clip_pos.x = client_pos.x;
-        clip_pos.width = client_pos.width;
-    }
-    if (!valid_y) {
-        clip_pos.y = client_pos.y;
-        clip_pos.height = client_pos.height;
-    }
-    m_clips.emplace_back(clip_pos, bdr_radius);
-}
-
-void headless_container::del_clip()
-{
-    if (!m_clips.empty()) {
-        m_clips.pop_back();
-    }
-}
-
-void headless_container::get_client_rect(litehtml::position& client) const
-{
-    client.width = kDefaultWidth;
-    client.height = kDefaultHeight;
-}
-
-void headless_container::apply_clip(cairo_t* cr)
-{
-    for (const auto& clip_box : m_clips) {
-        rounded_rectangle(cr, clip_box.box, clip_box.radius);
-        cairo_clip(cr);
-    }
-}
-
-void headless_container::draw_ellipse(cairo_t* cr,
-    int x,
-    int y,
-    int width,
-    int height,
-    const litehtml::web_color& color,
-    int line_width)
-{
-    if (!cr) {
-        return;
-    }
-
-    cairo_save(cr);
-
-    apply_clip(cr);
-
-    cairo_new_path(cr);
-
-    cairo_translate(cr, x + width / 2.0, y + height / 2.0);
-    cairo_scale(cr, width / 2.0, height / 2.0);
-    cairo_arc(cr, 0, 0, 1, 0, 2 * M_PI);
-
-    set_color(cr, color);
-    cairo_set_line_width(cr, line_width);
-    cairo_stroke(cr);
-
-    cairo_restore(cr);
-}
-
-void headless_container::fill_ellipse(cairo_t* cr,
-    int x,
-    int y,
-    int width,
-    int height,
-    const litehtml::web_color& color)
-{
-    if (!cr) {
-        return;
-    }
-
-    cairo_save(cr);
-
-    apply_clip(cr);
-
-    cairo_new_path(cr);
-
-    cairo_translate(cr, x + width / 2.0, y + height / 2.0);
-    cairo_scale(cr, width / 2.0, height / 2.0);
-    cairo_arc(cr, 0, 0, 1, 0, 2 * M_PI);
-
-    set_color(cr, color);
-    cairo_fill(cr);
-
-    cairo_restore(cr);
-}
-
-cairo_surface_t* headless_container::get_image(const litehtml::URL& url,
-    bool redraw_on_ready)
-{
-    return nullptr;
-}
-
-
-const litehtml::tchar_t* headless_container::get_default_font_name() const
-{
-    return "Times New Roman";
-}
-
-std::shared_ptr<litehtml::element> headless_container::create_element(
-    const litehtml::tchar_t* tag_name,
-    const litehtml::string_map& attributes,
-    const std::shared_ptr<litehtml::document>& doc)
-{
-    return 0;
-}
-
-void headless_container::rounded_rectangle(cairo_t* cr,
-    const litehtml::position& pos,
-    const litehtml::border_radiuses& radius)
-{
-    cairo_new_path(cr);
-    if (radius.top_left_x) {
-        cairo_arc(cr,
-            pos.left() + radius.top_left_x,
-            pos.top() + radius.top_left_x,
-            radius.top_left_x,
-            M_PI,
-            M_PI * 3.0 / 2.0);
-    } else {
-        cairo_move_to(cr, pos.left(), pos.top());
-    }
-
-    cairo_line_to(cr, pos.right() - radius.top_right_x, pos.top());
-
-    if (radius.top_right_x) {
-        cairo_arc(cr,
-            pos.right() - radius.top_right_x,
-            pos.top() + radius.top_right_x,
-            radius.top_right_x,
-            M_PI * 3.0 / 2.0,
-            2.0 * M_PI);
-    }
-
-    cairo_line_to(cr, pos.right(), pos.bottom() - radius.bottom_right_x);
-
-    if (radius.bottom_right_x) {
-        cairo_arc(cr,
-            pos.right() - radius.bottom_right_x,
-            pos.bottom() - radius.bottom_right_x,
-            radius.bottom_right_x,
-            0,
-            M_PI / 2.0);
-    }
-
-    cairo_line_to(cr, pos.left() - radius.bottom_left_x, pos.bottom());
-
-    if (radius.bottom_left_x) {
-        cairo_arc(cr,
-            pos.left() + radius.bottom_left_x,
-            pos.bottom() - radius.bottom_left_x,
-            radius.bottom_left_x,
-            M_PI / 2.0,
-            M_PI);
-    }
-}
-
-void headless_container::get_media_features(litehtml::media_features& media) const
-{
-    litehtml::position client;
+    litehtml::Position client;
     get_client_rect(client);
-    media.type = litehtml::media_type_screen;
+    media.type = litehtml::kMediaTypeScreen;
     media.width = client.width;
     media.height = client.height;
     media.device_width = kDefaultWidth;
     media.device_height = kDefaultHeight;
     media.color = 8;
     media.monochrome = 0;
-    media.color_index = 256;
-    media.resolution = kDefaultDPI;
+    media.color_index = 0;
+    media.resolution = dpi_;
 }
 
-void headless_container::get_language(litehtml::tstring& language,
+void HeadlessContainer::get_language(litehtml::tstring& language,
     litehtml::tstring& culture) const
 {
     language = _t("en");
     culture = _t("");
 }
 
-void headless_container::set_caption(const litehtml::tchar_t*)
+void HeadlessContainer::link(const litehtml::Document* ptr,
+    const litehtml::Element::ptr& el)
 {
 }
 
-void headless_container::link(const std::shared_ptr<litehtml::document>& ptr,
-    const litehtml::element::ptr& el)
+void HeadlessContainer::transform_text(litehtml::tstring& text,
+    litehtml::TextTransform tt)
+{
+    HEADLESS_TRACE0(HeadlessContainer::transform_text);
+}
+
+void HeadlessContainer::set_clip(const litehtml::Position& position,
+    const litehtml::border_radiuses& bdr_radius,
+    bool valid_x,
+    bool valid_y)
+{
+    HEADLESS_TRACE0(HeadlessContainer::set_clip);
+}
+
+void HeadlessContainer::del_clip()
+{
+    HEADLESS_TRACE0(HeadlessContainer::del_clip);
+}
+
+void HeadlessContainer::set_caption(const litehtml::tchar_t* caption)
 {
 }
 
-void headless_container::on_anchor_click(const litehtml::tchar_t* url,
-    const litehtml::element::ptr& el)
+void HeadlessContainer::on_anchor_click(const litehtml::tchar_t* url,
+    const litehtml::Element* el)
 {
 }
 
-void headless_container::set_cursor(const litehtml::tchar_t* cursor)
+void HeadlessContainer::set_cursor(const litehtml::tchar_t* cursor)
 {
 }
+
+void HeadlessContainer::import_css(litehtml::tstring& text,
+    const litehtml::tstring& url,
+    litehtml::tstring& baseurl)
+{
+    HEADLESS_TRACE3(HeadlessContainer::import_css, text, url, baseurl);
+
+    assert(false);
+}
+
+litehtml::tstring HeadlessContainer::import_css(const litehtml::URL& url)
+{
+    HEADLESS_TRACE1(HeadlessContainer::import_css, url.string());
+
+    http_response response = http_request(url);
+    return response.body;
+}
+
+void HeadlessContainer::get_client_rect(litehtml::Position& client) const
+{
+    client.width = kDefaultWidth;
+    client.height = kDefaultHeight;
+}
+
+} // namespace headless
