@@ -29,7 +29,7 @@
 
 #include "litehtml/html.h"
 
-#include "litehtml/element/html_tag.h"
+#include "litehtml/element/html_element.h"
 #include "litehtml/types.h"
 
 namespace litehtml {

@@ -32,24 +32,67 @@
 
 #include <vector>
 
+#include "litehtml/css/css_block.h"
+#include "litehtml/css/css_prelude.h"
 #include "litehtml/debug/json.h"
+#include "litehtml/os_types.h"
 
 namespace litehtml {
 
-class css_block;
-class css_component_value;
-class css_prelude;
+    class CSSComponentValue;
 
-class css_rule {
+class CSSRule {
+protected:
+    String name_;
+
+    std::unique_ptr<CSSPrelude> prelude_;
+
+    std::unique_ptr<CSSBlock> block_;
+
 public:
-    css_prelude* prelude_;
+    CSSRule();
 
-    css_block* block_;
+    ~CSSRule() = default;
 
-public:
-    css_rule() = default;
+    const String& name() const
+    {
+        return name_;
+    }
 
-    ~css_rule() = default;
+    void name(const String& name)
+    {
+        name_ = name;
+    }
+
+    CSSPrelude* prelude()
+    {
+        return prelude_.get();
+    }
+
+    const CSSPrelude* prelude() const
+    {
+        return prelude_.get();
+    }
+
+    void prelude(CSSPrelude* prelude)
+    {
+        prelude_.reset(prelude);
+    }
+
+    CSSBlock* block()
+    {
+        return block_.get();
+    }
+
+    const CSSBlock* block() const
+    {
+        return block_.get();
+    }
+
+    void block(CSSBlock* block)
+    {
+        block_.reset(block);
+    }
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const;

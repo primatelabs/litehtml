@@ -32,37 +32,63 @@
 
 #include <string>
 
+#include "litehtml/css/css_token.h"
 #include "litehtml/debug/json.h"
 
 namespace litehtml {
 
-class css_block;
-class css_function;
-class css_token;
+class CSSBlock;
+class CSSFunction;
+class CSSToken;
 
-enum css_component_value_type {
-    kCSSComponentValueNone,
-    kCSSComponentValueBlock,
-    kCSSComponentValueFunction,
-    kCSSComponentValueToken,
-};
-
-std::string css_component_value_type_string(css_component_value_type type);
-
-class css_component_value {
+class CSSComponentValue {
 public:
-    css_block* block_ = nullptr;
+    // Using CSSTokenType as the component value type makes the CSSParser
+    // implementation much simpler.  In fact, the CSS Syntax Module Level 3
+    // document effectively recommends this approach:
+    //
+    //   https://www.w3.org/TR/css-syntax-3/#parser-definitions
 
-    css_function* function_ = nullptr;
+    CSSTokenType type_ = kCSSTokenNone;
 
-    css_token* token_ = nullptr;
+    CSSBlock* block_ = nullptr;
 
-    css_component_value_type type_ = kCSSComponentValueNone;
+    CSSFunction* function_ = nullptr;
+
+    CSSToken* token_ = nullptr;
 
 public:
-    css_component_value() = default;
+    CSSComponentValue() = default;
 
-    ~css_component_value() = default;
+    explicit CSSComponentValue(CSSTokenType type);
+
+    explicit CSSComponentValue(CSSBlock* block);
+
+    explicit CSSComponentValue(CSSFunction* function);
+
+    explicit CSSComponentValue(CSSToken* token);
+
+    ~CSSComponentValue() = default;
+
+    const CSSBlock* block() const
+    {
+        return block_;
+    }
+
+    const CSSFunction* function() const
+    {
+        return function_;
+    }
+
+    const CSSToken* token() const
+    {
+        return token_;
+    }
+
+    CSSTokenType type() const
+    {
+        return type_;
+    }
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const;

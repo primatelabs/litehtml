@@ -31,8 +31,8 @@
 #ifndef LITEHTML_CSS_SELECTOR_H__
 #define LITEHTML_CSS_SELECTOR_H__
 
-#include "litehtml/media_query.h"
-#include "litehtml/style.h"
+#include "litehtml/css/css_style.h"
+#include "litehtml/media_query_list.h"
 
 namespace litehtml {
 
@@ -128,6 +128,18 @@ struct selector_specificity {
         }
         return false;
     }
+
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const
+    {
+        return nlohmann::json{
+            {"a", a},
+            {"b", b},
+            {"c", c},
+            {"d", d},
+        };
+    }
+#endif
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -156,6 +168,18 @@ struct css_attribute_selector {
     {
         condition = select_exists;
     }
+
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const
+    {
+        return nlohmann::json{
+            {"attribute", attribute},
+            {"value", val},
+            {"class_val", json_vector(class_val)},
+        };
+    }
+#endif
+
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -167,6 +191,17 @@ public:
 
 public:
     void parse(const tstring& txt);
+
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const
+    {
+        return nlohmann::json{
+            {"tag", m_tag},
+            {"attrs", json_vector(m_attrs)},
+        };
+    }
+#endif
+
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -180,64 +215,68 @@ enum css_combinator {
 
 //////////////////////////////////////////////////////////////////////////
 
-class css_selector {
+class CSSSelector {
 public:
-    typedef std::shared_ptr<css_selector> ptr;
-    typedef std::vector<css_selector::ptr> vector;
+    typedef std::shared_ptr<CSSSelector> ptr;
+    typedef std::vector<CSSSelector::ptr> vector;
 
 public:
     selector_specificity m_specificity;
     css_element_selector m_right;
-    css_selector::ptr m_left;
+    CSSSelector::ptr m_left;
     css_combinator m_combinator;
-    style::ptr m_style;
+    CSSStyle::ptr m_style;
     int m_order;
-    media_query_list::ptr m_media_query;
+    MediaQueryList::ptr media_query_list_;
 
 public:
-    css_selector(media_query_list::ptr media)
+    CSSSelector(MediaQueryList::ptr media)
     {
-        m_media_query = media;
+        media_query_list_ = media;
         m_combinator = combinator_descendant;
         m_order = 0;
     }
 
-    ~css_selector()
+    ~CSSSelector()
     {
     }
 
-    css_selector(const css_selector& val)
+    CSSSelector(const CSSSelector& val)
     {
         m_right = val.m_right;
         if (val.m_left) {
-            m_left = std::make_shared<css_selector>(*val.m_left);
+            m_left = std::make_shared<CSSSelector>(*val.m_left);
         } else {
             m_left = nullptr;
         }
         m_combinator = val.m_combinator;
         m_specificity = val.m_specificity;
         m_order = val.m_order;
-        m_media_query = val.m_media_query;
+        media_query_list_ = val.media_query_list_;
     }
 
     bool parse(const tstring& text);
     void calc_specificity();
     bool is_media_valid() const;
-    void add_media_to_doc(document* doc) const;
+    void add_media_to_doc(Document* doc) const;
+
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const;
+#endif
 };
 
-inline bool css_selector::is_media_valid() const
+inline bool CSSSelector::is_media_valid() const
 {
-    if (!m_media_query) {
+    if (!media_query_list_) {
         return true;
     }
-    return m_media_query->is_used();
+    return media_query_list_->is_used();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 
-inline bool operator>(const css_selector& v1, const css_selector& v2)
+inline bool operator>(const CSSSelector& v1, const CSSSelector& v2)
 {
     if (v1.m_specificity == v2.m_specificity) {
         return (v1.m_order > v2.m_order);
@@ -245,7 +284,7 @@ inline bool operator>(const css_selector& v1, const css_selector& v2)
     return (v1.m_specificity > v2.m_specificity);
 }
 
-inline bool operator<(const css_selector& v1, const css_selector& v2)
+inline bool operator<(const CSSSelector& v1, const CSSSelector& v2)
 {
     if (v1.m_specificity == v2.m_specificity) {
         return (v1.m_order < v2.m_order);
@@ -253,12 +292,12 @@ inline bool operator<(const css_selector& v1, const css_selector& v2)
     return (v1.m_specificity < v2.m_specificity);
 }
 
-inline bool operator>(const css_selector::ptr& v1, const css_selector::ptr& v2)
+inline bool operator>(const CSSSelector::ptr& v1, const CSSSelector::ptr& v2)
 {
     return (*v1 > *v2);
 }
 
-inline bool operator<(const css_selector::ptr& v1, const css_selector::ptr& v2)
+inline bool operator<(const CSSSelector::ptr& v1, const CSSSelector::ptr& v2)
 {
     return (*v1 < *v2);
 }
@@ -270,10 +309,10 @@ public:
     typedef std::unique_ptr<used_selector> ptr;
     typedef std::vector<used_selector::ptr> vector;
 
-    css_selector::ptr m_selector;
+    CSSSelector::ptr m_selector;
     bool m_used;
 
-    used_selector(const css_selector::ptr& selector, bool used)
+    used_selector(const CSSSelector::ptr& selector, bool used)
     {
         m_used = used;
         m_selector = selector;

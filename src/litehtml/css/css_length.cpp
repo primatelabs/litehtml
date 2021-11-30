@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,7 +34,7 @@
 
 namespace litehtml {
 
-void css_length::fromString(const tstring& str, const tstring& predefs, int defValue)
+void CSSLength::parse_length_string(const tstring& str, const tstring& predefs, int defValue)
 {
     // TODO: Make support for calc
     if (str.substr(0, 4) == _t("calc")) {
@@ -67,15 +68,68 @@ void css_length::fromString(const tstring& str, const tstring& predefs, int defV
         }
         if (!num.empty()) {
             m_value = (float)t_strtod(num.c_str(), nullptr);
-            m_units = (css_units)value_index(un.c_str(),
-                css_units_strings,
-                css_units_none);
+            m_units = (CSSUnits)value_index(un.c_str(),
+                CSS_UNITS_STRINGS,
+                kCSSUnitsNone);
         } else {
             // not a number so it is predefined
             m_is_predefined = true;
             m_predef = defValue;
         }
     }
+}
+
+
+void CSSLength::parse_length_string(const tstring& str, const KeywordVector& keywords, int default_keyword)
+{
+    for (auto& keyword : keywords) {
+        if (!t_strcasecmp(keyword.first.c_str(), str.c_str())) {
+            m_is_predefined = true;
+            m_predef = default_keyword;
+            return;
+        }
+    }
+
+    m_is_predefined = false;
+
+    tstring num;
+    tstring un;
+    bool is_unit = false;
+    for (tstring::const_iterator chr = str.begin(); chr != str.end(); chr++) {
+        if (!is_unit) {
+            if (t_isdigit(*chr) || *chr == _t('.') || *chr == _t('+') ||
+                *chr == _t('-')) {
+                num += *chr;
+            } else {
+                is_unit = true;
+            }
+        }
+        if (is_unit) {
+            un += *chr;
+        }
+    }
+    if (!num.empty()) {
+        m_value = (float)t_strtod(num.c_str(), nullptr);
+        m_units = (CSSUnits)value_index(un.c_str(),
+            CSS_UNITS_STRINGS,
+            kCSSUnitsNone);
+    } else {
+        // not a number so it is predefined
+        m_is_predefined = true;
+        m_predef = default_keyword;
+    }
+}
+
+std::basic_ostream<String::value_type>& operator<<(
+    std::basic_ostream<String::value_type>& os,
+    const CSSLength& length)
+{
+    if (length.is_predefined()) {
+        os << length.predef();
+    } else {
+        os << length.val() << " " << length.units();
+    }
+    return os;
 }
 
 } // namespace litehtml

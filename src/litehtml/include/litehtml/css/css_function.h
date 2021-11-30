@@ -34,11 +34,11 @@
 
 namespace litehtml {
 
-class css_function {
+class CSSFunction {
 public:
-    css_function() = default;
+    CSSFunction() = default;
 
-    ~css_function() = default;
+    ~CSSFunction() = default;
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const

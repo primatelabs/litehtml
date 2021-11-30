@@ -30,7 +30,7 @@
 #include "litehtml/iterators.h"
 
 #include "litehtml/html.h"
-#include "litehtml/element/html_tag.h"
+#include "litehtml/element/html_element.h"
 
 namespace litehtml {
 
@@ -38,12 +38,12 @@ iterator_selector::~iterator_selector()
 {
 }
 
-element::ptr elements_iterator::next(bool ret_parent)
+Element::ptr elements_iterator::next(bool ret_parent)
 {
     next_idx();
 
     while (m_idx < (int)m_el->get_children_count()) {
-        element::ptr el = m_el->get_child(m_idx);
+        Element::ptr el = m_el->get_child(m_idx);
         if (el->get_children_count() && m_go_inside && m_go_inside->select(el)) {
             stack_item si;
             si.idx = m_idx;
@@ -85,36 +85,36 @@ void elements_iterator::next_idx()
 //////////////////////////////////////////////////////////////////////////
 
 
-bool go_inside_inline::select(const element::ptr& el)
+bool go_inside_inline::select(const Element::ptr& el)
 {
-    if (el->get_display() == display_inline ||
-        el->get_display() == display_inline_text) {
+    if (el->get_display() == kDisplayInline ||
+        el->get_display() == kDisplayInlineText) {
         return true;
     }
     return false;
 }
 
-bool go_inside_table::select(const element::ptr& el)
+bool go_inside_table::select(const Element::ptr& el)
 {
-    if (el->get_display() == display_table_row_group ||
-        el->get_display() == display_table_header_group ||
-        el->get_display() == display_table_footer_group) {
+    if (el->get_display() == kDisplayTableRowGroup ||
+        el->get_display() == kDisplayTableHeaderGroup ||
+        el->get_display() == kDisplayTableFooterGroup) {
         return true;
     }
     return false;
 }
 
-bool table_rows_selector::select(const element::ptr& el)
+bool table_rows_selector::select(const Element::ptr& el)
 {
-    if (el->get_display() == display_table_row) {
+    if (el->get_display() == kDisplayTableRow) {
         return true;
     }
     return false;
 }
 
-bool table_cells_selector::select(const element::ptr& el)
+bool table_cells_selector::select(const Element::ptr& el)
 {
-    if (el->get_display() == display_table_cell) {
+    if (el->get_display() == kDisplayTableCell) {
         return true;
     }
     return false;

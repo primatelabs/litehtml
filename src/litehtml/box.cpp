@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,36 +31,36 @@
 #include "litehtml/box.h"
 
 #include "litehtml/html.h"
-#include "litehtml/element/html_tag.h"
+#include "litehtml/element/html_element.h"
 
 namespace litehtml {
 
-box::~box()
+Box::~Box()
 {
 }
 
-box_type block_box::get_type()
+BoxType BlockBox::get_type()
 {
-    return box_block;
+    return kBoxBlock;
 }
 
-int block_box::height()
+int BlockBox::height()
 {
     return m_element->height();
 }
 
-int block_box::width()
+int BlockBox::width()
 {
     return m_element->width();
 }
 
-void block_box::add_element(const element::ptr& el)
+void BlockBox::add_element(const Element::ptr& el)
 {
     m_element = el;
     el->m_box = this;
 }
 
-void block_box::finish(bool)
+void BlockBox::finish(bool)
 {
     if (!m_element) {
         return;
@@ -67,7 +68,7 @@ void block_box::finish(bool)
     m_element->apply_relative_shift(m_box_right - m_box_left);
 }
 
-bool block_box::can_hold(const element::ptr& el, white_space)
+bool BlockBox::can_hold(const Element::ptr& el, CSSKeyword)
 {
     if (m_element || el->is_inline_box()) {
         return false;
@@ -75,7 +76,7 @@ bool block_box::can_hold(const element::ptr& el, white_space)
     return true;
 }
 
-bool block_box::is_empty()
+bool BlockBox::is_empty()
 {
     if (m_element) {
         return false;
@@ -83,20 +84,20 @@ bool block_box::is_empty()
     return true;
 }
 
-int block_box::baseline()
+int BlockBox::baseline()
 {
     if (m_element) {
-        return m_element->get_base_line();
+        return m_element->get_baseline();
     }
     return 0;
 }
 
-void block_box::get_elements(elements_vector& els)
+void BlockBox::get_elements(ElementsVector& els)
 {
     els.push_back(m_element);
 }
 
-int block_box::top_margin()
+int BlockBox::top_margin()
 {
     if (m_element && m_element->collapse_top_margin()) {
         return m_element->m_margins.top;
@@ -104,7 +105,7 @@ int block_box::top_margin()
     return 0;
 }
 
-int block_box::bottom_margin()
+int BlockBox::bottom_margin()
 {
     if (m_element && m_element->collapse_bottom_margin()) {
         return m_element->m_margins.bottom;
@@ -112,36 +113,36 @@ int block_box::bottom_margin()
     return 0;
 }
 
-void block_box::y_shift(int shift)
+void BlockBox::y_shift(int shift)
 {
     m_box_top += shift;
     if (m_element) {
-        m_element->m_pos.y += shift;
+        m_element->position_.y += shift;
     }
 }
 
-void block_box::new_width(int, int, elements_vector&)
+void BlockBox::new_width(int, int, ElementsVector&)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-box_type line_box::get_type()
+BoxType LineBox::get_type()
 {
-    return box_line;
+    return kBoxLine;
 }
 
-int line_box::height()
+int LineBox::height()
 {
     return m_height;
 }
 
-int line_box::width()
+int LineBox::width()
 {
     return m_width;
 }
 
-void line_box::add_element(const element::ptr& el)
+void LineBox::add_element(const Element::ptr& el)
 {
     el->m_skip = false;
     el->m_box = nullptr;
@@ -163,15 +164,15 @@ void line_box::add_element(const element::ptr& el)
             int el_shift_left = el->get_inline_shift_left();
             int el_shift_right = el->get_inline_shift_right();
 
-            el->m_pos.x = m_box_left + m_width + el_shift_left +
+            el->position_.x = m_box_left + m_width + el_shift_left +
                           el->content_margins_left();
-            el->m_pos.y = m_box_top + el->content_margins_top();
+            el->position_.y = m_box_top + el->content_margins_top();
             m_width += el->width() + el_shift_left + el_shift_right;
         }
     }
 }
 
-void line_box::finish(bool last_box)
+void LineBox::finish(bool last_box)
 {
     if (is_empty() || (!is_empty() && last_box && is_break_only())) {
         m_height = 0;
@@ -189,17 +190,17 @@ void line_box::finish(bool last_box)
         }
     }
 
-    int base_line = m_font_metrics.base_line();
-    int line_height = m_line_height;
+    int baseline = font_metrics_.baseline();
+    int line_height = line_height_;
 
     int add_x = 0;
     switch (m_text_align) {
-        case text_align_right:
+        case kTextAlignRight:
             if (m_width < (m_box_right - m_box_left)) {
                 add_x = (m_box_right - m_box_left) - m_width;
             }
             break;
-        case text_align_center:
+        case kTextAlignCenter:
             if (m_width < (m_box_right - m_box_left)) {
                 add_x = ((m_box_right - m_box_left) - m_width) / 2;
             }
@@ -211,18 +212,18 @@ void line_box::finish(bool last_box)
     m_height = 0;
     // find line box baseline and line-height
     for (const auto& el : m_items) {
-        if (el->get_display() == display_inline_text) {
-            font_metrics fm;
+        if (el->get_display() == kDisplayInlineText) {
+            FontMetrics fm;
             el->get_font(&fm);
-            base_line = std::max(base_line, fm.base_line());
+            baseline = std::max(baseline, fm.baseline());
             line_height = std::max(line_height, el->line_height());
             m_height = std::max(m_height, fm.height);
         }
-        el->m_pos.x += add_x;
+        el->position_.x += add_x;
     }
 
     if (m_height) {
-        base_line += (line_height - m_height) / 2;
+        baseline += (line_height - m_height) / 2;
     }
 
     m_height = line_height;
@@ -231,35 +232,35 @@ void line_box::finish(bool last_box)
     int y2 = m_height;
 
     for (const auto& el : m_items) {
-        if (el->get_display() == display_inline_text) {
-            font_metrics fm;
+        if (el->get_display() == kDisplayInlineText) {
+            FontMetrics fm;
             el->get_font(&fm);
-            el->m_pos.y = m_height - base_line - fm.ascent;
+            el->position_.y = m_height - baseline - fm.ascent;
         } else {
             switch (el->get_vertical_align()) {
-                case va_super:
-                case va_sub:
-                case va_baseline:
-                    el->m_pos.y = m_height - base_line - el->height() +
-                                  el->get_base_line() + el->content_margins_top();
+                case kVerticalAlignSuper:
+                case kVerticalAlignSub:
+                case kVerticalAlignBaseline:
+                    el->position_.y = m_height - baseline - el->height() +
+                                  el->get_baseline() + el->content_margins_top();
                     break;
-                case va_top:
-                    el->m_pos.y = y1 + el->content_margins_top();
+                case kVerticalAlignTop:
+                    el->position_.y = y1 + el->content_margins_top();
                     break;
-                case va_text_top:
-                    el->m_pos.y = m_height - base_line - m_font_metrics.ascent +
+                case kVerticalAlignTextTop:
+                    el->position_.y = m_height - baseline - font_metrics_.ascent +
                                   el->content_margins_top();
                     break;
-                case va_middle:
-                    el->m_pos.y = m_height - base_line -
-                                  m_font_metrics.x_height / 2 -
+                case kVerticalAlignMiddle:
+                    el->position_.y = m_height - baseline -
+                                  font_metrics_.x_height / 2 -
                                   el->height() / 2 + el->content_margins_top();
                     break;
-                case va_bottom:
-                    el->m_pos.y = y2 - el->height() + el->content_margins_top();
+                case kVerticalAlignBottom:
+                    el->position_.y = y2 - el->height() + el->content_margins_top();
                     break;
-                case va_text_bottom:
-                    el->m_pos.y = m_height - base_line + m_font_metrics.descent -
+                case kVerticalAlignTextBottom:
+                    el->position_.y = m_height - baseline + font_metrics_.descent -
                                   el->height() + el->content_margins_top();
                     break;
             }
@@ -268,36 +269,36 @@ void line_box::finish(bool last_box)
         }
     }
 
-    css_offsets offsets;
+    CSSOffsets offsets;
 
     for (const auto& el : m_items) {
-        el->m_pos.y -= y1;
-        el->m_pos.y += m_box_top;
-        if (el->get_display() != display_inline_text) {
+        el->position_.y -= y1;
+        el->position_.y += m_box_top;
+        if (el->get_display() != kDisplayInlineText) {
             switch (el->get_vertical_align()) {
-                case va_top:
-                    el->m_pos.y = m_box_top + el->content_margins_top();
+                case kVerticalAlignTop:
+                    el->position_.y = m_box_top + el->content_margins_top();
                     break;
-                case va_bottom:
-                    el->m_pos.y = m_box_top + (y2 - y1) - el->height() +
+                case kVerticalAlignBottom:
+                    el->position_.y = m_box_top + (y2 - y1) - el->height() +
                                   el->content_margins_top();
                     break;
-                case va_baseline:
+                case kVerticalAlignBaseline:
                     // TODO: process vertical align "baseline"
                     break;
-                case va_middle:
+                case kVerticalAlignMiddle:
                     // TODO: process vertical align "middle"
                     break;
-                case va_sub:
+                case kVerticalAlignSub:
                     // TODO: process vertical align "sub"
                     break;
-                case va_super:
+                case kVerticalAlignSuper:
                     // TODO: process vertical align "super"
                     break;
-                case va_text_bottom:
+                case kVerticalAlignTextBottom:
                     // TODO: process vertical align "text-bottom"
                     break;
-                case va_text_top:
+                case kVerticalAlignTextTop:
                     // TODO: process vertical align "text-top"
                     break;
             }
@@ -306,10 +307,10 @@ void line_box::finish(bool last_box)
         el->apply_relative_shift(m_box_right - m_box_left);
     }
     m_height = y2 - y1;
-    m_baseline = (base_line - y1) - (m_height - line_height);
+    m_baseline = (baseline - y1) - (m_height - line_height);
 }
 
-bool line_box::can_hold(const element::ptr& el, white_space ws)
+bool LineBox::can_hold(const Element::ptr& el, CSSKeyword ws)
 {
     if (!el->is_inline_box())
         return false;
@@ -318,7 +319,7 @@ bool line_box::can_hold(const element::ptr& el, white_space ws)
         return false;
     }
 
-    if (ws == white_space_nowrap || ws == white_space_pre) {
+    if (ws == kWhiteSpaceNowrap || ws == kWhiteSpacePre) {
         return true;
     }
 
@@ -331,7 +332,7 @@ bool line_box::can_hold(const element::ptr& el, white_space ws)
     return true;
 }
 
-bool line_box::have_last_space()
+bool LineBox::have_last_space()
 {
     bool ret = false;
     for (auto i = m_items.rbegin(); i != m_items.rend() && !ret; i++) {
@@ -344,7 +345,7 @@ bool line_box::have_last_space()
     return ret;
 }
 
-bool line_box::is_empty()
+bool LineBox::is_empty()
 {
     if (m_items.empty())
         return true;
@@ -356,35 +357,35 @@ bool line_box::is_empty()
     return true;
 }
 
-int line_box::baseline()
+int LineBox::baseline()
 {
     return m_baseline;
 }
 
-void line_box::get_elements(elements_vector& els)
+void LineBox::get_elements(ElementsVector& els)
 {
     els.insert(els.begin(), m_items.begin(), m_items.end());
 }
 
-int line_box::top_margin()
+int LineBox::top_margin()
 {
     return 0;
 }
 
-int line_box::bottom_margin()
+int LineBox::bottom_margin()
 {
     return 0;
 }
 
-void line_box::y_shift(int shift)
+void LineBox::y_shift(int shift)
 {
     m_box_top += shift;
     for (auto& el : m_items) {
-        el->m_pos.y += shift;
+        el->position_.y += shift;
     }
 }
 
-bool line_box::is_break_only()
+bool LineBox::is_break_only()
 {
     if (m_items.empty())
         return true;
@@ -400,7 +401,7 @@ bool line_box::is_break_only()
     return false;
 }
 
-void line_box::new_width(int left, int right, elements_vector& els)
+void LineBox::new_width(int left, int right, ElementsVector& els)
 {
     int add = left - m_box_left;
     if (add) {
@@ -409,7 +410,7 @@ void line_box::new_width(int left, int right, elements_vector& els)
         m_width = 0;
         auto remove_begin = m_items.end();
         for (auto i = m_items.begin() + 1; i != m_items.end(); i++) {
-            element::ptr el = (*i);
+            Element::ptr el = (*i);
 
             if (!el->m_skip) {
                 if (m_box_left + m_width + el->width() +
@@ -418,7 +419,7 @@ void line_box::new_width(int left, int right, elements_vector& els)
                     remove_begin = i;
                     break;
                 } else {
-                    el->m_pos.x += add;
+                    el->position_.x += add;
                     m_width += el->width() + el->get_inline_shift_right() +
                                el->get_inline_shift_left();
                 }

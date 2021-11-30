@@ -29,6 +29,92 @@
 
 #include "litehtml/css/css_value.h"
 
+#include "litehtml/css/css_property.h"
+#include "litehtml/logging.h"
+
 namespace litehtml {
+
+CSSValue::CSSValue(const tstring& value, bool important)
+: type_(kCSSValueString)
+, value_(value)
+, important_(important)
+{
+}
+
+CSSValue::CSSValue(CSSValueType type, const tstring& value, bool important)
+: type_(type)
+, value_(value)
+, important_(important)
+{
+}
+
+CSSValue* CSSValue::factory(CSSProperty property, const tstring& str, bool important)
+{
+    CSSValueType type = css_property_value_type(property);
+
+    // LOG(INFO) << "CSSValue::factory";
+    // LOG(INFO) << css_property_string(property) << " " << str << " " << important;
+
+    switch (type) {
+        case kCSSValueString: {
+            return new CSSValue(kCSSValueString, str, important);
+        }
+
+        case kCSSValueColor: {
+            WebColor color(str);
+            return new CSSColorValue(color, str, important);
+        }
+
+        case kCSSValueKeyword: {
+            auto keywords = css_property_keywords(property);
+            for (auto& keyword : keywords) {
+                if (!t_strcasecmp(keyword.first.c_str(), str.c_str())) {
+                    return new CSSKeywordValue(keyword.second, str, important);
+                }
+            }
+            return new CSSKeywordValue(kCSSKeywordNone, str, important);
+        }
+
+        case kCSSValueLength: {
+            CSSLength length;
+            length.parse_length_string(str, css_property_keywords(property), 0);
+
+            return new CSSLengthValue(length, str, important);
+        }
+
+        default:
+            return nullptr;
+    }
+}
+
+#if defined(ENABLE_JSON)
+
+nlohmann::json CSSValue::json() const
+{
+    return nlohmann::json{
+        {"value", value_},
+        {"important", important_}
+    };
+}
+
+#endif // ENABLE_JSON
+
+CSSColorValue::CSSColorValue(WebColor color, const tstring& value, bool important)
+: CSSValue(kCSSValueColor, value, important)
+, color_(color)
+{
+}
+
+CSSKeywordValue::CSSKeywordValue(CSSKeyword keyword, const tstring& value, bool important)
+: CSSValue(kCSSValueKeyword, value, important)
+, keyword_(keyword)
+{
+}
+
+CSSLengthValue::CSSLengthValue(const CSSLength& length, const tstring& str, bool important)
+: CSSValue(kCSSValueLength, str, important)
+, length_(length)
+{
+}
 
 } // namespace litehtml

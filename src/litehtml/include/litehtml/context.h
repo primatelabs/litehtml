@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (C) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,14 +33,20 @@
 #include "litehtml/css/css_stylesheet.h"
 
 namespace litehtml {
-class context {
-    litehtml::css_stylesheet m_master_css;
+
+class Context {
+    CSSStylesheet master_stylesheet_;
 
 public:
-    void load_master_stylesheet(const tchar_t* str);
-    litehtml::css_stylesheet& master_css()
+    Context() = default;
+
+    explicit Context(const tstring& css);
+
+    void load_master_stylesheet(const tstring& css);
+
+    CSSStylesheet& master_stylesheet()
     {
-        return m_master_css;
+        return master_stylesheet_;
     }
 };
 } // namespace litehtml

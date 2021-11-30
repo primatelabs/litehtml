@@ -122,7 +122,6 @@ bool is_newline(litehtml::tchar_t c)
     return lookup(newline_lookup, c);
 }
 
-#if 0
 // https://www.w3.org/TR/css-syntax-3/#non-printable-code-point
 bool is_non_printable_code_point(litehtml::tchar_t c)
 {
@@ -136,7 +135,6 @@ bool is_non_printable_code_point(litehtml::tchar_t c)
     }
     return lookup(non_printable_lookup, c);
 }
-#endif
 
 // https://www.w3.org/TR/css-syntax-3/#whitespace
 bool is_whitespace(litehtml::tchar_t c)
@@ -212,20 +210,27 @@ bool would_start_number(litehtml::tchar_t c0,
 
 namespace litehtml {
 
-css_tokenizer::css_tokenizer(litehtml::tstring input)
+CSSTokenizer::CSSTokenizer(litehtml::tstring input)
 : stream_(input)
 {
     while (true) {
-        css_token token = next();
+        CSSToken* token = next();
         tokens_.push_back(token);
-        if (token.type() == kCSSTokenEOF) {
+        if (token->type() == kCSSTokenEOF) {
             break;
         }
     }
 }
 
+CSSTokenizer::~CSSTokenizer()
+{
+    for (auto token : tokens_) {
+        delete token;
+    }
+}
+
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_whitespace()
+CSSToken* CSSTokenizer::consume_whitespace()
 {
     while (true) {
         tchar_t c = stream_.consume();
@@ -235,148 +240,152 @@ css_token css_tokenizer::consume_whitespace()
         }
     }
 
-    return css_token(kCSSTokenWhitespace);
+    return new CSSToken(kCSSTokenWhitespace);
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_number_sign(tchar_t c0)
+CSSToken* CSSTokenizer::consume_number_sign(tchar_t c0)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
-    css_token result;
+    tchar_t c3 = stream_.peek(1);
+    CSSToken* result = nullptr;
 
     if (is_name_code_point(c1) || is_valid_escape(c1, c2)) {
-        // FIXME: Determine hash type flag (either id or unrestricted);
-        tstring value = consume_name(c0);
-        result = css_token(kCSSTokenHash);
-    } else {
-        result = css_token(kCSSTokenDelim);
+        if (would_start_identifier(c1, c2, c3)) {
+            // TODO: Set the hash token type flag to `id`.
+        }
+        stream_.advance();
+        tstring value = consume_name(c1);
+        result = new CSSToken(kCSSTokenHash, value);
     }
 
-    assert(result.type() != kCSSTokenNone);
+    if (!result) {
+        result = new CSSToken(kCSSTokenDelim, c0);
+    }
 
     return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_plus_sign(tchar_t c0)
+CSSToken* CSSTokenizer::consume_plus_sign(tchar_t c0)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
-    css_token result;
+    CSSToken* result = nullptr;
 
     if (would_start_number(c0, c1, c2)) {
         result = consume_numeric(c0);
     } else {
-        result = css_token(kCSSTokenDelim);
+        result = new CSSToken(kCSSTokenDelim, c0);
     }
 
-    assert(result.type() != kCSSTokenNone);
+    assert(result && result->type() != kCSSTokenNone);
 
     return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_hyphen_minus(tchar_t c0)
+CSSToken* CSSTokenizer::consume_hyphen_minus(tchar_t c0)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
-    css_token result;
+    CSSToken* result = nullptr;
 
     if (would_start_number(c0, c1, c2)) {
         result = consume_numeric(c0);
     } else if (c1 == _t('-') && c2 == _t('>')) {
-        result = css_token(kCSSTokenCDC);
+        result = new CSSToken(kCSSTokenCDC);
     } else if (would_start_identifier(c0, c1, c2)) {
         result = consume_ident(c0);
     } else {
-        result = css_token(kCSSTokenDelim);
+        result = new CSSToken(kCSSTokenDelim, c0);
     }
 
-    assert(result.type() != kCSSTokenNone);
+    assert(result && result->type() != kCSSTokenNone);
 
     return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_full_stop(tchar_t c0)
+CSSToken* CSSTokenizer::consume_full_stop(tchar_t c0)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
-    css_token result;
+    CSSToken* result = nullptr;
 
     if (would_start_number(c0, c1, c2)) {
         result = consume_numeric(c0);
     } else {
-        result = css_token(kCSSTokenDelim);
+        result = new CSSToken(kCSSTokenDelim, c0);
     }
 
-    assert(result.type() != kCSSTokenNone);
+    assert(result && result->type() != kCSSTokenNone);
 
     return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_less_than(tchar_t)
+CSSToken* CSSTokenizer::consume_less_than(tchar_t c0)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
     tchar_t c3 = stream_.peek(2);
-    css_token result;
+    CSSToken* result = nullptr;
 
     if (c1 == _t('!') && c2 == _t('-') && c3 == _t('-')) {
         stream_.advance(3);
-        result = css_token(kCSSTokenCDO);
+        result = new CSSToken(kCSSTokenCDO);
     } else {
-        result = css_token(kCSSTokenDelim);
+        result = new CSSToken(kCSSTokenDelim, c0);
     }
 
-    assert(result.type() != kCSSTokenNone);
+    assert(result && result->type() != kCSSTokenNone);
 
     return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_at(tchar_t)
+CSSToken* CSSTokenizer::consume_at(tchar_t c0)
 {
     tchar_t c1 = stream_.peek(0);
     tchar_t c2 = stream_.peek(1);
     tchar_t c3 = stream_.peek(2);
-    css_token result;
+    CSSToken* result = nullptr;
 
     if (would_start_identifier(c1, c2, c3)) {
         stream_.advance();
-        tstring name = consume_name(c1);
-        result = css_token(kCSSTokenAtKeyword);
+        String name = consume_name(c1);
+        result = new CSSToken(kCSSTokenAtKeyword, name);
     } else {
-        result = css_token(kCSSTokenDelim);
+        result = new CSSToken(kCSSTokenDelim, c0);
     }
 
-    assert(result.type() != kCSSTokenNone);
+    assert(result && result->type() != kCSSTokenNone);
 
     return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-token
-css_token css_tokenizer::consume_backslash(tchar_t c0)
+CSSToken* CSSTokenizer::consume_backslash(tchar_t c0)
 {
     tchar_t c1 = stream_.peek(0);
-    css_token result;
+    CSSToken* result = nullptr;
 
     if (is_valid_escape(c0, c1)) {
         result = consume_ident(c0);
     } else {
         // FIXME: Parse error
-        result = css_token(kCSSTokenDelim);
+        result = new CSSToken(kCSSTokenDelim, c0);
     }
 
-    assert(result.type() != kCSSTokenNone);
+    assert(result && result->type() != kCSSTokenNone);
 
     return result;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-comment
-void css_tokenizer::consume_comment()
+void CSSTokenizer::consume_comment()
 {
     while (true) {
         if (stream_.peek(0) == _t('*') && stream_.peek(1) == _t('/')) {
@@ -392,14 +401,14 @@ void css_tokenizer::consume_comment()
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-numeric-token
-css_token css_tokenizer::consume_numeric(tchar_t first)
+CSSToken* CSSTokenizer::consume_numeric(tchar_t first)
 {
-    return css_token(kCSSTokenNumber, consume_number(first));
+    return new CSSToken(kCSSTokenNumber, consume_number(first));
 }
 
 
 // https://www.w3.org/TR/css-syntax-3/#consume-ident-like-token
-css_token css_tokenizer::consume_ident(tchar_t first)
+CSSToken* CSSTokenizer::consume_ident(tchar_t first)
 {
     tstring name = consume_name(first);
 
@@ -422,11 +431,11 @@ css_token css_tokenizer::consume_ident(tchar_t first)
         // that demonstrate the edge cases I can't be certain.
 
         if (stream_.peek(0) == _t('\"') || stream_.peek(0) == _t('\'')) {
-            return css_token(kCSSTokenFunction, name);
+            return new CSSToken(kCSSTokenFunction, name);
         }
 
         if (is_whitespace(stream_.peek(0)) && (stream_.peek(1) == _t('\"') || stream_.peek(1) == _t('\''))) {
-            return css_token(kCSSTokenFunction, name);
+            return new CSSToken(kCSSTokenFunction, name);
         }
 
         return consume_url();
@@ -434,29 +443,29 @@ css_token css_tokenizer::consume_ident(tchar_t first)
 
     if (stream_.peek(0) == _t('(')) {
         stream_.consume();
-        return css_token(kCSSTokenFunction, name);
+        return new CSSToken(kCSSTokenFunction, name);
     }
 
-    return css_token(kCSSTokenIdent, name);
+    return new CSSToken(kCSSTokenIdent, name);
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-string-token
-css_token css_tokenizer::consume_string(tchar_t ending)
+CSSToken* CSSTokenizer::consume_string(tchar_t ending)
 {
-    css_token token;
-    tstring value;
+    CSSToken* token = nullptr;
+    String value;
 
     while (true) {
         tchar_t c = stream_.consume();
         if (c == ending) {
-            token = css_token(kCSSTokenString, value);
+            token = new CSSToken(kCSSTokenString, value);
             break;
         } else if (c == _t('\0')) {
             // FIXME: Indicate a parse error occurred.
-            token = css_token(kCSSTokenString, value);
+            token = new CSSToken(kCSSTokenString, value);
             break;
         } else if (is_newline(c)) {
-            token = css_token(kCSSTokenBadString);
+            token = new CSSToken(kCSSTokenBadString);
             break;
         } else if (c == _t('\\')) {
             if (stream_.peek(0) == _t('\0')) {
@@ -472,21 +481,58 @@ css_token css_tokenizer::consume_string(tchar_t ending)
         }
     }
 
-    assert(token.type() == kCSSTokenString || token.type() == kCSSTokenBadString);
+    assert(token);
+    assert(token->type() == kCSSTokenString || token->type() == kCSSTokenBadString);
 
     return token;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-url-token
-css_token css_tokenizer::consume_url()
+CSSToken* CSSTokenizer::consume_url()
 {
-    // TODO: Implement
-    assert(false);
-    return css_token(kCSSTokenURL);
+    // 1. Create a <url-token> with its value set to the empty string.
+    String value;// token(kCSSTokenURL);
+
+    // 2. Consume as much whitespace as possible.
+    while (is_whitespace(stream_.peek(0))) {
+        stream_.consume();
+    }
+
+    while (true) {
+        tchar_t c = stream_.consume();
+        if (c == _t(')')) {
+            break;
+        } else if (c == _t('\0')) {
+            // FIXME: Indicate a parse error occurred.
+            break;
+        } else if (is_whitespace(c)) {
+            while (is_whitespace(stream_.peek(0))) {
+                stream_.consume();
+            }
+            c = stream_.consume();
+            if (c == _t(')')) {
+                break;
+            } else if (c == _t('\0')) {
+                // FIXME: Indicate a parse error occurred.
+                break;
+            } else {
+                // FIXME: Indicate a parse error occurred.
+                return consume_bad_url();
+            }
+        } else if (c == _t('"') || c == _t('\'') || c == _t('(') || is_non_printable_code_point(c)) {
+            // FIXME: Indicate a parse error occurred.
+            return consume_bad_url();
+        } else {
+            value.push_back(c);
+        }
+
+    }
+
+    return new CSSToken(kCSSTokenURL, value);
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-escaped-code-point
-tchar_t css_tokenizer::consume_escape()
+tchar_t CSSTokenizer::consume_escape()
 {
     tchar_t result = 0;
     tchar_t c = stream_.consume();
@@ -504,7 +550,7 @@ tchar_t css_tokenizer::consume_escape()
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-name
-tstring css_tokenizer::consume_name(tchar_t first)
+tstring CSSTokenizer::consume_name(tchar_t first)
 {
     tstring result;
     result.push_back(first);
@@ -525,13 +571,13 @@ tstring css_tokenizer::consume_name(tchar_t first)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-number
-css_number css_tokenizer::consume_number(tchar_t first)
+CSSNumber CSSTokenizer::consume_number(tchar_t first)
 {
-    css_number_value_type type = kCSSIntegerValue;
-    tstring repr;
+    CSSNumberValueType type = kCSSIntegerValue;
+    String repr;
 
     if (first == _t('+') || first == _t('-')) {
-        repr.push_back(stream_.peek(0));
+        repr.push_back(first);
     } else {
         stream_.replace(first);
     }
@@ -572,10 +618,26 @@ css_number css_tokenizer::consume_number(tchar_t first)
     }
 #endif
 
-    return css_number(type, std::stod(repr));
+    return CSSNumber(type, std::stod(repr));
 }
 
-css_token css_tokenizer::next()
+// https://www.w3.org/TR/css-syntax-3/#consume-remnants-of-bad-url
+CSSToken* CSSTokenizer::consume_bad_url()
+{
+    while (true) {
+        tchar_t c = stream_.consume();
+
+        if (c == _t('(') || c == _t('\0')) {
+            break;
+        } else if (is_valid_escape(c, stream_.peek(0))) {
+            consume_escape();
+        }
+    }
+
+    return new CSSToken(kCSSTokenBadURL);
+}
+
+CSSToken* CSSTokenizer::next()
 {
     while (true) {
         if (stream_.peek(0) == _t('/') && stream_.peek(1) == _t('*')) {
@@ -589,7 +651,7 @@ css_token css_tokenizer::next()
     tchar_t c = stream_.consume();
     switch (c) {
         case _t('\0'):
-            return css_token(kCSSTokenEOF);
+            return new CSSToken(kCSSTokenEOF);
 
         case _t('\t'):
         case _t('\n'):
@@ -609,7 +671,7 @@ css_token css_tokenizer::next()
             return consume_plus_sign(c);
 
         case _t(','):
-            return css_token(kCSSTokenComma);
+            return new CSSToken(kCSSTokenComma);
 
         case _t('-'):
             return consume_hyphen_minus(c);
@@ -618,10 +680,10 @@ css_token css_tokenizer::next()
             return consume_full_stop(c);
 
         case _t(':'):
-            return css_token(kCSSTokenColon);
+            return new CSSToken(kCSSTokenColon);
 
         case _t(';'):
-            return css_token(kCSSTokenSemicolon);
+            return new CSSToken(kCSSTokenSemicolon);
 
         case _t('<'):
             return consume_less_than(c);
@@ -699,22 +761,22 @@ css_token css_tokenizer::next()
             return consume_ident(c);
 
         case _t('('):
-            return css_token(kCSSTokenOpenRoundBracket);
+            return new CSSToken(kCSSTokenOpenRoundBracket);
         case _t(')'):
-            return css_token(kCSSTokenCloseRoundBracket);
+            return new CSSToken(kCSSTokenCloseRoundBracket);
 
         case _t('['):
-            return css_token(kCSSTokenOpenSquareBracket);
+            return new CSSToken(kCSSTokenOpenSquareBracket);
         case _t(']'):
-            return css_token(kCSSTokenCloseSquareBracket);
+            return new CSSToken(kCSSTokenCloseSquareBracket);
 
         case _t('{'):
-            return css_token(kCSSTokenOpenBrace);
+            return new CSSToken(kCSSTokenOpenBrace);
         case _t('}'):
-            return css_token(kCSSTokenCloseBrace);
+            return new CSSToken(kCSSTokenCloseBrace);
 
         default:
-            return css_token(kCSSTokenNone);
+            return new CSSToken(kCSSTokenDelim, c);
     }
 }
 

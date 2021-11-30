@@ -41,9 +41,9 @@ namespace litehtml {
 struct list_marker {
     tstring image;
     const tchar_t* baseurl;
-    list_style_type marker_type;
-    web_color color;
-    position pos;
+    ListStyleType marker_type;
+    WebColor color;
+    Position pos;
     int index;
     uint_ptr font;
 };

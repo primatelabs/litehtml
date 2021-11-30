@@ -33,6 +33,7 @@
 
 #include <string>
 
+#include "litehtml/background_paint.h"
 #include "litehtml/element/element.h"
 #include "litehtml/list_marker.h"
 #include "litehtml/url.h"
@@ -41,16 +42,16 @@
 namespace litehtml {
 
 // call back interface to draw text, images and other elements
-class document_container {
+class DocumentContainer {
 public:
-    virtual ~document_container() = default;
+    virtual ~DocumentContainer() = default;
 
     virtual litehtml::uint_ptr create_font(const litehtml::tchar_t* faceName,
         int size,
         int weight,
         litehtml::font_style italic,
         unsigned int decoration,
-        litehtml::font_metrics* fm) = 0;
+        litehtml::FontMetrics* fm) = 0;
 
     virtual void delete_font(litehtml::uint_ptr hFont) = 0;
 
@@ -60,8 +61,8 @@ public:
     virtual void draw_text(litehtml::uint_ptr hdc,
         const litehtml::tchar_t* text,
         litehtml::uint_ptr hFont,
-        litehtml::web_color color,
-        const litehtml::position& pos) = 0;
+        litehtml::WebColor color,
+        const litehtml::Position& pos) = 0;
 
     virtual int pt_to_px(int pt) = 0;
 
@@ -77,30 +78,30 @@ public:
 
     virtual void get_image_size(const litehtml::tchar_t* src,
         const litehtml::tchar_t* baseurl,
-        litehtml::size& sz) = 0;
+        litehtml::Size& sz) = 0;
 
-    virtual litehtml::size get_image_size(const URL& url) = 0;
+    virtual litehtml::Size get_image_size(const URL& url) = 0;
 
     virtual void draw_background(litehtml::uint_ptr hdc,
-        const litehtml::background_paint& bg) = 0;
+        const litehtml::BackgroundPaint& bg) = 0;
 
     virtual void draw_borders(litehtml::uint_ptr hdc,
         const litehtml::borders& borders,
-        const litehtml::position& draw_pos,
+        const litehtml::Position& draw_pos,
         bool root) = 0;
 
     virtual void set_caption(const litehtml::tchar_t* caption) = 0;
 
-    virtual void link(const std::shared_ptr<litehtml::document>& doc,
-        const litehtml::element::ptr& el) = 0;
+    virtual void link(const Document* doc,
+        const litehtml::Element::ptr& el) = 0;
 
     virtual void on_anchor_click(const litehtml::tchar_t* url,
-        const litehtml::element::ptr& el) = 0;
+        const litehtml::Element* el) = 0;
 
     virtual void set_cursor(const litehtml::tchar_t* cursor) = 0;
 
     virtual void transform_text(litehtml::tstring& text,
-        litehtml::text_transform tt) = 0;
+        litehtml::TextTransform tt) = 0;
 
     virtual void import_css(litehtml::tstring& text,
         const litehtml::tstring& url,
@@ -108,29 +109,19 @@ public:
 
     virtual tstring import_css(const URL& css_url) = 0;
 
-    virtual void set_clip(const litehtml::position& pos,
+    virtual void set_clip(const litehtml::Position& pos,
         const litehtml::border_radiuses& bdr_radius,
         bool valid_x,
         bool valid_y) = 0;
 
     virtual void del_clip() = 0;
 
-    virtual void get_client_rect(litehtml::position& client) const = 0;
+    virtual void get_client_rect(litehtml::Position& client) const = 0;
 
-    virtual std::shared_ptr<litehtml::element> create_element(
-        const litehtml::tchar_t* tag_name,
-        const litehtml::string_map& attributes,
-        const std::shared_ptr<litehtml::document>& doc) = 0;
-
-    virtual void get_media_features(litehtml::media_features& media) const = 0;
+    virtual void get_media_features(litehtml::MediaFeatures& media) const = 0;
 
     virtual void get_language(litehtml::tstring& language,
         litehtml::tstring& culture) const = 0;
-
-    virtual litehtml::tstring resolve_color(const litehtml::tstring&) const
-    {
-        return litehtml::tstring();
-    }
 };
 
 } // namespace litehtml

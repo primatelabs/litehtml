@@ -37,9 +37,8 @@ using namespace litehtml;
 TEST(DocumentTest, AddFont)
 {
     test_container container;
-    litehtml::document::ptr doc =
-        std::make_shared<litehtml::document>(&container, nullptr);
-    font_metrics fm;
+    Document* doc = new Document(&container, nullptr);
+    FontMetrics fm;
     doc->get_font(nullptr, 0, _t("normal"), _t("normal"), _t(""), &fm);
     doc->get_font(_t("inherit"), 0, _t("normal"), _t("normal"), _t(""), &fm);
     doc->get_font(_t("Arial"), 0, _t("bold"), _t("normal"), _t("underline"), &fm);
@@ -49,52 +48,50 @@ TEST(DocumentTest, AddFont)
 
 TEST(DocumentTest, Render)
 {
-    context ctx;
+    Context ctx;
     test_container container;
-    litehtml::document::ptr doc =
-        document::createFromString(_t("<html>Body</html>"), &container, &ctx);
-    doc->render(100, render_fixed_only);
-    doc->render(100, render_no_fixed);
-    doc->render(100, render_all);
+    Document* doc =
+        Document::createFromString(_t("<html>Body</html>"), &container, &ctx);
+    doc->render(100, kRenderFixedOnly);
+    doc->render(100, kRenderNoFixed);
+    doc->render(100, kRenderAll);
 }
 
 TEST(DocumentTest, Draw)
 {
-    context ctx;
+    Context ctx;
     test_container container;
-    litehtml::document::ptr doc =
-        document::createFromString(_t("<html>Body</html>"), &container, &ctx);
-    position pos(0, 0, 100, 100);
+    Document* doc =
+        Document::createFromString(_t("<html>Body</html>"), &container, &ctx);
+    Position pos(0, 0, 100, 100);
     doc->draw((uint_ptr)0, 0, 0, &pos);
 }
 
 TEST(DocumentTest, CvtUnits)
 {
     test_container container;
-    litehtml::document::ptr doc =
-        std::make_shared<litehtml::document>(&container, nullptr);
+    Document* doc = new Document(&container, nullptr);
     bool is_percent;
     doc->cvt_units(_t(""), 10, &is_percent);
-    css_length c;
-    c.fromString(_t("10%")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10em")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10pt")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10in")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10cm")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10mm")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10vm")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10vh")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10vmin")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10vmax")), doc->cvt_units(c, 10, 100);
-    c.fromString(_t("10")), doc->cvt_units(c, 10, 100);
+    CSSLength c;
+    c.parse_length_string(_t("10%")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10em")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10pt")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10in")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10cm")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10mm")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10vm")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10vh")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10vmin")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10vmax")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string(_t("10")), doc->cvt_units(c, 10, 100);
 }
 
 TEST(DocumentTest, MouseEvents)
 {
     test_container container;
-    litehtml::document::ptr doc =
-        std::make_shared<litehtml::document>(&container, nullptr);
-    position::vector redraw_boxes;
+    Document* doc = new Document(&container, nullptr);
+    std::vector<Position> redraw_boxes;
     doc->on_mouse_over(0, 0, 0, 0, redraw_boxes);
     doc->on_lbutton_down(0, 0, 0, 0, redraw_boxes);
     doc->on_lbutton_up(0, 0, 0, 0, redraw_boxes);
@@ -104,8 +101,7 @@ TEST(DocumentTest, MouseEvents)
 TEST(DocumentTest, CreateElement)
 {
     test_container container;
-    litehtml::document::ptr doc =
-        std::make_shared<litehtml::document>(&container, nullptr);
+    Document* doc = new Document(&container, nullptr);
     string_map map;
     doc->create_element(_t("container"), map);
     doc->create_element(_t("br"), map);
@@ -129,15 +125,14 @@ TEST(DocumentTest, CreateElement)
 TEST(DocumentTest, DeviceChange)
 {
     test_container container;
-    litehtml::document::ptr doc =
-        std::make_shared<litehtml::document>(&container, nullptr);
+    Document* doc = new Document(&container, nullptr);
     doc->media_changed();
     doc->lang_changed();
 }
 
 TEST(DocumentTest, Parse)
 {
-    context ctx;
+    Context ctx;
     test_container container;
-    document::createFromString(_t(""), &container, &ctx);
+    Document::createFromString(_t(""), &container, &ctx);
 }

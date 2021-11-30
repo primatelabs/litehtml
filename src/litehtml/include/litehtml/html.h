@@ -41,7 +41,7 @@
 
 #include "litehtml/background.h"
 #include "litehtml/borders.h"
-#include "litehtml/element/html_tag.h"
+#include "litehtml/element/html_element.h"
 #include "litehtml/media_query.h"
 #include "litehtml/os_types.h"
 #include "litehtml/types.h"

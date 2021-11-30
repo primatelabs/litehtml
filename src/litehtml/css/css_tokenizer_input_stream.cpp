@@ -32,18 +32,18 @@
 
 namespace litehtml {
 
-css_tokenizer_input_stream::css_tokenizer_input_stream(litehtml::tstring input)
+CSSTokenizerInputStream::CSSTokenizerInputStream(litehtml::tstring input)
 : input_(input)
 , offset_(0)
 {
 }
 
-void css_tokenizer_input_stream::advance(int offset)
+void CSSTokenizerInputStream::advance(int offset)
 {
     offset_ += offset;
 }
 
-tchar_t css_tokenizer_input_stream::consume()
+tchar_t CSSTokenizerInputStream::consume()
 {
     tchar_t c = peek(0);
     advance(1);
@@ -51,12 +51,12 @@ tchar_t css_tokenizer_input_stream::consume()
     return c;
 }
 
-tchar_t css_tokenizer_input_stream::next()
+tchar_t CSSTokenizerInputStream::next()
 {
     return peek(0);
 }
 
-tchar_t css_tokenizer_input_stream::peek(int lookahead)
+tchar_t CSSTokenizerInputStream::peek(int lookahead)
 {
     if (static_cast<size_t>(lookahead + offset_) >= input_.length()) {
         return 0;
@@ -64,7 +64,7 @@ tchar_t css_tokenizer_input_stream::peek(int lookahead)
     return input_[lookahead + offset_];
 }
 
-void css_tokenizer_input_stream::replace(tchar_t)
+void CSSTokenizerInputStream::replace(tchar_t)
 {
     offset_--;
 }

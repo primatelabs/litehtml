@@ -34,15 +34,26 @@
 
 namespace litehtml {
 
-void context::load_master_stylesheet(const tchar_t* str)
+Context::Context(const tstring& css)
 {
-    media_query_list::ptr media;
+    MediaQueryList::ptr media;
 
-    m_master_css.parse_stylesheet(str,
+    master_stylesheet_.parse(css,
         URL(),
-        std::shared_ptr<document>(),
-        media_query_list::ptr());
-    m_master_css.sort_selectors();
+        nullptr,
+        MediaQueryList::ptr());
+    master_stylesheet_.sort_selectors();
+}
+
+void Context::load_master_stylesheet(const tstring& css)
+{
+    MediaQueryList::ptr media;
+
+    master_stylesheet_.parse(css,
+        URL(),
+        nullptr,
+        MediaQueryList::ptr());
+    master_stylesheet_.sort_selectors();
 }
 
 } // namespace litehtml

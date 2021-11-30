@@ -35,46 +35,52 @@
 
 namespace litehtml {
 
-#define TOKEN_CASE(t)           \
-    case kCSSComponentValue##t: \
-        return #t;
-
-std::string css_component_value_type_string(css_component_value_type type)
+CSSComponentValue::CSSComponentValue(CSSTokenType type)
+: type_(type)
 {
-    switch (type) {
-        TOKEN_CASE(None);
-        TOKEN_CASE(Block);
-        TOKEN_CASE(Function);
-        TOKEN_CASE(Token);
-        default:
-            return "Unknown";
-    }
+}
+
+CSSComponentValue::CSSComponentValue(CSSBlock* block)
+: type_(kCSSTokenBlock)
+, block_(block)
+{
+}
+
+CSSComponentValue::CSSComponentValue(CSSFunction* function)
+: type_(kCSSTokenFunction)
+, function_(function)
+{
+}
+
+CSSComponentValue::CSSComponentValue(CSSToken* token)
+: type_(token->type())
+, token_(token)
+{
 }
 
 #if defined(ENABLE_JSON)
 
-nlohmann::json css_component_value::json() const
+nlohmann::json CSSComponentValue::json() const
 {
     nlohmann::json result{
-        {"type", css_component_value_type_string(type_)}
+        {"type", css_token_type_string(type_)}
     };
 
     switch (type_) {
-        case kCSSComponentValueBlock:
+        case kCSSTokenBlock:
+            assert(block_);
             result["block"] = block_->json();
             break;
 
-        case kCSSComponentValueFunction:
+        case kCSSTokenFunction:
             assert(function_);
             result["function"] = function_->json();
             break;
 
-        case kCSSComponentValueToken:
-            assert(token_);
-            result["token"] = token_->json();
-            break;
-
         default:
+            if (token_) {
+                result["token"] = token_->json();
+            }
             break;
     }
 

@@ -31,36 +31,44 @@
 
 #include "litehtml/css/css_block.h"
 #include "litehtml/css/css_component_value.h"
+#include "litehtml/css/css_declaration.h"
 #include "litehtml/css/css_function.h"
 #include "litehtml/css/css_prelude.h"
+#include "litehtml/css/css_range.h"
+#include "litehtml/css/css_style.h"
 #include "litehtml/css/css_stylesheet.h"
-#include "litehtml/css/css_token_range.h"
 #include "litehtml/css/css_tokenizer.h"
 #include "litehtml/types.h"
 
 namespace litehtml {
 
-class css_parser {
+class CSSParser {
 protected:
-    css_tokenizer tokenizer_;
+    CSSTokenizer tokenizer_;
 
-    std::vector<css_rule*> consume_rules(css_token_range& range, bool top_level);
+    std::vector<CSSRule*> consume_rules(CSSTokenRange& range, bool top_level);
 
-    void consume_at_rule(css_token_range& range);
+    CSSRule* consume_at_rule(CSSTokenRange& range);
 
-    css_rule* consume_qualified_rule(css_token_range& range);
+    CSSRule* consume_qualified_rule(CSSTokenRange& range);
 
-    css_component_value* consume_component_value(css_token_range& range);
+    CSSComponentValue* consume_component_value(CSSTokenRange& range);
 
-    css_block* consume_block(css_token_range& range,
-        const css_token& starting_token);
+    CSSBlock* consume_block(CSSTokenRange& range,
+        CSSToken* starting_token);
 
-    css_function* consume_function(css_token_range& range);
+    CSSFunction* consume_function(CSSTokenRange& range);
+
+    CSSDeclaration* consume_declaration(CSSComponentValueRange& range);
+
+    CSSStyle* consume_declarations(CSSComponentValueRange& range);
 
 public:
-    explicit css_parser(const tstring& input);
+    explicit CSSParser(const tstring& input);
 
-    css_stylesheet parse_stylesheet();
+    CSSStylesheet* parse_stylesheet();
+
+    void parse_stylesheet(CSSStylesheet* stylesheet);
 };
 
 } // namespace litehtml

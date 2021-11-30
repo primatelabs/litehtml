@@ -36,20 +36,25 @@
 
 namespace litehtml {
 
-class css_component_value;
+class CSSComponentValue;
 
-class css_prelude {
+class CSSPrelude {
 public:
-    std::vector<css_component_value*> values_;
+    std::vector<CSSComponentValue*> values_;
 
 public:
-    css_prelude() = default;
+    CSSPrelude() = default;
 
-    ~css_prelude() = default;
+    ~CSSPrelude();
 
-    void append(css_component_value* value)
+    void append(CSSComponentValue* value)
     {
         values_.push_back(value);
+    }
+
+    const std::vector<CSSComponentValue*>& values() const
+    {
+        return values_;
     }
 
 #if defined(ENABLE_JSON)

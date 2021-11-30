@@ -1,0 +1,145 @@
+// Copyright (C) 2020-2021 Primate Labs Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the name of the copyright holders nor the names of their
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "litehtml/css/css_property.h"
+
+#include "litehtml/background.h"
+#include "litehtml/css/css_value.h"
+
+namespace litehtml {
+
+String css_property_string(CSSProperty property)
+{
+    switch (property) {
+        case kCSSPropertyNone:
+            return "none";
+{{#properties}}
+        case {{property_enum}}:
+            return "{{property_name}}";
+{{/properties}}
+        case kCSSPropertyUnknown:
+            return "unknown";
+    }
+}
+
+CSSProperty css_property_from_string(const String& name)
+{
+{{#properties}}
+    if (name == "{{property_name}}") {
+        return {{property_enum}};
+    }
+{{/properties}}
+
+    return kCSSPropertyUnknown;
+}
+
+const tchar_t* css_property_default(CSSProperty property)
+{
+    switch (property) {
+        case kCSSPropertyNone:
+            return nullptr;
+{{#properties}}
+        case {{property_enum}}:
+            return {{{property_default}}};
+{{/properties}}
+        case kCSSPropertyUnknown:
+            return nullptr;
+    }
+}
+
+const CSSValue* css_property_default_value(CSSProperty property)
+{
+    switch (property) {
+        case kCSSPropertyNone:
+            return nullptr;
+{{#properties}}
+        case {{property_enum}}: {
+            static const CSSValue* default_value = CSSValue::factory(property, {{{property_default}}}, false);
+            return default_value;
+        }
+{{/properties}}
+        case kCSSPropertyUnknown:
+            return nullptr;
+    }
+}
+
+
+bool css_property_inherited(CSSProperty property)
+{
+    switch (property) {
+        case kCSSPropertyNone:
+            return false;
+{{#properties}}
+        case {{property_enum}}:
+            return {{property_inherited}};
+{{/properties}}
+        case kCSSPropertyUnknown:
+            return false;
+    }
+}
+
+CSSValueType css_property_value_type(CSSProperty property)
+{
+    switch (property) {
+        case kCSSPropertyNone:
+            return kCSSValueString;
+{{#properties}}
+        case {{property_enum}}:
+            return {{property_value_type}};
+{{/properties}}
+        case kCSSPropertyUnknown:
+            return kCSSValueString;
+    }
+}
+
+const KeywordVector& css_property_keywords(CSSProperty property)
+{
+    switch (property) {
+        case kCSSPropertyNone: {
+            static const KeywordVector keywords;
+            return keywords;
+        }
+{{#properties}}
+        case {{property_enum}}: {
+            static const KeywordVector keywords = {
+{{#keywords}}
+                { "{{keyword_str}}", {{keyword_enum}} },
+{{/keywords}}
+            };
+            return keywords;
+        }
+{{/properties}}
+        case kCSSPropertyUnknown: {
+            static const KeywordVector keywords;
+            return keywords;
+        }
+    }
+}
+
+} // namespace litehtml

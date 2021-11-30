@@ -29,6 +29,7 @@
 
 #include "litehtml/css/css_selector.h"
 
+#include "litehtml/debug/json.h"
 #include "litehtml/document.h"
 #include "litehtml/html.h"
 
@@ -164,7 +165,7 @@ void css_element_selector::parse(const tstring& txt)
 }
 
 
-bool css_selector::parse(const tstring& text)
+bool CSSSelector::parse(const tstring& text)
 {
     if (text.empty()) {
         return false;
@@ -222,7 +223,7 @@ bool css_selector::parse(const tstring& text)
     m_left = nullptr;
 
     if (!left.empty()) {
-        m_left = std::make_shared<css_selector>(media_query_list::ptr(nullptr));
+        m_left = std::make_shared<CSSSelector>(MediaQueryList::ptr(nullptr));
         if (!m_left->parse(left)) {
             return false;
         }
@@ -231,7 +232,7 @@ bool css_selector::parse(const tstring& text)
     return true;
 }
 
-void css_selector::calc_specificity()
+void CSSSelector::calc_specificity()
 {
     if (!m_right.m_tag.empty() && m_right.m_tag != _t("*")) {
         m_specificity.d = 1;
@@ -255,11 +256,42 @@ void css_selector::calc_specificity()
     }
 }
 
-void css_selector::add_media_to_doc(document* doc) const
+void CSSSelector::add_media_to_doc(Document* doc) const
 {
-    if (m_media_query && doc) {
-        doc->add_media_list(m_media_query);
+    if (media_query_list_ && doc) {
+        doc->add_media_list(media_query_list_);
     }
 }
+
+#if defined(ENABLE_JSON)
+
+nlohmann::json CSSSelector::json() const
+{
+    nlohmann::json result = nlohmann::json{
+        {"specificity", m_specificity.json()},
+        {"right", m_right.json()},
+        {"order", m_order},
+
+    };
+
+    if (m_style) {
+        result["style"] = m_style->json();
+    }
+
+#if 0
+    selector_specificity m_specificity;
+    css_element_selector m_right;
+    CSSSelector::ptr m_left;
+    css_combinator m_combinator;
+    CSSStyle::ptr m_style;
+    int m_order;
+    MediaQueryList::ptr media_query_list_;
+#endif
+    //return nlohmann::json::object();
+
+    return result;
+}
+
+#endif
 
 } // namespace litehtml

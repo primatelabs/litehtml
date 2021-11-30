@@ -30,7 +30,7 @@
 
 #include <gtest/gtest.h>
 
-#include <iostream>
+#include "litehtml/logging.h"
 
 using namespace litehtml;
 
@@ -38,49 +38,42 @@ namespace {
 
 struct CSSTokenizerTestCase {
     tstring css;
-    std::vector<css_token> tokens;
+    std::vector<CSSToken> tokens;
 };
 
 void test(std::vector<CSSTokenizerTestCase>& testcases)
 {
     for (auto testcase : testcases) {
-        css_tokenizer tokenizer(testcase.css);
+        CSSTokenizer tokenizer(testcase.css);
         auto tokens = tokenizer.tokens();
-        std::cout << tokens.size() << " " << testcase.tokens.size() << std::endl;
         EXPECT_EQ(testcase.tokens.size(), tokens.size() - 1);
         for (int i = 0; i < testcase.tokens.size(); i++) {
             auto& token = tokens[i];
             auto& reference = testcase.tokens[i];
 #if defined(LITEHTML_UTF8)
-            std::cout << i << " " << css_token_type_string(token.type()) << " "
-                      << css_token_type_string(reference.type()) << std::endl;
+            LOG(INFO) << i << " " << css_token_type_string(token->type()) << " "
+                      << css_token_type_string(reference.type());
 #endif
-            EXPECT_EQ(reference.type(), token.type());
+            EXPECT_EQ(reference.type(), token->type());
 
             if (reference.type() == kCSSTokenNumber) {
 #if defined(LITEHTML_UTF8)
-                std::cout << reference.numeric_value().value() << std::endl;
-                std::cout << token.numeric_value().value() << std::endl;
+                LOG(INFO) << reference.numeric_value().value();
+                LOG(INFO) << token->numeric_value().value();
 #endif
                 EXPECT_EQ(reference.numeric_value().type(),
-                    token.numeric_value().type());
+                    token->numeric_value().type());
                 EXPECT_EQ(reference.numeric_value().value(),
-                    token.numeric_value().value());
-            } else if (reference.type() == kCSSTokenIdent) {
+                    token->numeric_value().value());
+            } else if (!reference.value().empty()) {
 #if defined(LITEHTML_UTF8)
-                std::cout << reference.value() << std::endl;
-                std::cout << token.value() << std::endl;
+                LOG(INFO) << reference.value();
+                LOG(INFO) << token->value();
 #endif
-                EXPECT_EQ(reference.value(), token.value());
-            } else if (reference.type() == kCSSTokenString) {
-#if defined(LITEHTML_UTF8)
-                std::cout << reference.value() << std::endl;
-                std::cout << token.value() << std::endl;
-#endif
-                EXPECT_EQ(reference.value(), token.value());
+                EXPECT_EQ(reference.value(), token->value());
             }
         }
-        EXPECT_EQ(kCSSTokenEOF, tokens.back().type());
+        EXPECT_EQ(kCSSTokenEOF, tokens.back()->type());
     }
 }
 
@@ -88,17 +81,17 @@ void test(std::vector<CSSTokenizerTestCase>& testcases)
 
 
 // Generate a CSS token of type t that does not contain a value.
-#define T(t) css_token(kCSSToken##t)
+#define T(t) CSSToken(kCSSToken##t)
 
 // Generate a CSS token of type t that contains a string value.  This includes
 // string tokens and identifier tokens.
-#define TS(t, v) css_token(kCSSToken##t, _t(v))
+#define TS(t, v) CSSToken(kCSSToken##t, _t(v))
 
 // Generate a CSS number token that contains an integer value.
-#define TI(v) css_token(kCSSTokenNumber, css_number(kCSSIntegerValue, v))
+#define TI(v) CSSToken(kCSSTokenNumber, CSSNumber(kCSSIntegerValue, v))
 
 // Generate a CSS number token that contains a real number value.
-#define TN(v) css_token(kCSSTokenNumber, css_number(kCSSNumberValue, v))
+#define TN(v) CSSToken(kCSSTokenNumber, CSSNumber(kCSSNumberValue, v))
 
 TEST(CSSTokenizerTest, DISABLED_BadString)
 {
@@ -134,6 +127,20 @@ TEST(CSSTokenizerTest, Number)
         {_t("-0"), {TI(0)}},
         {_t("100"), {TI(100)}},
         {_t("100.0"), {TN(100.0)}},
+        {_t("+.4"), {TN(0.4)}},
+        {_t("-.4"), {TN(-0.4)}},
+    };
+
+    test(testcases);
+}
+
+TEST(CSSTokenizerTest, NumberSign)
+{
+    std::vector<CSSTokenizerTestCase> testcases = {
+        {_t(""), {}},
+        {_t("#ff00ff"), {TS(Hash, "ff00ff")}},
+        {_t("#fff"), {TS(Hash, "fff")}},
+        {_t("#000"), {TS(Hash, "000")}},
     };
 
     test(testcases);
@@ -155,6 +162,25 @@ TEST(CSSTokenizerTest, String)
             {TS(String, "hi'"), T(Whitespace), TS(String, "there")}},
         {_t("\"hi\\\"\" 'there'"),
             {TS(String, "hi\""), T(Whitespace), TS(String, "there")}},
+    };
+
+    test(testcases);
+}
+
+TEST(CSSTokenizerTest, URL)
+{
+    std::vector<CSSTokenizerTestCase> testcases = {
+        {_t("url()"), {TS(URL, "")}},
+        {_t("url( )"), {TS(URL, "")}},
+        {_t("url(https://example.com/images/myImg.jpg)"),
+            {TS(URL, "https://example.com/images/myImg.jpg")}},
+        {_t("url(data:image/png;base64,iRxVB0)"),
+            {TS(URL, "data:image/png;base64,iRxVB0")}},
+        {_t("url(#IDofSVGpath)"), {TS(URL, "#IDofSVGpath")}},
+        {_t("url(myFont.woff)"), {TS(URL, "myFont.woff")}},
+        {_t("url( myFont.woff)"), {TS(URL, "myFont.woff")}},
+        {_t("url(myFont.woff )"), {TS(URL, "myFont.woff")}},
+        {_t("url( myFont.woff )"), {TS(URL, "myFont.woff")}},
     };
 
     test(testcases);
@@ -199,7 +225,7 @@ TEST(CSSTokenizerTest, Stylesheet)
             "  margin: 25px;\n"
             "  background-color: rgb(220,230,240);\n"
             "  font-family: roboto, arial, sans-serif;\n"
-            "  font-size: 14px;\n"
+            "  font-size: 14px !important;\n"
             "}\n"),
             {T(Whitespace),
                 TS(Ident, "body"),
@@ -242,7 +268,54 @@ TEST(CSSTokenizerTest, Stylesheet)
                 T(Whitespace),
                 TI(14),
                 TS(Ident, "px"),
+                T(Whitespace),
+                TS(Delim, "!"),
+                TS(Ident, "important"),
                 T(Semicolon),
+                T(Whitespace),
+                T(CloseBrace),
+                T(Whitespace)}},
+        {_t("body {\n"
+            "  margin: 25px;\n"
+            "}\n"
+            "@media (color) {\n"
+            "  body {\n"
+            "    margin: 50px;\n"
+            "  }\n"
+            "}\n"),
+            {TS(Ident, "body"),
+                T(Whitespace),
+                T(OpenBrace),
+                T(Whitespace),
+                TS(Ident, "margin"),
+                T(Colon),
+                T(Whitespace),
+                TI(25),
+                TS(Ident, "px"),
+                T(Semicolon),
+                T(Whitespace),
+                T(CloseBrace),
+                T(Whitespace),
+                TS(AtKeyword, "media"),
+                T(Whitespace),
+                T(OpenRoundBracket),
+                TS(Ident, "color"),
+                T(CloseRoundBracket),
+                T(Whitespace),
+                T(OpenBrace),
+                T(Whitespace),
+                TS(Ident, "body"),
+                T(Whitespace),
+                T(OpenBrace),
+                T(Whitespace),
+                TS(Ident, "margin"),
+                T(Colon),
+                T(Whitespace),
+                TI(50),
+                TS(Ident, "px"),
+                T(Semicolon),
+                T(Whitespace),
+                T(CloseBrace),
                 T(Whitespace),
                 T(CloseBrace),
                 T(Whitespace)}}};

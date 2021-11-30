@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,166 +31,183 @@
 #include "litehtml/web_color.h"
 
 #include <string.h>
+#include <unordered_map>
 
 #include "litehtml/document_container.h"
 #include "litehtml/html.h"
 
 namespace litehtml {
 
-def_color g_def_colors[] = {{_t("transparent"), _t("rgba(0, 0, 0, 0)")},
-    {_t("AliceBlue"), _t("#F0F8FF")},
-    {_t("AntiqueWhite"), _t("#FAEBD7")},
-    {_t("Aqua"), _t("#00FFFF")},
-    {_t("Aquamarine"), _t("#7FFFD4")},
-    {_t("Azure"), _t("#F0FFFF")},
-    {_t("Beige"), _t("#F5F5DC")},
-    {_t("Bisque"), _t("#FFE4C4")},
-    {_t("Black"), _t("#000000")},
-    {_t("BlanchedAlmond"), _t("#FFEBCD")},
-    {_t("Blue"), _t("#0000FF")},
-    {_t("BlueViolet"), _t("#8A2BE2")},
-    {_t("Brown"), _t("#A52A2A")},
-    {_t("BurlyWood"), _t("#DEB887")},
-    {_t("CadetBlue"), _t("#5F9EA0")},
-    {_t("Chartreuse"), _t("#7FFF00")},
-    {_t("Chocolate"), _t("#D2691E")},
-    {_t("Coral"), _t("#FF7F50")},
-    {_t("CornflowerBlue"), _t("#6495ED")},
-    {_t("Cornsilk"), _t("#FFF8DC")},
-    {_t("Crimson"), _t("#DC143C")},
-    {_t("Cyan"), _t("#00FFFF")},
-    {_t("DarkBlue"), _t("#00008B")},
-    {_t("DarkCyan"), _t("#008B8B")},
-    {_t("DarkGoldenRod"), _t("#B8860B")},
-    {_t("DarkGray"), _t("#A9A9A9")},
-    {_t("DarkGrey"), _t("#A9A9A9")},
-    {_t("DarkGreen"), _t("#006400")},
-    {_t("DarkKhaki"), _t("#BDB76B")},
-    {_t("DarkMagenta"), _t("#8B008B")},
-    {_t("DarkOliveGreen"), _t("#556B2F")},
-    {_t("Darkorange"), _t("#FF8C00")},
-    {_t("DarkOrchid"), _t("#9932CC")},
-    {_t("DarkRed"), _t("#8B0000")},
-    {_t("DarkSalmon"), _t("#E9967A")},
-    {_t("DarkSeaGreen"), _t("#8FBC8F")},
-    {_t("DarkSlateBlue"), _t("#483D8B")},
-    {_t("DarkSlateGray"), _t("#2F4F4F")},
-    {_t("DarkSlateGrey"), _t("#2F4F4F")},
-    {_t("DarkTurquoise"), _t("#00CED1")},
-    {_t("DarkViolet"), _t("#9400D3")},
-    {_t("DeepPink"), _t("#FF1493")},
-    {_t("DeepSkyBlue"), _t("#00BFFF")},
-    {_t("DimGray"), _t("#696969")},
-    {_t("DimGrey"), _t("#696969")},
-    {_t("DodgerBlue"), _t("#1E90FF")},
-    {_t("FireBrick"), _t("#B22222")},
-    {_t("FloralWhite"), _t("#FFFAF0")},
-    {_t("ForestGreen"), _t("#228B22")},
-    {_t("Fuchsia"), _t("#FF00FF")},
-    {_t("Gainsboro"), _t("#DCDCDC")},
-    {_t("GhostWhite"), _t("#F8F8FF")},
-    {_t("Gold"), _t("#FFD700")},
-    {_t("GoldenRod"), _t("#DAA520")},
-    {_t("Gray"), _t("#808080")},
-    {_t("Grey"), _t("#808080")},
-    {_t("Green"), _t("#008000")},
-    {_t("GreenYellow"), _t("#ADFF2F")},
-    {_t("HoneyDew"), _t("#F0FFF0")},
-    {_t("HotPink"), _t("#FF69B4")},
-    {_t("Ivory"), _t("#FFFFF0")},
-    {_t("Khaki"), _t("#F0E68C")},
-    {_t("Lavender"), _t("#E6E6FA")},
-    {_t("LavenderBlush"), _t("#FFF0F5")},
-    {_t("LawnGreen"), _t("#7CFC00")},
-    {_t("LemonChiffon"), _t("#FFFACD")},
-    {_t("LightBlue"), _t("#ADD8E6")},
-    {_t("LightCoral"), _t("#F08080")},
-    {_t("LightCyan"), _t("#E0FFFF")},
-    {_t("LightGoldenRodYellow"), _t("#FAFAD2")},
-    {_t("LightGray"), _t("#D3D3D3")},
-    {_t("LightGrey"), _t("#D3D3D3")},
-    {_t("LightGreen"), _t("#90EE90")},
-    {_t("LightPink"), _t("#FFB6C1")},
-    {_t("LightSalmon"), _t("#FFA07A")},
-    {_t("LightSeaGreen"), _t("#20B2AA")},
-    {_t("LightSkyBlue"), _t("#87CEFA")},
-    {_t("LightSlateGray"), _t("#778899")},
-    {_t("LightSlateGrey"), _t("#778899")},
-    {_t("LightSteelBlue"), _t("#B0C4DE")},
-    {_t("LightYellow"), _t("#FFFFE0")},
-    {_t("Lime"), _t("#00FF00")},
-    {_t("LimeGreen"), _t("#32CD32")},
-    {_t("Linen"), _t("#FAF0E6")},
-    {_t("Magenta"), _t("#FF00FF")},
-    {_t("Maroon"), _t("#800000")},
-    {_t("MediumAquaMarine"), _t("#66CDAA")},
-    {_t("MediumBlue"), _t("#0000CD")},
-    {_t("MediumOrchid"), _t("#BA55D3")},
-    {_t("MediumPurple"), _t("#9370D8")},
-    {_t("MediumSeaGreen"), _t("#3CB371")},
-    {_t("MediumSlateBlue"), _t("#7B68EE")},
-    {_t("MediumSpringGreen"), _t("#00FA9A")},
-    {_t("MediumTurquoise"), _t("#48D1CC")},
-    {_t("MediumVioletRed"), _t("#C71585")},
-    {_t("MidnightBlue"), _t("#191970")},
-    {_t("MintCream"), _t("#F5FFFA")},
-    {_t("MistyRose"), _t("#FFE4E1")},
-    {_t("Moccasin"), _t("#FFE4B5")},
-    {_t("NavajoWhite"), _t("#FFDEAD")},
-    {_t("Navy"), _t("#000080")},
-    {_t("OldLace"), _t("#FDF5E6")},
-    {_t("Olive"), _t("#808000")},
-    {_t("OliveDrab"), _t("#6B8E23")},
-    {_t("Orange"), _t("#FFA500")},
-    {_t("OrangeRed"), _t("#FF4500")},
-    {_t("Orchid"), _t("#DA70D6")},
-    {_t("PaleGoldenRod"), _t("#EEE8AA")},
-    {_t("PaleGreen"), _t("#98FB98")},
-    {_t("PaleTurquoise"), _t("#AFEEEE")},
-    {_t("PaleVioletRed"), _t("#D87093")},
-    {_t("PapayaWhip"), _t("#FFEFD5")},
-    {_t("PeachPuff"), _t("#FFDAB9")},
-    {_t("Peru"), _t("#CD853F")},
-    {_t("Pink"), _t("#FFC0CB")},
-    {_t("Plum"), _t("#DDA0DD")},
-    {_t("PowderBlue"), _t("#B0E0E6")},
-    {_t("Purple"), _t("#800080")},
-    {_t("Red"), _t("#FF0000")},
-    {_t("RosyBrown"), _t("#BC8F8F")},
-    {_t("RoyalBlue"), _t("#4169E1")},
-    {_t("SaddleBrown"), _t("#8B4513")},
-    {_t("Salmon"), _t("#FA8072")},
-    {_t("SandyBrown"), _t("#F4A460")},
-    {_t("SeaGreen"), _t("#2E8B57")},
-    {_t("SeaShell"), _t("#FFF5EE")},
-    {_t("Sienna"), _t("#A0522D")},
-    {_t("Silver"), _t("#C0C0C0")},
-    {_t("SkyBlue"), _t("#87CEEB")},
-    {_t("SlateBlue"), _t("#6A5ACD")},
-    {_t("SlateGray"), _t("#708090")},
-    {_t("SlateGrey"), _t("#708090")},
-    {_t("Snow"), _t("#FFFAFA")},
-    {_t("SpringGreen"), _t("#00FF7F")},
-    {_t("SteelBlue"), _t("#4682B4")},
-    {_t("Tan"), _t("#D2B48C")},
-    {_t("Teal"), _t("#008080")},
-    {_t("Thistle"), _t("#D8BFD8")},
-    {_t("Tomato"), _t("#FF6347")},
-    {_t("Turquoise"), _t("#40E0D0")},
-    {_t("Violet"), _t("#EE82EE")},
-    {_t("Wheat"), _t("#F5DEB3")},
-    {_t("White"), _t("#FFFFFF")},
-    {_t("WhiteSmoke"), _t("#F5F5F5")},
-    {_t("Yellow"), _t("#FFFF00")},
-    {_t("YellowGreen"), _t("#9ACD32")},
-    {nullptr, nullptr}};
+namespace {
 
+std::unordered_map<tstring, WebColor> named_colors = {
+    {_t("aliceblue"), WebColor(0xf0, 0xf8, 0xff)},
+    {_t("antiquewhite"), WebColor(0xfa, 0xeb, 0xd7)},
+    {_t("aqua"), WebColor(0x00, 0xff, 0xff)},
+    {_t("aquamarine"), WebColor(0x7f, 0xff, 0xd4)},
+    {_t("azure"), WebColor(0xf0, 0xff, 0xff)},
+    {_t("beige"), WebColor(0xf5, 0xf5, 0xdc)},
+    {_t("bisque"), WebColor(0xff, 0xe4, 0xc4)},
+    {_t("black"), WebColor(0x00, 0x00, 0x00)},
+    {_t("blanchedalmond"), WebColor(0xff, 0xeb, 0xcd)},
+    {_t("blue"), WebColor(0x00, 0x00, 0xff)},
+    {_t("blueviolet"), WebColor(0x8a, 0x2b, 0xe2)},
+    {_t("brown"), WebColor(0xa5, 0x2a, 0x2a)},
+    {_t("burlywood"), WebColor(0xde, 0xb8, 0x87)},
+    {_t("cadetblue"), WebColor(0x5f, 0x9e, 0xa0)},
+    {_t("chartreuse"), WebColor(0x7f, 0xff, 0x00)},
+    {_t("chocolate"), WebColor(0xd2, 0x69, 0x1e)},
+    {_t("coral"), WebColor(0xff, 0x7f, 0x50)},
+    {_t("cornflowerblue"), WebColor(0x64, 0x95, 0xed)},
+    {_t("cornsilk"), WebColor(0xff, 0xf8, 0xdc)},
+    {_t("crimson"), WebColor(0xdc, 0x14, 0x3c)},
+    {_t("cyan"), WebColor(0x00, 0xff, 0xff)},
+    {_t("darkblue"), WebColor(0x00, 0x00, 0x8b)},
+    {_t("darkcyan"), WebColor(0x00, 0x8b, 0x8b)},
+    {_t("darkgoldenrod"), WebColor(0xb8, 0x86, 0x0b)},
+    {_t("darkgray"), WebColor(0xa9, 0xa9, 0xa9)},
+    {_t("darkgrey"), WebColor(0xa9, 0xa9, 0xa9)},
+    {_t("darkgreen"), WebColor(0x00, 0x64, 0x00)},
+    {_t("darkkhaki"), WebColor(0xbd, 0xb7, 0x6b)},
+    {_t("darkmagenta"), WebColor(0x8b, 0x00, 0x8b)},
+    {_t("darkolivegreen"), WebColor(0x55, 0x6b, 0x2f)},
+    {_t("darkorange"), WebColor(0xff, 0x8c, 0x00)},
+    {_t("darkorchid"), WebColor(0x99, 0x32, 0xcc)},
+    {_t("darkred"), WebColor(0x8b, 0x00, 0x00)},
+    {_t("darksalmon"), WebColor(0xe9, 0x96, 0x7a)},
+    {_t("darkseagreen"), WebColor(0x8f, 0xbc, 0x8f)},
+    {_t("darkslateblue"), WebColor(0x48, 0x3d, 0x8b)},
+    {_t("darkslategray"), WebColor(0x2f, 0x4f, 0x4f)},
+    {_t("darkslategrey"), WebColor(0x2f, 0x4f, 0x4f)},
+    {_t("darkturquoise"), WebColor(0x00, 0xce, 0xd1)},
+    {_t("darkviolet"), WebColor(0x94, 0x00, 0xd3)},
+    {_t("deeppink"), WebColor(0xff, 0x14, 0x93)},
+    {_t("deepskyblue"), WebColor(0x00, 0xbf, 0xff)},
+    {_t("dimgray"), WebColor(0x69, 0x69, 0x69)},
+    {_t("dimgrey"), WebColor(0x69, 0x69, 0x69)},
+    {_t("dodgerblue"), WebColor(0x1e, 0x90, 0xff)},
+    {_t("firebrick"), WebColor(0xb2, 0x22, 0x22)},
+    {_t("floralwhite"), WebColor(0xff, 0xfa, 0xf0)},
+    {_t("forestgreen"), WebColor(0x22, 0x8b, 0x22)},
+    {_t("fuchsia"), WebColor(0xff, 0x00, 0xff)},
+    {_t("gainsboro"), WebColor(0xdc, 0xdc, 0xdc)},
+    {_t("ghostwhite"), WebColor(0xf8, 0xf8, 0xff)},
+    {_t("gold"), WebColor(0xff, 0xd7, 0x00)},
+    {_t("goldenrod"), WebColor(0xda, 0xa5, 0x20)},
+    {_t("gray"), WebColor(0x80, 0x80, 0x80)},
+    {_t("grey"), WebColor(0x80, 0x80, 0x80)},
+    {_t("green"), WebColor(0x00, 0x80, 0x00)},
+    {_t("greenyellow"), WebColor(0xad, 0xff, 0x2f)},
+    {_t("honeydew"), WebColor(0xf0, 0xff, 0xf0)},
+    {_t("hotpink"), WebColor(0xff, 0x69, 0xb4)},
+    {_t("ivory"), WebColor(0xff, 0xff, 0xf0)},
+    {_t("khaki"), WebColor(0xf0, 0xe6, 0x8c)},
+    {_t("lavender"), WebColor(0xe6, 0xe6, 0xfa)},
+    {_t("lavenderblush"), WebColor(0xff, 0xf0, 0xf5)},
+    {_t("lawngreen"), WebColor(0x7c, 0xfc, 0x00)},
+    {_t("lemonchiffon"), WebColor(0xff, 0xfa, 0xcd)},
+    {_t("lightblue"), WebColor(0xad, 0xd8, 0xe6)},
+    {_t("lightcoral"), WebColor(0xf0, 0x80, 0x80)},
+    {_t("lightcyan"), WebColor(0xe0, 0xff, 0xff)},
+    {_t("lightgoldenrodyellow"), WebColor(0xfa, 0xfa, 0xd2)},
+    {_t("lightgray"), WebColor(0xd3, 0xd3, 0xd3)},
+    {_t("lightgrey"), WebColor(0xd3, 0xd3, 0xd3)},
+    {_t("lightgreen"), WebColor(0x90, 0xee, 0x90)},
+    {_t("lightpink"), WebColor(0xff, 0xb6, 0xc1)},
+    {_t("lightsalmon"), WebColor(0xff, 0xa0, 0x7a)},
+    {_t("lightseagreen"), WebColor(0x20, 0xb2, 0xaa)},
+    {_t("lightskyblue"), WebColor(0x87, 0xce, 0xfa)},
+    {_t("lightslategray"), WebColor(0x77, 0x88, 0x99)},
+    {_t("lightslategrey"), WebColor(0x77, 0x88, 0x99)},
+    {_t("lightsteelblue"), WebColor(0xb0, 0xc4, 0xde)},
+    {_t("lightyellow"), WebColor(0xff, 0xff, 0xe0)},
+    {_t("lime"), WebColor(0x00, 0xff, 0x00)},
+    {_t("limegreen"), WebColor(0x32, 0xcd, 0x32)},
+    {_t("linen"), WebColor(0xfa, 0xf0, 0xe6)},
+    {_t("magenta"), WebColor(0xff, 0x00, 0xff)},
+    {_t("maroon"), WebColor(0x80, 0x00, 0x00)},
+    {_t("mediumaquamarine"), WebColor(0x66, 0xcd, 0xaa)},
+    {_t("mediumblue"), WebColor(0x00, 0x00, 0xcd)},
+    {_t("mediumorchid"), WebColor(0xba, 0x55, 0xd3)},
+    {_t("mediumpurple"), WebColor(0x93, 0x70, 0xd8)},
+    {_t("mediumseagreen"), WebColor(0x3c, 0xb3, 0x71)},
+    {_t("mediumslateblue"), WebColor(0x7b, 0x68, 0xee)},
+    {_t("mediumspringgreen"), WebColor(0x00, 0xfa, 0x9a)},
+    {_t("mediumturquoise"), WebColor(0x48, 0xd1, 0xcc)},
+    {_t("mediumvioletred"), WebColor(0xc7, 0x15, 0x85)},
+    {_t("midnightblue"), WebColor(0x19, 0x19, 0x70)},
+    {_t("mintcream"), WebColor(0xf5, 0xff, 0xfa)},
+    {_t("mistyrose"), WebColor(0xff, 0xe4, 0xe1)},
+    {_t("moccasin"), WebColor(0xff, 0xe4, 0xb5)},
+    {_t("navajowhite"), WebColor(0xff, 0xde, 0xad)},
+    {_t("navy"), WebColor(0x00, 0x00, 0x80)},
+    {_t("oldlace"), WebColor(0xfd, 0xf5, 0xe6)},
+    {_t("olive"), WebColor(0x80, 0x80, 0x00)},
+    {_t("olivedrab"), WebColor(0x6b, 0x8e, 0x23)},
+    {_t("orange"), WebColor(0xff, 0xa5, 0x00)},
+    {_t("orangered"), WebColor(0xff, 0x45, 0x00)},
+    {_t("orchid"), WebColor(0xda, 0x70, 0xd6)},
+    {_t("palegoldenrod"), WebColor(0xee, 0xe8, 0xaa)},
+    {_t("palegreen"), WebColor(0x98, 0xfb, 0x98)},
+    {_t("paleturquoise"), WebColor(0xaf, 0xee, 0xee)},
+    {_t("palevioletred"), WebColor(0xd8, 0x70, 0x93)},
+    {_t("papayawhip"), WebColor(0xff, 0xef, 0xd5)},
+    {_t("peachpuff"), WebColor(0xff, 0xda, 0xb9)},
+    {_t("peru"), WebColor(0xcd, 0x85, 0x3f)},
+    {_t("pink"), WebColor(0xff, 0xc0, 0xcb)},
+    {_t("plum"), WebColor(0xdd, 0xa0, 0xdd)},
+    {_t("powderblue"), WebColor(0xb0, 0xe0, 0xe6)},
+    {_t("purple"), WebColor(0x80, 0x00, 0x80)},
+    {_t("red"), WebColor(0xff, 0x00, 0x00)},
+    {_t("rosybrown"), WebColor(0xbc, 0x8f, 0x8f)},
+    {_t("royalblue"), WebColor(0x41, 0x69, 0xe1)},
+    {_t("saddlebrown"), WebColor(0x8b, 0x45, 0x13)},
+    {_t("salmon"), WebColor(0xfa, 0x80, 0x72)},
+    {_t("sandybrown"), WebColor(0xf4, 0xa4, 0x60)},
+    {_t("seagreen"), WebColor(0x2e, 0x8b, 0x57)},
+    {_t("seashell"), WebColor(0xff, 0xf5, 0xee)},
+    {_t("sienna"), WebColor(0xa0, 0x52, 0x2d)},
+    {_t("silver"), WebColor(0xc0, 0xc0, 0xc0)},
+    {_t("skyblue"), WebColor(0x87, 0xce, 0xeb)},
+    {_t("slateblue"), WebColor(0x6a, 0x5a, 0xcd)},
+    {_t("slategray"), WebColor(0x70, 0x80, 0x90)},
+    {_t("slategrey"), WebColor(0x70, 0x80, 0x90)},
+    {_t("snow"), WebColor(0xff, 0xfa, 0xfa)},
+    {_t("springgreen"), WebColor(0x00, 0xff, 0x7f)},
+    {_t("steelblue"), WebColor(0x46, 0x82, 0xb4)},
+    {_t("tan"), WebColor(0xd2, 0xb4, 0x8c)},
+    {_t("teal"), WebColor(0x00, 0x80, 0x80)},
+    {_t("thistle"), WebColor(0xd8, 0xbf, 0xd8)},
+    {_t("tomato"), WebColor(0xff, 0x63, 0x47)},
+    {_t("turquoise"), WebColor(0x40, 0xe0, 0xd0)},
+    {_t("violet"), WebColor(0xee, 0x82, 0xee)},
+    {_t("wheat"), WebColor(0xf5, 0xde, 0xb3)},
+    {_t("white"), WebColor(0xff, 0xff, 0xff)},
+    {_t("whitesmoke"), WebColor(0xf5, 0xf5, 0xf5)},
+    {_t("yellow"), WebColor(0xff, 0xff, 0x00)},
+    {_t("yellowgreen"), WebColor(0x9a, 0xcd, 0x32)},
 
-web_color web_color::from_string(const tchar_t* str, document_container* callback)
+    {_t("transparent"), WebColor(0, 0, 0, 0)},
+};
+
+WebColor resolve_name(const tstring& name)
+{
+    return named_colors[name];
+}
+
+} // namespace
+
+WebColor::WebColor(const tstring& str)
+{
+    *this = from_string(str.c_str());
+}
+
+WebColor WebColor::from_string(const tchar_t* str)
 {
     if (!str || !str[0]) {
-        return web_color(0, 0, 0);
+        return WebColor(0, 0, 0);
     }
+
     if (str[0] == _t('#')) {
         tstring red = _t("");
         tstring green = _t("");
@@ -210,7 +228,7 @@ web_color web_color::from_string(const tchar_t* str, document_container* callbac
             blue += str[6];
         }
         tchar_t* sss = nullptr;
-        web_color clr;
+        WebColor clr;
         clr.red = (byte)t_strtol(red.c_str(), &sss, 16);
         clr.green = (byte)t_strtol(green.c_str(), &sss, 16);
         clr.blue = (byte)t_strtol(blue.c_str(), &sss, 16);
@@ -230,7 +248,7 @@ web_color web_color::from_string(const tchar_t* str, document_container* callbac
         std::vector<tstring> tokens;
         split_string(s, tokens, _t(", \t"));
 
-        web_color clr;
+        WebColor clr;
 
         if (tokens.size() >= 1)
             clr.red = (byte)t_atoi(tokens[0].c_str());
@@ -243,29 +261,11 @@ web_color web_color::from_string(const tchar_t* str, document_container* callbac
 
         return clr;
     } else {
-        tstring rgb = resolve_name(str, callback);
-        if (!rgb.empty()) {
-            return from_string(rgb.c_str(), callback);
-        }
+        return resolve_name(str);
     }
-    return web_color(0, 0, 0);
 }
 
-tstring web_color::resolve_name(const tchar_t* name, document_container* callback)
-{
-    for (int i = 0; g_def_colors[i].name; i++) {
-        if (!t_strcasecmp(name, g_def_colors[i].name)) {
-            return tstring(g_def_colors[i].rgb);
-        }
-    }
-    if (callback) {
-        tstring clr = callback->resolve_color(name);
-        return clr;
-    }
-    return tstring();
-}
-
-bool web_color::is_color(const tchar_t* str)
+bool WebColor::is_color(const tchar_t* str)
 {
     if (!t_strncasecmp(str, _t("rgb"), 3) || str[0] == _t('#')) {
         return true;
@@ -273,6 +273,7 @@ bool web_color::is_color(const tchar_t* str)
     if (!t_isdigit(str[0]) && str[0] != _t('.')) {
         return true;
     }
+
     return false;
 }
 

@@ -42,7 +42,7 @@ litehtml::uint_ptr test_container::create_font(const litehtml::tchar_t* faceName
     int weight,
     litehtml::font_style italic,
     unsigned int decoration,
-    litehtml::font_metrics* fm)
+    litehtml::FontMetrics* fm)
 {
     if (fm) {
         fm->ascent = 10;
@@ -66,8 +66,8 @@ int test_container::text_width(const litehtml::tchar_t* text,
 void test_container::draw_text(litehtml::uint_ptr hdc,
     const litehtml::tchar_t* text,
     litehtml::uint_ptr hFont,
-    litehtml::web_color color,
-    const litehtml::position& pos)
+    litehtml::WebColor color,
+    const litehtml::Position& pos)
 {
 }
 
@@ -98,30 +98,23 @@ void test_container::load_image(const litehtml::URL& src,
 
 void test_container::get_image_size(const litehtml::tchar_t* src,
     const litehtml::tchar_t* baseurl,
-    litehtml::size& sz)
+    litehtml::Size& sz)
 {
 }
 
-litehtml::size test_container::get_image_size(const litehtml::URL& src)
+litehtml::Size test_container::get_image_size(const litehtml::URL& src)
 {
-    return litehtml::size();
+    return litehtml::Size();
 }
 
 void test_container::draw_background(litehtml::uint_ptr hdc,
-    const litehtml::background_paint& bg)
+    const litehtml::BackgroundPaint& bg)
 {
-}
-
-void test_container::make_url(const litehtml::tchar_t* url,
-    const litehtml::tchar_t* basepath,
-    litehtml::tstring& out)
-{
-    out = url;
 }
 
 void test_container::draw_borders(litehtml::uint_ptr hdc,
     const litehtml::borders& borders,
-    const litehtml::position& draw_pos,
+    const litehtml::Position& draw_pos,
     bool root)
 {
 }
@@ -130,12 +123,12 @@ void test_container::set_caption(const litehtml::tchar_t* caption)
 {
 }
 
-void test_container::link(const std::shared_ptr<litehtml::document>& ptr,
-    const litehtml::element::ptr& el)
+void test_container::link(const litehtml::Document* ptr,
+    const litehtml::Element::ptr& el)
 {
 }
 void test_container::on_anchor_click(const litehtml::tchar_t* url,
-    const litehtml::element::ptr& el)
+    const litehtml::Element* el)
 {
 }
 
@@ -144,7 +137,7 @@ void test_container::set_cursor(const litehtml::tchar_t* cursor)
 }
 
 void test_container::transform_text(litehtml::tstring& text,
-    litehtml::text_transform tt)
+    litehtml::TextTransform tt)
 {
 }
 
@@ -159,7 +152,7 @@ litehtml::tstring test_container::import_css(const litehtml::URL& url)
     return "";
 }
 
-void test_container::set_clip(const litehtml::position& pos,
+void test_container::set_clip(const litehtml::Position& pos,
     const litehtml::border_radiuses& bdr_radius,
     bool valid_x,
     bool valid_y)
@@ -170,23 +163,15 @@ void test_container::del_clip()
 {
 }
 
-void test_container::get_client_rect(litehtml::position& client) const
+void test_container::get_client_rect(litehtml::Position& client) const
 {
 }
 
-std::shared_ptr<litehtml::element> test_container::create_element(
-    const litehtml::tchar_t* tag_name,
-    const litehtml::string_map& attributes,
-    const std::shared_ptr<litehtml::document>& doc)
+void test_container::get_media_features(litehtml::MediaFeatures& media) const
 {
-    return 0;
-}
-
-void test_container::get_media_features(litehtml::media_features& media) const
-{
-    litehtml::position client;
+    litehtml::Position client;
     get_client_rect(client);
-    media.type = litehtml::media_type_screen;
+    media.type = litehtml::kMediaTypeScreen;
     media.width = client.width;
     media.height = client.height;
     media.device_width = 100;

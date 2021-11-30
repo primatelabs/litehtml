@@ -35,18 +35,41 @@
 
 namespace litehtml {
 
-class css_component_value;
+class CSSComponentValue;
 
-class css_declaration {
+class CSSDeclaration {
 public:
-    tstring name_;
+    String name_;
 
-    std::vector<css_component_value*> values_;
+    std::vector<CSSComponentValue*> values_;
+
+    bool important_;
 
 public:
-    css_declaration() = default;
+    CSSDeclaration() = delete;
 
-    ~css_declaration() = default;
+    CSSDeclaration(const String& name,
+        const std::vector<CSSComponentValue*> values,
+        bool important);
+
+    ~CSSDeclaration() = default;
+
+    const String& name() const
+    {
+        return name_;
+    }
+
+    const std::vector<CSSComponentValue*> values() const
+    {
+        return values_;
+    }
+
+    bool important() const
+    {
+        return important_;
+    }
+
+
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const;

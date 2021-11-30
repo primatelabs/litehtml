@@ -30,11 +30,11 @@
 #include "litehtml/table.h"
 
 #include "litehtml/html.h"
-#include "litehtml/element/html_tag.h"
+#include "litehtml/element/html_element.h"
 
 namespace litehtml {
 
-void litehtml::table_grid::add_cell(element::ptr& el)
+void litehtml::table_grid::add_cell(Element::ptr& el)
 {
     table_cell cell;
     cell.el = el;
@@ -54,7 +54,7 @@ void litehtml::table_grid::add_cell(element::ptr& el)
 }
 
 
-void litehtml::table_grid::begin_row(element::ptr& row)
+void litehtml::table_grid::begin_row(Element::ptr& row)
 {
     std::vector<table_cell> r;
     m_cells.push_back(r);
@@ -222,7 +222,7 @@ void litehtml::table_grid::distribute_width(int width, int start, int end)
                 // distribute between the columns with percents
                 for (int col = start; col <= end; col++) {
                     if (!m_columns[col].css_width.is_predefined() &&
-                        m_columns[col].css_width.units() == css_units_percentage) {
+                        m_columns[col].css_width.units() == kCSSUnitsPercent) {
                         distribute_columns.push_back(&m_columns[col]);
                     }
                 }
@@ -341,7 +341,7 @@ int litehtml::table_grid::calc_table_width(int block_width,
         float percent = 0;
         for (int col = 0; col < m_cols_count; col++) {
             if (!m_columns[col].css_width.is_predefined() &&
-                m_columns[col].css_width.units() == css_units_percentage) {
+                m_columns[col].css_width.units() == kCSSUnitsPercent) {
                 percent += m_columns[col].css_width.val();
             } else {
                 fixed_width += m_columns[col].width;
@@ -351,10 +351,10 @@ int litehtml::table_grid::calc_table_width(int block_width,
         cur_width = 0;
         for (int col = 0; col < m_cols_count; col++) {
             if (!m_columns[col].css_width.is_predefined() &&
-                m_columns[col].css_width.units() == css_units_percentage) {
-                css_length w;
+                m_columns[col].css_width.units() == kCSSUnitsPercent) {
+                CSSLength w;
                 w.set_value(m_columns[col].css_width.val() * scale,
-                    css_units_percentage);
+                    kCSSUnitsPercent);
                 m_columns[col].width = w.calc_percent(block_width - fixed_width);
                 if (m_columns[col].width < m_columns[col].min_width) {
                     m_columns[col].width = m_columns[col].min_width;
@@ -439,7 +439,7 @@ void litehtml::table_grid::calc_rows_height(int blockHeight, int /* borderSpacin
     // compute vertical size inferred by cells
     for (auto& row : m_rows) {
         if (!row.css_height.is_predefined()) {
-            if (row.css_height.units() != css_units_percentage) {
+            if (row.css_height.units() != kCSSUnitsPercent) {
                 if (row.height < (int)row.css_height.val()) {
                     row.height = (int)row.css_height.val();
                 }
@@ -456,7 +456,7 @@ void litehtml::table_grid::calc_rows_height(int blockHeight, int /* borderSpacin
         int auto_count = 0; // number of rows with height=auto
         for (auto& row : m_rows) {
             if (!row.css_height.is_predefined() &&
-                row.css_height.units() == css_units_percentage) {
+                row.css_height.units() == kCSSUnitsPercent) {
                 row.height = row.css_height.calc_percent(blockHeight);
                 if (row.height < row.min_height) {
                     row.height = row.min_height;

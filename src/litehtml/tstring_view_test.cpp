@@ -31,7 +31,7 @@
 
 #include <gtest/gtest.h>
 
-#include <iostream>
+#include "litehtml/logging.h"
 
 using namespace litehtml;
 
@@ -72,6 +72,6 @@ TEST(TStringViewTest, RangeForLoop)
     for (auto c : view) {
         // TODO: How can we automatically (rather than manually) verify the
         // iterator is working properly here?
-        std::cout << c << std::endl;
+        LOG(INFO) << c;
     }
 }

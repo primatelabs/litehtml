@@ -34,11 +34,20 @@
 
 namespace litehtml {
 
+CSSRule::CSSRule()
+: prelude_(std::make_unique<CSSPrelude>())
+{
+}
+
 #if defined(ENABLE_JSON)
 
-nlohmann::json css_rule::json() const
+nlohmann::json CSSRule::json() const
 {
     nlohmann::json result{};
+
+    if (!name_.empty()) {
+        result["name"] = name_;
+    }
 
     if (prelude_) {
         result["prelude"] = prelude_->json();

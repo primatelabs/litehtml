@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,29 +28,27 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_WEB_COLOR_H__
-#define LITEHTML_WEB_COLOR_H__
+#ifndef LITEHTML_WEBCOLOR_H__
+#define LITEHTML_WEBCOLOR_H__
 
 #include "litehtml/os_types.h"
 #include "litehtml/types.h"
 
 namespace litehtml {
-struct def_color {
-    const tchar_t* name;
-    const tchar_t* rgb;
-};
 
-extern def_color g_def_colors[];
+class DocumentContainer;
 
-class document_container;
+struct WebColor {
+    uint8_t blue = 0;
+    uint8_t green = 0;
+    uint8_t red = 0;
+    uint8_t alpha = 255;
 
-struct web_color {
-    byte blue;
-    byte green;
-    byte red;
-    byte alpha;
+    WebColor() = default;
 
-    web_color(byte r, byte g, byte b, byte a = 255)
+    WebColor(const tstring& str);
+
+    WebColor(byte r, byte g, byte b, byte a = 255)
     {
         blue = b;
         green = g;
@@ -57,36 +56,11 @@ struct web_color {
         alpha = a;
     }
 
-    web_color()
-    {
-        blue = 0;
-        green = 0;
-        red = 0;
-        alpha = 0xFF;
-    }
+    static WebColor from_string(const tchar_t* str);
 
-    web_color(const web_color& val)
-    {
-        blue = val.blue;
-        green = val.green;
-        red = val.red;
-        alpha = val.alpha;
-    }
-
-    web_color& operator=(const web_color& val)
-    {
-        blue = val.blue;
-        green = val.green;
-        red = val.red;
-        alpha = val.alpha;
-        return *this;
-    }
-    static web_color from_string(const tchar_t* str,
-        litehtml::document_container* callback);
-    static litehtml::tstring resolve_name(const tchar_t* name,
-        litehtml::document_container* callback);
     static bool is_color(const tchar_t* str);
 };
+
 } // namespace litehtml
 
-#endif // LITEHTML_WEB_COLOR_H__
+#endif // LITEHTML_WEBCOLOR_H__

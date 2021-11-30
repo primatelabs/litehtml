@@ -16,6 +16,7 @@ set(PROJECT_MINOR 0)
 
 set(SOURCE_LITEHTML
     background.cpp
+    background_paint.cpp
     box.cpp
     codepoint.cpp
     context.cpp
@@ -27,45 +28,51 @@ set(SOURCE_LITEHTML
     css/css_number.cpp
     css/css_parser.cpp
     css/css_prelude.cpp
+    css/css_property.cpp
+    css/css_range.cpp
+    css/css_regenerate.cpp
     css/css_rule.cpp
     css/css_selector.cpp
+    css/css_style.cpp
     css/css_stylesheet.cpp
     css/css_token.cpp
-    css/css_token_range.cpp
     css/css_tokenizer.cpp
     css/css_tokenizer_input_stream.cpp
     css/css_value.cpp
     document.cpp
     document_container.cpp
-    element/el_anchor.cpp
-    element/el_base.cpp
-    element/el_before_after.cpp
-    element/el_body.cpp
-    element/el_break.cpp
-    element/el_cdata.cpp
-    element/el_comment.cpp
-    element/el_div.cpp
-    element/el_font.cpp
-    element/el_image.cpp
-    element/el_li.cpp
-    element/el_link.cpp
-    element/el_para.cpp
-    element/el_script.cpp
-    element/el_space.cpp
-    element/el_style.cpp
-    element/el_table.cpp
-    element/el_td.cpp
-    element/el_text.cpp
-    element/el_title.cpp
-    element/el_tr.cpp
+    element/anchor_element.cpp
+    element/base_element.cpp
+    element/before_after_element.cpp
+    element/body_element.cpp
+    element/break_element.cpp
+    element/cdata_element.cpp
+    element/comment_element.cpp
+    element/div_element.cpp
     element/element.cpp
-    element/html_tag.cpp
+    element/font_element.cpp
+    element/html_element.cpp
+    element/image_element.cpp
+    element/li_element.cpp
+    element/link_element.cpp
+    element/paragraph_element.cpp
+    element/script_element.cpp
+    element/space_element.cpp
+    element/style_element.cpp
+    element/table_element.cpp
+    element/td_element.cpp
+    element/text_element.cpp
+    element/title_element.cpp
+    element/tr_element.cpp
     html.cpp
     iterators.cpp
     list_marker.cpp
+    logging.cpp
+    media_features.cpp
     media_query.cpp
+    media_query_expression.cpp
+    media_query_list.cpp
     num_cvt.cpp
-    style.cpp
     table.cpp
     tstring_view.cpp
     url.cpp
@@ -75,8 +82,8 @@ set(SOURCE_LITEHTML
 )
 
 set(HEADER_LITEHTML
-    include/litehtml/attributes.h
     include/litehtml/background.h
+    include/litehtml/background_paint.h
     include/litehtml/borders.h
     include/litehtml/box.h
     include/litehtml/codepoint.h
@@ -92,46 +99,51 @@ set(HEADER_LITEHTML
     include/litehtml/css/css_parser.h
     include/litehtml/css/css_position.h
     include/litehtml/css/css_prelude.h
+    include/litehtml/css/css_property.h
+    include/litehtml/css/css_range.h
     include/litehtml/css/css_rule.h
     include/litehtml/css/css_selector.h
+    include/litehtml/css/css_style.h
     include/litehtml/css/css_stylesheet.h
     include/litehtml/css/css_token.h
-    include/litehtml/css/css_token_range.h
     include/litehtml/css/css_tokenizer.h
     include/litehtml/css/css_tokenizer_input_stream.h
     include/litehtml/css/css_value.h
     include/litehtml/document.h
     include/litehtml/document_container.h
-    include/litehtml/element/el_anchor.h
-    include/litehtml/element/el_base.h
-    include/litehtml/element/el_before_after.h
-    include/litehtml/element/el_body.h
-    include/litehtml/element/el_break.h
-    include/litehtml/element/el_cdata.h
-    include/litehtml/element/el_comment.h
-    include/litehtml/element/el_div.h
-    include/litehtml/element/el_font.h
-    include/litehtml/element/el_image.h
-    include/litehtml/element/el_link.h
-    include/litehtml/element/el_para.h
-    include/litehtml/element/el_script.h
-    include/litehtml/element/el_space.h
-    include/litehtml/element/el_style.h
-    include/litehtml/element/el_table.h
-    include/litehtml/element/el_td.h
-    include/litehtml/element/el_text.h
-    include/litehtml/element/el_title.h
-    include/litehtml/element/el_tr.h
+    include/litehtml/element/anchor_element.h
+    include/litehtml/element/base_element.h
+    include/litehtml/element/before_after_element.h
+    include/litehtml/element/body_element.h
+    include/litehtml/element/break_element.h
+    include/litehtml/element/cdata_element.h
+    include/litehtml/element/comment_element.h
+    include/litehtml/element/div_element.h
     include/litehtml/element/element.h
-    include/litehtml/element/html_tag.h
+    include/litehtml/element/font_element.h
+    include/litehtml/element/html_element.h
+    include/litehtml/element/image_element.h
+    include/litehtml/element/link_element.h
+    include/litehtml/element/paragraph_element.h
+    include/litehtml/element/script_element.h
+    include/litehtml/element/space_element.h
+    include/litehtml/element/style_element.h
+    include/litehtml/element/table_element.h
+    include/litehtml/element/td_element.h
+    include/litehtml/element/text_element.h
+    include/litehtml/element/title_element.h
+    include/litehtml/element/tr_element.h
     include/litehtml/html.h
     include/litehtml/iterators.h
     include/litehtml/list_marker.h
     include/litehtml/litehtml.h
+    include/litehtml/logging.h
+    include/litehtml/media_features.h
     include/litehtml/media_query.h
+    include/litehtml/media_query_expression.h
+    include/litehtml/media_query_list.h
     include/litehtml/num_cvt.h
     include/litehtml/os_types.h
-    include/litehtml/style.h
     include/litehtml/table.h
     include/litehtml/tstring_view.h
     include/litehtml/types.h
@@ -144,6 +156,7 @@ set(HEADER_LITEHTML
 set(TEST_LITEHTML
     codepoint_test.cpp
     context_test.cpp
+    css/css_length_test.cpp
     css/css_parser_test.cpp
     css/css_stylesheet_test.cpp
     css/css_test.cpp
@@ -151,6 +164,7 @@ set(TEST_LITEHTML
     css/css_tokenizer_test.cpp
     document_test.cpp
     layout_global_test.cpp
+    media_query_expression_test.cpp
     media_query_test.cpp
     test_container.cpp
     tstring_view_test.cpp
@@ -169,7 +183,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 11
+    CXX_STANDARD 14
     C_STANDARD 99
     PUBLIC_HEADER "${HEADER_LITEHTML}"
 )
@@ -220,17 +234,39 @@ install(FILES cmake/litehtmlConfig.cmake DESTINATION lib${LIB_SUFFIX}/cmake/lite
 install(EXPORT litehtmlTargets FILE litehtmlTargets.cmake DESTINATION lib${LIB_SUFFIX}/cmake/litehtml)
 
 # Binary master.css
-find_package(PythonInterp REQUIRED)
+find_package(Python3 REQUIRED)
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/master.css.inc"
-    COMMAND "${PYTHON_EXECUTABLE}"
+    COMMAND "${Python3_EXECUTABLE}"
         "${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/process-css.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/master.css"
         "${CMAKE_CURRENT_SOURCE_DIR}/master.css.inc"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/master.css")
 
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/master.css.inc PROPERTIES GENERATED TRUE)
+
+
+# Generate CSS property name files
+
+add_custom_command(
+    OUTPUT
+        "${CMAKE_CURRENT_SOURCE_DIR}/css/css_property.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/litehtml/css/css_property.h"
+    COMMAND
+        "${Python3_EXECUTABLE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_css_property.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/scripts/css_property.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/css/css_property.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/litehtml/css/css_property.h"
+    DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/scripts/css_property.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/scripts/css_property.cpp.mustache"
+        "${CMAKE_CURRENT_SOURCE_DIR}/scripts/css_property.h.mustache")
+
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/css/css_property.cpp PROPERTIES GENERATED TRUE)
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/include/litehtml/css/css_property.h PROPERTIES GENERATED TRUE)
+
 
 # Tests
 
@@ -259,7 +295,7 @@ if (BUILD_TESTING)
     )
 
     set_target_properties(${TEST_NAME} PROPERTIES
-        CXX_STANDARD 11
+        CXX_STANDARD 14
         C_STANDARD 99
         PUBLIC_HEADER "${HEADER_LITEHTML}"
     )

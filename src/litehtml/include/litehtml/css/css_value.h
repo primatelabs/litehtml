@@ -1,4 +1,5 @@
-// Copyright (C) 2020-2021 Primate Labs Inc.
+// Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -11,7 +12,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//    * Neither the name of the copyright holders nor the names of their
+//    * Neither the names of the copyright holders nor the names of their
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -27,28 +28,134 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_CSS_VALUE_H__
-#define LITEHTML_CSS_VALUE_H__
+#ifndef LITEHTML_CSS_CSS_VALUE_H__
+#define LITEHTML_CSS_CSS_VALUE_H__
 
+#include "litehtml/css/css_length.h"
 #include "litehtml/debug/json.h"
-#include "litehtml/types.h"
+#include "litehtml/os_types.h"
+#include "litehtml/web_color.h"
 
 namespace litehtml {
 
-class css_value {
-public:
-    css_value() = default;
+enum CSSProperty : int;
 
-    ~css_value() = default;
+using CSSKeyword = int;
+
+enum CSSValueType : int {
+    kCSSValueString,
+    kCSSValueColor,
+    kCSSValueKeyword,
+    kCSSValueLength,
+};
+
+class CSSValue {
+protected:
+    CSSValueType type_ = kCSSValueString;
+
+    tstring value_;
+
+    bool important_ = false;
+
+public:
+    CSSValue() = delete;
+
+    // FIXME: Legacy interface.
+    CSSValue(const tstring& value, bool important);
+
+    CSSValue(CSSValueType type, const tstring& value, bool important);
+
+    CSSValueType type() const
+    {
+        return type_;
+    }
+
+    bool is_string() const
+    {
+        return type_ == kCSSValueString;
+    }
+
+    bool is_color() const
+    {
+        return type_ == kCSSValueColor;
+    }
+
+    bool is_keyword() const
+    {
+        return type_ == kCSSValueKeyword;
+    }
+
+    bool is_length() const
+    {
+        return type_ == kCSSValueLength;
+    }
+
+    const tstring& string() const
+    {
+        return value_;
+    }
+
+    void string(tstring& value)
+    {
+        value_ = value;
+    }
+
+    bool important() const
+    {
+        return important_;
+    }
+
+    void important(bool important)
+    {
+        important_ = important;
+    }
+
+    static CSSValue* factory(CSSProperty property, const tstring& value, bool important);
 
 #if defined(ENABLE_JSON)
-    nlohmann::json json() const
+    nlohmann::json json() const;
+#endif
+};
+
+class CSSColorValue : public CSSValue {
+protected:
+    WebColor color_;
+
+public:
+    CSSColorValue(WebColor color, const tstring& value, bool important);
+
+    WebColor color() const
     {
-        return nlohmann::json{};
+        return color_;
     }
-#endif // ENABLE_JSON
+};
+
+class CSSKeywordValue : public CSSValue {
+protected:
+  CSSKeyword keyword_;
+
+public:
+    CSSKeywordValue(CSSKeyword keyword, const tstring& value, bool important);
+
+    CSSKeyword keyword() const
+    {
+        return keyword_;
+    }
+};
+
+class CSSLengthValue : public CSSValue {
+protected:
+  CSSLength length_;
+
+public:
+    CSSLengthValue(const CSSLength& length, const tstring& value, bool important);
+
+    const CSSLength& length() const
+    {
+        return length_;
+    }
 };
 
 } // namespace litehtml
 
-#endif // LITEHTML_CSS_VALUE_H__
+#endif // LITEHTML_CSS_CSS_VALUE_H__

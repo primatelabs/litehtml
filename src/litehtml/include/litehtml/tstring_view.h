@@ -130,6 +130,8 @@ std::basic_ostream<tstring_view::value_type>& operator<<(
     std::basic_ostream<tstring_view::value_type>&,
     tstring_view str);
 
+using StringView = tstring_view;
+
 } // namespace litehtml
 
 #endif // LITEHTML_TSTRING_VIEW_H__

@@ -35,63 +35,51 @@
 
 #include "litehtml/css/css_rule.h"
 #include "litehtml/css/css_selector.h"
+#include "litehtml/css/css_style.h"
 #include "litehtml/debug/json.h"
-#include "litehtml/style.h"
 #include "litehtml/url.h"
 
 namespace litehtml {
 
-class css_stylesheet {
-    css_selector::vector m_selectors;
+class CSSStylesheet {
+    CSSSelector::vector selectors_;
 
 public:
-    std::vector<css_rule*> rules_;
+    std::vector<CSSRule*> rules_;
 
 public:
-    css_stylesheet() = default;
+    CSSStylesheet() = default;
 
-    ~css_stylesheet() = default;
+    ~CSSStylesheet() = default;
 
-    const css_selector::vector& selectors() const
+    const CSSSelector::vector& selectors() const
     {
-        return m_selectors;
+        return selectors_;
     }
 
     void clear()
     {
-        m_selectors.clear();
+        selectors_.clear();
     }
 
-    void parse_stylesheet(const tstring& str,
+    void parse(const tstring& str,
         const URL& url,
-        const std::shared_ptr<document>& doc,
-        const media_query_list::ptr& media);
+        const Document* doc,
+        const MediaQueryList::ptr& media);
 
     void sort_selectors();
 
     static void parse_css_url(const tstring& str, tstring& url);
 
 public:
-    void parse_atrule(const tstring& text,
-        const URL& url,
-        const std::shared_ptr<document>& doc,
-        const media_query_list::ptr& media);
-
-    void add_selector(css_selector::ptr selector)
+    void add_selector(CSSSelector::ptr selector)
     {
-        selector->m_order = (int)m_selectors.size();
-        m_selectors.push_back(selector);
+        selector->m_order = selectors_.size();
+        selectors_.push_back(selector);
     }
-
-    bool parse_selectors(const tstring& txt,
-        const litehtml::style::ptr& styles,
-        const media_query_list::ptr& media);
 
 #if defined(ENABLE_JSON)
-    nlohmann::json json() const
-    {
-        return nlohmann::json{{"rules", json_vector(rules_)}};
-    }
+    nlohmann::json json() const;
 #endif // ENABLE_JSON
 };
 

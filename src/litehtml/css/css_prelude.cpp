@@ -33,9 +33,16 @@
 
 namespace litehtml {
 
+CSSPrelude::~CSSPrelude()
+{
+    for (auto value : values_) {
+        delete value;
+    }
+}
+
 #if defined(ENABLE_JSON)
 
-nlohmann::json css_prelude::json() const
+nlohmann::json CSSPrelude::json() const
 {
     return nlohmann::json{
         {"values", json_vector(values_)},

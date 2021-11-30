@@ -34,12 +34,11 @@ namespace litehtml {
     case kCSSToken##t: \
         return #t;
 
-std::string css_token_type_string(css_token_type type)
+std::string css_token_type_string(CSSTokenType type)
 {
     switch (type) {
         TOKEN_CASE(None);
         TOKEN_CASE(Ident);
-        TOKEN_CASE(Function);
         TOKEN_CASE(AtKeyword);
         TOKEN_CASE(Hash);
         TOKEN_CASE(String);
@@ -62,29 +61,38 @@ std::string css_token_type_string(css_token_type type)
         TOKEN_CASE(CloseRoundBracket);
         TOKEN_CASE(OpenBrace);
         TOKEN_CASE(CloseBrace);
+        TOKEN_CASE(Function);
+        TOKEN_CASE(Block);
         TOKEN_CASE(EOF);
         default:
             return "Unknown";
     }
 }
 
-css_token::css_token()
+CSSToken::CSSToken()
 : type_(kCSSTokenNone)
 {
 }
 
-css_token::css_token(css_token_type type)
+CSSToken::CSSToken(CSSTokenType type)
 : type_(type)
 {
 }
 
-css_token::css_token(css_token_type type, const tstring& value)
+CSSToken::CSSToken(CSSTokenType type, tchar_t value)
+: type_(type)
+, value_(1, value)
+{
+
+}
+
+CSSToken::CSSToken(CSSTokenType type, const tstring& value)
 : type_(type)
 , value_(value)
 {
 }
 
-css_token::css_token(css_token_type type, const css_number& numeric_value)
+CSSToken::CSSToken(CSSTokenType type, const CSSNumber& numeric_value)
 : type_(type)
 , numeric_value_(numeric_value)
 {

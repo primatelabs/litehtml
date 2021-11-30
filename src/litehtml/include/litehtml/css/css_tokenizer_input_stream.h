@@ -33,13 +33,13 @@
 
 namespace litehtml {
 
-class css_tokenizer_input_stream {
+class CSSTokenizerInputStream {
 protected:
     litehtml::tstring input_;
     int offset_;
 
 public:
-    explicit css_tokenizer_input_stream(litehtml::tstring input);
+    explicit CSSTokenizerInputStream(litehtml::tstring input);
 
     void advance(int offset = 1);
 

@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (C) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,28 +39,28 @@
 #include "litehtml/css/css_stylesheet.h"
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
-#include "litehtml/element/el_anchor.h"
-#include "litehtml/element/el_base.h"
-#include "litehtml/element/el_body.h"
-#include "litehtml/element/el_break.h"
-#include "litehtml/element/el_cdata.h"
-#include "litehtml/element/el_comment.h"
-#include "litehtml/element/el_div.h"
-#include "litehtml/element/el_font.h"
-#include "litehtml/element/el_image.h"
-#include "litehtml/element/el_li.h"
-#include "litehtml/element/el_link.h"
-#include "litehtml/element/el_para.h"
-#include "litehtml/element/el_script.h"
-#include "litehtml/element/el_space.h"
-#include "litehtml/element/el_style.h"
-#include "litehtml/element/el_table.h"
-#include "litehtml/element/el_td.h"
-#include "litehtml/element/el_text.h"
-#include "litehtml/element/el_title.h"
-#include "litehtml/element/el_tr.h"
+#include "litehtml/element/anchor_element.h"
+#include "litehtml/element/base_element.h"
+#include "litehtml/element/body_element.h"
+#include "litehtml/element/break_element.h"
+#include "litehtml/element/cdata_element.h"
+#include "litehtml/element/comment_element.h"
+#include "litehtml/element/div_element.h"
+#include "litehtml/element/font_element.h"
+#include "litehtml/element/image_element.h"
+#include "litehtml/element/li_element.h"
+#include "litehtml/element/link_element.h"
+#include "litehtml/element/paragraph_element.h"
+#include "litehtml/element/script_element.h"
+#include "litehtml/element/space_element.h"
+#include "litehtml/element/style_element.h"
+#include "litehtml/element/table_element.h"
+#include "litehtml/element/td_element.h"
+#include "litehtml/element/text_element.h"
+#include "litehtml/element/title_element.h"
+#include "litehtml/element/tr_element.h"
 #include "litehtml/html.h"
-#include "litehtml/element/html_tag.h"
+#include "litehtml/element/html_element.h"
 #include "litehtml/utf8_strings.h"
 
 #if defined(USE_ICU)
@@ -81,7 +82,7 @@ namespace {
 
 #if defined(USE_ICU)
 
-void split_text_node(document* document, elements_vector& elements, const char* text)
+void split_text_node(Document* document, ElementsVector& elements, const char* text)
 {
     UErrorCode code = U_ZERO_ERROR;
     BreakIterator* break_iterator =
@@ -93,15 +94,13 @@ void split_text_node(document* document, elements_vector& elements, const char* 
     for (int32_t end = break_iterator->next(); end != BreakIterator::DONE;
          start = end, end = break_iterator->next()) {
         std::string str(text + start, end - start);
-        elements.push_back(
-            std::make_shared<el_text>(litehtml_from_utf8(str.c_str()),
-                document->shared_from_this()));
+        elements.push_back(new TextElement(litehtml_from_utf8(str.c_str()), document));
     }
 }
 
 #else
 
-void split_text_node(document* document, elements_vector& elements, const char* text)
+void split_text_node(Document* document, ElementsVector& elements, const char* text)
 {
     std::wstring str_in = (const wchar_t*)utf8_to_wchar(text);
     std::wstring str;
@@ -111,38 +110,29 @@ void split_text_node(document* document, elements_vector& elements, const char* 
         if (c <= ' ' &&
             (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f')) {
             if (!str.empty()) {
-                elements.push_back(
-                    std::make_shared<el_text>(litehtml_from_wchar(str.c_str()),
-                        document->shared_from_this()));
+
+                elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
                 str.clear();
             }
             str += (wchar_t)c;
-            elements.push_back(
-                std::make_shared<el_space>(litehtml_from_wchar(str.c_str()),
-                    document->shared_from_this()));
+            elements.push_back(new SpaceElement(litehtml_from_wchar(str.c_str()), document));
             str.clear();
         }
         // CJK character range
         else if (c >= 0x4E00 && c <= 0x9FCC) {
             if (!str.empty()) {
-                elements.push_back(
-                    std::make_shared<el_text>(litehtml_from_wchar(str.c_str()),
-                        document->shared_from_this()));
+                elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
                 str.clear();
             }
             str += (wchar_t)c;
-            elements.push_back(
-                std::make_shared<el_text>(litehtml_from_wchar(str.c_str()),
-                    document->shared_from_this()));
+            elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
             str.clear();
         } else {
             str += (wchar_t)c;
         }
     }
     if (!str.empty()) {
-        elements.push_back(
-            std::make_shared<el_text>(litehtml_from_wchar(str.c_str()),
-                document->shared_from_this()));
+        elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
     }
 }
 
@@ -150,103 +140,104 @@ void split_text_node(document* document, elements_vector& elements, const char* 
 
 } // namespace
 
-document::document(document_container* objContainer, context* ctx)
+Document::Document(DocumentContainer* container, Context* context)
+: container_(container)
+, context_(context)
 {
-    m_container = objContainer;
-    m_context = ctx;
 }
 
-document::document(const URL& base_url,
-    litehtml::document_container* objContainer,
-    litehtml::context* ctx)
-: m_container(objContainer)
-, m_context(ctx)
+Document::Document(const URL& base_url,
+    DocumentContainer* container,
+    Context* context)
+: container_(container)
+, context_(context)
 , base_url_(base_url)
 {
 }
 
-document::~document()
+Document::~Document()
 {
     m_over_element = nullptr;
-    if (m_container) {
-        for (fonts_map::iterator f = m_fonts.begin(); f != m_fonts.end(); f++) {
-            m_container->delete_font(f->second.font);
+    if (container_) {
+        for (FontMap::iterator f = m_fonts.begin(); f != m_fonts.end(); f++) {
+            container_->delete_font(f->second.font);
         }
     }
 }
 
-document::ptr document::createFromString(const tchar_t* str,
-    document_container* objPainter,
-    context* ctx,
-    css_stylesheet* user_styles)
+Document* Document::createFromString(const tchar_t* str,
+    DocumentContainer* container,
+    Context* context,
+    CSSStylesheet* user_styles)
 {
-    return create(litehtml_to_utf8(str), URL(), objPainter, ctx, user_styles);
+    return create(litehtml_to_utf8(str), URL(), container, context, user_styles);
 }
 
-document::ptr document::createFromUTF8(const char* str,
-    document_container* objPainter,
-    context* ctx,
-    css_stylesheet* user_styles)
+Document* Document::createFromUTF8(const char* str,
+    DocumentContainer* container,
+    Context* context,
+    CSSStylesheet* user_styles)
 {
-    return create(str, URL(), objPainter, ctx, user_styles);
+    return create(str, URL(), container, context, user_styles);
 }
 
-document::ptr document::create(const std::string& str,
+Document* Document::create(const std::string& str,
     const URL& url,
-    document_container* objPainter,
-    context* ctx,
-    css_stylesheet* user_styles)
+    DocumentContainer* container,
+    Context* context,
+    CSSStylesheet* user_styles)
 {
     // parse document into GumboOutput
     GumboOutput* output = gumbo_parse(str.c_str());
 
     // Create document
-    document::ptr doc = std::make_shared<document>(url, objPainter, ctx);
+    Document* doc = new Document(url, container, context);
 
     // Create elements.
-    elements_vector root_elements;
+    ElementsVector root_elements;
     doc->create_node(output->root, root_elements, true);
     if (!root_elements.empty()) {
-        doc->m_root = root_elements.back();
+        assert(root_elements.size() == 1);
+        doc->root_.reset(root_elements.back());
     }
     // Destroy GumboOutput
     gumbo_destroy_output(&kGumboDefaultOptions, output);
 
     // Let's process created elements tree
-    if (doc->m_root) {
+    if (doc->root_) {
         doc->container()->get_media_features(doc->m_media);
 
         // apply master CSS
-        doc->m_root->apply_stylesheet(ctx->master_css());
+        doc->root_->apply_stylesheet(context->master_stylesheet());
 
         // parse elements attributes
-        doc->m_root->parse_attributes();
+        doc->root_->parse_attributes();
 
         // parse style sheets linked in document
-        media_query_list::ptr media;
+        MediaQueryList::ptr media;
         for (auto& css : doc->m_css) {
-            media_query_list::ptr media = nullptr;
+            MediaQueryList::ptr media = nullptr;
             if (!css.media.empty()) {
-                media = media_query_list::create_from_string(css.media, doc);
+                media = MediaQueryList::create_from_string(css.media, doc);
             }
 
-            doc->m_styles.parse_stylesheet(css.text, css.baseurl, doc, media);
+            doc->stylesheet_.parse(css.text, css.baseurl, doc, media);
         }
         for (css_text::vector::iterator css = doc->m_css.begin();
              css != doc->m_css.end();
              css++) {
             if (!css->media.empty()) {
-                media = media_query_list::create_from_string(css->media, doc);
+                media = MediaQueryList::create_from_string(css->media, doc);
             } else {
                 media = nullptr;
             }
-            doc->m_styles.parse_stylesheet(css->text,
+            doc->stylesheet_.parse(css->text,
                 css->baseurl,
                 doc,
                 media);
         }
         // Sort css selectors using CSS rules.
-        doc->m_styles.sort_selectors();
+        doc->stylesheet_.sort_selectors();
 
         // get current media features
         if (!doc->m_media_lists.empty()) {
@@ -254,15 +245,15 @@ document::ptr document::create(const std::string& str,
         }
 
         // Apply parsed styles.
-        doc->m_root->apply_stylesheet(doc->m_styles);
+        doc->root_->apply_stylesheet(doc->stylesheet_);
 
         // Apply user styles if any
         if (user_styles) {
-            doc->m_root->apply_stylesheet(*user_styles);
+            doc->root_->apply_stylesheet(*user_styles);
         }
 
         // Parse applied styles in the elements
-        doc->m_root->parse_styles();
+        doc->root_->parse_styles();
 
         // Now the m_tabular_elements is filled with tabular elements.
         // We have to check the tabular elements for missing table elements
@@ -270,23 +261,23 @@ document::ptr document::create(const std::string& str,
         doc->fix_tables_layout();
 
         // Fanaly initialize elements
-        doc->m_root->init();
+        doc->root_->init();
     }
 
     return doc;
 }
 
-uint_ptr document::add_font(const tchar_t* name,
+uint_ptr Document::add_font(const tchar_t* name,
     int size,
     const tchar_t* weight,
     const tchar_t* style,
     const tchar_t* decoration,
-    font_metrics* fm)
+    FontMetrics* fm)
 {
     uint_ptr ret = 0;
 
     if (!name || (name && !t_strcasecmp(name, _t("inherit")))) {
-        name = m_container->get_default_font_name();
+        name = container_->get_default_font_name();
     }
 
     if (!size) {
@@ -309,16 +300,16 @@ uint_ptr document::add_font(const tchar_t* name,
     if (m_fonts.find(key) == m_fonts.end()) {
         font_style fs =
             (font_style)value_index(style, font_style_strings, fontStyleNormal);
-        int fw = value_index(weight, font_weight_strings, -1);
+        int fw = value_index(weight, FONT_WEIGHT_STRINGS, -1);
         if (fw >= 0) {
             switch (fw) {
-                case fontWeightBold:
+                case kFontWeightBold:
                     fw = 700;
                     break;
-                case fontWeightBolder:
+                case kFontWeightBolder:
                     fw = 600;
                     break;
-                case fontWeightLighter:
+                case kFontWeightLighter:
                     fw = 300;
                     break;
                 default:
@@ -350,9 +341,9 @@ uint_ptr document::add_font(const tchar_t* name,
             }
         }
 
-        font_item fi = {0};
+        FontItem fi = {0};
 
-        fi.font = m_container->create_font(name, size, fw, fs, decor, &fi.metrics);
+        fi.font = container_->create_font(name, size, fw, fs, decor, &fi.metrics);
         m_fonts[key] = fi;
         ret = fi.font;
         if (fm) {
@@ -362,19 +353,19 @@ uint_ptr document::add_font(const tchar_t* name,
     return ret;
 }
 
-uint_ptr document::get_font(const tchar_t* name,
+uint_ptr Document::get_font(const tchar_t* name,
     int size,
     const tchar_t* weight,
     const tchar_t* style,
     const tchar_t* decoration,
-    font_metrics* fm)
+    FontMetrics* fm)
 {
     if (!name || (name && !t_strcasecmp(name, _t("inherit")))) {
-        name = m_container->get_default_font_name();
+        name = container_->get_default_font_name();
     }
 
     if (!size) {
-        size = m_container->get_default_font_size();
+        size = container_->get_default_font_size();
     }
 
     tchar_t strSize[20];
@@ -390,7 +381,7 @@ uint_ptr document::get_font(const tchar_t* name,
     key += _t(":");
     key += decoration;
 
-    fonts_map::iterator el = m_fonts.find(key);
+    FontMap::iterator el = m_fonts.find(key);
 
     if (el != m_fonts.end()) {
         if (fm) {
@@ -401,97 +392,97 @@ uint_ptr document::get_font(const tchar_t* name,
     return add_font(name, size, weight, style, decoration, fm);
 }
 
-int document::render(int max_width, render_type rt)
+int Document::render(int max_width, RenderType rt)
 {
     int ret = 0;
-    if (m_root) {
-        if (rt == render_fixed_only) {
+    if (root_) {
+        if (rt == kRenderFixedOnly) {
             m_fixed_boxes.clear();
-            m_root->render_positioned(rt);
+            root_->render_positioned(rt);
         } else {
-            ret = m_root->render(0, 0, max_width);
-            if (m_root->fetch_positioned()) {
+            ret = root_->render(0, 0, max_width);
+            if (root_->fetch_positioned()) {
                 m_fixed_boxes.clear();
-                m_root->render_positioned(rt);
+                root_->render_positioned(rt);
             }
             m_size.width = 0;
             m_size.height = 0;
-            m_root->calc_document_size(m_size);
+            root_->calc_document_size(m_size);
         }
     }
     return ret;
 }
 
-void document::draw(uint_ptr hdc, int x, int y, const position* clip)
+void Document::draw(uint_ptr hdc, int x, int y, const Position* clip)
 {
-    if (m_root) {
-        m_root->draw(hdc, x, y, clip);
-        m_root->draw_stacking_context(hdc, x, y, clip, true);
+    if (root_) {
+        root_->draw(hdc, x, y, clip);
+        root_->draw_stacking_context(hdc, x, y, clip, true);
     }
 }
 
-int document::cvt_units(const tchar_t* str,
+int Document::cvt_units(const tchar_t* str,
     int fontSize,
     bool* is_percent /*= 0*/) const
 {
     if (!str)
         return 0;
 
-    css_length val;
-    val.fromString(str);
-    if (is_percent && val.units() == css_units_percentage && !val.is_predefined()) {
+    CSSLength val;
+    val.parse_length_string(str);
+    if (is_percent && val.units() == kCSSUnitsPercent && !val.is_predefined()) {
         *is_percent = true;
     }
     return cvt_units(val, fontSize);
 }
 
-int document::cvt_units(css_length& val, int fontSize, int size) const
+int Document::cvt_units(CSSLength& val, int fontSize, int size) const
 {
     if (val.is_predefined()) {
         return 0;
     }
     int ret = 0;
     switch (val.units()) {
-        case css_units_percentage:
+        case kCSSUnitsPercent:
             ret = val.calc_percent(size);
             break;
-        case css_units_em:
+        case kCSSUnitsEm:
             ret = round_f(val.val() * fontSize);
-            val.set_value((float)ret, css_units_px);
+            val.set_value((float)ret, kCSSUnitsPx);
             break;
-        case css_units_pt:
-            ret = m_container->pt_to_px((int)val.val());
-            val.set_value((float)ret, css_units_px);
+        case kCSSUnitsPt:
+            ret = container_->pt_to_px((int)val.val());
+            val.set_value((float)ret, kCSSUnitsPx);
             break;
-        case css_units_in:
-            ret = m_container->pt_to_px((int)(val.val() * 72));
-            val.set_value((float)ret, css_units_px);
+        case kCSSUnitsIn:
+            ret = container_->pt_to_px((int)(val.val() * 72));
+            val.set_value((float)ret, kCSSUnitsPx);
             break;
-        case css_units_cm:
-            ret = m_container->pt_to_px((int)(val.val() * 0.3937 * 72));
-            val.set_value((float)ret, css_units_px);
+        case kCSSUnitsCm:
+            ret = container_->pt_to_px((int)(val.val() * 0.3937 * 72));
+            val.set_value((float)ret, kCSSUnitsPx);
             break;
-        case css_units_mm:
-            ret = m_container->pt_to_px((int)(val.val() * 0.3937 * 72) / 10);
-            val.set_value((float)ret, css_units_px);
+        case kCSSUnitsMm:
+            ret = container_->pt_to_px((int)(val.val() * 0.3937 * 72) / 10);
+            val.set_value((float)ret, kCSSUnitsPx);
             break;
-        case css_units_vw:
+        case kCSSUnitsVw:
             ret = (int)((double)m_media.width * (double)val.val() / 100.0);
             break;
-        case css_units_vh:
+        case kCSSUnitsVh:
             ret = (int)((double)m_media.height * (double)val.val() / 100.0);
             break;
-        case css_units_vmin:
+        case kCSSUnitsVmin:
             ret = (int)((double)std::min(m_media.height, m_media.width) *
                         (double)val.val() / 100.0);
             break;
-        case css_units_vmax:
+        case kCSSUnitsVmax:
             ret = (int)((double)std::max(m_media.height, m_media.width) *
                         (double)val.val() / 100.0);
             break;
-        case css_units_rem:
-            ret = (int)((double)m_root->get_font_size() * (double)val.val());
-            val.set_value((float)ret, css_units_px);
+        case kCSSUnitsRem:
+            ret = (int)((double)root_->get_font_size() * (double)val.val());
+            val.set_value((float)ret, kCSSUnitsPx);
             break;
         default:
             ret = (int)val.val();
@@ -500,17 +491,17 @@ int document::cvt_units(css_length& val, int fontSize, int size) const
     return ret;
 }
 
-int document::width() const
+int Document::width() const
 {
     return m_size.width;
 }
 
-int document::height() const
+int Document::height() const
 {
     return m_size.height;
 }
 
-void document::add_stylesheet(const tstring& str,
+void Document::add_stylesheet(const tstring& str,
     const URL& url,
     const tchar_t* media)
 {
@@ -519,17 +510,17 @@ void document::add_stylesheet(const tstring& str,
     }
 }
 
-bool document::on_mouse_over(int x,
+bool Document::on_mouse_over(int x,
     int y,
     int client_x,
     int client_y,
-    position::vector& redraw_boxes)
+    std::vector<Position>& redraw_boxes)
 {
-    if (!m_root) {
+    if (!root_) {
         return false;
     }
 
-    element::ptr over_el = m_root->get_element_by_point(x, y, client_x, client_y);
+    Element::ptr over_el = root_->get_element_by_point(x, y, client_x, client_y);
 
     bool state_was_changed = false;
 
@@ -551,38 +542,38 @@ bool document::on_mouse_over(int x,
         cursor = m_over_element->get_cursor();
     }
 
-    m_container->set_cursor(cursor ? cursor : _t("auto"));
+    container_->set_cursor(cursor ? cursor : _t("auto"));
 
     if (state_was_changed) {
-        return m_root->find_styles_changes(redraw_boxes, 0, 0);
+        return root_->find_styles_changes(redraw_boxes, 0, 0);
     }
     return false;
 }
 
-bool document::on_mouse_leave(position::vector& redraw_boxes)
+bool Document::on_mouse_leave(std::vector<Position>& redraw_boxes)
 {
-    if (!m_root) {
+    if (!root_) {
         return false;
     }
     if (m_over_element) {
         if (m_over_element->on_mouse_leave()) {
-            return m_root->find_styles_changes(redraw_boxes, 0, 0);
+            return root_->find_styles_changes(redraw_boxes, 0, 0);
         }
     }
     return false;
 }
 
-bool document::on_lbutton_down(int x,
+bool Document::on_lbutton_down(int x,
     int y,
     int client_x,
     int client_y,
-    position::vector& redraw_boxes)
+    std::vector<Position>& redraw_boxes)
 {
-    if (!m_root) {
+    if (!root_) {
         return false;
     }
 
-    element::ptr over_el = m_root->get_element_by_point(x, y, client_x, client_y);
+    Element::ptr over_el = root_->get_element_by_point(x, y, client_x, client_y);
 
     bool state_was_changed = false;
 
@@ -609,76 +600,71 @@ bool document::on_lbutton_down(int x,
         cursor = m_over_element->get_cursor();
     }
 
-    m_container->set_cursor(cursor ? cursor : _t("auto"));
+    container_->set_cursor(cursor ? cursor : _t("auto"));
 
     if (state_was_changed) {
-        return m_root->find_styles_changes(redraw_boxes, 0, 0);
+        return root_->find_styles_changes(redraw_boxes, 0, 0);
     }
 
     return false;
 }
 
-bool document::on_lbutton_up(int,
+bool Document::on_lbutton_up(int,
     int,
     int,
     int,
-    position::vector& redraw_boxes)
+    std::vector<Position>& redraw_boxes)
 {
-    if (!m_root) {
+    if (!root_) {
         return false;
     }
     if (m_over_element) {
         if (m_over_element->on_lbutton_up()) {
-            return m_root->find_styles_changes(redraw_boxes, 0, 0);
+            return root_->find_styles_changes(redraw_boxes, 0, 0);
         }
     }
     return false;
 }
 
-element::ptr document::create_element(const tchar_t* tag_name,
+Element::ptr Document::create_element(const tchar_t* tag_name,
     const string_map& attributes)
 {
-    element::ptr newTag;
-    document::ptr this_doc = shared_from_this();
-    if (m_container) {
-        newTag = m_container->create_element(tag_name, attributes, this_doc);
-    }
-    if (!newTag) {
-        if (!t_strcmp(tag_name, _t("br"))) {
-            newTag = std::make_shared<el_break>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("p"))) {
-            newTag = std::make_shared<el_para>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("img"))) {
-            newTag = std::make_shared<el_image>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("table"))) {
-            newTag = std::make_shared<el_table>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("td")) || !t_strcmp(tag_name, _t("th"))) {
-            newTag = std::make_shared<el_td>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("link"))) {
-            newTag = std::make_shared<el_link>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("title"))) {
-            newTag = std::make_shared<el_title>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("a"))) {
-            newTag = std::make_shared<el_anchor>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("tr"))) {
-            newTag = std::make_shared<el_tr>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("style"))) {
-            newTag = std::make_shared<el_style>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("base"))) {
-            newTag = std::make_shared<el_base>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("body"))) {
-            newTag = std::make_shared<el_body>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("div"))) {
-            newTag = std::make_shared<el_div>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("script"))) {
-            newTag = std::make_shared<el_script>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("font"))) {
-            newTag = std::make_shared<el_font>(this_doc);
-        } else if (!t_strcmp(tag_name, _t("li"))) {
-            newTag = std::make_shared<el_li>(this_doc);
-        } else {
-            newTag = std::make_shared<html_tag>(this_doc);
-        }
+    Element* newTag = nullptr;
+
+    if (!t_strcmp(tag_name, _t("br"))) {
+        newTag = new BreakElement(this);
+    } else if (!t_strcmp(tag_name, _t("p"))) {
+        newTag = new ParagraphElement(this);
+    } else if (!t_strcmp(tag_name, _t("img"))) {
+        newTag = new ImageElement(this);
+    } else if (!t_strcmp(tag_name, _t("table"))) {
+        newTag = new TableElement(this);
+    } else if (!t_strcmp(tag_name, _t("td")) || !t_strcmp(tag_name, _t("th"))) {
+        newTag = new TdElement(this);
+    } else if (!t_strcmp(tag_name, _t("link"))) {
+        newTag = new LinkElement(this);
+    } else if (!t_strcmp(tag_name, _t("title"))) {
+        newTag = new TitleElement(this);
+    } else if (!t_strcmp(tag_name, _t("a"))) {
+        newTag = new AnchorElement(this);
+    } else if (!t_strcmp(tag_name, _t("tr"))) {
+        newTag = new TrElement(this);
+    } else if (!t_strcmp(tag_name, _t("style"))) {
+        newTag = new StyleElement(this);
+    } else if (!t_strcmp(tag_name, _t("base"))) {
+        newTag = new BaseElement(this);
+    } else if (!t_strcmp(tag_name, _t("body"))) {
+        newTag = new BodyElement(this);
+    } else if (!t_strcmp(tag_name, _t("div"))) {
+        newTag = new DivElement(this);
+    } else if (!t_strcmp(tag_name, _t("script"))) {
+        newTag = new ScriptElement(this);
+    } else if (!t_strcmp(tag_name, _t("font"))) {
+        newTag = new FontElement(this);
+    } else if (!t_strcmp(tag_name, _t("li"))) {
+        newTag = new LiElement(this);
+    } else {
+        newTag = new HTMLElement(this);
     }
 
     if (newTag) {
@@ -693,60 +679,60 @@ element::ptr document::create_element(const tchar_t* tag_name,
     return newTag;
 }
 
-void document::get_fixed_boxes(position::vector& fixed_boxes)
+void Document::get_fixed_boxes(std::vector<Position>& fixed_boxes)
 {
     fixed_boxes = m_fixed_boxes;
 }
 
-void document::add_fixed_box(const position& pos)
+void Document::add_fixed_box(const Position& pos)
 {
     m_fixed_boxes.push_back(pos);
 }
 
-bool document::media_changed()
+bool Document::media_changed()
 {
     if (!m_media_lists.empty()) {
         container()->get_media_features(m_media);
         if (update_media_lists(m_media)) {
-            m_root->refresh_styles();
-            m_root->parse_styles();
+            root_->refresh_styles();
+            root_->parse_styles();
             return true;
         }
     }
     return false;
 }
 
-bool document::lang_changed()
+bool Document::lang_changed()
 {
     if (!m_media_lists.empty()) {
         tstring culture;
-        container()->get_language(m_lang, culture);
+        container()->get_language(language_, culture);
         if (!culture.empty()) {
-            m_culture = m_lang + _t('-') + culture;
+            culture_ = language_ + _t('-') + culture;
         } else {
-            m_culture.clear();
+            culture_.clear();
         }
-        m_root->refresh_styles();
-        m_root->parse_styles();
+        root_->refresh_styles();
+        root_->parse_styles();
         return true;
     }
     return false;
 }
 
-bool document::update_media_lists(const media_features& features)
+bool Document::update_media_lists(const MediaFeatures& features)
 {
     bool update_styles = false;
-    for (media_query_list::vector::iterator iter = m_media_lists.begin();
+    for (MediaQueryList::vector::iterator iter = m_media_lists.begin();
          iter != m_media_lists.end();
          iter++) {
-        if ((*iter)->apply_media_features(features)) {
+        if ((*iter)->apply_MediaFeatures(features)) {
             update_styles = true;
         }
     }
     return update_styles;
 }
 
-void document::add_media_list(media_query_list::ptr list)
+void Document::add_media_list(MediaQueryList::ptr list)
 {
     if (list) {
         if (std::find(m_media_lists.begin(), m_media_lists.end(), list) ==
@@ -756,7 +742,7 @@ void document::add_media_list(media_query_list::ptr list)
     }
 }
 
-void document::create_node(void* gnode, elements_vector& elements, bool parseTextNode)
+void Document::create_node(void* gnode, ElementsVector& elements, bool parseTextNode)
 {
     GumboNode* node = (GumboNode*)gnode;
     switch (node->type) {
@@ -770,7 +756,7 @@ void document::create_node(void* gnode, elements_vector& elements, bool parseTex
             }
 
 
-            element::ptr ret;
+            Element* ret = nullptr;
             const char* tag = gumbo_normalized_tagname(node->v.element.tag);
             if (tag[0]) {
                 ret = create_element(litehtml_from_utf8(tag), attrs);
@@ -788,7 +774,7 @@ void document::create_node(void* gnode, elements_vector& elements, bool parseTex
                 parseTextNode = false;
             }
             if (ret) {
-                elements_vector child;
+                ElementsVector child;
                 for (unsigned int i = 0; i < node->v.element.children.length; i++) {
                     child.clear();
                     create_node(static_cast<GumboNode*>(
@@ -797,7 +783,7 @@ void document::create_node(void* gnode, elements_vector& elements, bool parseTex
                         parseTextNode);
                     std::for_each(child.begin(),
                         child.end(),
-                        [&ret](element::ptr& el) { ret->appendChild(el); });
+                        [&ret](Element::ptr& el) { ret->appendChild(el); });
                 }
                 elements.push_back(ret);
             }
@@ -806,30 +792,26 @@ void document::create_node(void* gnode, elements_vector& elements, bool parseTex
             const char* text = node->v.text.text;
 
             if (!parseTextNode) {
-                elements.push_back(
-                    std::make_shared<el_text>(litehtml_from_utf8(text),
-                        shared_from_this()));
+                elements.push_back(new TextElement(litehtml_from_utf8(text), this));
                 break;
             } else {
                 split_text_node(this, elements, text);
             }
         } break;
         case GUMBO_NODE_CDATA: {
-            element::ptr ret = std::make_shared<el_cdata>(shared_from_this());
+            Element::ptr ret = new CDATAElement(this);
             ret->set_data(litehtml_from_utf8(node->v.text.text));
             elements.push_back(ret);
         } break;
         case GUMBO_NODE_COMMENT: {
-            element::ptr ret = std::make_shared<el_comment>(shared_from_this());
+            Element::ptr ret = new CommentElement(this);
             ret->set_data(litehtml_from_utf8(node->v.text.text));
             elements.push_back(ret);
         } break;
         case GUMBO_NODE_WHITESPACE: {
             tstring str = litehtml_from_utf8(node->v.text.text);
             for (size_t i = 0; i < str.length(); i++) {
-                elements.push_back(
-                    std::make_shared<el_space>(str.substr(i, 1).c_str(),
-                        shared_from_this()));
+                elements.push_back(new SpaceElement(str.substr(i, 1).c_str(), this));
             }
         } break;
         default:
@@ -837,42 +819,42 @@ void document::create_node(void* gnode, elements_vector& elements, bool parseTex
     }
 }
 
-void document::fix_tables_layout()
+void Document::fix_tables_layout()
 {
     size_t i = 0;
     while (i < m_tabular_elements.size()) {
-        element::ptr el_ptr = m_tabular_elements[i];
+        Element::ptr el_ptr = m_tabular_elements[i];
 
         switch (el_ptr->get_display()) {
-            case display_inline_table:
-            case display_table:
+            case kDisplayInlineTable:
+            case kDisplayTable:
                 fix_table_children(el_ptr,
-                    display_table_row_group,
+                    kDisplayTableRowGroup,
                     _t("table-row-group"));
                 break;
-            case display_table_footer_group:
-            case display_table_row_group:
-            case display_table_header_group: {
-                element::ptr parent = el_ptr->parent();
+            case kDisplayTableFooterGroup:
+            case kDisplayTableRowGroup:
+            case kDisplayTableHeaderGroup: {
+                Element::ptr parent = el_ptr->parent();
                 if (parent) {
-                    if (parent->get_display() != display_inline_table)
-                        fix_table_parent(el_ptr, display_table, _t("table"));
+                    if (parent->get_display() != kDisplayInlineTable)
+                        fix_table_parent(el_ptr, kDisplayTable, _t("table"));
                 }
-                fix_table_children(el_ptr, display_table_row, _t("table-row"));
+                fix_table_children(el_ptr, kDisplayTableRow, _t("table-row"));
             } break;
-            case display_table_row:
+            case kDisplayTableRow:
                 fix_table_parent(el_ptr,
-                    display_table_row_group,
+                    kDisplayTableRowGroup,
                     _t("table-row-group"));
-                fix_table_children(el_ptr, display_table_cell, _t("table-cell"));
+                fix_table_children(el_ptr, kDisplayTableCell, _t("table-cell"));
                 break;
-            case display_table_cell:
-                fix_table_parent(el_ptr, display_table_row, _t("table-row"));
+            case kDisplayTableCell:
+                fix_table_parent(el_ptr, kDisplayTableRow, _t("table-row"));
                 break;
             // TODO: make table layout fix for table-caption, table-column etc. elements
-            case display_table_caption:
-            case display_table_column:
-            case display_table_column_group:
+            case kDisplayTableCaption:
+            case kDisplayTableColumn:
+            case kDisplayTableColumnGroup:
             default:
                 break;
         }
@@ -880,22 +862,22 @@ void document::fix_tables_layout()
     }
 }
 
-void document::fix_table_children(element::ptr& el_ptr,
-    style_display disp,
+void Document::fix_table_children(Element::ptr& el_ptr,
+    Display disp,
     const tchar_t* disp_str)
 {
-    elements_vector tmp;
-    elements_vector::iterator first_iter = el_ptr->m_children.begin();
-    elements_vector::iterator cur_iter = el_ptr->m_children.begin();
+    ElementsVector tmp;
+    ElementsVector::iterator first_iter = el_ptr->m_children.begin();
+    ElementsVector::iterator cur_iter = el_ptr->m_children.begin();
 
     auto flush_elements = [&]() {
-        element::ptr annon_tag = std::make_shared<html_tag>(shared_from_this());
-        style st;
-        st.add_property(_t("display"), disp_str, URL(), false);
+        Element::ptr annon_tag = new HTMLElement(this);
+        CSSStyle st;
+        st.add_property(kCSSPropertyDisplay, disp_str, URL(), false);
         annon_tag->add_style(st);
         annon_tag->parent(el_ptr);
         annon_tag->parse_styles();
-        std::for_each(tmp.begin(), tmp.end(), [&annon_tag](element::ptr& el) {
+        std::for_each(tmp.begin(), tmp.end(), [&annon_tag](Element::ptr& el) {
             annon_tag->appendChild(el);
         });
         first_iter = el_ptr->m_children.insert(first_iter, annon_tag);
@@ -929,27 +911,27 @@ void document::fix_table_children(element::ptr& el_ptr,
     }
 }
 
-void document::fix_table_parent(element::ptr& el_ptr,
-    style_display disp,
+void Document::fix_table_parent(Element::ptr& el_ptr,
+    Display disp,
     const tchar_t* disp_str)
 {
-    element::ptr parent = el_ptr->parent();
+    Element::ptr parent = el_ptr->parent();
 
     if (parent->get_display() != disp) {
-        elements_vector::iterator this_element =
+        ElementsVector::iterator this_element =
             std::find_if(parent->m_children.begin(),
                 parent->m_children.end(),
-                [&](element::ptr& el) {
+                [&](Element::ptr& el) {
                     if (el == el_ptr) {
                         return true;
                     }
                     return false;
                 });
         if (this_element != parent->m_children.end()) {
-            style_display el_disp = el_ptr->get_display();
-            elements_vector::iterator first = this_element;
-            elements_vector::iterator last = this_element;
-            elements_vector::iterator cur = this_element;
+            Display el_disp = el_ptr->get_display();
+            ElementsVector::iterator first = this_element;
+            ElementsVector::iterator last = this_element;
+            ElementsVector::iterator cur = this_element;
 
             // find first element with same display
             while (true) {
@@ -978,14 +960,13 @@ void document::fix_table_parent(element::ptr& el_ptr,
             }
 
             // extract elements with the same display and wrap them with anonymous object
-            element::ptr annon_tag =
-                std::make_shared<html_tag>(shared_from_this());
-            style st;
-            st.add_property(_t("display"), disp_str, URL(), false);
+            Element* annon_tag = new HTMLElement(this);
+            CSSStyle st;
+            st.add_property(kCSSPropertyDisplay, disp_str, URL(), false);
             annon_tag->add_style(st);
             annon_tag->parent(parent);
             annon_tag->parse_styles();
-            std::for_each(first, last + 1, [&annon_tag](element::ptr& el) {
+            std::for_each(first, last + 1, [&annon_tag](Element::ptr& el) {
                 annon_tag->appendChild(el);
             });
             first = parent->m_children.erase(first, last + 1);
@@ -994,15 +975,15 @@ void document::fix_table_parent(element::ptr& el_ptr,
     }
 }
 
-void document::append_children_from_string(element& parent, const tchar_t* str)
+void Document::append_children_from_string(Element& parent, const tchar_t* str)
 {
     append_children_from_utf8(parent, litehtml_to_utf8(str));
 }
 
-void document::append_children_from_utf8(element& parent, const char* str)
+void Document::append_children_from_utf8(Element& parent, const char* str)
 {
     // parent must belong to this document
-    if (parent.get_document().get() != this) {
+    if (parent.get_document() != this) {
         return;
     }
 
@@ -1010,25 +991,25 @@ void document::append_children_from_utf8(element& parent, const char* str)
     GumboOutput* output = gumbo_parse((const char*)str);
 
     // Create elements.
-    elements_vector child_elements;
+    ElementsVector child_elements;
     create_node(output->root, child_elements, true);
 
     // Destroy GumboOutput
     gumbo_destroy_output(&kGumboDefaultOptions, output);
 
     // Let's process created elements tree
-    for (element::ptr child : child_elements) {
+    for (Element::ptr child : child_elements) {
         // Add the child element to parent
         parent.appendChild(child);
 
         // apply master CSS
-        child->apply_stylesheet(m_context->master_css());
+        child->apply_stylesheet(context_->master_stylesheet());
 
         // parse elements attributes
         child->parse_attributes();
 
         // Apply parsed styles.
-        child->apply_stylesheet(m_styles);
+        child->apply_stylesheet(stylesheet_);
 
         // Parse applied styles in the elements
         child->parse_styles();

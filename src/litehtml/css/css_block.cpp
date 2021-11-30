@@ -33,9 +33,16 @@
 
 namespace litehtml {
 
+CSSBlock::~CSSBlock()
+{
+    for (auto value : values_) {
+        delete value;
+    }
+}
+
 #if defined(ENABLE_JSON)
 
-nlohmann::json css_block::json() const
+nlohmann::json CSSBlock::json() const
 {
     return nlohmann::json{
         {"values", json_vector(values_)},

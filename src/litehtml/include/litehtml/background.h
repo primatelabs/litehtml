@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,54 +31,56 @@
 #ifndef LITEHTML_BACKGROUND_H__
 #define LITEHTML_BACKGROUND_H__
 
-#include "litehtml/attributes.h"
 #include "litehtml/borders.h"
 #include "litehtml/css/css_length.h"
 #include "litehtml/css/css_position.h"
 #include "litehtml/types.h"
+#include "litehtml/url.h"
 #include "litehtml/web_color.h"
 
 namespace litehtml {
-class background {
+
+#define BACKGROUND_ATTACHMENT_STRINGS _t("scroll;fixed")
+
+enum BackgroundAttachment {
+    kBackgroundAttachmentScroll,
+    kBackgroundAttachmentFixed
+};
+
+#define BACKGROUND_REPEAT_STRINGS _t("repeat;repeat-x;repeat-y;no-repeat")
+
+enum BackgroundRepeat {
+    kBackgroundRepeatRepeat,
+    kBackgroundRepeatRepeatX,
+    kBackgroundRepeatRepeatY,
+    kBackgroundRepeatNoRepeat
+};
+
+#define BACKGROUND_BOX_STRINGS _t("border-box;padding-box;content-box")
+
+enum BackgroundBox {
+    kBackgroundBoxBorderBox,
+    kBackgroundBoxPaddingBox,
+    kBackgroundBoxContentBox
+};
+
+class Background {
 public:
-    tstring m_image;
-    tstring m_baseurl;
-    web_color m_color;
-    background_attachment m_attachment;
-    css_position m_position;
-    background_repeat m_repeat;
-    background_box m_clip;
-    background_box m_origin;
+    URL m_image;
+    WebColor m_color;
+    BackgroundAttachment m_attachment;
+    CSSPosition m_position;
+    BackgroundRepeat m_repeat;
+    BackgroundBox m_clip;
+    BackgroundBox m_origin;
     css_border_radius m_radius;
 
 public:
-    background(void);
-    background(const background& val);
-    ~background(void);
+    Background(void);
+    Background(const Background& val);
+    ~Background(void);
 
-    background& operator=(const background& val);
-};
-
-class background_paint {
-public:
-    tstring image;
-    tstring baseurl;
-    background_attachment attachment;
-    background_repeat repeat;
-    web_color color;
-    position clip_box;
-    position origin_box;
-    position border_box;
-    border_radiuses border_radius;
-    size image_size;
-    int position_x;
-    int position_y;
-    bool is_root;
-
-public:
-    background_paint();
-    background_paint(const background_paint& val);
-    void operator=(const background& val);
+    Background& operator=(const Background& val);
 };
 
 } // namespace litehtml

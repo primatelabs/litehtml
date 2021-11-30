@@ -37,35 +37,28 @@ using namespace litehtml;
 
 TEST(CSSParserTest, Stylesheet)
 {
-    tstring css =
-        _t("/* A simple CSS stylesheet */\n"
-           "body {\n"
-           "  margin: 25px;\n"
-           "  background-color: rgb(240,240,240);\n"
-           "  font-family: roboto, arial, sans-serif;\n"
-           "  font-size: 14px;\n"
-           "}\n");
+    std::vector<String> testcases = {
+        "/* A simple CSS stylesheet */\n"
+        "body {\n"
+        "  margin: 25px;\n"
+        // "  background-color: rgb(240,240,240);\n"
+        "  font-family: roboto, arial, sans-serif;\n"
+        "  font-size: 14px;\n"
+        // "  color: #ff00ff !important;\n"
+        "  color: #ff00ff;\n"
+        "}\n",
+        "body {\n"
+        "  margin: 25px;\n"
+        "}\n"
+        "@media (color) {\n"
+        "  body {\n"
+        "    margin: 50px;\n"
+        "  }\n"
+        "}\n",
+    };
 
-    css_parser parser(css);
-    css_stylesheet stylesheet = parser.parse_stylesheet();
-
-#if defined(ENABLE_JSON)
-    nlohmann::json j = stylesheet.json();
-    std::cout << std::setw(4) << j << std::endl;
-#endif
-
-    //EXPECT_EQ(1, stylesheet.rules_.size());
-    //
-    //// EXPECT_EQ(1, stylesheet.rules_[0].prelude_.values_.size());
-    //EXPECT_EQ(kCSSComponentValueToken,
-    //    stylesheet.rules_[0].prelude_.values_[0].type_);
-    //EXPECT_EQ(kCSSTokenIdent,
-    //    stylesheet.rules_[0].prelude_.values_[0].token_.type());
-    //EXPECT_EQ(_t("body"), stylesheet.rules_[0].prelude_.values_[0].token_.value());
-    //
-    //EXPECT_EQ(kCSSComponentValueToken,
-    //    stylesheet.rules_[0].prelude_.values_[1].type_);
-    //EXPECT_EQ(kCSSTokenIdent,
-    //    stylesheet.rules_[0].prelude_.values_[1].token_.type());
-    //EXPECT_EQ(_t("body"), stylesheet.rules_[0].prelude_.values_[1].token_.value());
+    for (String& testcase : testcases) {
+        CSSParser parser(testcase);
+        CSSStylesheet* stylesheet = parser.parse_stylesheet();
+    }
 }

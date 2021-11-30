@@ -116,6 +116,9 @@ typedef std::stringstream tstringstream;
 #define t_to_string(val) std::to_string(val)
 
 #endif
+
+using String = tstring;
+
 } // namespace litehtml
 
 #endif // LITEHTML_OS_TYPES_H__

@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,22 +34,21 @@
 
 namespace litehtml {
 
-background::background(void)
+Background::Background(void)
 {
-    m_attachment = background_attachment_scroll;
-    m_repeat = background_repeat_repeat;
-    m_clip = background_box_border;
-    m_origin = background_box_padding;
+    m_attachment = kBackgroundAttachmentScroll;
+    m_repeat = kBackgroundRepeatRepeat;
+    m_clip = kBackgroundBoxBorderBox;
+    m_origin = kBackgroundBoxPaddingBox;
     m_color.alpha = 0;
     m_color.red = 0;
     m_color.green = 0;
     m_color.blue = 0;
 }
 
-background::background(const background& val)
+Background::Background(const Background& val)
 {
     m_image = val.m_image;
-    m_baseurl = val.m_baseurl;
     m_color = val.m_color;
     m_attachment = val.m_attachment;
     m_position = val.m_position;
@@ -57,14 +57,13 @@ background::background(const background& val)
     m_origin = val.m_origin;
 }
 
-background::~background(void)
+Background::~Background(void)
 {
 }
 
-background& background::operator=(const background& val)
+Background& Background::operator=(const Background& val)
 {
     m_image = val.m_image;
-    m_baseurl = val.m_baseurl;
     m_color = val.m_color;
     m_attachment = val.m_attachment;
     m_position = val.m_position;
@@ -72,43 +71,6 @@ background& background::operator=(const background& val)
     m_clip = val.m_clip;
     m_origin = val.m_origin;
     return *this;
-}
-
-
-background_paint::background_paint()
-: color(0, 0, 0, 0)
-{
-    position_x = 0;
-    position_y = 0;
-    attachment = background_attachment_scroll;
-    repeat = background_repeat_repeat;
-    is_root = false;
-}
-
-background_paint::background_paint(const background_paint& val)
-{
-    image = val.image;
-    baseurl = val.baseurl;
-    attachment = val.attachment;
-    repeat = val.repeat;
-    color = val.color;
-    clip_box = val.clip_box;
-    origin_box = val.origin_box;
-    border_box = val.border_box;
-    border_radius = val.border_radius;
-    image_size = val.image_size;
-    position_x = val.position_x;
-    position_y = val.position_y;
-    is_root = val.is_root;
-}
-
-void background_paint::operator=(const background& val)
-{
-    attachment = val.m_attachment;
-    baseurl = val.m_baseurl;
-    image = val.m_image;
-    repeat = val.m_repeat;
-    color = val.m_color;
 }
 
 } // namespace litehtml

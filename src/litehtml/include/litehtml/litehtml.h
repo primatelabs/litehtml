@@ -34,7 +34,7 @@
 #include <litehtml/document.h>
 #include <litehtml/document_container.h>
 #include <litehtml/element/element.h>
-#include <litehtml/element/html_tag.h>
+#include <litehtml/element/html_element.h>
 #include <litehtml/html.h>
 
 #endif // LITEHTML_H__

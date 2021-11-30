@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (C) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,12 +33,13 @@
 
 #include "litehtml/context.h"
 #include "litehtml/element/element.h"
-#include "litehtml/style.h"
+#include "litehtml/css/css_style.h"
 #include "litehtml/types.h"
 #include "litehtml/url.h"
 #include "litehtml/web_color.h"
 
 namespace litehtml {
+
 struct css_text {
     typedef std::vector<css_text> vector;
 
@@ -74,60 +76,92 @@ struct ommited_end_tags_t {
     const litehtml::tchar_t* followed_tags;
 };
 
-class html_tag;
+class HTMLElement;
 
-class document : public std::enable_shared_from_this<document> {
+class Document : public std::enable_shared_from_this<Document> {
 public:
-    typedef std::shared_ptr<document> ptr;
-    typedef std::weak_ptr<document> weak_ptr;
+    typedef std::shared_ptr<Document> ptr;
+    typedef std::weak_ptr<Document> weak_ptr;
 
 private:
-    std::shared_ptr<element> m_root;
-    document_container* m_container;
-    fonts_map m_fonts;
+    std::unique_ptr<Element> root_;
+
+    DocumentContainer* container_;
+
+    FontMap m_fonts;
+
     css_text::vector m_css;
-    litehtml::css_stylesheet m_styles;
-    litehtml::web_color m_def_color;
-    litehtml::context* m_context;
-    litehtml::size m_size;
-    position::vector m_fixed_boxes;
-    media_query_list::vector m_media_lists;
-    element::ptr m_over_element;
-    elements_vector m_tabular_elements;
-    media_features m_media;
-    tstring m_lang;
-    tstring m_culture;
+
+    CSSStylesheet stylesheet_;
+
+    WebColor default_color_;
+
+    Context* context_;
+
+    litehtml::Size m_size;
+
+    std::vector<Position> m_fixed_boxes;
+
+    MediaQueryList::vector m_media_lists;
+
+    Element::ptr m_over_element;
+
+    ElementsVector m_tabular_elements;
+
+    MediaFeatures m_media;
+
+    tstring language_;
+
+    tstring culture_;
 
     URL base_url_;
 
 public:
-    document(litehtml::document_container* objContainer, litehtml::context* ctx);
+    Document(litehtml::DocumentContainer* objContainer, Context* ctx);
 
-    document(const URL& base_url,
-        litehtml::document_container* objContainer,
-        litehtml::context* ctx);
+    Document(const URL& base_url,
+        litehtml::DocumentContainer* objContainer,
+        Context* ctx);
 
-    virtual ~document();
+    virtual ~Document();
 
-    litehtml::document_container* container()
+    Element* root()
     {
-        return m_container;
+        return root_.get();
     }
+
+    DocumentContainer* container() const
+    {
+        return container_;
+    }
+
+    const CSSStylesheet& stylesheet() const
+    {
+        return stylesheet_;
+    }
+
     uint_ptr get_font(const tchar_t* name,
         int size,
         const tchar_t* weight,
         const tchar_t* style,
         const tchar_t* decoration,
-        font_metrics* fm);
-    int render(int max_width, render_type rt = render_all);
-    void draw(uint_ptr hdc, int x, int y, const position* clip);
-    web_color get_def_color()
+        FontMetrics* fm);
+
+    int render(int max_width, RenderType rt = kRenderAll);
+
+    void draw(uint_ptr hdc, int x, int y, const Position* clip);
+
+    WebColor get_default_color()
     {
-        return m_def_color;
+        return default_color_;
     }
+
     int cvt_units(const tchar_t* str, int fontSize, bool* is_percent = nullptr) const;
-    int cvt_units(css_length& val, int fontSize, int size = 0) const;
+
+    int cvt_units(CSSLength& val, int fontSize, int size = 0) const;
+
     int width() const;
+
     int height() const;
 
     void add_stylesheet(const tstring& str,
@@ -138,29 +172,28 @@ public:
         int y,
         int client_x,
         int client_y,
-        position::vector& redraw_boxes);
+        std::vector<Position>& redraw_boxes);
     bool on_lbutton_down(int x,
         int y,
         int client_x,
         int client_y,
-        position::vector& redraw_boxes);
+        std::vector<Position>& redraw_boxes);
     bool on_lbutton_up(int x,
         int y,
         int client_x,
         int client_y,
-        position::vector& redraw_boxes);
-    bool on_mouse_leave(position::vector& redraw_boxes);
-    litehtml::element::ptr create_element(const tchar_t* tag_name,
+        std::vector<Position>& redraw_boxes);
+    bool on_mouse_leave(std::vector<Position>& redraw_boxes);
+    litehtml::Element::ptr create_element(const tchar_t* tag_name,
         const string_map& attributes);
-    element::ptr root();
-    void get_fixed_boxes(position::vector& fixed_boxes);
-    void add_fixed_box(const position& pos);
-    void add_media_list(media_query_list::ptr list);
+    void get_fixed_boxes(std::vector<Position>& fixed_boxes);
+    void add_fixed_box(const Position& pos);
+    void add_media_list(MediaQueryList::ptr list);
     bool media_changed();
     bool lang_changed();
     bool match_lang(const tstring& lang);
-    void add_tabular(const element::ptr& el);
-    const element::const_ptr get_over_element() const
+    void add_tabular(const Element::ptr& el);
+    const Element::const_ptr get_over_element() const
     {
         return m_over_element;
     }
@@ -175,24 +208,25 @@ public:
         base_url_ = base_url;
     }
 
-    void append_children_from_string(element& parent, const tchar_t* str);
-    void append_children_from_utf8(element& parent, const char* str);
+    void append_children_from_string(Element& parent, const tchar_t* str);
 
-    static litehtml::document::ptr createFromString(const tchar_t* str,
-        litehtml::document_container* objPainter,
-        litehtml::context* ctx,
-        litehtml::css_stylesheet* user_styles = nullptr);
+    void append_children_from_utf8(Element& parent, const char* str);
 
-    static litehtml::document::ptr createFromUTF8(const char* str,
-        litehtml::document_container* objPainter,
-        litehtml::context* ctx,
-        litehtml::css_stylesheet* user_styles = nullptr);
+    static Document* createFromString(const tchar_t* str,
+        litehtml::DocumentContainer* objPainter,
+        Context* ctx,
+        litehtml::CSSStylesheet* user_styles = nullptr);
 
-    static ptr create(const std::string& str,
+    static Document* createFromUTF8(const char* str,
+        litehtml::DocumentContainer* objPainter,
+        Context* ctx,
+        litehtml::CSSStylesheet* user_styles = nullptr);
+
+    static Document* create(const std::string& str,
         const URL& base_url,
-        litehtml::document_container* objPainter,
-        litehtml::context* ctx,
-        litehtml::css_stylesheet* user_styles = nullptr);
+        litehtml::DocumentContainer* objPainter,
+        Context* ctx,
+        litehtml::CSSStylesheet* user_styles = nullptr);
 
 private:
     litehtml::uint_ptr add_font(const tchar_t* name,
@@ -200,30 +234,26 @@ private:
         const tchar_t* weight,
         const tchar_t* style,
         const tchar_t* decoration,
-        font_metrics* fm);
+        FontMetrics* fm);
 
-    void create_node(void* gnode, elements_vector& elements, bool parseTextNode);
-    bool update_media_lists(const media_features& features);
+    void create_node(void* gnode, ElementsVector& elements, bool parseTextNode);
+    bool update_media_lists(const MediaFeatures& features);
     void fix_tables_layout();
-    void fix_table_children(element::ptr& el_ptr,
-        style_display disp,
+    void fix_table_children(Element::ptr& el_ptr,
+        Display disp,
         const tchar_t* disp_str);
-    void fix_table_parent(element::ptr& el_ptr,
-        style_display disp,
+    void fix_table_parent(Element::ptr& el_ptr,
+        Display disp,
         const tchar_t* disp_str);
 };
 
-inline element::ptr document::root()
-{
-    return m_root;
-}
-inline void document::add_tabular(const element::ptr& el)
+inline void Document::add_tabular(const Element::ptr& el)
 {
     m_tabular_elements.push_back(el);
 }
-inline bool document::match_lang(const tstring& lang)
+inline bool Document::match_lang(const tstring& lang)
 {
-    return lang == m_lang || lang == m_culture;
+    return lang == language_ || lang == culture_;
 }
 } // namespace litehtml
 

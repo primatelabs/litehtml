@@ -37,13 +37,13 @@
 namespace litehtml {
 
 struct css_border {
-    css_length width;
-    border_style style;
-    web_color color;
+    CSSLength width;
+    BorderStyle style;
+    WebColor color;
 
     css_border()
     {
-        style = border_style_none;
+        style = kBorderStyleNone;
     }
 
     css_border(const css_border& val)
@@ -64,8 +64,8 @@ struct css_border {
 
 struct border {
     int width;
-    border_style style;
-    web_color color;
+    BorderStyle style;
+    WebColor color;
 
     border()
     {
@@ -192,17 +192,17 @@ struct border_radiuses {
 };
 
 struct css_border_radius {
-    css_length top_left_x;
-    css_length top_left_y;
+    CSSLength top_left_x;
+    CSSLength top_left_y;
 
-    css_length top_right_x;
-    css_length top_right_y;
+    CSSLength top_right_x;
+    CSSLength top_right_y;
 
-    css_length bottom_right_x;
-    css_length bottom_right_y;
+    CSSLength bottom_right_x;
+    CSSLength bottom_right_y;
 
-    css_length bottom_left_x;
-    css_length bottom_left_y;
+    CSSLength bottom_left_x;
+    CSSLength bottom_left_y;
 
     css_border_radius()
     {

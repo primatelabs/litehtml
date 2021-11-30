@@ -36,14 +36,16 @@
 #include "litehtml/element/element.h"
 
 namespace litehtml {
-class html_tag;
 
-enum box_type { box_block, box_line };
+enum BoxType {
+    kBoxBlock,
+    kBoxLine
+};
 
-class box {
+class Box {
 public:
-    typedef std::unique_ptr<litehtml::box> ptr;
-    typedef std::vector<box::ptr> vector;
+    typedef std::unique_ptr<Box> ptr;
+    typedef std::vector<Box::ptr> vector;
 
 protected:
     int m_box_top;
@@ -51,14 +53,14 @@ protected:
     int m_box_right;
 
 public:
-    box(int top, int left, int right)
+    Box(int top, int left, int right)
     {
         m_box_top = top;
         m_box_left = left;
         m_box_right = right;
     }
 
-    virtual ~box();
+    virtual ~Box();
 
     int bottom()
     {
@@ -80,89 +82,90 @@ public:
         return m_box_left;
     }
 
-    virtual litehtml::box_type get_type() = 0;
+    virtual litehtml::BoxType get_type() = 0;
     virtual int height() = 0;
     virtual int width() = 0;
-    virtual void add_element(const element::ptr& el) = 0;
-    virtual bool can_hold(const element::ptr& el, white_space ws) = 0;
+    virtual void add_element(const Element::ptr& el) = 0;
+    virtual bool can_hold(const Element::ptr& el, CSSKeyword ws) = 0;
     virtual void finish(bool last_box = false) = 0;
     virtual bool is_empty() = 0;
     virtual int baseline() = 0;
-    virtual void get_elements(elements_vector& els) = 0;
+    virtual void get_elements(ElementsVector& els) = 0;
     virtual int top_margin() = 0;
     virtual int bottom_margin() = 0;
     virtual void y_shift(int shift) = 0;
-    virtual void new_width(int left, int right, elements_vector& els) = 0;
+    virtual void new_width(int left, int right, ElementsVector& els) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-class block_box : public box {
-    element::ptr m_element;
+class BlockBox : public Box {
+    Element::ptr m_element;
 
 public:
-    block_box(int top, int left, int right)
-    : box(top, left, right)
+    BlockBox(int top, int left, int right)
+    : Box(top, left, right)
+    , m_element(nullptr)
     {
-        m_element = nullptr;
     }
 
-    virtual litehtml::box_type get_type();
+    virtual litehtml::BoxType get_type();
     virtual int height();
     virtual int width();
-    virtual void add_element(const element::ptr& el);
-    virtual bool can_hold(const element::ptr& el, white_space ws);
+    virtual void add_element(const Element::ptr& el);
+    virtual bool can_hold(const Element::ptr& el, CSSKeyword ws);
     virtual void finish(bool last_box = false);
     virtual bool is_empty();
     virtual int baseline();
-    virtual void get_elements(elements_vector& els);
+    virtual void get_elements(ElementsVector& els);
     virtual int top_margin();
     virtual int bottom_margin();
     virtual void y_shift(int shift);
-    virtual void new_width(int left, int right, elements_vector& els);
+    virtual void new_width(int left, int right, ElementsVector& els);
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-class line_box : public box {
-    elements_vector m_items;
+class LineBox : public Box {
+    ElementsVector m_items;
     int m_height;
     int m_width;
-    int m_line_height;
-    font_metrics m_font_metrics;
+    int line_height_;
+    FontMetrics font_metrics_;
     int m_baseline;
-    text_align m_text_align;
+    TextAlign m_text_align;
 
 public:
-    line_box(int top, int left, int right, int line_height, font_metrics& fm, text_align align)
-    : box(top, left, right)
+    LineBox(int top, int left, int right, int line_height, FontMetrics& fm, TextAlign align)
+    : Box(top, left, right)
     {
         m_height = 0;
         m_width = 0;
-        m_font_metrics = fm;
-        m_line_height = line_height;
+        font_metrics_ = fm;
+        line_height_ = line_height;
         m_baseline = 0;
         m_text_align = align;
     }
 
-    virtual litehtml::box_type get_type();
+    virtual BoxType get_type();
     virtual int height();
     virtual int width();
-    virtual void add_element(const element::ptr& el);
-    virtual bool can_hold(const element::ptr& el, white_space ws);
+    virtual void add_element(const Element::ptr& el);
+    virtual bool can_hold(const Element::ptr& el, CSSKeyword ws);
     virtual void finish(bool last_box = false);
     virtual bool is_empty();
     virtual int baseline();
-    virtual void get_elements(elements_vector& els);
+    virtual void get_elements(ElementsVector& els);
     virtual int top_margin();
     virtual int bottom_margin();
     virtual void y_shift(int shift);
-    virtual void new_width(int left, int right, elements_vector& els);
+    virtual void new_width(int left, int right, ElementsVector& els);
 
 private:
     bool have_last_space();
     bool is_break_only();
 };
+
 } // namespace litehtml
 
 #endif // LITEHTML_BOX_H__

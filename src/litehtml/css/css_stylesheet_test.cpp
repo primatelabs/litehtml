@@ -48,11 +48,9 @@ TEST(CSSStylesheetTest, Parse)
            "}\n");
 
     test_container container;
-    litehtml::document::ptr doc =
-        std::make_shared<litehtml::document>(&container, nullptr);
-    css_stylesheet s;
-    media_query_list::ptr media;
+    Document* document = new Document(&container, nullptr);
+    CSSStylesheet s;
+    MediaQueryList::ptr media;
 
-    s.parse_stylesheet(css.c_str(), URL(), doc, media);
-
+    s.parse(css.c_str(), URL(), document, media);
 }

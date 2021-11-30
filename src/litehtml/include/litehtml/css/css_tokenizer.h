@@ -35,52 +35,52 @@
 
 namespace litehtml {
 
-class css_tokenizer {
+class CSSTokenizer {
 protected:
-    css_tokenizer_input_stream stream_;
+    CSSTokenizerInputStream stream_;
 
-    std::vector<css_token> tokens_;
+    std::vector<CSSToken*> tokens_;
 
     int offset_;
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_whitespace();
+    CSSToken* consume_whitespace();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_number_sign(tchar_t c0);
+    CSSToken* consume_number_sign(tchar_t c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_plus_sign(tchar_t c0);
+    CSSToken* consume_plus_sign(tchar_t c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_hyphen_minus(tchar_t c0);
+    CSSToken* consume_hyphen_minus(tchar_t c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_full_stop(tchar_t c0);
+    CSSToken* consume_full_stop(tchar_t c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_less_than(tchar_t c0);
+    CSSToken* consume_less_than(tchar_t c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_at(tchar_t c0);
+    CSSToken* consume_at(tchar_t c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    css_token consume_backslash(tchar_t first);
+    CSSToken* consume_backslash(tchar_t first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-comment
     void consume_comment();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-number
-    css_token consume_numeric(tchar_t first);
+    CSSToken* consume_numeric(tchar_t first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-ident-like-token
-    css_token consume_ident(tchar_t first);
+    CSSToken* consume_ident(tchar_t first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-string-token
-    css_token consume_string(tchar_t opening);
+    CSSToken* consume_string(tchar_t opening);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-url-token
-    css_token consume_url();
+    CSSToken* consume_url();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-escaped-code-point
     tchar_t consume_escape();
@@ -89,19 +89,24 @@ protected:
     tstring consume_name(tchar_t first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-number
-    css_number consume_number(tchar_t first);
+    CSSNumber consume_number(tchar_t first);
 
-    css_token next();
+    // https://www.w3.org/TR/css-syntax-3/#consume-remnants-of-bad-url
+    CSSToken* consume_bad_url();
+
+    CSSToken* next();
 
 public:
-    explicit css_tokenizer(litehtml::tstring input);
+    explicit CSSTokenizer(String input);
 
-    const std::vector<css_token>& tokens() const
+    ~CSSTokenizer();
+
+    std::vector<CSSToken*>& tokens()
     {
         return tokens_;
     }
 
-    const css_token& consume();
+    CSSToken* consume();
 
     void reconsume();
 };

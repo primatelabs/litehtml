@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,126 +31,138 @@
 #ifndef LITEHTML_CSS_LENGTH_H__
 #define LITEHTML_CSS_LENGTH_H__
 
+#include <ostream>
+
 #include "litehtml/types.h"
+#include "litehtml/css/css_property.h"
 
 namespace litehtml {
-class css_length {
+
+class CSSLength {
     union {
         float m_value;
         int m_predef;
     };
-    css_units m_units;
+    CSSUnits m_units;
     bool m_is_predefined;
 
 public:
-    css_length();
-    css_length(const css_length& val);
+    CSSLength()
+    : m_value(0)
+    , m_units(kCSSUnitsNone)
+    , m_is_predefined(false)
+    {
+    }
 
-    css_length& operator=(const css_length& val);
-    css_length& operator=(float val);
-    bool is_predefined() const;
-    void predef(int val);
-    int predef() const;
-    void set_value(float val, css_units units);
-    float val() const;
-    css_units units() const;
-    int calc_percent(int width) const;
-    void fromString(const tstring& str,
+    explicit CSSLength(int predef)
+    : m_predef(predef)
+    , m_units(kCSSUnitsNone)
+    , m_is_predefined(true)
+    {
+    }
+
+    CSSLength(float value, CSSUnits units)
+    : m_value(value)
+    , m_units(units)
+    , m_is_predefined(false)
+    {
+    }
+
+    CSSLength(const CSSLength& other)
+    {
+        if (other.is_predefined()) {
+            m_predef = other.m_predef;
+        } else {
+            m_value = other.m_value;
+        }
+        m_units = other.m_units;
+        m_is_predefined = other.m_is_predefined;
+    }
+
+    CSSLength& operator=(const CSSLength& other)
+    {
+        if (other.is_predefined()) {
+            m_predef = other.m_predef;
+        } else {
+            m_value = other.m_value;
+        }
+        m_units = other.m_units;
+        m_is_predefined = other.m_is_predefined;
+        return *this;
+    }
+
+    CSSLength& operator=(float val)
+    {
+        m_value = val;
+        m_units = kCSSUnitsPx;
+        m_is_predefined = false;
+        return *this;
+    }
+
+    bool is_predefined() const
+    {
+        return m_is_predefined;
+    }
+
+    void predef(int val)
+    {
+        m_predef = val;
+        m_is_predefined = true;
+    }
+
+    int predef() const
+    {
+        if (m_is_predefined) {
+            return m_predef;
+        }
+        return 0;
+    }
+
+    void set_value(float val, CSSUnits units)
+    {
+        m_value = val;
+        m_is_predefined = false;
+        m_units = units;
+    }
+
+    float val() const
+    {
+        if (!m_is_predefined) {
+            return m_value;
+        }
+        return 0;
+    }
+
+    CSSUnits units() const
+    {
+        return m_units;
+    }
+
+    int calc_percent(int width) const
+    {
+        if (!is_predefined()) {
+            if (units() == kCSSUnitsPercent) {
+                return (int)((double)width * (double)m_value / 100.0);
+            } else {
+                return (int)val();
+            }
+        }
+        return 0;
+    }
+
+    void parse_length_string(const tstring& str,
         const tstring& predefs = _t(""),
         int defValue = 0);
+
+    void parse_length_string(const tstring& str,
+        const KeywordVector& keywords,
+        int default_keyword);
 };
 
-// css_length inlines
+std::basic_ostream<String::value_type>& operator<<(
+    std::basic_ostream<String::value_type>&,
+    const CSSLength& length);
 
-inline css_length::css_length()
-{
-    m_value = 0;
-    m_predef = 0;
-    m_units = css_units_none;
-    m_is_predefined = false;
-}
-
-inline css_length::css_length(const css_length& val)
-{
-    if (val.is_predefined()) {
-        m_predef = val.m_predef;
-    } else {
-        m_value = val.m_value;
-    }
-    m_units = val.m_units;
-    m_is_predefined = val.m_is_predefined;
-}
-
-inline css_length& css_length::operator=(const css_length& val)
-{
-    if (val.is_predefined()) {
-        m_predef = val.m_predef;
-    } else {
-        m_value = val.m_value;
-    }
-    m_units = val.m_units;
-    m_is_predefined = val.m_is_predefined;
-    return *this;
-}
-
-inline css_length& css_length::operator=(float val)
-{
-    m_value = val;
-    m_units = css_units_px;
-    m_is_predefined = false;
-    return *this;
-}
-
-inline bool css_length::is_predefined() const
-{
-    return m_is_predefined;
-}
-
-inline void css_length::predef(int val)
-{
-    m_predef = val;
-    m_is_predefined = true;
-}
-
-inline int css_length::predef() const
-{
-    if (m_is_predefined) {
-        return m_predef;
-    }
-    return 0;
-}
-
-inline void css_length::set_value(float val, css_units units)
-{
-    m_value = val;
-    m_is_predefined = false;
-    m_units = units;
-}
-
-inline float css_length::val() const
-{
-    if (!m_is_predefined) {
-        return m_value;
-    }
-    return 0;
-}
-
-inline css_units css_length::units() const
-{
-    return m_units;
-}
-
-inline int css_length::calc_percent(int width) const
-{
-    if (!is_predefined()) {
-        if (units() == css_units_percentage) {
-            return (int)((double)width * (double)m_value / 100.0);
-        } else {
-            return (int)val();
-        }
-    }
-    return 0;
-}
 } // namespace litehtml
 
 #endif // LITEHTML_CSS_LENGTH_H__

@@ -36,16 +36,21 @@
 
 namespace litehtml {
 
-class css_component_value;
+class CSSComponentValue;
 
-class css_block {
+class CSSBlock {
 public:
-    std::vector<css_component_value*> values_;
+    std::vector<CSSComponentValue*> values_;
 
 public:
-    css_block() = default;
+    CSSBlock() = default;
 
-    ~css_block() = default;
+    ~CSSBlock();
+
+    const std::vector<CSSComponentValue*>& values() const
+    {
+        return values_;
+    }
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const;
@@ -54,4 +59,4 @@ public:
 
 } // namespace litehtml
 
-#endif // LITEHTML_CSS_RULE_H__
+#endif // LITEHTML_CSS_BLOCK_H__

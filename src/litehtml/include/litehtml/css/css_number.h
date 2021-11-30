@@ -34,29 +34,29 @@
 
 namespace litehtml {
 
-enum css_number_value_type {
+enum CSSNumberValueType {
     kCSSIntegerValue,
     kCSSNumberValue,
 };
 
-class css_number {
-    css_number_value_type type_;
+class CSSNumber {
+    CSSNumberValueType type_;
     double value_;
 
 public:
-    css_number()
+    CSSNumber()
     : type_(kCSSIntegerValue)
     , value_(0.0)
     {
     }
 
-    css_number(css_number_value_type type, double value)
+    CSSNumber(CSSNumberValueType type, double value)
     : type_(type)
     , value_(value)
     {
     }
 
-    css_number_value_type type() const
+    CSSNumberValueType type() const
     {
         return type_;
     }

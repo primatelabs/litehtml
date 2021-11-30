@@ -45,7 +45,7 @@ std::vector<tstring> testcases = {
 TEST(CssTokenizerInputStreamTest, Advance)
 {
     for (auto testcase : testcases) {
-        css_tokenizer_input_stream stream(testcase);
+        CSSTokenizerInputStream stream(testcase);
         for (int i = 0; i < testcase.length(); i++) {
             EXPECT_EQ(testcase[i], stream.peek(0));
             stream.advance();
@@ -57,7 +57,7 @@ TEST(CssTokenizerInputStreamTest, Advance)
 TEST(CssTokenizerInputStreamTest, Consume)
 {
     for (auto testcase : testcases) {
-        css_tokenizer_input_stream stream(testcase);
+        CSSTokenizerInputStream stream(testcase);
         for (int i = 0; i < testcase.length(); i++) {
             EXPECT_EQ(testcase[i], stream.consume());
         }
@@ -68,7 +68,7 @@ TEST(CssTokenizerInputStreamTest, Consume)
 TEST(CssTokenizerInputStreamTest, Next)
 {
     for (auto testcase : testcases) {
-        css_tokenizer_input_stream stream(testcase);
+        CSSTokenizerInputStream stream(testcase);
         for (int i = 0; i < testcase.length(); i++) {
             EXPECT_EQ(testcase[i], stream.next());
             stream.advance();
@@ -80,7 +80,7 @@ TEST(CssTokenizerInputStreamTest, Next)
 TEST(CssTokenizerInputStreamTest, Peak)
 {
     for (auto testcase : testcases) {
-        css_tokenizer_input_stream stream(testcase);
+        CSSTokenizerInputStream stream(testcase);
         for (int i = 0; i < testcase.length(); i++) {
             EXPECT_EQ(testcase[i], stream.peek(i));
         }

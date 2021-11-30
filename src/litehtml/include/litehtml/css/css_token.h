@@ -35,10 +35,9 @@
 
 namespace litehtml {
 
-enum css_token_type {
+enum CSSTokenType {
     kCSSTokenNone,
     kCSSTokenIdent,
-    kCSSTokenFunction,
     kCSSTokenAtKeyword,
     kCSSTokenHash,
     kCSSTokenString,
@@ -61,29 +60,40 @@ enum css_token_type {
     kCSSTokenCloseRoundBracket,
     kCSSTokenOpenBrace,
     kCSSTokenCloseBrace,
+
+    // Used to represent either a function token or a component value that
+    // contains a function.
+    kCSSTokenFunction,
+
+    // Used to represent a component value that contains a block.
+    kCSSTokenBlock,
+
+    // Used to represent the end of a list of tokens or component values.
     kCSSTokenEOF,
 };
 
-std::string css_token_type_string(css_token_type type);
+std::string css_token_type_string(CSSTokenType type);
 
-class css_token {
+class CSSToken {
 protected:
-    css_token_type type_;
+    CSSTokenType type_;
 
     tstring value_;
 
-    css_number numeric_value_;
+    CSSNumber numeric_value_;
 
 public:
-    css_token();
+    CSSToken();
 
-    explicit css_token(css_token_type type);
+    explicit CSSToken(CSSTokenType type);
 
-    css_token(css_token_type type, const tstring& value);
+    CSSToken(CSSTokenType type, tchar_t value);
 
-    css_token(css_token_type type, const css_number& numeric_value);
+    CSSToken(CSSTokenType type, const tstring& value);
 
-    css_token_type type() const
+    CSSToken(CSSTokenType type, const CSSNumber& numeric_value);
+
+    CSSTokenType type() const
     {
         return type_;
     }
@@ -93,7 +103,7 @@ public:
         return value_;
     }
 
-    const css_number& numeric_value() const
+    const CSSNumber& numeric_value() const
     {
         return numeric_value_;
     }

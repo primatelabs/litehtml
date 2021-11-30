@@ -40,10 +40,10 @@ using namespace litehtml;
 TEST(CSSTest, Parse)
 {
     test_container container;
-    litehtml::document::ptr doc =
+    litehtml::Document::ptr doc =
         std::make_shared<litehtml::document>(&container, nullptr);
-    media_query_list::ptr media = media_query_list::ptr();
-    css_stylesheet c;
+    MediaQueryList::ptr media = MediaQueryList::ptr();
+    CSSStylesheet c;
     c.parse_stylesheet(_t("/*Comment*/"), URL(), doc, nullptr);
     c.parse_stylesheet(_t("html { display: none }"), URL(), doc, nullptr);
     // https://www.w3schools.com/cssref/pr_import_rule.asp
@@ -74,70 +74,70 @@ TEST(CSSTest, Url)
 {
     tstring url;
 
-    css_stylesheet::parse_css_url(_t(""), url);
+    CSSStylesheet::parse_css_url(_t(""), url);
     EXPECT_TRUE(url.empty());
 
-    css_stylesheet::parse_css_url(_t("value"), url);
+    CSSStylesheet::parse_css_url(_t("value"), url);
     EXPECT_TRUE(url.empty());
 
-    css_stylesheet::parse_css_url(_t("url()"), url);
+    CSSStylesheet::parse_css_url(_t("url()"), url);
     EXPECT_TRUE(url.empty());
 
-    css_stylesheet::parse_css_url(_t("url(value)"), url);
+    CSSStylesheet::parse_css_url(_t("url(value)"), url);
     EXPECT_TRUE(!t_strcmp(url.c_str(), _t("value")));
 
-    css_stylesheet::parse_css_url(_t("url('value')"), url);
+    CSSStylesheet::parse_css_url(_t("url('value')"), url);
     EXPECT_TRUE(!t_strcmp(url.c_str(), _t("value")));
 
-    css_stylesheet::parse_css_url(_t("url(\"value\")"), url);
+    CSSStylesheet::parse_css_url(_t("url(\"value\")"), url);
     EXPECT_TRUE(!t_strcmp(url.c_str(), _t("value")));
 }
 
 TEST(CSSTest, LengthParse)
 {
-    css_length length;
+    CSSLength length;
 
     length.fromString(_t("calc(todo)"));
     assert(length.is_predefined() == true);
     assert(length.predef() == 0);
     assert(length.val() == 0);
-    assert(length.units() == css_units_none);
+    assert(length.units() == kCSSUnitsNone);
 
-    length.fromString(_t("top"), _t("top;bottom"), -1);
+    length.fromString(kCSSPropertyTop, _t("top;bottom"), -1);
     assert(length.is_predefined() == true);
     assert(length.predef() == 0);
     assert(length.val() == 0);
-    assert(length.units() == css_units_none);
+    assert(length.units() == kCSSUnitsNone);
 
-    length.fromString(_t("bottom"), _t("top;bottom"), -1);
+    length.fromString(kCSSPropertyBottom, _t("top;bottom"), -1);
     assert(length.is_predefined() == true);
     assert(length.predef() == 1);
     assert(length.val() == 0);
-    assert(length.units() == css_units_none);
+    assert(length.units() == kCSSUnitsNone);
 
     length.fromString(_t("bad"), _t("top;bottom"), -1);
     assert(length.is_predefined() == true);
     assert(length.predef() == -1);
     assert(length.val() == 0);
-    assert(length.units() == css_units_none);
+    assert(length.units() == kCSSUnitsNone);
 
     length.fromString(_t("123"), _t("top;bottom"), -1);
     assert(length.is_predefined() == false);
     assert(length.predef() == 0);
     assert(length.val() == 123);
-    assert(length.units() == css_units_none);
+    assert(length.units() == kCSSUnitsNone);
 
     length.fromString(_t("123px"), _t("top;bottom"), -1);
     assert(length.is_predefined() == false);
     assert(length.predef() == 0);
     assert(length.val() == 123);
-    assert(length.units() == css_units_px);
+    assert(length.units() == kCSSUnitsPx);
 }
 
 TEST(CSSTest, ElementSelectorParse)
 {
     css_element_selector selector;
-    // https://www.w3schools.com/cssref/css_selectors.asp
+    // https://www.w3schools.com/cssref/CSSSelectors.asp
     selector.parse(_t(".class"));
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
@@ -497,8 +497,8 @@ TEST(CSSTest, ElementSelectorParse)
 
 TEST(CSSTest, DISABLED_SelectorParse)
 {
-    css_selector selector(nullptr);
-    // https://www.w3schools.com/cssref/css_selectors.asp
+    CSSSelector selector(nullptr);
+    // https://www.w3schools.com/cssref/CSSSelectors.asp
     assert(!selector.parse(_t("")));
     EXPECT_TRUE(selector.parse(_t("element")));
     EXPECT_TRUE(selector.m_combinator == combinator_descendant);
@@ -553,85 +553,85 @@ TEST(CSSTest, StyleAdd)
 TEST(CSSTest, StyleAddProperty)
 {
     style style;
-    style.add_property(_t("background-image"), _t("value"), _t("base"), false);
-    style.add_property(_t("border-spacing"), _t("1"), nullptr, false);
-    style.add_property(_t("border-spacing"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border"), _t("5px solid red"), nullptr, false);
-    style.add_property(_t("border-left"), _t("5px solid red"), nullptr, false);
-    style.add_property(_t("border-right"), _t("5px solid red"), nullptr, false);
-    style.add_property(_t("border-top"), _t("5px solid red"), nullptr, false);
-    style.add_property(_t("border-bottom"), _t("5px solid red"), nullptr, false);
-    style.add_property(_t("border-bottom-left-radius"), _t("1"), nullptr, false);
-    style.add_property(_t("border-bottom-left-radius"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-bottom-right-radius"), _t("1"), nullptr, false);
-    style.add_property(_t("border-bottom-right-radius"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-top-right-radius"), _t("1"), nullptr, false);
-    style.add_property(_t("border-top-right-radius"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-top-left-radius"), _t("1"), nullptr, false);
-    style.add_property(_t("border-top-left-radius"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-radius"), _t("1"), nullptr, false);
-    style.add_property(_t("border-radius"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-radius-x"), _t("1"), nullptr, false);
-    style.add_property(_t("border-radius-x"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-radius-x"), _t("1 2 3"), nullptr, false);
-    style.add_property(_t("border-radius-x"), _t("1 2 3 4"), nullptr, false);
-    style.add_property(_t("border-radius-y"), _t("1"), nullptr, false);
-    style.add_property(_t("border-radius-y"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-radius-y"), _t("1 2 3"), nullptr, false);
-    style.add_property(_t("border-radius-y"), _t("1 2 3 4"), nullptr, false);
-    style.add_property(_t("list-style-image"), _t("value"), _t("base"), false);
-    style.add_property(_t("background"), _t("url(value)"), _t("base"), false);
-    style.add_property(_t("background"), _t("repeat"), nullptr, false);
-    style.add_property(_t("background"), _t("fixed"), nullptr, false);
-    style.add_property(_t("background"), _t("border-box"), nullptr, false);
-    style.add_property(_t("background"), _t("border-box border-box"), nullptr, false);
-    style.add_property(_t("background"), _t("left"), nullptr, false);
-    style.add_property(_t("background"), _t("1"), nullptr, false);
-    style.add_property(_t("background"), _t("-1"), nullptr, false);
-    style.add_property(_t("background"), _t("-1"), nullptr, false);
-    style.add_property(_t("background"), _t("+1"), nullptr, false);
-    style.add_property(_t("background"), _t("left 1"), nullptr, false);
-    style.add_property(_t("background"), _t("red"), nullptr, false);
-    style.add_property(_t("margin"), _t("1"), nullptr, false);
-    style.add_property(_t("margin"), _t("1 2"), nullptr, false);
-    style.add_property(_t("margin"), _t("1 2 3"), nullptr, false);
-    style.add_property(_t("margin"), _t("1 2 3 4"), nullptr, false);
-    style.add_property(_t("padding"), _t("1"), nullptr, false);
-    style.add_property(_t("padding"), _t("1 2"), nullptr, false);
-    style.add_property(_t("padding"), _t("1 2 3"), nullptr, false);
-    style.add_property(_t("padding"), _t("1 2 3 4"), nullptr, false);
-    style.add_property(_t("border-left"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-left"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-left"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-left"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-right"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-right"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-right"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-right"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-top"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-top"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-top"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-top"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-bottom"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-bottom"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-bottom"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-bottom"), _t("TBD"), nullptr, false);
-    style.add_property(_t("border-width"), _t("1"), nullptr, false);
-    style.add_property(_t("border-width"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-width"), _t("1 2 3"), nullptr, false);
-    style.add_property(_t("border-width"), _t("1 2 3 4"), nullptr, false);
-    style.add_property(_t("border-style"), _t("1"), nullptr, false);
-    style.add_property(_t("border-style"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-style"), _t("1 2 3"), nullptr, false);
-    style.add_property(_t("border-style"), _t("1 2 3 4"), nullptr, false);
-    style.add_property(_t("border-color"), _t("1"), nullptr, false);
-    style.add_property(_t("border-color"), _t("1 2"), nullptr, false);
-    style.add_property(_t("border-color"), _t("1 2 3"), nullptr, false);
-    style.add_property(_t("border-color"), _t("1 2 3 4"), nullptr, false);
-    style.add_property(_t("font"), _t("TBD"), nullptr, false);
-    style.add_property(_t("font"), _t("TBD"), nullptr, false);
-    style.add_property(_t("font"), _t("TBD"), nullptr, false);
-    style.add_property(_t("font"), _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBackgroundImage, _t("value"), _t("base"), false);
+    style.add_property(kCSSPropertyBorderSpacing, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderSpacing, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorder, _t("5px solid red"), nullptr, false);
+    style.add_property(kCSSPropertyBorderLeft, _t("5px solid red"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRight, _t("5px solid red"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTop, _t("5px solid red"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottom, _t("5px solid red"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottomLeftRadius, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottomLeftRadius, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottomRightRadius, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottomRightRadius, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTopRightRadius, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTopRightRadius, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTopLeftRadius, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTopLeftRadius, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadius, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadius, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusX, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusX, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusX, _t("1 2 3"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusX, _t("1 2 3 4"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusY, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusY, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusY, _t("1 2 3"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRadiusY, _t("1 2 3 4"), nullptr, false);
+    style.add_property(kCSSPropertyListStyleImage, _t("value"), _t("base"), false);
+    style.add_property(kCSSPropertyBackground, _t("url(value)"), _t("base"), false);
+    style.add_property(kCSSPropertyBackground, _t("repeat"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("fixed"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("border-box"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("border-box border-box"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, kCSSPropertyLeft, nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("-1"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("-1"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("+1"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("left 1"), nullptr, false);
+    style.add_property(kCSSPropertyBackground, _t("red"), nullptr, false);
+    style.add_property(kCSSPropertyMargin, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyMargin, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyMargin, _t("1 2 3"), nullptr, false);
+    style.add_property(kCSSPropertyMargin, _t("1 2 3 4"), nullptr, false);
+    style.add_property(kCSSPropertyPadding, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyPadding, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyPadding, _t("1 2 3"), nullptr, false);
+    style.add_property(kCSSPropertyPadding, _t("1 2 3 4"), nullptr, false);
+    style.add_property(kCSSPropertyBorderLeft, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderLeft, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderLeft, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderLeft, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRight, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRight, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRight, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderRight, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTop, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTop, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTop, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderTop, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottom, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottom, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottom, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderBottom, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyBorderWidth, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderWidth, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderWidth, _t("1 2 3"), nullptr, false);
+    style.add_property(kCSSPropertyBorderWidth, _t("1 2 3 4"), nullptr, false);
+    style.add_property(kCSSPropertyBorderStyle, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderStyle, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderStyle, _t("1 2 3"), nullptr, false);
+    style.add_property(kCSSPropertyBorderStyle, _t("1 2 3 4"), nullptr, false);
+    style.add_property(kCSSPropertyBorderColor, _t("1"), nullptr, false);
+    style.add_property(kCSSPropertyBorderColor, _t("1 2"), nullptr, false);
+    style.add_property(kCSSPropertyBorderColor, _t("1 2 3"), nullptr, false);
+    style.add_property(kCSSPropertyBorderColor, _t("1 2 3 4"), nullptr, false);
+    style.add_property(kCSSPropertyFont, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyFont, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyFont, _t("TBD"), nullptr, false);
+    style.add_property(kCSSPropertyFont, _t("TBD"), nullptr, false);
     style.add_property(_t("unknown"), _t("value"), nullptr, false);
 }
 #endif

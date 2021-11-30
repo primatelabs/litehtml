@@ -33,9 +33,18 @@
 
 namespace litehtml {
 
+CSSDeclaration::CSSDeclaration(const String& name,
+    const std::vector<CSSComponentValue*> values,
+    bool important)
+: name_(name)
+, values_(values)
+, important_(important)
+{
+}
+
 #if defined(ENABLE_JSON)
 
-nlohmann::json css_declaration::json() const
+nlohmann::json CSSDeclaration::json() const
 {
     return nlohmann::json{
         {"name", name_},
