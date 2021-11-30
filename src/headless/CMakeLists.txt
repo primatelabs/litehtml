@@ -87,6 +87,12 @@ target_link_libraries(
     ${FOUNDATION}
 )
 
+add_custom_command(
+    TARGET ${HEADLESS_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/fonts/Roboto-Regular.ttf
+    ${CMAKE_BINARY_DIR}/Roboto-Regular.ttf)
+
 # JSON
 if (ENABLE_JSON)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_JSON)
