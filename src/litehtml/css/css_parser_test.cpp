@@ -41,7 +41,7 @@ TEST(CSSParserTest, Stylesheet)
         "/* A simple CSS stylesheet */\n"
         "body {\n"
         "  margin: 25px;\n"
-        // "  background-color: rgb(240,240,240);\n"
+        "  background-color: rgb(240,240,240);\n"
         "  font-family: roboto, arial, sans-serif;\n"
         "  font-size: 14px;\n"
         // "  color: #ff00ff !important;\n"

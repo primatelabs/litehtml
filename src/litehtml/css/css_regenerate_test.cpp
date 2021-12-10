@@ -53,6 +53,13 @@ TEST(CSSRegenerateTest, Smoke)
         "font-family: roboto, arial, sans-serif; "
         "font-size: 14px !important; "
         "}",
+        "baz > bar { "
+        "margin: 25px; "
+        "background: rgba(220,230,240,0.5); "
+        "color: #ff00ff; "
+        "font-family: roboto, arial, sans-serif; "
+        "font-size: 14px !important; "
+        "}",
         "@media (color) { "
         "body { "
         "margin: 50px; "
