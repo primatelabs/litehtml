@@ -157,6 +157,7 @@ set(TEST_LITEHTML
     context_test.cpp
     css/css_length_test.cpp
     css/css_parser_test.cpp
+    css/css_regenerate_test.cpp
     css/css_stylesheet_test.cpp
     css/css_test.cpp
     css/css_tokenizer_input_stream_test.cpp
@@ -165,11 +166,12 @@ set(TEST_LITEHTML
     layout_global_test.cpp
     media_query_expression_test.cpp
     media_query_test.cpp
-    test_container.cpp
     tstring_view_test.cpp
     url_path_test.cpp
     url_test.cpp
     web_color_test.cpp
+
+    test_container.cpp
 )
 
 set(PROJECT_LIB_VERSION ${PROJECT_MAJOR}.${PROJECT_MINOR}.0)
