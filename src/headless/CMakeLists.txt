@@ -7,7 +7,6 @@ enable_testing()
 include(FindJPEG)
 
 find_package(PkgConfig)
-pkg_search_module(CAIRO REQUIRED cairo>=1.12.0)
 pkg_search_module(FMT REQUIRED fmt)
 pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
 pkg_search_module(FREETYPE REQUIRED freetype2)
@@ -62,7 +61,6 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../litehtml/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../litehtml
     ${CMAKE_CURRENT_SOURCE_DIR}/../../third_party/orion/include
-    ${CAIRO_INCLUDE_DIRS}
     ${FONTCONFIG_INCLUDE_DIRS}
     ${JPEG_INCLUDE_DIRS}
 )
@@ -70,7 +68,6 @@ target_include_directories(
 target_link_directories(
     ${HEADLESS_NAME}
     PUBLIC
-    ${CAIRO_LIBRARY_DIRS}
     ${FONTCONFIG_LIBRARY_DIRS}
     ${FMT_LIBRARY_DIRS}
     ${LIBPNG_LIBRARY_DIRS}
@@ -79,7 +76,6 @@ target_link_directories(
 target_link_libraries(
     ${HEADLESS_NAME}
     litehtml
-    ${CAIRO_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${LIBPNG_LIBRARIES}
