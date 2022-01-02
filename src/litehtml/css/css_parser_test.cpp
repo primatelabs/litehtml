@@ -62,3 +62,15 @@ TEST(CSSParserTest, Stylesheet)
         CSSStylesheet* stylesheet = parser.parse_stylesheet();
     }
 }
+
+TEST(CSSParserTest, Fuzz)
+{
+    std::vector<String> testcases = {
+        "/( A simple CSS stylesheet */\n",
+    };
+
+    for (String& testcase : testcases) {
+        CSSParser parser(testcase);
+        CSSStylesheet* stylesheet = parser.parse_stylesheet();
+    }
+}

@@ -151,9 +151,11 @@ CSSRule* CSSParser::consume_qualified_rule(CSSTokenRange& range)
 
         if (type == kCSSTokenEOF) {
             // Parse error.  Return nothing.
-            // TODO: Error handling.
-            assert(false);
+            // FIXME: Implement error handling (or reporting).
+            delete rule;
+            rule = nullptr;
             break;
+
         } else if (type == kCSSTokenOpenBrace) {
             // Consume a simple block and assign it to the qualified rule's
             // block.  Return the qualified rule.
