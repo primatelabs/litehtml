@@ -261,8 +261,7 @@ CSSFunction* CSSParser::consume_function(CSSTokenRange& range)
         if (type == kCSSTokenCloseRoundBracket) {
             break;
         } else if (type == kCSSTokenEOF) {
-            // TODO: Raise a parse error before returning the block.
-            assert(false);
+            // FIXME: Implement error handling (or reporting).
             break;
         } else {
             range.reconsume();

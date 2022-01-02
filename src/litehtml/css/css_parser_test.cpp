@@ -67,6 +67,7 @@ TEST(CSSParserTest, Fuzz)
 {
     std::vector<String> testcases = {
         "/( A simple CSS stylesheet */\n",
+        "body({}",
     };
 
     for (String& testcase : testcases) {
