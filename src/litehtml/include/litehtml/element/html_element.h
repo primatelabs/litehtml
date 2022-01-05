@@ -147,7 +147,7 @@ public:
     int get_cleared_top(const Element::ptr& el, int line_top) const;
     int finish_last_box(bool end_of_render = false);
 
-    virtual bool appendChild(const Element::ptr& el) override;
+    virtual bool append_child(Element* element) override;
     virtual void clearRecursive() override;
     virtual const tchar_t* get_tagName() const override;
     virtual void set_tagName(const tchar_t* tag) override;

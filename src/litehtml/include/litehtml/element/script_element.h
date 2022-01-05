@@ -43,7 +43,7 @@ public:
     virtual ~ScriptElement() override;
 
     virtual void parse_attributes() override;
-    virtual bool appendChild(const ptr& el) override;
+    virtual bool append_child(Element* element) override;
     virtual const tchar_t* get_tagName() const override;
 };
 

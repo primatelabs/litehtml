@@ -588,9 +588,18 @@ int Element::render(int, int, int, bool)
     return 0;
 }
 
-bool Element::appendChild(const ptr&)
+bool Element::append_child(Element*)
 {
     return false;
+}
+
+void Element::append_children(ElementsVector& children)
+{
+    for (Element* child : children) {
+        if (!append_child(child)) {
+            delete child;
+        }
+    }
 }
 
 void Element::clearRecursive()

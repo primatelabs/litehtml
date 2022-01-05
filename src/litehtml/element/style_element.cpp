@@ -53,9 +53,9 @@ void StyleElement::parse_attributes()
     get_document()->add_stylesheet(text.c_str(), URL(), get_attr(_t("media")));
 }
 
-bool StyleElement::appendChild(const ptr& el)
+bool StyleElement::append_child(Element* element)
 {
-    m_children.push_back(el);
+    m_children.push_back(element);
     return true;
 }
 

@@ -776,13 +776,10 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
                 ElementsVector child;
                 for (unsigned int i = 0; i < node->v.element.children.length; i++) {
                     child.clear();
-                    create_node(static_cast<GumboNode*>(
-                                    node->v.element.children.data[i]),
+                    create_node(node->v.element.children.data[i],
                         child,
                         parseTextNode);
-                    std::for_each(child.begin(),
-                        child.end(),
-                        [&ret](Element::ptr& el) { ret->appendChild(el); });
+                    ret->append_children(child);
                 }
                 elements.push_back(ret);
             }
@@ -876,9 +873,7 @@ void Document::fix_table_children(Element::ptr& el_ptr,
         annon_tag->add_style(st);
         annon_tag->parent(el_ptr);
         annon_tag->parse_styles();
-        std::for_each(tmp.begin(), tmp.end(), [&annon_tag](Element::ptr& el) {
-            annon_tag->appendChild(el);
-        });
+        annon_tag->append_children(tmp);
         first_iter = el_ptr->m_children.insert(first_iter, annon_tag);
         cur_iter = first_iter + 1;
         while (cur_iter != el_ptr->m_children.end() &&
@@ -965,8 +960,10 @@ void Document::fix_table_parent(Element::ptr& el_ptr,
             annon_tag->add_style(st);
             annon_tag->parent(parent);
             annon_tag->parse_styles();
-            std::for_each(first, last + 1, [&annon_tag](Element::ptr& el) {
-                annon_tag->appendChild(el);
+            std::for_each(first, last + 1, [&annon_tag](Element* element) {
+                if (!annon_tag->append_child(element)) {
+                    delete element;
+                }
             });
             first = parent->m_children.erase(first, last + 1);
             parent->m_children.insert(first, annon_tag);
@@ -999,7 +996,7 @@ void Document::append_children_from_utf8(Element& parent, const char* str)
     // Let's process created elements tree
     for (Element::ptr child : child_elements) {
         // Add the child element to parent
-        parent.appendChild(child);
+        parent.append_child(child);
 
         // apply master CSS
         child->apply_stylesheet(context_->master_stylesheet());

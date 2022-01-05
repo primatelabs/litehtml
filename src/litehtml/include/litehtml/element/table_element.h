@@ -45,7 +45,7 @@ public:
     TableElement(Document* doc);
     virtual ~TableElement() override;
 
-    virtual bool appendChild(const litehtml::Element::ptr& el) override;
+    virtual bool append_child(Element* element) override;
     virtual void parse_styles(bool is_reparse = false) override;
     virtual void parse_attributes() override;
 };

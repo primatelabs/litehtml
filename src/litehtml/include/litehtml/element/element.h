@@ -320,7 +320,14 @@ public:
     virtual bool fetch_positioned();
     virtual void render_positioned(RenderType rt = kRenderAll);
 
-    virtual bool appendChild(const ptr& el);
+    // Returns true if the parent elemenet appends the child element and
+    // adopts ownership of it, false otherwise.
+    virtual bool append_child(Element* element);
+
+    // For each of the child elements either append and adopt the child
+    // element or delete the element.
+    virtual void append_children(ElementsVector& children);
+
     virtual void clearRecursive();
 
     virtual const tchar_t* get_tagName() const;

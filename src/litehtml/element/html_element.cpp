@@ -75,11 +75,11 @@ HTMLElement::~HTMLElement()
 {
 }
 
-bool HTMLElement::appendChild(const Element::ptr& el)
+bool HTMLElement::append_child(Element* element)
 {
-    if (el) {
-        el->parent(this);
-        m_children.push_back(el);
+    if (element) {
+        element->parent(this);
+        m_children.push_back(element);
         return true;
     }
     return false;
@@ -3380,9 +3380,9 @@ Element::ptr HTMLElement::get_element_after()
             return m_children.back();
         }
     }
-    Element::ptr el = new AfterElement(get_document());
-    appendChild(el);
-    return el;
+    Element* element = new AfterElement(get_document());
+    append_child(element);
+    return element;
 }
 
 void HTMLElement::add_style(const CSSStyle& st)

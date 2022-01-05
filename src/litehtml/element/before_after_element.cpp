@@ -111,12 +111,12 @@ void BeforeAfterBaseElement::add_text(const tstring& txt)
             if (esc.empty()) {
                 if (!word.empty()) {
                     Element::ptr el = new TextElement(word.c_str(), get_document());
-                    appendChild(el);
+                    append_child(el);
                     word.clear();
                 }
 
-                Element::ptr el = new SpaceElement(txt.substr(i, 1).c_str(), get_document());
-                appendChild(el);
+                Element* element = new SpaceElement(txt.substr(i, 1).c_str(), get_document());
+                append_child(element);
             } else {
                 word += convert_escape(esc.c_str() + 1);
                 esc.clear();
@@ -138,7 +138,7 @@ void BeforeAfterBaseElement::add_text(const tstring& txt)
     }
     if (!word.empty()) {
         Element::ptr el = new TextElement(word.c_str(), get_document());
-        appendChild(el);
+        append_child(el);
         word.clear();
     }
 }
@@ -183,7 +183,7 @@ void BeforeAfterBaseElement::add_function(const tstring& fnc, const tstring& par
                 el->set_attr(_t("src"), p_url.c_str());
                 el->set_attr(_t("style"), _t("display:inline-block"));
                 el->set_tagName(_t("img"));
-                appendChild(el);
+                append_child(el);
                 el->parse_attributes();
             }
         } break;

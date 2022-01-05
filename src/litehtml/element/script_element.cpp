@@ -48,10 +48,10 @@ void ScriptElement::parse_attributes()
     // TODO: pass script text to document container
 }
 
-bool ScriptElement::appendChild(const ptr& el)
+bool ScriptElement::append_child(Element* element)
 {
-    el->get_text(m_text);
-    return true;
+    element->get_text(m_text);
+    return false;
 }
 
 const tchar_t* ScriptElement::get_tagName() const

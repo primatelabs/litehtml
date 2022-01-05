@@ -51,14 +51,14 @@ TableElement::~TableElement()
 {
 }
 
-bool TableElement::appendChild(const Element::ptr& el)
+bool TableElement::append_child(Element* element)
 {
-    if (!el)
+    if (!element)
         return false;
-    if (!t_strcmp(el->get_tagName(), _t("tbody")) ||
-        !t_strcmp(el->get_tagName(), _t("thead")) ||
-        !t_strcmp(el->get_tagName(), _t("tfoot"))) {
-        return HTMLElement::appendChild(el);
+    if (!t_strcmp(element->get_tagName(), _t("tbody")) ||
+        !t_strcmp(element->get_tagName(), _t("thead")) ||
+        !t_strcmp(element->get_tagName(), _t("tfoot"))) {
+        return HTMLElement::append_child(element);
     }
     return false;
 }
