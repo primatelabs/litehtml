@@ -593,11 +593,6 @@ bool Element::appendChild(const ptr&)
     return false;
 }
 
-bool Element::removeChild(const ptr&)
-{
-    return false;
-}
-
 void Element::clearRecursive()
 {
 }

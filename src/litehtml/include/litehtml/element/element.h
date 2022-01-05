@@ -321,7 +321,6 @@ public:
     virtual void render_positioned(RenderType rt = kRenderAll);
 
     virtual bool appendChild(const ptr& el);
-    virtual bool removeChild(const ptr& el);
     virtual void clearRecursive();
 
     virtual const tchar_t* get_tagName() const;

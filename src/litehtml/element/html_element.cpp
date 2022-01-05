@@ -85,17 +85,6 @@ bool HTMLElement::appendChild(const Element::ptr& el)
     return false;
 }
 
-bool HTMLElement::removeChild(const Element::ptr& el)
-{
-    if (el && el->parent() == this) {
-        el->parent(nullptr);
-        m_children.erase(std::remove(m_children.begin(), m_children.end(), el),
-            m_children.end());
-        return true;
-    }
-    return false;
-}
-
 void HTMLElement::clearRecursive()
 {
     for (auto& el : m_children) {
