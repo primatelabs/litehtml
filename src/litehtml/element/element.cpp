@@ -602,10 +602,6 @@ void Element::append_children(ElementsVector& children)
     }
 }
 
-void Element::clearRecursive()
-{
-}
-
 const tchar_t* Element::get_tagName() const
 {
     return _t("");

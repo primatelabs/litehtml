@@ -85,16 +85,6 @@ bool HTMLElement::append_child(Element* element)
     return false;
 }
 
-void HTMLElement::clearRecursive()
-{
-    for (auto& el : m_children) {
-        el->clearRecursive();
-        el->parent(nullptr);
-    }
-    m_children.clear();
-}
-
-
 const tchar_t* HTMLElement::get_tagName() const
 {
     return m_tag.c_str();

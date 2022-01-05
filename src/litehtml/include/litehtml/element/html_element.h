@@ -148,7 +148,7 @@ public:
     int finish_last_box(bool end_of_render = false);
 
     virtual bool append_child(Element* element) override;
-    virtual void clearRecursive() override;
+
     virtual const tchar_t* get_tagName() const override;
     virtual void set_tagName(const tchar_t* tag) override;
     virtual void set_data(const tchar_t* data) override;
