@@ -42,7 +42,7 @@ public:
     CommentElement(Document* doc);
     virtual ~CommentElement() override;
 
-    virtual void get_text(tstring& text) override;
+    virtual void get_text(tstring& text) const override;
     virtual void set_data(const tchar_t* data) override;
 };
 

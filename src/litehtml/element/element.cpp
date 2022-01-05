@@ -757,7 +757,7 @@ int Element::get_font_size() const
     return 0;
 }
 
-void Element::get_text(tstring&)
+void Element::get_text(tstring&) const
 {
 }
 

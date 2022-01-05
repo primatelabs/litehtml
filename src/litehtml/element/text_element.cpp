@@ -58,7 +58,7 @@ void TextElement::get_content_size(Size& sz, int /* max_width */)
     sz = size_;
 }
 
-void TextElement::get_text(tstring& text)
+void TextElement::get_text(tstring& text) const
 {
     text += text_;
 }

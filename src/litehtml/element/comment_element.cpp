@@ -42,7 +42,7 @@ CommentElement::~CommentElement()
 {
 }
 
-void CommentElement::get_text(tstring& text)
+void CommentElement::get_text(tstring& text) const
 {
     text += m_text;
 }

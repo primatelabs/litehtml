@@ -379,7 +379,7 @@ public:
 
     virtual uintptr_t get_font(FontMetrics* fm = nullptr);
     virtual int get_font_size() const;
-    virtual void get_text(tstring& text);
+    virtual void get_text(tstring& text) const;
     virtual void parse_attributes();
     virtual int select(const CSSSelector& selector, bool apply_pseudo = true);
     virtual int select(const css_element_selector& selector,

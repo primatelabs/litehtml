@@ -42,7 +42,7 @@ CDATAElement::~CDATAElement()
 {
 }
 
-void CDATAElement::get_text(tstring& text)
+void CDATAElement::get_text(tstring& text) const
 {
     text += m_text;
 }

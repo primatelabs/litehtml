@@ -233,7 +233,7 @@ public:
         const CSSSelector& selector,
         bool apply_pseudo = true,
         bool* is_pseudo = nullptr) override;
-    virtual void get_text(tstring& text) override;
+    virtual void get_text(tstring& text) const override;
     virtual void parse_attributes() override;
 
     virtual bool is_first_child_inline(const Element::ptr& el) const override;

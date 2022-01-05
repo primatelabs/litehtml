@@ -1523,7 +1523,7 @@ void HTMLElement::parse_attributes()
     }
 }
 
-void HTMLElement::get_text(tstring& text)
+void HTMLElement::get_text(tstring& text) const
 {
     for (auto& el : m_children) {
         el->get_text(text);
