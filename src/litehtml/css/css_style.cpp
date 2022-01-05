@@ -105,8 +105,8 @@ nlohmann::json CSSStyle::json() const
 {
     nlohmann::json result;
 
-    for (auto property : properties_) {
-        result[property.first] = property.second.json();
+    for (auto& property : properties_) {
+        result[property.first] = property.second->json();
     }
 
     return result;
