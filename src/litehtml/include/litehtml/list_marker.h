@@ -32,9 +32,9 @@
 #define LITEHTML_LIST_MARKER_H__
 
 #include "litehtml/background.h"
+#include "litehtml/color.h"
 #include "litehtml/string.h"
 #include "litehtml/types.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 
@@ -42,7 +42,7 @@ struct list_marker {
     tstring image;
     const tchar_t* baseurl;
     ListStyleType marker_type;
-    WebColor color;
+    Color color;
     Position pos;
     int index;
     uintptr_t font;

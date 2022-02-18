@@ -155,7 +155,7 @@ void TextElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
             Document* doc = get_document();
 
             uintptr_t font = el_parent->get_font();
-            WebColor color =
+            Color color =
                 el_parent->get_color(kCSSPropertyColor, doc->get_default_color());
             doc->container()->draw_text(hdc,
                 use_transformed_ ? transformed_text_.c_str() : text_.c_str(),

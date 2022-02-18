@@ -66,7 +66,7 @@ int test_container::text_width(const litehtml::tchar_t* text,
 void test_container::draw_text(uintptr_t hdc,
     const litehtml::tchar_t* text,
     uintptr_t hFont,
-    litehtml::WebColor color,
+    litehtml::Color color,
     const litehtml::Position& pos)
 {
 }

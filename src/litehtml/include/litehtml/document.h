@@ -34,12 +34,12 @@
 #include <memory>
 #include <vector>
 
+#include "litehtml/color.h"
 #include "litehtml/context.h"
-#include "litehtml/element/element.h"
 #include "litehtml/css/css_style.h"
+#include "litehtml/element/element.h"
 #include "litehtml/types.h"
 #include "litehtml/url.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 
@@ -97,7 +97,7 @@ private:
 
     CSSStylesheet stylesheet_;
 
-    WebColor default_color_;
+    Color default_color_;
 
     Context* context_;
 
@@ -154,7 +154,7 @@ public:
 
     void draw(uintptr_t hdc, int x, int y, const Position* clip);
 
-    WebColor get_default_color()
+    Color get_default_color()
     {
         return default_color_;
     }

@@ -29,6 +29,7 @@
 
 #ifndef LITEHTML_HTML_H__
 #define LITEHTML_HTML_H__
+
 #include <ctype.h>
 #include <stdlib.h>
 
@@ -41,11 +42,11 @@
 
 #include "litehtml/background.h"
 #include "litehtml/borders.h"
+#include "litehtml/color.h"
 #include "litehtml/element/html_element.h"
 #include "litehtml/media_query.h"
 #include "litehtml/string.h"
 #include "litehtml/types.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 

@@ -34,10 +34,10 @@
 #include <string>
 
 #include "litehtml/background_paint.h"
+#include "litehtml/color.h"
 #include "litehtml/element/element.h"
 #include "litehtml/list_marker.h"
 #include "litehtml/url.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 
@@ -61,7 +61,7 @@ public:
     virtual void draw_text(uintptr_t hdc,
         const litehtml::tchar_t* text,
         uintptr_t hFont,
-        litehtml::WebColor color,
+        litehtml::Color color,
         const litehtml::Position& pos) = 0;
 
     virtual int pt_to_px(int pt) = 0;

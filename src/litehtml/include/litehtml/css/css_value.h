@@ -31,10 +31,10 @@
 #ifndef LITEHTML_CSS_CSS_VALUE_H__
 #define LITEHTML_CSS_CSS_VALUE_H__
 
+#include "litehtml/color.h"
 #include "litehtml/css/css_length.h"
 #include "litehtml/debug/json.h"
 #include "litehtml/string.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 
@@ -119,12 +119,12 @@ public:
 
 class CSSColorValue : public CSSValue {
 protected:
-    WebColor color_;
+    Color color_;
 
 public:
-    CSSColorValue(WebColor color, const tstring& value, bool important);
+    CSSColorValue(Color color, const tstring& value, bool important);
 
-    WebColor color() const
+    Color color() const
     {
         return color_;
     }

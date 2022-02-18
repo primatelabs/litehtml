@@ -34,9 +34,9 @@
 #include <memory>
 
 #include "litehtml/background.h"
+#include "litehtml/color.h"
 #include "litehtml/css/css_offsets.h"
 #include "litehtml/css/css_stylesheet.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 
@@ -234,7 +234,7 @@ public:
         return false;
     }
 
-    WebColor get_color(CSSProperty name, const WebColor& default_color = litehtml::WebColor());
+    Color get_color(CSSProperty name, const Color& default_color = litehtml::Color());
 
     template <typename T>
     T get_keyword(CSSProperty name)

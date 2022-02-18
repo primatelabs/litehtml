@@ -28,8 +28,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_WEBCOLOR_H__
-#define LITEHTML_WEBCOLOR_H__
+#ifndef LITEHTML_COLOR_H__
+#define LITEHTML_COLOR_H__
 
 #include "litehtml/string.h"
 #include "litehtml/types.h"
@@ -38,17 +38,17 @@ namespace litehtml {
 
 class DocumentContainer;
 
-struct WebColor {
+struct Color {
     uint8_t blue = 0;
     uint8_t green = 0;
     uint8_t red = 0;
     uint8_t alpha = 255;
 
-    WebColor() = default;
+    Color() = default;
 
-    WebColor(const tstring& str);
+    Color(const tstring& str);
 
-    WebColor(byte r, byte g, byte b, byte a = 255)
+    Color(byte r, byte g, byte b, byte a = 255)
     {
         blue = b;
         green = g;
@@ -56,11 +56,11 @@ struct WebColor {
         alpha = a;
     }
 
-    static WebColor from_string(const tchar_t* str);
+    static Color from_string(const tchar_t* str);
 
     static bool is_color(const tchar_t* str);
 };
 
 } // namespace litehtml
 
-#endif // LITEHTML_WEBCOLOR_H__
+#endif // LITEHTML_COLOR_H__

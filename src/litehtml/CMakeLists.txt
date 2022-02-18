@@ -18,6 +18,7 @@ set(SOURCE_LITEHTML
     background_paint.cpp
     box.cpp
     codepoint.cpp
+    color.cpp
     context.cpp
     css/css_block.cpp
     css/css_component_value.cpp
@@ -77,7 +78,6 @@ set(SOURCE_LITEHTML
     url.cpp
     url_path.cpp
     utf8_strings.cpp
-    web_color.cpp
 )
 
 set(HEADER_LITEHTML
@@ -86,6 +86,7 @@ set(HEADER_LITEHTML
     include/litehtml/borders.h
     include/litehtml/box.h
     include/litehtml/codepoint.h
+    include/litehtml/color.h
     include/litehtml/context.h
     include/litehtml/css/css_block.h
     include/litehtml/css/css_component_value.h
@@ -149,11 +150,11 @@ set(HEADER_LITEHTML
     include/litehtml/url.h
     include/litehtml/url_path.h
     include/litehtml/utf8_strings.h
-    include/litehtml/web_color.h
 )
 
 set(TEST_LITEHTML
     codepoint_test.cpp
+    color_test.cpp
     context_test.cpp
     css/css_length_test.cpp
     css/css_parser_test.cpp
@@ -169,7 +170,6 @@ set(TEST_LITEHTML
     tstring_view_test.cpp
     url_path_test.cpp
     url_test.cpp
-    web_color_test.cpp
 
     test_container.cpp
 )

@@ -61,7 +61,7 @@ CSSValue* CSSValue::factory(CSSProperty property, const tstring& str, bool impor
         }
 
         case kCSSValueColor: {
-            WebColor color(str);
+            Color color(str);
             return new CSSColorValue(color, str, important);
         }
 
@@ -99,7 +99,7 @@ nlohmann::json CSSValue::json() const
 
 #endif // ENABLE_JSON
 
-CSSColorValue::CSSColorValue(WebColor color, const tstring& value, bool important)
+CSSColorValue::CSSColorValue(Color color, const tstring& value, bool important)
 : CSSValue(kCSSValueColor, value, important)
 , color_(color)
 {

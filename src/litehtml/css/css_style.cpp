@@ -221,7 +221,7 @@ void CSSStyle::add_property(CSSProperty name,
                 str += _t("-style");
                 add_property(str.c_str(), tok->c_str(), url, important);
             } else {
-                if (WebColor::is_color(tok->c_str())) {
+                if (Color::is_color(tok->c_str())) {
                     str = css_property_string(name);
                     str += _t("-color");
                     add_property(str.c_str(), tok->c_str(), url, important);
@@ -726,7 +726,7 @@ void CSSStyle::parse_short_background(const tstring& val,
             } else {
                 add_parsed_property(kCSSPropertyBackgroundPosition, *tok, important);
             }
-        } else if (WebColor::is_color(tok->c_str())) {
+        } else if (Color::is_color(tok->c_str())) {
             add_parsed_property(kCSSPropertyBackgroundColor, *tok, important);
         }
     }

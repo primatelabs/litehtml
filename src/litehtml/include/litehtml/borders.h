@@ -30,16 +30,16 @@
 #ifndef LITEHTML_BORDERS_H__
 #define LITEHTML_BORDERS_H__
 
+#include "litehtml/color.h"
 #include "litehtml/css/css_length.h"
 #include "litehtml/types.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 
 struct css_border {
     CSSLength width;
     BorderStyle style;
-    WebColor color;
+    Color color;
 
     css_border()
     {
@@ -65,7 +65,7 @@ struct css_border {
 struct border {
     int width;
     BorderStyle style;
-    WebColor color;
+    Color color;
 
     border()
     {

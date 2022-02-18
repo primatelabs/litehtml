@@ -40,7 +40,7 @@ public:
     URL image;
     BackgroundAttachment attachment;
     BackgroundRepeat repeat;
-    WebColor color;
+    Color color;
     Position clip_box;
     Position origin_box;
     Position border_box;

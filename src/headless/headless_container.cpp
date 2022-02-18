@@ -86,7 +86,7 @@ constexpr int kDefaultHeight = 1000;
 // We cannot use a higher DPI setting until media queries are implemented.
 constexpr int kDefaultDPI = 72;
 
-void draw_bitmap(Image<uint8_t>& canvas, FT_Bitmap* bitmap, WebColor color, FT_Int x, FT_Int y)
+void draw_bitmap(Image<uint8_t>& canvas, FT_Bitmap* bitmap, Color color, FT_Int x, FT_Int y)
 {
     FT_Int x_max = x + bitmap->width;
     FT_Int y_max = y + bitmap->rows;
@@ -237,7 +237,7 @@ int HeadlessContainer::text_width(const litehtml::tchar_t* text,
 void HeadlessContainer::draw_text(uintptr_t hdc,
     const litehtml::tchar_t* text,
     uintptr_t hFont,
-    litehtml::WebColor color,
+    litehtml::Color color,
     const litehtml::Position& pos)
 {
     // Don't bother tracing this function as it's called once per token (where

@@ -32,11 +32,11 @@
 #define LITEHTML_BACKGROUND_H__
 
 #include "litehtml/borders.h"
+#include "litehtml/color.h"
 #include "litehtml/css/css_length.h"
 #include "litehtml/css/css_position.h"
 #include "litehtml/types.h"
 #include "litehtml/url.h"
-#include "litehtml/web_color.h"
 
 namespace litehtml {
 
@@ -67,7 +67,7 @@ enum BackgroundBox {
 class Background {
 public:
     URL m_image;
-    WebColor m_color;
+    Color m_color;
     BackgroundAttachment m_attachment;
     CSSPosition m_position;
     BackgroundRepeat m_repeat;

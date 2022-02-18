@@ -1313,7 +1313,7 @@ int HTMLElement::find_next_line_top(int top, int width, int def_right)
 
 void HTMLElement::parse_background()
 {
-    m_bg.m_color = get_color(kCSSPropertyBackgroundColor, WebColor(0, 0, 0, 0));
+    m_bg.m_color = get_color(kCSSPropertyBackgroundColor, Color(0, 0, 0, 0));
 
     const tchar_t* str = get_style_property(kCSSPropertyBackgroundPosition);
     if (str) {
@@ -2680,7 +2680,7 @@ void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
     int sz_font = get_font_size();
     lm.pos.x = pos.x;
     lm.pos.width = sz_font - sz_font * 2 / 3;
-    lm.color = get_color(kCSSPropertyColor, WebColor(0, 0, 0));
+    lm.color = get_color(kCSSPropertyColor, Color(0, 0, 0));
     lm.marker_type = list_style_type_;
     lm.font = get_font();
 

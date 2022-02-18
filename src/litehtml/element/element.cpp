@@ -76,7 +76,7 @@ bool Element::is_point_inside(int x, int y)
     return false;
 }
 
-WebColor Element::get_color(CSSProperty name, const WebColor& default_color)
+Color Element::get_color(CSSProperty name, const Color& default_color)
 {
     const CSSValue* value = get_style_property_value(name);
     if (!value) {
