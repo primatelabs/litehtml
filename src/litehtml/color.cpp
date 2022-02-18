@@ -43,7 +43,7 @@ namespace {
 
 Color resolve_name(const tstring& name)
 {
-    static std::unordered_map<tstring, Color> named_colors = {
+    static const std::unordered_map<tstring, Color> named_colors = {
         {_t("aliceblue"), Color(0xf0, 0xf8, 0xff)},
         {_t("antiquewhite"), Color(0xfa, 0xeb, 0xd7)},
         {_t("aqua"), Color(0x00, 0xff, 0xff)},
@@ -193,7 +193,12 @@ Color resolve_name(const tstring& name)
         {_t("transparent"), Color(0, 0, 0, 0)},
     };
 
-    return named_colors[name];
+    auto color = named_colors.find(name);
+    if (color != named_colors.end()) {
+        return color->second;
+    }
+
+    return Color();
 }
 
 } // namespace
