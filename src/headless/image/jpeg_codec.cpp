@@ -29,6 +29,8 @@
 
 #include "image/jpeg_codec.h"
 
+#include <assert.h>
+
 #include <algorithm>
 
 #include "math/clamp.h"

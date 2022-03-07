@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2021 Primate Labs Inc.
+// Copyright (C) 2020-2022 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,24 +27,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef HEADLESS_HTTP_H__
-#define HEADLESS_HTTP_H__
+#ifndef HEADLESS_HTTP_CURL_H__
+#define HEADLESS_HTTP_CURL_H__
 
-#include "litehtml/litehtml.h"
-#include "litehtml/url.h"
-
-struct http_response
-{
-  int code;
-  std::string mime_type;
-  std::string body;
-
-  bool success()
-  {
-    return code == 200;
-  }
-};
-
-http_response http_request(const litehtml::URL& url);
-
-#endif // HEADLESS_HTTP_H__
+#endif // HEADLESS_HTTP_CURL_H__

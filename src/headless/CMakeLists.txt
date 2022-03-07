@@ -12,14 +12,13 @@ pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
 pkg_search_module(FREETYPE REQUIRED freetype2)
 pkg_search_module(LIBPNG REQUIRED libpng>=1.6.0)
 
-find_library(FOUNDATION Foundation)
+
 
 set(HEADLESS_NAME headless)
 
 set(SOURCE_HEADLESS
     headless.cpp
     headless_container.cpp
-    http_darwin.mm
     http.cpp
     image/composite.cpp
     image/convert.cpp
@@ -28,6 +27,20 @@ set(SOURCE_HEADLESS
     image/png_codec.cpp
     orion_render_context.cpp
 )
+
+set(requiredlibs)
+
+if (APPLE)
+    find_library(FOUNDATION Foundation)
+    list(APPEND SOURCE_HEADLESS http_darwin.mm)
+    set(requiredlibs ${requiredlibs} ${FOUNDATION})
+else()
+    find_package(CURL)
+    if(CURL_FOUND)
+        list(APPEND SOURCE_HEADLESS http_curl.cpp)
+        set(requiredlibs ${requiredlibs} ${CURL_LIBRARIES})
+    endif(CURL_FOUND)
+endif()
 
 add_executable(
     ${HEADLESS_NAME}
@@ -80,7 +93,7 @@ target_link_libraries(
     ${JPEG_LIBRARIES}
     ${LIBPNG_LIBRARIES}
     ${FMT_LIBRARIES}
-    ${FOUNDATION}
+    ${requiredlibs}
 )
 
 add_custom_command(

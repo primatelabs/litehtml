@@ -29,6 +29,8 @@
 
 #include "image/composite.h"
 
+#include <assert.h>
+
 #include "litehtml/logging.h"
 
 namespace headless {

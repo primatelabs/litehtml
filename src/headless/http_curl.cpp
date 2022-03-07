@@ -27,24 +27,62 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef HEADLESS_HTTP_H__
-#define HEADLESS_HTTP_H__
+#include "http_curl.h"
 
-#include "litehtml/litehtml.h"
-#include "litehtml/url.h"
+#include <curl/curl.h>
+#include <curl/easy.h>
+#include <openssl/crypto.h>
+#include <openssl/md5.h>
+#include <stdint.h>
 
-struct http_response
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+
+#include "http.h"
+
+namespace {
+
+uint32_t write_callback(char* in, uint32_t size, uint32_t nmemb, std::string* out)
 {
-  int code;
-  std::string mime_type;
-  std::string body;
+    uint32_t r = size * nmemb;
+    out->append(in, r);
+    return r;
+}
 
-  bool success()
-  {
-    return code == 200;
-  }
-};
+} // namespace
 
-http_response http_request(const litehtml::URL& url);
+http_response http_request(const litehtml::URL& url)
+{
+    static bool init_curl = false;
 
-#endif // HEADLESS_HTTP_H__
+    if (!init_curl) {
+        curl_global_init(CURL_GLOBAL_ALL);
+        init_curl = true;
+    }
+
+    http_response response;
+
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        response.code = 0;
+        return response;
+    }
+
+    // TODO: Find a way to bundle CA certs so that verification can occur.
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.string().c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response.body);
+
+    CURLcode result = curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_HTTP_CODE, &response.code);
+
+    if (result != CURLE_OK && result != CURLE_PARTIAL_FILE) {
+        response.code = 0;
+    }
+
+    return response;
+}

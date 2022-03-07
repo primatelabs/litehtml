@@ -29,6 +29,8 @@
 
 #include "image/png_codec.h"
 
+#include <assert.h>
+
 #include <algorithm>
 
 #include "png.h"
