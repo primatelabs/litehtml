@@ -580,7 +580,7 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyBorderBottom:
             return nullptr;
         case kCSSPropertyBorderBottomColor:
-            return "";
+            return "currentcolor";
         case kCSSPropertyBorderBottomLeftRadius:
             return "0";
         case kCSSPropertyBorderBottomLeftRadiusX:
@@ -604,7 +604,7 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyBorderLeft:
             return nullptr;
         case kCSSPropertyBorderLeftColor:
-            return "";
+            return "currentcolor";
         case kCSSPropertyBorderLeftStyle:
             return "none";
         case kCSSPropertyBorderLeftWidth:
@@ -618,19 +618,19 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyBorderRight:
             return nullptr;
         case kCSSPropertyBorderRightColor:
-            return "";
+            return "currentcolor";
         case kCSSPropertyBorderRightStyle:
             return "none";
         case kCSSPropertyBorderRightWidth:
             return "medium";
         case kCSSPropertyBorderSpacing:
-            return nullptr;
+            return "0";
         case kCSSPropertyBorderStyle:
             return nullptr;
         case kCSSPropertyBorderTop:
             return nullptr;
         case kCSSPropertyBorderTopColor:
-            return "";
+            return "currentcolor";
         case kCSSPropertyBorderTopLeftRadius:
             return "0";
         case kCSSPropertyBorderTopLeftRadiusX:
@@ -660,7 +660,7 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyContent:
             return "";
         case kCSSPropertyCursor:
-            return nullptr;
+            return "auto";
         case kCSSPropertyDisplay:
             return "inline";
         case kCSSPropertyFloat:
@@ -670,11 +670,11 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyFontFamily:
             return "inherit";
         case kCSSPropertyFontSize:
-            return nullptr;
+            return "medium";
         case kCSSPropertyFontStyle:
             return "normal";
         case kCSSPropertyFontVariant:
-            return nullptr;
+            return "normal";
         case kCSSPropertyFontWeight:
             return "normal";
         case kCSSPropertyHeight:
@@ -686,7 +686,7 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyListStyle:
             return nullptr;
         case kCSSPropertyListStyleImage:
-            return nullptr;
+            return "none";
         case kCSSPropertyListStyleImageBaseurl:
             return "";
         case kCSSPropertyListStylePosition:
@@ -734,7 +734,7 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyTextIndent:
             return "0";
         case kCSSPropertyTextShadow:
-            return nullptr;
+            return "none";
         case kCSSPropertyTextTransform:
             return "none";
         case kCSSPropertyTop:
@@ -748,7 +748,7 @@ const tchar_t* css_property_default(CSSProperty property)
         case kCSSPropertyWidth:
             return "auto";
         case kCSSPropertyZIndex:
-            return nullptr;
+            return "auto";
         case kCSSPropertyUnknown:
         default:
             return nullptr;
@@ -817,7 +817,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyBorderBottomColor: {
-            static const CSSValue* default_value = CSSValue::factory(property, "", false);
+            static const CSSValue* default_value = CSSValue::factory(property, "currentcolor", false);
             return default_value;
         }
         case kCSSPropertyBorderBottomLeftRadius: {
@@ -865,7 +865,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyBorderLeftColor: {
-            static const CSSValue* default_value = CSSValue::factory(property, "", false);
+            static const CSSValue* default_value = CSSValue::factory(property, "currentcolor", false);
             return default_value;
         }
         case kCSSPropertyBorderLeftStyle: {
@@ -893,7 +893,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyBorderRightColor: {
-            static const CSSValue* default_value = CSSValue::factory(property, "", false);
+            static const CSSValue* default_value = CSSValue::factory(property, "currentcolor", false);
             return default_value;
         }
         case kCSSPropertyBorderRightStyle: {
@@ -905,7 +905,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyBorderSpacing: {
-            static const CSSValue* default_value = CSSValue::factory(property, nullptr, false);
+            static const CSSValue* default_value = CSSValue::factory(property, "0", false);
             return default_value;
         }
         case kCSSPropertyBorderStyle: {
@@ -917,7 +917,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyBorderTopColor: {
-            static const CSSValue* default_value = CSSValue::factory(property, "", false);
+            static const CSSValue* default_value = CSSValue::factory(property, "currentcolor", false);
             return default_value;
         }
         case kCSSPropertyBorderTopLeftRadius: {
@@ -977,7 +977,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyCursor: {
-            static const CSSValue* default_value = CSSValue::factory(property, nullptr, false);
+            static const CSSValue* default_value = CSSValue::factory(property, "auto", false);
             return default_value;
         }
         case kCSSPropertyDisplay: {
@@ -997,7 +997,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyFontSize: {
-            static const CSSValue* default_value = CSSValue::factory(property, nullptr, false);
+            static const CSSValue* default_value = CSSValue::factory(property, "medium", false);
             return default_value;
         }
         case kCSSPropertyFontStyle: {
@@ -1005,7 +1005,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyFontVariant: {
-            static const CSSValue* default_value = CSSValue::factory(property, nullptr, false);
+            static const CSSValue* default_value = CSSValue::factory(property, "normal", false);
             return default_value;
         }
         case kCSSPropertyFontWeight: {
@@ -1029,7 +1029,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyListStyleImage: {
-            static const CSSValue* default_value = CSSValue::factory(property, nullptr, false);
+            static const CSSValue* default_value = CSSValue::factory(property, "none", false);
             return default_value;
         }
         case kCSSPropertyListStyleImageBaseurl: {
@@ -1125,7 +1125,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyTextShadow: {
-            static const CSSValue* default_value = CSSValue::factory(property, nullptr, false);
+            static const CSSValue* default_value = CSSValue::factory(property, "none", false);
             return default_value;
         }
         case kCSSPropertyTextTransform: {
@@ -1153,7 +1153,7 @@ const CSSValue* css_property_default_value(CSSProperty property)
             return default_value;
         }
         case kCSSPropertyZIndex: {
-            static const CSSValue* default_value = CSSValue::factory(property, nullptr, false);
+            static const CSSValue* default_value = CSSValue::factory(property, "auto", false);
             return default_value;
         }
         case kCSSPropertyUnknown:
