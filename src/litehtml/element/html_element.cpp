@@ -274,17 +274,17 @@ uintptr_t HTMLElement::get_font(FontMetrics* fm)
 const tchar_t* HTMLElement::get_style_property(CSSProperty name)
 {
     const tchar_t* value = m_style.get_property(name);
-    const tchar_t* default_value = css_property_default(name);
-    bool inherited = css_property_inherited(name);
 
     if (parent()) {
-        if ((value && !t_strcasecmp(value, _t("inherit"))) || (!value && inherited)) {
+        if (value && !t_strcasecmp(value, _t("inherit"))) {
+            value = parent()->get_style_property(name);
+        } else if (!value && css_property_inherited(name)) {
             value = parent()->get_style_property(name);
         }
     }
 
     if (!value) {
-        value = default_value;
+        value = css_property_default(name);
     }
 
     return value;
@@ -293,10 +293,11 @@ const tchar_t* HTMLElement::get_style_property(CSSProperty name)
 const CSSValue* HTMLElement::get_style_property_value(CSSProperty property) const
 {
     const CSSValue* value = m_style.get_property_value(property);
-    bool inherited = css_property_inherited(property);
 
     if (parent()) {
-        if ((value && !t_strcasecmp(value->string().c_str(), _t("inherit"))) || (!value && inherited)) {
+        if (value && value->inherit()) {
+            value = parent()->get_style_property_value(property);
+        } else if (!value && css_property_inherited(property)) {
             value = parent()->get_style_property_value(property);
         }
     }
