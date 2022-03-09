@@ -39,6 +39,7 @@ CSSValue::CSSValue(const tstring& value, bool important)
 , value_(value)
 , important_(important)
 {
+    inherit_ = !t_strcasecmp(value.c_str(), "inherit");
 }
 
 CSSValue::CSSValue(CSSValueType type, const tstring& value, bool important)
@@ -46,6 +47,7 @@ CSSValue::CSSValue(CSSValueType type, const tstring& value, bool important)
 , value_(value)
 , important_(important)
 {
+    inherit_ = !t_strcasecmp(value.c_str(), "inherit");
 }
 
 CSSValue* CSSValue::factory(CSSProperty property, const tstring& str, bool important)

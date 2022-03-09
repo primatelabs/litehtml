@@ -57,6 +57,8 @@ protected:
 
     bool important_ = false;
 
+    bool inherit_ = false;
+
 public:
     CSSValue() = delete;
 
@@ -108,6 +110,11 @@ public:
     void important(bool important)
     {
         important_ = important;
+    }
+
+    bool inherit() const
+    {
+        return inherit_;
     }
 
     static CSSValue* factory(CSSProperty property, const tstring& value, bool important);
