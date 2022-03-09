@@ -485,7 +485,7 @@ void HTMLElement::parse_styles(bool is_reparse)
         list_style_position_ = get_keyword<ListStylePosition>(kCSSPropertyListStylePosition);
 
         const tchar_t* list_image = get_style_property(kCSSPropertyListStyleImage);
-        if (list_image && list_image[0]) {
+        if (list_image && list_image[0] && t_strcasecmp(list_image, "none")) {
             tstring url;
             CSSStylesheet::parse_css_url(list_image, url);
 
