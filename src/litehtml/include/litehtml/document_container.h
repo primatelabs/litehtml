@@ -99,10 +99,6 @@ public:
     virtual void transform_text(litehtml::tstring& text,
         litehtml::TextTransform tt) = 0;
 
-    virtual void import_css(litehtml::tstring& text,
-        const litehtml::tstring& url,
-        litehtml::tstring& baseurl) = 0;
-
     virtual tstring import_css(const URL& css_url) = 0;
 
     virtual void set_clip(const litehtml::Position& pos,

@@ -552,15 +552,6 @@ void HeadlessContainer::set_cursor(const litehtml::tchar_t* cursor)
 {
 }
 
-void HeadlessContainer::import_css(litehtml::tstring& text,
-    const litehtml::tstring& url,
-    litehtml::tstring& baseurl)
-{
-    HEADLESS_TRACE3(HeadlessContainer::import_css, text, url, baseurl);
-
-    assert(false);
-}
-
 litehtml::tstring HeadlessContainer::import_css(const litehtml::URL& url)
 {
     HEADLESS_TRACE1(HeadlessContainer::import_css, url.string());

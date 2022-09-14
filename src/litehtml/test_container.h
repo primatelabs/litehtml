@@ -103,10 +103,6 @@ public:
 
     virtual void set_cursor(const litehtml::tchar_t* cursor) override;
 
-    virtual void import_css(litehtml::tstring& text,
-        const litehtml::tstring& url,
-        litehtml::tstring& baseurl) override;
-
     virtual litehtml::tstring import_css(const litehtml::URL& url) override;
 
     virtual void get_client_rect(litehtml::Position& client) const override;

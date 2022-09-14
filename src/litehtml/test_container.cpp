@@ -135,12 +135,6 @@ void test_container::transform_text(litehtml::tstring& text,
 {
 }
 
-void test_container::import_css(litehtml::tstring& text,
-    const litehtml::tstring& url,
-    litehtml::tstring& baseurl)
-{
-}
-
 litehtml::tstring test_container::import_css(const litehtml::URL& url)
 {
     return "";
