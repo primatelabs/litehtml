@@ -19,5 +19,6 @@ add_subdirectory(src/fuzz)
 endif()
 
 if(BUILD_HEADLESS)
+add_subdirectory(third_party/orion)
 add_subdirectory(src/headless)
 endif()

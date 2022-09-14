@@ -93,6 +93,7 @@ target_link_libraries(
     ${JPEG_LIBRARIES}
     ${LIBPNG_LIBRARIES}
     ${FMT_LIBRARIES}
+    orion
     ${requiredlibs}
 )
 

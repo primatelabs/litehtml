@@ -32,6 +32,7 @@
 #include <fstream>
 
 #include <fmt/format.h>
+#include <orion/conv_stroke.h>
 
 #include "http.h"
 #include "image/jpeg_codec.h"
@@ -426,13 +427,72 @@ void HeadlessContainer::draw_background(uintptr_t hdc,
     }
 }
 
+void draw_border(OrionRenderContext* orc,
+  orion::rasterizer_scanline_aa<>& ras,
+  orion::scanline_p8& scanline,
+  const border& b,
+  int x0,
+  int y0,
+  int x1,
+  int y1)
+{
+    if (b.style == kBorderStyleNone || b.style == kBorderStyleHidden) {
+        return;
+    }
+
+    // draw_border() can only draw solid borders.
+    assert(b.style == kBorderStyleSolid);
+
+    const orion::rgba8 color(b.color.red, b.color.green, b.color.blue, b.color.alpha);
+    Path path({
+        (double)x0, (double)y0, (double)x1, (double)y1
+    });
+
+    orion::conv_stroke<Path> stroke_path(path);
+    double stroke_width = 1.0;
+    stroke_path.width(stroke_width);
+    stroke_path.line_cap(orion::square_cap);
+    stroke_path.line_join(orion::miter_join);
+    stroke_path.miter_limit(stroke_width);
+
+    ras.reset();
+    ras.add_path(stroke_path);
+    orion::render_scanlines_aa_solid(ras, scanline, orc->render_base, color);
+}
+
 void HeadlessContainer::draw_borders(uintptr_t hdc,
     const litehtml::borders& borders,
-    const litehtml::Position& draw_pos,
+    const litehtml::Position& draw_position,
     bool root)
 {
     // Don't bother tracing this function as it's called frequently.
     // HEADLESS_TRACE0(HeadlessContainer::draw_borders);
+
+    const litehtml::border& left = borders.left;
+    const litehtml::border& top = borders.top;
+    const litehtml::border& right = borders.right;
+    const litehtml::border& bottom = borders.bottom;
+
+    int x = draw_position.x;
+    int y = draw_position.y;
+    int width = draw_position.width;
+    int height = draw_position.height;
+
+    if (left.style == kBorderStyleNone && top.style == kBorderStyleNone && right.style == kBorderStyleNone && bottom.style == kBorderStyleNone) {
+        return;
+    }
+
+    OrionRenderContext* orc = reinterpret_cast<OrionRenderContext*>(hdc);
+
+    orion::rasterizer_scanline_aa<> ras;
+    ras.auto_close(false);
+
+    orion::scanline_p8 scanline;
+
+    draw_border(orc, ras, scanline, left, x, y, x, y + height);
+    draw_border(orc, ras, scanline, top, x, y, x + width, y);
+    draw_border(orc, ras, scanline, right, x + width, y, x + width, y + height);
+    draw_border(orc, ras, scanline, bottom, x, y + height, x + width, y + height);
 }
 
 void HeadlessContainer::draw_list_marker(uintptr_t hdc,
