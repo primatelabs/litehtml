@@ -41,8 +41,17 @@ headless demonstrates how to use litehtml and integrate it into an application. 
   * fmt
   * fontconfig
   * freetype2
+  * libcurl
   * libpng
   * libjpeg
+
+On Ubuntu the easiest way to install the prerequisites is with the following command:
+
+    sudo apt install libcurl4-openssl-dev \
+        libfmt-dev \
+        libfontconfig-dev \
+        libjpeg-dev \
+        libpng-dev
 
 ## Building headless
 
