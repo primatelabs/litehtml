@@ -2670,9 +2670,8 @@ void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
     if (list_image) {
         CSSStylesheet::parse_css_url(list_image, lm.image);
         lm.baseurl = get_style_property(kCSSPropertyListStyleImageBaseurl);
-        get_document()->container()->get_image_size(lm.image.c_str(),
-            lm.baseurl,
-            img_size);
+        URL list_image_url = resolve(URL(lm.baseurl), URL(lm.image));
+        img_size = get_document()->container()->get_image_size(list_image_url);
     } else {
         lm.baseurl = nullptr;
     }
