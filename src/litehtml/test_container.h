@@ -65,10 +65,6 @@ public:
     virtual void load_image(const litehtml::URL& src,
         bool redraw_on_ready) override;
 
-    virtual void get_image_size(const litehtml::tchar_t* src,
-        const litehtml::tchar_t* baseurl,
-        litehtml::Size& sz) override;
-
     virtual litehtml::Size get_image_size(const litehtml::URL& src) override;
 
     virtual void draw_background(uintptr_t hdc,

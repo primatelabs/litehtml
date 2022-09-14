@@ -96,12 +96,6 @@ void test_container::load_image(const litehtml::URL& src,
 {
 }
 
-void test_container::get_image_size(const litehtml::tchar_t* src,
-    const litehtml::tchar_t* baseurl,
-    litehtml::Size& sz)
-{
-}
-
 litehtml::Size test_container::get_image_size(const litehtml::URL& src)
 {
     return litehtml::Size();

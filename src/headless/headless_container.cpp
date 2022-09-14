@@ -337,14 +337,6 @@ void HeadlessContainer::load_image(const litehtml::URL& src, bool redraw_on_read
     }
 }
 
-void HeadlessContainer::get_image_size(const litehtml::tchar_t* src,
-    const litehtml::tchar_t* baseurl,
-    litehtml::Size& sz)
-{
-    HEADLESS_TRACE0(HeadlessContainer::get_image_size)
-    assert(false);
-}
-
 litehtml::Size HeadlessContainer::get_image_size(const litehtml::URL& src)
 {
     HEADLESS_TRACE1(HeadlessContainer::get_image_size, src.string());
