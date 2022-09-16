@@ -69,16 +69,6 @@ struct css_text {
     }
 };
 
-struct stop_tags_t {
-    const litehtml::tchar_t* tags;
-    const litehtml::tchar_t* stop_parent;
-};
-
-struct ommited_end_tags_t {
-    const litehtml::tchar_t* tag;
-    const litehtml::tchar_t* followed_tags;
-};
-
 class HTMLElement;
 
 class Document : public std::enable_shared_from_this<Document> {
