@@ -1453,20 +1453,20 @@ void HTMLElement::add_positioned(const Element::ptr& el)
 
 void HTMLElement::calc_outlines(int parent_width)
 {
-    m_padding.left = m_css_padding.left.calc_percent(parent_width);
-    m_padding.right = m_css_padding.right.calc_percent(parent_width);
-
-    m_borders.left = m_css_borders.left.width.calc_percent(parent_width);
-    m_borders.right = m_css_borders.right.width.calc_percent(parent_width);
-
     m_margins.left = m_css_margins.left.calc_percent(parent_width);
     m_margins.right = m_css_margins.right.calc_percent(parent_width);
-
     m_margins.top = m_css_margins.top.calc_percent(parent_width);
     m_margins.bottom = m_css_margins.bottom.calc_percent(parent_width);
 
+    m_padding.left = m_css_padding.left.calc_percent(parent_width);
+    m_padding.right = m_css_padding.right.calc_percent(parent_width);
     m_padding.top = m_css_padding.top.calc_percent(parent_width);
     m_padding.bottom = m_css_padding.bottom.calc_percent(parent_width);
+
+    m_borders.left = m_css_borders.left.width.calc_percent(parent_width);
+    m_borders.right = m_css_borders.right.width.calc_percent(parent_width);
+    m_borders.top = m_css_borders.top.width.calc_percent(parent_width);
+    m_borders.bottom = m_css_borders.bottom.width.calc_percent(parent_width);
 }
 
 void HTMLElement::calc_auto_margins(int parent_width)
