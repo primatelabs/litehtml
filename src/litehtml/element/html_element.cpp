@@ -246,8 +246,7 @@ void HTMLElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
             border_box += m_borders;
 
             BorderRadii bdr_radius =
-                m_css_borders.radius.calc_percents(border_box.width,
-                    border_box.height);
+                m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
 
             bdr_radius -= m_borders;
             bdr_radius -= m_padding;
@@ -425,26 +424,23 @@ void HTMLElement::parse_styles(bool is_reparse)
     m_css_borders.bottom.color = get_color(kCSSPropertyBorderBottomColor);
     m_css_borders.bottom.style = get_keyword<BorderStyle>(kCSSPropertyBorderBottomStyle);
 
-    m_css_borders.radius.top_left_x = get_length(kCSSPropertyBorderTopLeftRadiusX);
-    m_css_borders.radius.top_left_y = get_length(kCSSPropertyBorderTopLeftRadiusY);
+    m_css_borders.radii.top_left_x = get_length(kCSSPropertyBorderTopLeftRadiusX);
+    m_css_borders.radii.top_left_y = get_length(kCSSPropertyBorderTopLeftRadiusY);
+    m_css_borders.radii.top_right_x = get_length(kCSSPropertyBorderTopRightRadiusX);
+    m_css_borders.radii.top_right_y = get_length(kCSSPropertyBorderTopRightRadiusY);
+    m_css_borders.radii.bottom_right_x = get_length(kCSSPropertyBorderBottomRightRadiusX);
+    m_css_borders.radii.bottom_right_y = get_length(kCSSPropertyBorderBottomRightRadiusY);
+    m_css_borders.radii.bottom_left_x = get_length(kCSSPropertyBorderBottomLeftRadiusX);
+    m_css_borders.radii.bottom_left_y = get_length(kCSSPropertyBorderBottomLeftRadiusY);
 
-    m_css_borders.radius.top_right_x = get_length(kCSSPropertyBorderTopRightRadiusX);
-    m_css_borders.radius.top_right_y = get_length(kCSSPropertyBorderTopRightRadiusY);
-
-    m_css_borders.radius.bottom_right_x = get_length(kCSSPropertyBorderBottomRightRadiusX);
-    m_css_borders.radius.bottom_right_y = get_length(kCSSPropertyBorderBottomRightRadiusY);
-
-    m_css_borders.radius.bottom_left_x = get_length(kCSSPropertyBorderBottomLeftRadiusX);
-    m_css_borders.radius.bottom_left_y = get_length(kCSSPropertyBorderBottomLeftRadiusY);
-
-    doc->cvt_units(m_css_borders.radius.bottom_left_x, font_size_);
-    doc->cvt_units(m_css_borders.radius.bottom_left_y, font_size_);
-    doc->cvt_units(m_css_borders.radius.bottom_right_x, font_size_);
-    doc->cvt_units(m_css_borders.radius.bottom_right_y, font_size_);
-    doc->cvt_units(m_css_borders.radius.top_left_x, font_size_);
-    doc->cvt_units(m_css_borders.radius.top_left_y, font_size_);
-    doc->cvt_units(m_css_borders.radius.top_right_x, font_size_);
-    doc->cvt_units(m_css_borders.radius.top_right_y, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_left_x, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_left_y, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_right_x, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_right_y, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_left_x, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_left_y, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_right_x, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_right_y, font_size_);
 
     doc->cvt_units(m_css_text_indent, font_size_);
 
@@ -1863,12 +1859,9 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
             border_box += m_padding;
             border_box += m_borders;
 
-            Borders bdr = m_css_borders;
-            bdr.radius = m_css_borders.radius.calc_percents(border_box.width,
-                border_box.height);
-
+            Borders borders = m_css_borders.calculate_borders(border_box.width, border_box.height);
             get_document()->container()->draw_borders(hdc,
-                bdr,
+                borders,
                 border_box,
                 have_parent() ? false : true);
         }
@@ -1895,44 +1888,41 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
                     init_BackgroundPaint(content_box, bg_paint, bg);
                 }
 
-                CSSBorders bdr;
+                CSSBorders css_borders;
 
                 // set left borders radius for the first box
                 if (box == boxes.begin()) {
-                    bdr.radius.bottom_left_x = m_css_borders.radius.bottom_left_x;
-                    bdr.radius.bottom_left_y = m_css_borders.radius.bottom_left_y;
-                    bdr.radius.top_left_x = m_css_borders.radius.top_left_x;
-                    bdr.radius.top_left_y = m_css_borders.radius.top_left_y;
+                    css_borders.radii.bottom_left_x = m_css_borders.radii.bottom_left_x;
+                    css_borders.radii.bottom_left_y = m_css_borders.radii.bottom_left_y;
+                    css_borders.radii.top_left_x = m_css_borders.radii.top_left_x;
+                    css_borders.radii.top_left_y = m_css_borders.radii.top_left_y;
                 }
 
                 // set right borders radius for the last box
                 if (box == boxes.end() - 1) {
-                    bdr.radius.bottom_right_x = m_css_borders.radius.bottom_right_x;
-                    bdr.radius.bottom_right_y = m_css_borders.radius.bottom_right_y;
-                    bdr.radius.top_right_x = m_css_borders.radius.top_right_x;
-                    bdr.radius.top_right_y = m_css_borders.radius.top_right_y;
+                    css_borders.radii.bottom_right_x = m_css_borders.radii.bottom_right_x;
+                    css_borders.radii.bottom_right_y = m_css_borders.radii.bottom_right_y;
+                    css_borders.radii.top_right_x = m_css_borders.radii.top_right_x;
+                    css_borders.radii.top_right_y = m_css_borders.radii.top_right_y;
                 }
 
 
-                bdr.top = m_css_borders.top;
-                bdr.bottom = m_css_borders.bottom;
+                css_borders.top = m_css_borders.top;
+                css_borders.bottom = m_css_borders.bottom;
                 if (box == boxes.begin()) {
-                    bdr.left = m_css_borders.left;
+                    css_borders.left = m_css_borders.left;
                 }
                 if (box == boxes.end() - 1) {
-                    bdr.right = m_css_borders.right;
+                    css_borders.right = m_css_borders.right;
                 }
 
 
                 if (bg) {
-                    bg_paint.border_radius =
-                        bdr.radius.calc_percents(bg_paint.border_box.width,
-                            bg_paint.border_box.width);
+                    bg_paint.border_radius = css_borders.radii.calculate_radii(bg_paint.border_box.width, bg_paint.border_box.width);
                     get_document()->container()->draw_background(hdc, bg_paint);
                 }
-                Borders b = bdr;
-                b.radius = bdr.radius.calc_percents(box->width, box->height);
-                get_document()->container()->draw_borders(hdc, b, *box, false);
+                Borders borders = css_borders.calculate_borders(box->width, box->height);
+                get_document()->container()->draw_borders(hdc, borders, *box, false);
             }
         }
     }
@@ -2649,8 +2639,7 @@ void HTMLElement::init_BackgroundPaint(Position pos,
                     bg_paint.origin_box.height - bg_paint.image_size.height);
         }
     }
-    bg_paint.border_radius =
-        m_css_borders.radius.calc_percents(border_box.width, border_box.height);
+    bg_paint.border_radius = m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
     ;
     bg_paint.border_box = border_box;
     bg_paint.is_root = have_parent() ? false : true;
@@ -4255,13 +4244,12 @@ void HTMLElement::draw_children_box(uintptr_t hdc,
         border_box += m_padding;
         border_box += m_borders;
 
-        BorderRadii bdr_radius =
-            m_css_borders.radius.calc_percents(border_box.width, border_box.height);
+        BorderRadii border_radii = m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
 
-        bdr_radius -= m_borders;
-        bdr_radius -= m_padding;
+        border_radii -= m_borders;
+        border_radii -= m_padding;
 
-        doc->container()->set_clip(pos, bdr_radius, true, true);
+        doc->container()->set_clip(pos, border_radii, true, true);
     }
 
     Position browser_wnd;

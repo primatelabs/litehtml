@@ -36,34 +36,30 @@
 
 namespace litehtml {
 
-struct CSSBorder {
-    CSSLength width;
-    BorderStyle style = kBorderStyleNone;
-    Color color;
-
-    CSSBorder() = default;
-};
-
 struct Border {
     int width = 0;
     BorderStyle style = kBorderStyleNone;
     Color color;
 
     Border() = default;
+};
 
-    explicit Border(const CSSBorder& border)
-    {
-        width = (int)border.width.val();
-        style = border.style;
-        color = border.color;
-    }
+struct CSSBorder {
+    CSSLength width;
+    BorderStyle style = kBorderStyleNone;
+    Color color;
 
-    Border& operator=(const CSSBorder& border)
+    CSSBorder() = default;
+
+    Border calculate_border()
     {
-        width = (int)border.width.val();
-        style = border.style;
-        color = border.color;
-        return *this;
+        Border border;
+
+        border.width = width.val();
+        border.style = style;
+        border.color = color;
+
+        return border;
     }
 };
 
@@ -144,29 +140,21 @@ struct CSSBorderRadii {
 
     CSSBorderRadii() = default;
 
-    BorderRadii calc_percents(int width, int height)
+    BorderRadii calculate_radii(int width, int height)
     {
-        BorderRadii ret;
-        ret.bottom_left_x = bottom_left_x.calc_percent(width);
-        ret.bottom_left_y = bottom_left_y.calc_percent(height);
-        ret.top_left_x = top_left_x.calc_percent(width);
-        ret.top_left_y = top_left_y.calc_percent(height);
-        ret.top_right_x = top_right_x.calc_percent(width);
-        ret.top_right_y = top_right_y.calc_percent(height);
-        ret.bottom_right_x = bottom_right_x.calc_percent(width);
-        ret.bottom_right_y = bottom_right_y.calc_percent(height);
-        return ret;
+        BorderRadii border_radii;
+
+        border_radii.bottom_left_x = bottom_left_x.calc_percent(width);
+        border_radii.bottom_left_y = bottom_left_y.calc_percent(height);
+        border_radii.top_left_x = top_left_x.calc_percent(width);
+        border_radii.top_left_y = top_left_y.calc_percent(height);
+        border_radii.top_right_x = top_right_x.calc_percent(width);
+        border_radii.top_right_y = top_right_y.calc_percent(height);
+        border_radii.bottom_right_x = bottom_right_x.calc_percent(width);
+        border_radii.bottom_right_y = bottom_right_y.calc_percent(height);
+
+        return border_radii;
     }
-};
-
-struct CSSBorders {
-    CSSBorder left;
-    CSSBorder top;
-    CSSBorder right;
-    CSSBorder bottom;
-    CSSBorderRadii radius;
-
-    CSSBorders() = default;
 };
 
 struct Borders {
@@ -174,30 +162,31 @@ struct Borders {
     Border top;
     Border right;
     Border bottom;
-    BorderRadii radius;
+    BorderRadii radii;
 
-    Borders()
-    {
-    }
+    Borders() = default;
+};
 
-    // FIXME: Does make sense given the radius member is not copied over?
-    // FIXME: Mark explicit?
-    Borders(const CSSBorders& borders)
-    {
-        left = borders.left;
-        right = borders.right;
-        top = borders.top;
-        bottom = borders.bottom;
-    }
+struct CSSBorders {
+    CSSBorder left;
+    CSSBorder top;
+    CSSBorder right;
+    CSSBorder bottom;
+    CSSBorderRadii radii;
 
-    // FIXME: Does make sense given the radius member is not copied over?
-    Borders& operator=(const CSSBorders& borders)
+    CSSBorders() = default;
+
+    Borders calculate_borders(int width, int height)
     {
-        left = borders.left;
-        right = borders.right;
-        top = borders.top;
-        bottom = borders.bottom;
-        return *this;
+        Borders borders;
+
+        borders.left = left.calculate_border();
+        borders.top = top.calculate_border();
+        borders.right = right.calculate_border();
+        borders.bottom = bottom.calculate_border();
+        borders.radii = radii.calculate_radii(width, height);
+
+        return borders;
     }
 };
 

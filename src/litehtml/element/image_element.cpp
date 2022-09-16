@@ -244,9 +244,7 @@ void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
             bg.repeat = kBackgroundRepeatNoRepeat;
             bg.image_size.width = pos.width;
             bg.image_size.height = pos.height;
-            bg.border_radius =
-                m_css_borders.radius.calc_percents(bg.border_box.width,
-                    bg.border_box.height);
+            bg.border_radius = m_css_borders.radii.calculate_radii(bg.border_box.width, bg.border_box.height);
             bg.position_x = pos.x;
             bg.position_y = pos.y;
             get_document()->container()->draw_background(hdc, bg);
@@ -259,12 +257,10 @@ void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
         border_box += m_padding;
         border_box += m_borders;
 
-        Borders bdr = m_css_borders;
-        bdr.radius = m_css_borders.radius.calc_percents(border_box.width,
-            border_box.height);
+        Borders borders = m_css_borders.calculate_borders(border_box.width, border_box.height);
 
         get_document()->container()->draw_borders(hdc,
-            bdr,
+            borders,
             border_box,
             have_parent() ? false : true);
     }
