@@ -141,7 +141,7 @@ litehtml::tstring test_container::import_css(const litehtml::URL& url)
 }
 
 void test_container::set_clip(const litehtml::Position& pos,
-    const litehtml::BorderRadii& bdr_radius,
+    const litehtml::BorderRadii& border_radii,
     bool valid_x,
     bool valid_y)
 {

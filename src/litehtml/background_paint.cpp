@@ -53,7 +53,7 @@ BackgroundPaint::BackgroundPaint(const BackgroundPaint& val)
     clip_box = val.clip_box;
     origin_box = val.origin_box;
     border_box = val.border_box;
-    border_radius = val.border_radius;
+    border_radii = val.border_radii;
     image_size = val.image_size;
     position_x = val.position_x;
     position_y = val.position_y;

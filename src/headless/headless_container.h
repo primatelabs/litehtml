@@ -113,7 +113,7 @@ public:
         litehtml::TextTransform tt) override;
 
     virtual void set_clip(const litehtml::Position& pos,
-        const litehtml::BorderRadii& bdr_radius,
+        const litehtml::BorderRadii& border_radii,
         bool valid_x,
         bool valid_y) override;
 

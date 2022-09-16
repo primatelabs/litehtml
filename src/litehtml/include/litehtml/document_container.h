@@ -102,7 +102,7 @@ public:
     virtual tstring import_css(const URL& css_url) = 0;
 
     virtual void set_clip(const litehtml::Position& pos,
-        const litehtml::BorderRadii& bdr_radius,
+        const litehtml::BorderRadii& border_radii,
         bool valid_x,
         bool valid_y) = 0;
 

@@ -244,7 +244,7 @@ void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
             bg.repeat = kBackgroundRepeatNoRepeat;
             bg.image_size.width = pos.width;
             bg.image_size.height = pos.height;
-            bg.border_radius = m_css_borders.radii.calculate_radii(bg.border_box.width, bg.border_box.height);
+            bg.border_radii = m_css_borders.radii.calculate_radii(bg.border_box.width, bg.border_box.height);
             bg.position_x = pos.x;
             bg.position_y = pos.y;
             get_document()->container()->draw_background(hdc, bg);

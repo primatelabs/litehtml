@@ -245,13 +245,12 @@ void HTMLElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
             border_box += m_padding;
             border_box += m_borders;
 
-            BorderRadii bdr_radius =
-                m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
+            BorderRadii border_radii = m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
 
-            bdr_radius -= m_borders;
-            bdr_radius -= m_padding;
+            border_radii -= m_borders;
+            border_radii -= m_padding;
 
-            get_document()->container()->set_clip(pos, bdr_radius, true, true);
+            get_document()->container()->set_clip(pos, border_radii, true, true);
         }
 
         draw_list_marker(hdc, pos);
@@ -1918,7 +1917,7 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
 
 
                 if (bg) {
-                    bg_paint.border_radius = css_borders.radii.calculate_radii(bg_paint.border_box.width, bg_paint.border_box.width);
+                    bg_paint.border_radii = css_borders.radii.calculate_radii(bg_paint.border_box.width, bg_paint.border_box.width);
                     get_document()->container()->draw_background(hdc, bg_paint);
                 }
                 Borders borders = css_borders.calculate_borders(box->width, box->height);
@@ -2639,7 +2638,7 @@ void HTMLElement::init_BackgroundPaint(Position pos,
                     bg_paint.origin_box.height - bg_paint.image_size.height);
         }
     }
-    bg_paint.border_radius = m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
+    bg_paint.border_radii = m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
     ;
     bg_paint.border_box = border_box;
     bg_paint.is_root = have_parent() ? false : true;

@@ -551,7 +551,7 @@ void HeadlessContainer::transform_text(litehtml::tstring& text,
 }
 
 void HeadlessContainer::set_clip(const litehtml::Position& position,
-    const litehtml::BorderRadii& bdr_radius,
+    const litehtml::BorderRadii& border_radii,
     bool valid_x,
     bool valid_y)
 {
