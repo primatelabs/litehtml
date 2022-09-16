@@ -41,6 +41,11 @@ public:
     SpaceElement(const tchar_t* text, Document* doc);
     virtual ~SpaceElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementSpace;
+    }
+
     virtual bool is_white_space() const override;
     virtual bool is_break() const override;
 };

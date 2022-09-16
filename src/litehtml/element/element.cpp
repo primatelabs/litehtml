@@ -38,6 +38,62 @@
 
 namespace litehtml {
 
+String element_type_name(ElementType type)
+{
+    switch (type) {
+    case kElement:
+        return "element";
+    case kElementAfter:
+        return "after";
+    case kElementAnchor:
+        return "anchor";
+    case kElementBase:
+        return "base";
+    case kElementBefore:
+        return "before";
+    case kElementBody:
+        return "body";
+    case kElementBreak:
+        return "break";
+    case kElementCDATA:
+        return "cdata";
+    case kElementComment:
+        return "comment";
+    case kElementDiv:
+        return "div";
+    case kElementFont:
+        return "font";
+    case kElementHTML:
+        return "html";
+    case kElementImage:
+        return "image";
+    case kElementLI:
+        return "li";
+    case kElementLink:
+        return "link";
+    case kElementParagraph:
+        return "paragraph";
+    case kElementScript:
+        return "script";
+    case kElementSpace:
+        return "space";
+    case kElementStyle:
+        return "style";
+    case kElementTable:
+        return "table";
+    case kElementTD:
+        return "td";
+    case kElementText:
+        return "text";
+    case kElementTitle:
+        return "title";
+    case kElementTR:
+        return "tr";
+    };
+
+    return "unknown";
+}
+
 Element::Element(Document* document)
 : m_doc(document)
 , m_parent(nullptr)
@@ -601,6 +657,11 @@ void Element::append_children(ElementsVector& children)
             delete child;
         }
     }
+}
+
+ElementType Element::type() const
+{
+    return kElement;
 }
 
 const tchar_t* Element::get_tagName() const

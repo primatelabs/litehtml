@@ -40,6 +40,12 @@ public:
     BreakElement(Document* doc);
     virtual ~BreakElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementBreak;
+    }
+
+
     virtual bool is_break() const override;
 };
 

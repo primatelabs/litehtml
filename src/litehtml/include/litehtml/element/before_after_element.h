@@ -58,6 +58,12 @@ public:
     }
 
     virtual ~BeforeElement();
+
+    virtual ElementType type() const override
+    {
+        return kElementBefore;
+    }
+
 };
 
 class AfterElement : public BeforeAfterBaseElement {
@@ -65,6 +71,11 @@ public:
     AfterElement(Document* doc)
     : BeforeAfterBaseElement(doc, false)
     {
+    }
+
+    virtual ElementType type() const override
+    {
+        return kElementAfter;
     }
 
     virtual ~AfterElement();

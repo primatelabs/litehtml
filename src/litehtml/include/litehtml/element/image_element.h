@@ -42,6 +42,11 @@ public:
     ImageElement(Document* doc);
     virtual ~ImageElement(void) override;
 
+    virtual ElementType type() const override
+    {
+        return kElementImage;
+    }
+
     virtual int line_height() const override;
     virtual bool is_replaced() const override;
     virtual int render(int x, int y, int max_width, bool second_pass = false) override;

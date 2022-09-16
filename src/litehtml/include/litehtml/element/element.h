@@ -42,6 +42,35 @@ namespace litehtml {
 
 class Box;
 
+enum ElementType {
+    kElement,
+    kElementAfter,
+    kElementAnchor,
+    kElementBase,
+    kElementBefore,
+    kElementBody,
+    kElementBreak,
+    kElementCDATA,
+    kElementComment,
+    kElementDiv,
+    kElementFont,
+    kElementHTML,
+    kElementImage,
+    kElementLI,
+    kElementLink,
+    kElementParagraph,
+    kElementScript,
+    kElementSpace,
+    kElementStyle,
+    kElementTable,
+    kElementTD,
+    kElementText,
+    kElementTitle,
+    kElementTR,
+};
+
+String element_type_name(ElementType type);
+
 class Element : public std::enable_shared_from_this<Element> {
     friend class BlockBox;
     friend class LineBox;
@@ -327,6 +356,8 @@ public:
     // For each of the child elements either append and adopt the child
     // element or delete the element.
     virtual void append_children(ElementsVector& children);
+
+    virtual ElementType type() const;
 
     virtual const tchar_t* get_tagName() const;
     virtual void set_tagName(const tchar_t* tag);

@@ -55,6 +55,11 @@ public:
 
     virtual ~TextElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementText;
+    }
+
     virtual void get_text(tstring& text) const override;
 
     virtual const tchar_t* get_style_property(CSSProperty name) override;

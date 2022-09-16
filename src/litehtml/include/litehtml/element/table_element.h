@@ -45,6 +45,11 @@ public:
     TableElement(Document* doc);
     virtual ~TableElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementTable;
+    }
+
     virtual bool append_child(Element* element) override;
     virtual void parse_styles(bool is_reparse = false) override;
     virtual void parse_attributes() override;

@@ -40,6 +40,11 @@ public:
     DivElement(Document* doc);
     virtual ~DivElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementDiv;
+    }
+
     virtual void parse_attributes() override;
 };
 

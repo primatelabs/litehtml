@@ -42,6 +42,11 @@ public:
     ScriptElement(Document* doc);
     virtual ~ScriptElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementScript;
+    }
+
     virtual void parse_attributes() override;
     virtual bool append_child(Element* element) override;
     virtual const tchar_t* get_tagName() const override;

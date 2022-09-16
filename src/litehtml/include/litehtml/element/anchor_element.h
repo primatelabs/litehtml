@@ -40,6 +40,11 @@ public:
     explicit AnchorElement(Document* doc);
     virtual ~AnchorElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementAnchor;
+    }
+
     virtual void on_click() override;
     virtual void apply_stylesheet(
         const litehtml::CSSStylesheet& stylesheet) override;

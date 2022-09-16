@@ -39,6 +39,11 @@ public:
     LinkElement(Document* doc);
     virtual ~LinkElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementLink;
+    }
+
 protected:
     virtual void parse_attributes() override;
 };

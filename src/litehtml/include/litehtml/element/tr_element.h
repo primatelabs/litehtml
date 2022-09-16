@@ -40,6 +40,11 @@ public:
     TrElement(Document* doc);
     virtual ~TrElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementTR;
+    }
+
     virtual void parse_attributes() override;
     virtual void get_inline_boxes(std::vector<Position>& boxes) override;
 };

@@ -40,6 +40,11 @@ public:
     TdElement(Document* doc);
     virtual ~TdElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementTD;
+    }
+
     virtual void parse_attributes() override;
 };
 

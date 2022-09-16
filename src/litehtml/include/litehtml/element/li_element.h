@@ -39,6 +39,11 @@ public:
     LiElement(Document* doc);
     virtual ~LiElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementLI;
+    }
+
     virtual int render(int x, int y, int max_width, bool second_pass = false) override;
 
 private:

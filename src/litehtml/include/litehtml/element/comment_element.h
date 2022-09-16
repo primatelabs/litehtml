@@ -42,6 +42,12 @@ public:
     CommentElement(Document* doc);
     virtual ~CommentElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementComment;
+    }
+
+
     virtual void get_text(tstring& text) const override;
     virtual void set_data(const tchar_t* data) override;
 };

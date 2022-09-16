@@ -40,6 +40,12 @@ public:
     BodyElement(Document* doc);
     virtual ~BodyElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementBody;
+    }
+
+
     virtual bool is_body() const override;
 };
 

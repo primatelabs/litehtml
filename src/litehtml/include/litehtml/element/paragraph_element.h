@@ -40,6 +40,11 @@ public:
     ParagraphElement(Document* doc);
     virtual ~ParagraphElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementParagraph;
+    }
+
     virtual void parse_attributes() override;
 };
 

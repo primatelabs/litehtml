@@ -133,6 +133,11 @@ public:
     HTMLElement(Document* doc);
     virtual ~HTMLElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementHTML;
+    }
+
     /* render functions */
 
     virtual int render(int x, int y, int max_width, bool second_pass = false) override;

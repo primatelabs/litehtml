@@ -40,6 +40,11 @@ public:
     FontElement(Document* doc);
     virtual ~FontElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementFont;
+    }
+
     virtual void parse_attributes() override;
 };
 

@@ -40,6 +40,11 @@ public:
     BaseElement(Document* doc);
     virtual ~BaseElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementBase;
+    }
+
     virtual void parse_attributes() override;
 };
 

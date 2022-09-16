@@ -40,6 +40,11 @@ public:
     TitleElement(Document* doc);
     virtual ~TitleElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementTitle;
+    }
+
 protected:
     virtual void parse_attributes() override;
 };

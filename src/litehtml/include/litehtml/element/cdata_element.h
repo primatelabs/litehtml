@@ -42,6 +42,11 @@ public:
     CDATAElement(Document* doc);
     virtual ~CDATAElement() override;
 
+    virtual ElementType type() const override
+    {
+        return kElementCDATA;
+    }
+
     virtual void get_text(tstring& text) const override;
     virtual void set_data(const tchar_t* data) override;
 };
