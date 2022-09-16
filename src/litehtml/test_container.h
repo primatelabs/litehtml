@@ -71,7 +71,7 @@ public:
         const litehtml::BackgroundPaint& bg) override;
 
     virtual void draw_borders(uintptr_t hdc,
-        const litehtml::borders& borders,
+        const litehtml::Borders& borders,
         const litehtml::Position& draw_pos,
         bool root) override;
 
@@ -90,7 +90,7 @@ public:
         litehtml::TextTransform tt) override;
 
     virtual void set_clip(const litehtml::Position& pos,
-        const litehtml::border_radiuses& bdr_radius,
+        const litehtml::BorderRadii& bdr_radius,
         bool valid_x,
         bool valid_y) override;
 

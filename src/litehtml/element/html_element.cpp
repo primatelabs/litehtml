@@ -245,7 +245,7 @@ void HTMLElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
             border_box += m_padding;
             border_box += m_borders;
 
-            border_radiuses bdr_radius =
+            BorderRadii bdr_radius =
                 m_css_borders.radius.calc_percents(border_box.width,
                     border_box.height);
 
@@ -1863,7 +1863,7 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
             border_box += m_padding;
             border_box += m_borders;
 
-            borders bdr = m_css_borders;
+            Borders bdr = m_css_borders;
             bdr.radius = m_css_borders.radius.calc_percents(border_box.width,
                 border_box.height);
 
@@ -1895,7 +1895,7 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
                     init_BackgroundPaint(content_box, bg_paint, bg);
                 }
 
-                css_borders bdr;
+                CSSBorders bdr;
 
                 // set left borders radius for the first box
                 if (box == boxes.begin()) {
@@ -1930,7 +1930,7 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
                             bg_paint.border_box.width);
                     get_document()->container()->draw_background(hdc, bg_paint);
                 }
-                borders b = bdr;
+                Borders b = bdr;
                 b.radius = bdr.radius.calc_percents(box->width, box->height);
                 get_document()->container()->draw_borders(hdc, b, *box, false);
             }
@@ -4255,7 +4255,7 @@ void HTMLElement::draw_children_box(uintptr_t hdc,
         border_box += m_padding;
         border_box += m_borders;
 
-        border_radiuses bdr_radius =
+        BorderRadii bdr_radius =
             m_css_borders.radius.calc_percents(border_box.width, border_box.height);
 
         bdr_radius -= m_borders;

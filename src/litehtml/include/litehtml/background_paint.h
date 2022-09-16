@@ -44,7 +44,7 @@ public:
     Position clip_box;
     Position origin_box;
     Position border_box;
-    border_radiuses border_radius;
+    BorderRadii border_radius;
     Size image_size;
     int position_x;
     int position_y;

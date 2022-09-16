@@ -422,7 +422,7 @@ void HeadlessContainer::draw_background(uintptr_t hdc,
 void draw_border(OrionRenderContext* orc,
   orion::rasterizer_scanline_aa<>& ras,
   orion::scanline_p8& scanline,
-  const litehtml::border* border,
+  const litehtml::Border* border,
   const litehtml::Position& position)
 {
     assert(border->style > kBorderStyleHidden);
@@ -471,7 +471,7 @@ bool use_rounded_border_path(const litehtml::borders& borders)
 #endif
 
 void HeadlessContainer::draw_borders(uintptr_t hdc,
-    const litehtml::borders& borders,
+    const litehtml::Borders& borders,
     const litehtml::Position& draw_position,
     bool root)
 {
@@ -485,7 +485,7 @@ void HeadlessContainer::draw_borders(uintptr_t hdc,
 
     orion::scanline_p8 scanline;
 
-    std::array<const litehtml::border*, 4> b = {
+    std::array<const litehtml::Border*, 4> b = {
         &borders.left,
         &borders.top,
         &borders.right,
@@ -551,7 +551,7 @@ void HeadlessContainer::transform_text(litehtml::tstring& text,
 }
 
 void HeadlessContainer::set_clip(const litehtml::Position& position,
-    const litehtml::border_radiuses& bdr_radius,
+    const litehtml::BorderRadii& bdr_radius,
     bool valid_x,
     bool valid_y)
 {

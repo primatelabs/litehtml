@@ -73,7 +73,7 @@ public:
     BackgroundRepeat m_repeat;
     BackgroundBox m_clip;
     BackgroundBox m_origin;
-    css_border_radius m_radius;
+    CSSBorderRadii m_radius;
 
 public:
     Background(void);

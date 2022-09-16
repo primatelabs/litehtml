@@ -107,7 +107,7 @@ void test_container::draw_background(uintptr_t hdc,
 }
 
 void test_container::draw_borders(uintptr_t hdc,
-    const litehtml::borders& borders,
+    const litehtml::Borders& borders,
     const litehtml::Position& draw_pos,
     bool root)
 {
@@ -141,7 +141,7 @@ litehtml::tstring test_container::import_css(const litehtml::URL& url)
 }
 
 void test_container::set_clip(const litehtml::Position& pos,
-    const litehtml::border_radiuses& bdr_radius,
+    const litehtml::BorderRadii& bdr_radius,
     bool valid_x,
     bool valid_y)
 {

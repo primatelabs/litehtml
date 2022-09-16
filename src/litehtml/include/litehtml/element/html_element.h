@@ -100,7 +100,7 @@ protected:
 
     CSSMargins m_css_margins;
     CSSMargins m_css_padding;
-    css_borders m_css_borders;
+    CSSBorders m_css_borders;
     CSSLength m_css_width;
     CSSLength m_css_height;
     CSSLength m_css_min_width;

@@ -259,7 +259,7 @@ void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
         border_box += m_padding;
         border_box += m_borders;
 
-        borders bdr = m_css_borders;
+        Borders bdr = m_css_borders;
         bdr.radius = m_css_borders.radius.calc_percents(border_box.width,
             border_box.height);
 
