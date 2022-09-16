@@ -220,14 +220,16 @@ void HTMLElement::apply_stylesheet(const CSSStylesheet& stylesheet)
     }
 }
 
-void HTMLElement::get_content_size(Size& sz, int max_width)
+Size HTMLElement::get_content_size(int max_width)
 {
-    sz.height = 0;
+    Size size;
+    size.height = 0;
     if (m_display == kDisplayBlock) {
-        sz.width = max_width;
+        size.width = max_width;
     } else {
-        sz.width = 0;
+        size.width = 0;
     }
+    return size;
 }
 
 void HTMLElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
@@ -1961,8 +1963,9 @@ int HTMLElement::render_inline(const Element::ptr& container, int max_width)
 
 int HTMLElement::place_element(const Element::ptr& el, int max_width)
 {
-    if (el->get_display() == kDisplayNone)
+    if (el->get_display() == kDisplayNone) {
         return 0;
+    }
 
     if (el->get_display() == kDisplayInline) {
         return el->render_inline(this, max_width);
@@ -2086,8 +2089,7 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
                     el->calc_outlines(line_ctx.right - line_ctx.left);
                     break;
                 case kDisplayInlineText: {
-                    Size sz;
-                    el->get_content_size(sz, line_ctx.right);
+                    Size sz = el->get_content_size(line_ctx.right);
                     el->position_ = sz;
                 } break;
                 default:
@@ -3730,9 +3732,9 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
         // we don't need process absolute and fixed positioned element on the second pass
         if (second_pass) {
             el_position = el->get_element_position();
-            if ((el_position == kPositionAbsolute ||
-                    el_position == kPositionFixed))
+            if ((el_position == kPositionAbsolute || el_position == kPositionFixed)) {
                 continue;
+            }
         }
 
         // skip spaces to make rendering a bit faster

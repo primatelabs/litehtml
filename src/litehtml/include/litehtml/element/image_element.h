@@ -48,7 +48,7 @@ public:
     virtual void parse_attributes() override;
     virtual void parse_styles(bool is_reparse = false) override;
     virtual void draw(uintptr_t hdc, int x, int y, const Position* clip) override;
-    virtual void get_content_size(Size& sz, int max_width) override;
+    virtual Size get_content_size(int max_width) override;
 
 private:
     int calc_max_height(int image_height);

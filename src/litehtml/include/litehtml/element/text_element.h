@@ -71,7 +71,7 @@ public:
     virtual CSSOffsets get_css_offsets() const override;
 
 protected:
-    virtual void get_content_size(Size& sz, int max_width) override;
+    virtual Size get_content_size(int max_width) override;
 };
 
 } // namespace litehtml

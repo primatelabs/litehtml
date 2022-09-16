@@ -404,7 +404,7 @@ public:
     virtual bool is_first_child_inline(const Element::ptr& el) const;
     virtual bool is_last_child_inline(const Element::ptr& el);
     virtual bool have_inline_child() const;
-    virtual void get_content_size(Size& sz, int max_width);
+    virtual Size get_content_size(int max_width);
     virtual void init();
     virtual bool is_floats_holder() const;
     virtual int get_floats_height(ElementFloat el_float = kFloatNone) const;

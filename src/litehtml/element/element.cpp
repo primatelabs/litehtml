@@ -575,8 +575,9 @@ bool Element::is_floats_holder() const
     return false;
 }
 
-void Element::get_content_size(Size&, int)
+Size Element::get_content_size(int)
 {
+    return Size();
 }
 
 void Element::init()

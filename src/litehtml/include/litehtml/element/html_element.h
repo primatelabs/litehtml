@@ -239,7 +239,7 @@ public:
     virtual bool is_first_child_inline(const Element::ptr& el) const override;
     virtual bool is_last_child_inline(const Element::ptr& el) override;
     virtual bool have_inline_child() const override;
-    virtual void get_content_size(Size& sz, int max_width) override;
+    virtual Size get_content_size(int max_width) override;
     virtual void init() override;
     virtual void get_inline_boxes(std::vector<Position>& boxes) override;
     virtual bool is_floats_holder() const override;

@@ -45,9 +45,9 @@ ImageElement::~ImageElement(void)
 {
 }
 
-void ImageElement::get_content_size(Size& sz, int)
+Size ImageElement::get_content_size(int)
 {
-    sz = get_document()->container()->get_image_size(src_);
+    return get_document()->container()->get_image_size(src_);
 }
 
 int ImageElement::calc_max_height(int image_height)
