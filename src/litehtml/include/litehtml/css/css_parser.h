@@ -57,7 +57,8 @@ protected:
     CSSBlock* consume_block(CSSTokenRange& range,
         CSSToken* starting_token);
 
-    CSSFunction* consume_function(CSSTokenRange& range);
+    CSSFunction* consume_function(CSSTokenRange& range,
+        CSSToken* starting_token);
 
     CSSDeclaration* consume_declaration(CSSComponentValueRange& range);
 

@@ -31,20 +31,27 @@
 #define LITEHTML_CSS_FUNCTION_H__
 
 #include "litehtml/debug/json.h"
+#include "litehtml/types.h"
 
 namespace litehtml {
 
+class CSSComponentValue;
+
 class CSSFunction {
 public:
-    CSSFunction() = default;
+    String name_;
+
+    std::vector<CSSComponentValue*> values_;
+
+public:
+    CSSFunction() = delete;
+
+    explicit CSSFunction(const String& name);
 
     ~CSSFunction() = default;
 
 #if defined(ENABLE_JSON)
-    nlohmann::json json() const
-    {
-        return nlohmann::json{};
-    }
+    nlohmann::json json() const;
 #endif // ENABLE_JSON
 };
 

@@ -29,6 +29,25 @@
 
 #include "litehtml/css/css_function.h"
 
+#include "litehtml/css/css_component_value.h"
+
 namespace litehtml {
+
+CSSFunction::CSSFunction(const String& name)
+: name_(name)
+{
+}
+
+#if defined(ENABLE_JSON)
+
+nlohmann::json CSSFunction::json() const
+{
+    return nlohmann::json{
+        {"name", name_},
+        {"values", json_vector(values_)},
+    };
+}
+
+#endif
 
 } // namespace litehtml

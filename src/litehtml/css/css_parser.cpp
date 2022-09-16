@@ -192,7 +192,8 @@ CSSComponentValue* CSSParser::consume_component_value(CSSTokenRange& range)
         }
 
         case kCSSTokenFunction: {
-            CSSFunction* function = consume_function(range);
+
+            CSSFunction* function = consume_function(range, token);
             if (function) {
                 value = new CSSComponentValue(function);
             }
@@ -252,8 +253,11 @@ CSSBlock* CSSParser::consume_block(CSSTokenRange& range,
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-function
-CSSFunction* CSSParser::consume_function(CSSTokenRange& range)
+CSSFunction* CSSParser::consume_function(CSSTokenRange& range,
+    CSSToken* starting_token)
 {
+    CSSFunction* function = new CSSFunction(starting_token->value());
+
     while (true) {
         CSSToken* token = range.consume();
         CSSTokenType type = token->type();
@@ -265,11 +269,11 @@ CSSFunction* CSSParser::consume_function(CSSTokenRange& range)
             break;
         } else {
             range.reconsume();
-            consume_component_value(range);
+            function->values_.push_back(consume_component_value(range));
         }
     }
 
-    return new CSSFunction();
+    return function;
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-declaration

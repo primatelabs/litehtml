@@ -31,6 +31,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "litehtml/css/css_function.h"
+
 namespace litehtml {
 
 namespace {
@@ -108,10 +110,16 @@ void regenerate_component_value(std::ostringstream& oss, const CSSComponentValue
             //assert(false);
             break;
 
-        case kCSSTokenFunction:
-            // TODO: Implement
-            //assert(false);
+        case kCSSTokenFunction: {
+            const CSSFunction* function = value->function();
+
+            oss << function->name_ << "(";
+            for (const CSSComponentValue* value : function->values_) {
+                regenerate_component_value(oss, value);
+            }
+            oss << ")";
             break;
+        }
 
         default:
             regenerate_token(oss, value->token());
