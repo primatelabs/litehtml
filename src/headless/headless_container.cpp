@@ -32,7 +32,9 @@
 #include <fstream>
 
 #include <fmt/format.h>
+#include <orion/arc.h>
 #include <orion/conv_stroke.h>
+#include <orion/rounded_rect.h>
 
 #include "http.h"
 #include "image/jpeg_codec.h"
@@ -140,6 +142,11 @@ public:
     return orion::path_cmd_stop;
   }
 };
+
+orion::rgba8 convert_color(const litehtml::Color& color)
+{
+    return orion::rgba8(color.red, color.green, color.blue, color.alpha);
+}
 
 } // namespace
 
@@ -364,23 +371,28 @@ void HeadlessContainer::draw_background(uintptr_t hdc,
     ras.auto_close(false);
 
     // Draw the background.
-    {
-      Path path({
-        // clang-format off
-        bg.clip_box.x,                     bg.clip_box.y,
-        bg.clip_box.x + bg.clip_box.width, bg.clip_box.y,
-        bg.clip_box.x + bg.clip_box.width, bg.clip_box.y + bg.clip_box.height,
-        bg.clip_box.x,                     bg.clip_box.y + bg.clip_box.height,
-        bg.clip_box.x,                     bg.clip_box.y,
-        // clang-format on
-      });
+    orion::rounded_rect rect(
+        bg.clip_box.x,
+        bg.clip_box.y,
+        bg.clip_box.x + bg.clip_box.width,
+        bg.clip_box.y + bg.clip_box.height,
+        0);
 
-      ras.reset();
-      ras.add_path(path);
+    rect.radius(
+        bg.border_radii.top_left.x,
+        bg.border_radii.top_left.y,
+        bg.border_radii.top_right.x,
+        bg.border_radii.top_right.y,
+        bg.border_radii.bottom_right.x,
+        bg.border_radii.bottom_right.y,
+        bg.border_radii.bottom_left.x,
+        bg.border_radii.bottom_left.y);
 
-      const orion::rgba8 color(bg.color.red, bg.color.green, bg.color.blue, bg.color.alpha);
-      orion::render_scanlines_aa_solid(ras, scanline, orc->render_base, color);
-    }
+    ras.reset();
+    ras.add_path(rect);
+
+    const orion::rgba8 color = convert_color(bg.color);
+    orion::render_scanlines_aa_solid(ras, scanline, orc->render_base, color);
 
     if (bg.image.empty()) {
         return;
@@ -419,6 +431,113 @@ void HeadlessContainer::draw_background(uintptr_t hdc,
     }
 }
 
+class RoundedBorderPath {
+    int x1_;
+    int y1_;
+    int x2_;
+    int y2_;
+    int rx1_;
+    int ry1_;
+    int rx2_;
+    int ry2_;
+    int rx3_;
+    int ry3_;
+    int rx4_;
+    int ry4_;
+    unsigned status_ = 0;
+    orion::arc arc_;
+
+public:
+    RoundedBorderPath() = delete;
+
+    RoundedBorderPath(const litehtml::Position& draw_position, const litehtml::BorderRadii& radii)
+    : x1_(draw_position.x)
+    , y1_(draw_position.y)
+    , x2_(draw_position.x + draw_position.width)
+    , y2_(draw_position.y + draw_position.height)
+    , rx1_(radii.top_left.x)
+    , ry1_(radii.top_left.y)
+    , rx2_(radii.top_right.x)
+    , ry2_(radii.top_right.y)
+    , rx3_(radii.bottom_right.x)
+    , ry3_(radii.bottom_right.y)
+    , rx4_(radii.bottom_left.x)
+    , ry4_(radii.bottom_left.y)
+    {
+    }
+
+    void rewind(unsigned)
+    {
+        status_ = 0;
+    }
+
+    unsigned vertex(double* x, double* y)
+    {
+        unsigned cmd = orion::path_cmd_stop;
+
+        switch (status_) {
+            case 0:
+                arc_.init(x1_ + rx1_, y1_ + ry1_, rx1_, ry1_, orion::pi, orion::pi + orion::pi * 0.5);
+                arc_.rewind(0);
+                status_++;
+
+            case 1:
+                cmd = arc_.vertex(x, y);
+                if (orion::is_stop(cmd)) {
+                    status_++;
+                } else {
+                    return cmd;
+                }
+
+            case 2:
+                arc_.init(x2_ - rx2_, y1_ + ry2_, rx2_, ry2_, orion::pi + orion::pi * 0.5, 0.0);
+                arc_.rewind(0);
+                status_++;
+
+            case 3:
+                cmd = arc_.vertex(x, y);
+                if (orion::is_stop(cmd)) {
+                    status_++;
+                } else {
+                    return orion::path_cmd_line_to;
+                }
+
+            case 4:
+                arc_.init(x2_ - rx3_, y2_ - ry3_, rx3_, ry3_, 0.0, orion::pi * 0.5);
+                arc_.rewind(0);
+                status_++;
+
+            case 5:
+                cmd = arc_.vertex(x, y);
+                if (orion::is_stop(cmd)) {
+                    status_++;
+                } else {
+                    return orion::path_cmd_line_to;
+                }
+
+            case 6:
+                arc_.init(x1_ + rx4_, y2_ - ry4_, rx4_, ry4_, orion::pi * 0.5, orion::pi);
+                arc_.rewind(0);
+                status_++;
+
+            case 7:
+                cmd = arc_.vertex(x, y);
+                if (orion::is_stop(cmd)) {
+                    status_++;
+                } else {
+                    return orion::path_cmd_line_to;
+                }
+
+            case 8:
+                cmd = orion::path_cmd_end_poly | orion::path_flags_close | orion::path_flags_ccw;
+                status_++;
+                break;
+        }
+        return cmd;
+    }
+};
+
+
 void draw_border(OrionRenderContext* orc,
   orion::rasterizer_scanline_aa<>& ras,
   orion::scanline_p8& scanline,
@@ -430,10 +549,7 @@ void draw_border(OrionRenderContext* orc,
     // draw_border() can only draw solid borders.
     assert(border->style == kBorderStyleSolid);
 
-    const orion::rgba8 color(border->color.red,
-        border->color.green,
-        border->color.blue,
-        border->color.alpha);
+    const orion::rgba8 color = convert_color(border->color);
 
     Path path({
         position.x,
@@ -454,22 +570,6 @@ void draw_border(OrionRenderContext* orc,
     orion::render_scanlines_aa_solid(ras, scanline, orc->render_base, color);
 }
 
-#if 0
-bool use_rounded_border_path(const litehtml::borders& borders)
-{
-    bool rounded = false;
-    bool visible = true;
-
-
-    bool rounded = borders.radius.top
-
-
-    for (int i = 0; i < 4; i++) {
-        rounded = rounded || borders
-    }
-}
-#endif
-
 void HeadlessContainer::draw_borders(uintptr_t hdc,
     const litehtml::Borders& borders,
     const litehtml::Position& draw_position,
@@ -485,28 +585,46 @@ void HeadlessContainer::draw_borders(uintptr_t hdc,
 
     orion::scanline_p8 scanline;
 
-    std::array<const litehtml::Border*, 4> b = {
-        &borders.left,
-        &borders.top,
-        &borders.right,
-        &borders.bottom
-    };
+    if (borders.radii.has_radius()) {
+        RoundedBorderPath path(draw_position, borders.radii);
 
-    int x = draw_position.x;
-    int y = draw_position.y;
-    int width = draw_position.width;
-    int height = draw_position.height;
+        const litehtml::Border& border = borders.top;
+        const orion::rgba8 color = convert_color(border.color);
 
-    std::array<litehtml::Position, 4> c = {
-        litehtml::Position(x, y, 0, height),
-        litehtml::Position(x, y, width, 0),
-        litehtml::Position(x + width, y, 0, height),
-        litehtml::Position(x, y + height, width, 0),
-    };
+        orion::conv_stroke<RoundedBorderPath> stroke_path(path);
+        double stroke_width = border.width;
+        stroke_path.width(stroke_width);
+        stroke_path.line_cap(orion::square_cap);
+        stroke_path.line_join(orion::miter_join);
+        stroke_path.miter_limit(stroke_width);
 
-    for (int i = 0; i < 4; i++) {
-        if (b[i]->style > kBorderStyleHidden && b[i]->width > 0) {
-            draw_border(orc, ras, scanline, b[i], c[i]);
+        ras.reset();
+        ras.add_path(stroke_path);
+        orion::render_scanlines_aa_solid(ras, scanline, orc->render_base, color);
+    } else {
+        std::array<const litehtml::Border*, 4> b = {
+            &borders.left,
+            &borders.top,
+            &borders.right,
+            &borders.bottom
+        };
+
+        int x = draw_position.x;
+        int y = draw_position.y;
+        int width = draw_position.width;
+        int height = draw_position.height;
+
+        std::array<litehtml::Position, 4> c = {
+            litehtml::Position(x, y, 0, height),
+            litehtml::Position(x, y, width, 0),
+            litehtml::Position(x + width, y, 0, height),
+            litehtml::Position(x, y + height, width, 0),
+        };
+
+        for (int i = 0; i < 4; i++) {
+            if (b[i]->style > kBorderStyleHidden && b[i]->width > 0) {
+                draw_border(orc, ras, scanline, b[i], c[i]);
+            }
         }
     }
 }

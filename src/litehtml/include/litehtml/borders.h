@@ -63,80 +63,96 @@ struct CSSBorder {
     }
 };
 
+struct BorderRadius {
+    int x = 0;
+    int y = 0;
+
+    BorderRadius() = default;
+
+    void fix_values()
+    {
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+    }
+
+    bool has_radius() const
+    {
+        return (x > 0) && (y > 0);
+    }
+};
+
 struct BorderRadii {
-    int top_left_x = 0;
-    int top_left_y = 0;
-
-    int top_right_x = 0;
-    int top_right_y = 0;
-
-    int bottom_right_x = 0;
-    int bottom_right_y = 0;
-
-    int bottom_left_x = 0;
-    int bottom_left_y = 0;
+    BorderRadius top_left;
+    BorderRadius top_right;
+    BorderRadius bottom_left;
+    BorderRadius bottom_right;
 
     BorderRadii() = default;
 
     void operator+=(const margins& mg)
     {
-        top_left_x += mg.left;
-        top_left_y += mg.top;
-        top_right_x += mg.right;
-        top_right_y += mg.top;
-        bottom_right_x += mg.right;
-        bottom_right_y += mg.bottom;
-        bottom_left_x += mg.left;
-        bottom_left_y += mg.bottom;
+        top_left.x += mg.left;
+        top_left.y += mg.top;
+        top_right.x += mg.right;
+        top_right.y += mg.top;
+        bottom_left.x += mg.left;
+        bottom_left.y += mg.bottom;
+        bottom_right.x += mg.right;
+        bottom_right.y += mg.bottom;
         fix_values();
     }
 
     void operator-=(const margins& mg)
     {
-        top_left_x -= mg.left;
-        top_left_y -= mg.top;
-        top_right_x -= mg.right;
-        top_right_y -= mg.top;
-        bottom_right_x -= mg.right;
-        bottom_right_y -= mg.bottom;
-        bottom_left_x -= mg.left;
-        bottom_left_y -= mg.bottom;
+        top_left.x -= mg.left;
+        top_left.y -= mg.top;
+        top_right.x -= mg.right;
+        top_right.y -= mg.top;
+        bottom_left.x -= mg.left;
+        bottom_left.y -= mg.bottom;
+        bottom_right.x -= mg.right;
+        bottom_right.y -= mg.bottom;
         fix_values();
     }
 
     void fix_values()
     {
-        if (top_left_x < 0)
-            top_left_x = 0;
-        if (top_left_y < 0)
-            top_left_y = 0;
-        if (top_right_x < 0)
-            top_right_x = 0;
-        if (top_right_y < 0)
-            top_right_y = 0;
-        if (bottom_right_x < 0)
-            bottom_right_x = 0;
-        if (bottom_right_y < 0)
-            bottom_right_y = 0;
-        if (bottom_left_x < 0)
-            bottom_left_x = 0;
-        if (bottom_left_y < 0)
-            bottom_left_y = 0;
+        top_left.fix_values();
+        top_right.fix_values();
+        bottom_left.fix_values();
+        bottom_right.fix_values();
+    }
+
+    bool has_radius() const
+    {
+        return top_left.has_radius() || top_right.has_radius() || bottom_left.has_radius() || bottom_right.has_radius();
+    }
+};
+
+struct CSSBorderRadius {
+    CSSLength x;
+    CSSLength y;
+
+    BorderRadius calculate_radius(int width, int height)
+    {
+        BorderRadius border_radius;
+
+        border_radius.x = x.calc_percent(width);
+        border_radius.y = x.calc_percent(height);
+
+        return border_radius;
     }
 };
 
 struct CSSBorderRadii {
-    CSSLength top_left_x;
-    CSSLength top_left_y;
-
-    CSSLength top_right_x;
-    CSSLength top_right_y;
-
-    CSSLength bottom_right_x;
-    CSSLength bottom_right_y;
-
-    CSSLength bottom_left_x;
-    CSSLength bottom_left_y;
+    CSSBorderRadius top_left;
+    CSSBorderRadius top_right;
+    CSSBorderRadius bottom_left;
+    CSSBorderRadius bottom_right;
 
     CSSBorderRadii() = default;
 
@@ -144,14 +160,10 @@ struct CSSBorderRadii {
     {
         BorderRadii border_radii;
 
-        border_radii.bottom_left_x = bottom_left_x.calc_percent(width);
-        border_radii.bottom_left_y = bottom_left_y.calc_percent(height);
-        border_radii.top_left_x = top_left_x.calc_percent(width);
-        border_radii.top_left_y = top_left_y.calc_percent(height);
-        border_radii.top_right_x = top_right_x.calc_percent(width);
-        border_radii.top_right_y = top_right_y.calc_percent(height);
-        border_radii.bottom_right_x = bottom_right_x.calc_percent(width);
-        border_radii.bottom_right_y = bottom_right_y.calc_percent(height);
+        border_radii.top_left = top_left.calculate_radius(width, height);
+        border_radii.top_right = top_right.calculate_radius(width, height);
+        border_radii.bottom_left = bottom_left.calculate_radius(width, height);
+        border_radii.bottom_right = bottom_right.calculate_radius(width, height);
 
         return border_radii;
     }

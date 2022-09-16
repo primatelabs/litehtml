@@ -423,23 +423,23 @@ void HTMLElement::parse_styles(bool is_reparse)
     m_css_borders.bottom.color = get_color(kCSSPropertyBorderBottomColor);
     m_css_borders.bottom.style = get_keyword<BorderStyle>(kCSSPropertyBorderBottomStyle);
 
-    m_css_borders.radii.top_left_x = get_length(kCSSPropertyBorderTopLeftRadiusX);
-    m_css_borders.radii.top_left_y = get_length(kCSSPropertyBorderTopLeftRadiusY);
-    m_css_borders.radii.top_right_x = get_length(kCSSPropertyBorderTopRightRadiusX);
-    m_css_borders.radii.top_right_y = get_length(kCSSPropertyBorderTopRightRadiusY);
-    m_css_borders.radii.bottom_right_x = get_length(kCSSPropertyBorderBottomRightRadiusX);
-    m_css_borders.radii.bottom_right_y = get_length(kCSSPropertyBorderBottomRightRadiusY);
-    m_css_borders.radii.bottom_left_x = get_length(kCSSPropertyBorderBottomLeftRadiusX);
-    m_css_borders.radii.bottom_left_y = get_length(kCSSPropertyBorderBottomLeftRadiusY);
+    m_css_borders.radii.top_left.x = get_length(kCSSPropertyBorderTopLeftRadiusX);
+    m_css_borders.radii.top_left.y = get_length(kCSSPropertyBorderTopLeftRadiusY);
+    m_css_borders.radii.top_right.x = get_length(kCSSPropertyBorderTopRightRadiusX);
+    m_css_borders.radii.top_right.y = get_length(kCSSPropertyBorderTopRightRadiusY);
+    m_css_borders.radii.bottom_right.x = get_length(kCSSPropertyBorderBottomRightRadiusX);
+    m_css_borders.radii.bottom_right.y = get_length(kCSSPropertyBorderBottomRightRadiusY);
+    m_css_borders.radii.bottom_left.x = get_length(kCSSPropertyBorderBottomLeftRadiusX);
+    m_css_borders.radii.bottom_left.y = get_length(kCSSPropertyBorderBottomLeftRadiusY);
 
-    doc->cvt_units(m_css_borders.radii.bottom_left_x, font_size_);
-    doc->cvt_units(m_css_borders.radii.bottom_left_y, font_size_);
-    doc->cvt_units(m_css_borders.radii.bottom_right_x, font_size_);
-    doc->cvt_units(m_css_borders.radii.bottom_right_y, font_size_);
-    doc->cvt_units(m_css_borders.radii.top_left_x, font_size_);
-    doc->cvt_units(m_css_borders.radii.top_left_y, font_size_);
-    doc->cvt_units(m_css_borders.radii.top_right_x, font_size_);
-    doc->cvt_units(m_css_borders.radii.top_right_y, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_left.x, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_left.y, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_right.x, font_size_);
+    doc->cvt_units(m_css_borders.radii.bottom_right.y, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_left.x, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_left.y, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_right.x, font_size_);
+    doc->cvt_units(m_css_borders.radii.top_right.y, font_size_);
 
     doc->cvt_units(m_css_text_indent, font_size_);
 
@@ -1891,18 +1891,14 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
 
                 // set left borders radius for the first box
                 if (box == boxes.begin()) {
-                    css_borders.radii.bottom_left_x = m_css_borders.radii.bottom_left_x;
-                    css_borders.radii.bottom_left_y = m_css_borders.radii.bottom_left_y;
-                    css_borders.radii.top_left_x = m_css_borders.radii.top_left_x;
-                    css_borders.radii.top_left_y = m_css_borders.radii.top_left_y;
+                    css_borders.radii.top_left = m_css_borders.radii.top_left;
+                    css_borders.radii.bottom_left = m_css_borders.radii.bottom_left;
                 }
 
                 // set right borders radius for the last box
                 if (box == boxes.end() - 1) {
-                    css_borders.radii.bottom_right_x = m_css_borders.radii.bottom_right_x;
-                    css_borders.radii.bottom_right_y = m_css_borders.radii.bottom_right_y;
-                    css_borders.radii.top_right_x = m_css_borders.radii.top_right_x;
-                    css_borders.radii.top_right_y = m_css_borders.radii.top_right_y;
+                    css_borders.radii.top_right = m_css_borders.radii.top_right;
+                    css_borders.radii.bottom_right = m_css_borders.radii.bottom_right;
                 }
 
 
