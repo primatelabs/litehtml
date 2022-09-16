@@ -194,8 +194,16 @@ public:
     void add_media_list(MediaQueryList::ptr list);
     bool media_changed();
     bool lang_changed();
-    bool match_lang(const tstring& lang);
-    void add_tabular(const Element::ptr& el);
+    bool match_lang(const tstring& lang)
+    {
+        return lang == language_ || lang == culture_;
+    }
+
+    void add_tabular(const Element::ptr& el)
+    {
+        m_tabular_elements.push_back(el);
+    }
+
     const Element::const_ptr get_over_element() const
     {
         return m_over_element;
@@ -250,14 +258,6 @@ private:
         const tchar_t* disp_str);
 };
 
-inline void Document::add_tabular(const Element::ptr& el)
-{
-    m_tabular_elements.push_back(el);
-}
-inline bool Document::match_lang(const tstring& lang)
-{
-    return lang == language_ || lang == culture_;
-}
 } // namespace litehtml
 
 #endif // LITEHTML_DOCUMENT_H__
