@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (C) 2020-2022 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -158,14 +159,36 @@ struct CSSBorderRadii {
 
     BorderRadii calculate_radii(int width, int height)
     {
-        BorderRadii border_radii;
+        BorderRadii r;
 
-        border_radii.top_left = top_left.calculate_radius(width, height);
-        border_radii.top_right = top_right.calculate_radius(width, height);
-        border_radii.bottom_left = bottom_left.calculate_radius(width, height);
-        border_radii.bottom_right = bottom_right.calculate_radius(width, height);
+        r.top_left = top_left.calculate_radius(width, height);
+        r.top_right = top_right.calculate_radius(width, height);
+        r.bottom_left = bottom_left.calculate_radius(width, height);
+        r.bottom_right = bottom_right.calculate_radius(width, height);
 
-        return border_radii;
+        // Handle overlapping corner curves using the algorithm presented in
+        // the CSS Backgrounds and Borders Module Level 3 draft:
+        // https://www.w3.org/TR/css-backgrounds-3/#corner-overlap
+
+        float f = 1.0f;
+        f = std::min(f, (float)width / (r.top_left.x + r.top_right.x));
+        f = std::min(f, (float)width / (r.bottom_left.x + r.bottom_right.x));
+        f = std::min(f, (float)height / (r.top_left.y + r.top_right.y));
+        f = std::min(f, (float)height / (r.bottom_left.y + r.bottom_right.y));
+
+        r.top_left.x *= f;
+        r.top_left.y *= f;
+
+        r.top_right.x *= f;
+        r.top_right.y *= f;
+
+        r.bottom_left.x *= f;
+        r.bottom_left.y *= f;
+
+        r.bottom_right.x *= f;
+        r.bottom_right.y *= f;
+
+        return r;
     }
 };
 
