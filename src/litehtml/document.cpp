@@ -94,7 +94,7 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
     for (int32_t end = break_iterator->next(); end != BreakIterator::DONE;
          start = end, end = break_iterator->next()) {
         std::string str(text + start, end - start);
-        elements.push_back(new TextElement(litehtml_from_utf8(str.c_str()), document));
+        elements.push_back(new TextElement(str.c_str(), document));
     }
 }
 
@@ -170,7 +170,7 @@ Document* Document::createFromString(const tchar_t* str,
     Context* context,
     CSSStylesheet* user_styles)
 {
-    return create(litehtml_to_utf8(str), URL(), container, context, user_styles);
+    return create(str, URL(), container, context, user_styles);
 }
 
 Document* Document::createFromUTF8(const char* str,
@@ -734,15 +734,14 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
             GumboAttribute* attr;
             for (unsigned int i = 0; i < node->v.element.attributes.length; i++) {
                 attr = (GumboAttribute*)node->v.element.attributes.data[i];
-                attrs[tstring(litehtml_from_utf8(attr->name))] =
-                    litehtml_from_utf8(attr->value);
+                attrs[String(attr->name)] = attr->value;
             }
 
 
             Element* ret = nullptr;
             const char* tag = gumbo_normalized_tagname(node->v.element.tag);
             if (tag[0]) {
-                ret = create_element(litehtml_from_utf8(tag), attrs);
+                ret = create_element(tag, attrs);
             } else {
                 if (node->v.element.original_tag.data &&
                     node->v.element.original_tag.length) {
@@ -750,7 +749,7 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
                     gumbo_tag_from_original_text(&node->v.element.original_tag);
                     strA.append(node->v.element.original_tag.data,
                         node->v.element.original_tag.length);
-                    ret = create_element(litehtml_from_utf8(strA.c_str()), attrs);
+                    ret = create_element(strA.c_str(), attrs);
                 }
             }
             if (!strcmp(tag, "script")) {
@@ -772,7 +771,7 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
             const char* text = node->v.text.text;
 
             if (!parseTextNode) {
-                elements.push_back(new TextElement(litehtml_from_utf8(text), this));
+                elements.push_back(new TextElement(text, this));
                 break;
             } else {
                 split_text_node(this, elements, text);
@@ -780,16 +779,16 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
         } break;
         case GUMBO_NODE_CDATA: {
             Element::ptr ret = new CDATAElement(this);
-            ret->set_data(litehtml_from_utf8(node->v.text.text));
+            ret->set_data(node->v.text.text);
             elements.push_back(ret);
         } break;
         case GUMBO_NODE_COMMENT: {
             Element::ptr ret = new CommentElement(this);
-            ret->set_data(litehtml_from_utf8(node->v.text.text));
+            ret->set_data(node->v.text.text);
             elements.push_back(ret);
         } break;
         case GUMBO_NODE_WHITESPACE: {
-            tstring str = litehtml_from_utf8(node->v.text.text);
+            String str = node->v.text.text;
             for (size_t i = 0; i < str.length(); i++) {
                 elements.push_back(new SpaceElement(str.substr(i, 1).c_str(), this));
             }
@@ -957,7 +956,7 @@ void Document::fix_table_parent(Element::ptr& el_ptr,
 
 void Document::append_children_from_string(Element& parent, const tchar_t* str)
 {
-    append_children_from_utf8(parent, litehtml_to_utf8(str));
+    append_children_from_utf8(parent, str);
 }
 
 void Document::append_children_from_utf8(Element& parent, const char* str)

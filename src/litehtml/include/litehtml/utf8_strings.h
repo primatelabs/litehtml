@@ -74,8 +74,6 @@ public:
     }
 };
 
-#define litehtml_from_utf8(str) str
-#define litehtml_to_utf8(str) str
 #define litehtml_from_wchar(str) litehtml::wchar_to_utf8(str)
 
 } // namespace litehtml

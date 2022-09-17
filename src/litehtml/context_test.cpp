@@ -41,5 +41,5 @@ const char* master_css =
 
 TEST(ContextTest, LoadMasterStylesheet)
 {
-    Context ctx(litehtml_from_utf8(master_css));
+    Context ctx(master_css);
 }
