@@ -96,12 +96,15 @@ int main(int argc, char** argv)
     orion::scanline_p8 scanline;
     ras.auto_close(false);
 
-
     document->draw(reinterpret_cast<uintptr_t>(&orc), 0, 0, nullptr);
     orc.canvas.save<PNGCodec>("headless.png");
 
 #if defined(ENABLE_JSON)
-    LOG(INFO) << document->stylesheet().json();
+    std::ofstream ofs_stylesheet("stylesheet.json");
+    ofs_stylesheet << document->stylesheet().json().dump(2);
+
+    std::ofstream ofs_document("document.json");
+    ofs_document << document->json().dump(2);
 #endif
 
     return 0;
