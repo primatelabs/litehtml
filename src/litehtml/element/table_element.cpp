@@ -85,10 +85,10 @@ void TableElement::parse_styles(bool is_reparse)
     } else {
         m_border_spacing_x = 0;
         m_border_spacing_y = 0;
-        m_padding.bottom = 0;
-        m_padding.top = 0;
-        m_padding.left = 0;
-        m_padding.right = 0;
+        padding_.bottom = 0;
+        padding_.top = 0;
+        padding_.left = 0;
+        padding_.right = 0;
         m_css_padding.bottom.set_value(0, kCSSUnitsPx);
         m_css_padding.top.set_value(0, kCSSUnitsPx);
         m_css_padding.left.set_value(0, kCSSUnitsPx);

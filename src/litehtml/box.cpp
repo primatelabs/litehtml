@@ -100,7 +100,7 @@ void BlockBox::get_elements(ElementsVector& els)
 int BlockBox::top_margin()
 {
     if (m_element && m_element->collapse_top_margin()) {
-        return m_element->m_margins.top;
+        return m_element->margin_.top;
     }
     return 0;
 }
@@ -108,7 +108,7 @@ int BlockBox::top_margin()
 int BlockBox::bottom_margin()
 {
     if (m_element && m_element->collapse_bottom_margin()) {
-        return m_element->m_margins.bottom;
+        return m_element->margin_.bottom;
     }
     return 0;
 }
@@ -165,8 +165,8 @@ void LineBox::add_element(const Element::ptr& el)
             int el_shift_right = el->get_inline_shift_right();
 
             el->position_.x = m_box_left + m_width + el_shift_left +
-                          el->content_margins_left();
-            el->position_.y = m_box_top + el->content_margins_top();
+                          el->content_margin_left();
+            el->position_.y = m_box_top + el->content_margin_top();
             m_width += el->width() + el_shift_left + el_shift_right;
         }
     }
@@ -242,26 +242,26 @@ void LineBox::finish(bool last_box)
                 case kVerticalAlignSub:
                 case kVerticalAlignBaseline:
                     el->position_.y = m_height - baseline - el->height() +
-                                  el->get_baseline() + el->content_margins_top();
+                                  el->get_baseline() + el->content_margin_top();
                     break;
                 case kVerticalAlignTop:
-                    el->position_.y = y1 + el->content_margins_top();
+                    el->position_.y = y1 + el->content_margin_top();
                     break;
                 case kVerticalAlignTextTop:
                     el->position_.y = m_height - baseline - font_metrics_.ascent +
-                                  el->content_margins_top();
+                                  el->content_margin_top();
                     break;
                 case kVerticalAlignMiddle:
                     el->position_.y = m_height - baseline -
                                   font_metrics_.x_height / 2 -
-                                  el->height() / 2 + el->content_margins_top();
+                                  el->height() / 2 + el->content_margin_top();
                     break;
                 case kVerticalAlignBottom:
-                    el->position_.y = y2 - el->height() + el->content_margins_top();
+                    el->position_.y = y2 - el->height() + el->content_margin_top();
                     break;
                 case kVerticalAlignTextBottom:
                     el->position_.y = m_height - baseline + font_metrics_.descent -
-                                  el->height() + el->content_margins_top();
+                                  el->height() + el->content_margin_top();
                     break;
             }
             y1 = std::min(y1, el->top());
@@ -277,11 +277,11 @@ void LineBox::finish(bool last_box)
         if (el->get_display() != kDisplayInlineText) {
             switch (el->get_vertical_align()) {
                 case kVerticalAlignTop:
-                    el->position_.y = m_box_top + el->content_margins_top();
+                    el->position_.y = m_box_top + el->content_margin_top();
                     break;
                 case kVerticalAlignBottom:
                     el->position_.y = m_box_top + (y2 - y1) - el->height() +
-                                  el->content_margins_top();
+                                  el->content_margin_top();
                     break;
                 case kVerticalAlignBaseline:
                     // TODO: process vertical align "baseline"

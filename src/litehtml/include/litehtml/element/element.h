@@ -102,11 +102,13 @@ protected:
     // the CSS position attribute).
     Position position_;
 
-    Margins m_margins;
+    // CSS box model metrics (margin, border, and padding). Consider moving
+    // from Element to HTMLElement since these only apply to visible elements.
+    Margins margin_;
 
-    Margins m_padding;
+    Margins border_;
 
-    Margins m_borders;
+    Margins padding_;
 
     // Flag used by LineBox (and elsewhere). May control visibility since
     // skip is always true for certain elements (e.g., comments).
@@ -128,7 +130,7 @@ public:
 
     int left() const
     {
-        return position_.left() - margin_left() - m_padding.left - m_borders.left;
+        return position_.left() - margin_.left - padding_.left - border_.left;
     }
 
     int right() const
@@ -138,7 +140,7 @@ public:
 
     int top() const
     {
-        return position_.top() - margin_top() - m_padding.top - m_borders.top;
+        return position_.top() - margin_.top - padding_.top - border_.top;
     }
 
     int bottom() const
@@ -148,120 +150,59 @@ public:
 
     int height() const
     {
-        return position_.height + margin_top() + margin_bottom() + m_padding.height() +
-               m_borders.height();
+        return position_.height + margin_.top + margin_.bottom + padding_.height() +
+               border_.height();
     }
 
     int width() const
     {
-        return position_.width + margin_left() + margin_right() + m_padding.width() +
-               m_borders.width();
+        return position_.width + margin_.left + margin_.right + padding_.width() +
+               border_.width();
     }
 
-    int content_margins_top() const
+    int content_margin_top() const
     {
-        return margin_top() + m_padding.top + m_borders.top;
+        return margin_.top + padding_.top + border_.top;
     }
 
-     int content_margins_bottom() const
+     int content_margin_bottom() const
     {
-        return margin_bottom() + m_padding.bottom + m_borders.bottom;
+        return margin_.bottom + padding_.bottom + border_.bottom;
     }
 
-     int content_margins_left() const
+     int content_margin_left() const
     {
-        return margin_left() + m_padding.left + m_borders.left;
+        return margin_.left + padding_.left + border_.left;
     }
 
-     int content_margins_right() const
+     int content_margin_right() const
     {
-        return margin_right() + m_padding.right + m_borders.right;
+        return margin_.right + padding_.right + border_.right;
     }
 
-     int content_margins_width() const
+     int content_margin_width() const
     {
-        return content_margins_left() + content_margins_right();
+        return content_margin_left() + content_margin_right();
     }
 
-     int content_margins_height() const
+     int content_margin_height() const
     {
-        return content_margins_top() + content_margins_bottom();
+        return content_margin_top() + content_margin_bottom();
     }
 
-    litehtml::Margins get_margins() const
+    litehtml::Margins margin() const
     {
-        return m_margins;
+        return margin_;
     }
 
-    int margin_top() const
+    litehtml::Margins padding() const
     {
-        return m_margins.top;
+        return padding_;
     }
 
-    int margin_bottom() const
+    litehtml::Margins border() const
     {
-        return m_margins.bottom;
-    }
-
-    int margin_left() const
-    {
-        return m_margins.left;
-    }
-
-    int margin_right() const
-    {
-        return m_margins.right;
-    }
-
-    litehtml::Margins get_paddings() const
-    {
-        return m_padding;
-    }
-
-    int padding_top() const
-    {
-        return m_padding.top;
-    }
-
-    int padding_bottom() const
-    {
-        return m_padding.bottom;
-    }
-
-    int padding_left() const
-    {
-        return m_padding.left;
-    }
-
-    int padding_right() const
-    {
-        return m_padding.right;
-    }
-
-
-    litehtml::Margins get_borders() const
-    {
-        return m_borders;
-    }
-
-    int border_top() const
-    {
-        return m_borders.top;
-    }
-
-    int border_bottom() const
-    {
-        return m_borders.bottom;
-    }
-
-    int border_left() const
-    {
-        return m_borders.left;
-    }
-
-    int border_right() const
-    {
-        return m_borders.right;
+        return border_;
     }
 
     bool in_normal_flow() const

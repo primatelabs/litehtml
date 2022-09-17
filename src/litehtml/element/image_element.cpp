@@ -184,10 +184,10 @@ int ImageElement::render(int x, int y, int parent_width, bool /* second_pass */)
 
     calc_auto_margins(parent_width);
 
-    position_.x += content_margins_left();
-    position_.y += content_margins_top();
+    position_.x += content_margin_left();
+    position_.y += content_margin_top();
 
-    return position_.width + content_margins_left() + content_margins_right();
+    return position_.width + content_margin_left() + content_margin_right();
 }
 
 void ImageElement::parse_attributes()
@@ -217,8 +217,8 @@ void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
     pos.y += y;
 
     Position el_pos = pos;
-    el_pos += m_padding;
-    el_pos += m_borders;
+    el_pos += padding_;
+    el_pos += border_;
 
     // draw standard background here
     if (el_pos.does_intersect(clip)) {
@@ -239,8 +239,8 @@ void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
             bg.clip_box = pos;
             bg.origin_box = pos;
             bg.border_box = pos;
-            bg.border_box += m_padding;
-            bg.border_box += m_borders;
+            bg.border_box += padding_;
+            bg.border_box += border_;
             bg.repeat = kBackgroundRepeatNoRepeat;
             bg.image_size.width = pos.width;
             bg.image_size.height = pos.height;
@@ -254,8 +254,8 @@ void ImageElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
     // draw borders
     if (el_pos.does_intersect(clip)) {
         Position border_box = pos;
-        border_box += m_padding;
-        border_box += m_borders;
+        border_box += padding_;
+        border_box += border_;
 
         Borders borders = m_css_borders.calculate_borders(border_box.width, border_box.height);
 

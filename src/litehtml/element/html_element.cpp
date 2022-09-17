@@ -245,13 +245,13 @@ void HTMLElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
         list_style_type_ != kListStyleTypeNone) {
         if (overflow_ > kOverflowVisible) {
             Position border_box = pos;
-            border_box += m_padding;
-            border_box += m_borders;
+            border_box += padding_;
+            border_box += border_;
 
             BorderRadii border_radii = m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
 
-            border_radii -= m_borders;
-            border_radii -= m_padding;
+            border_radii -= border_;
+            border_radii -= padding_;
 
             get_document()->container()->set_clip(pos, border_radii, true, true);
         }
@@ -446,20 +446,20 @@ void HTMLElement::parse_styles(bool is_reparse)
 
     doc->cvt_units(m_css_text_indent, font_size_);
 
-    m_margins.left = doc->cvt_units(m_css_margins.left, font_size_);
-    m_margins.right = doc->cvt_units(m_css_margins.right, font_size_);
-    m_margins.top = doc->cvt_units(m_css_margins.top, font_size_);
-    m_margins.bottom = doc->cvt_units(m_css_margins.bottom, font_size_);
+    margin_.left = doc->cvt_units(m_css_margins.left, font_size_);
+    margin_.right = doc->cvt_units(m_css_margins.right, font_size_);
+    margin_.top = doc->cvt_units(m_css_margins.top, font_size_);
+    margin_.bottom = doc->cvt_units(m_css_margins.bottom, font_size_);
 
-    m_padding.left = doc->cvt_units(m_css_padding.left, font_size_);
-    m_padding.right = doc->cvt_units(m_css_padding.right, font_size_);
-    m_padding.top = doc->cvt_units(m_css_padding.top, font_size_);
-    m_padding.bottom = doc->cvt_units(m_css_padding.bottom, font_size_);
+    padding_.left = doc->cvt_units(m_css_padding.left, font_size_);
+    padding_.right = doc->cvt_units(m_css_padding.right, font_size_);
+    padding_.top = doc->cvt_units(m_css_padding.top, font_size_);
+    padding_.bottom = doc->cvt_units(m_css_padding.bottom, font_size_);
 
-    m_borders.left = doc->cvt_units(m_css_borders.left.width, font_size_);
-    m_borders.right = doc->cvt_units(m_css_borders.right.width, font_size_);
-    m_borders.top = doc->cvt_units(m_css_borders.top.width, font_size_);
-    m_borders.bottom = doc->cvt_units(m_css_borders.bottom.width, font_size_);
+    border_.left = doc->cvt_units(m_css_borders.left.width, font_size_);
+    border_.right = doc->cvt_units(m_css_borders.right.width, font_size_);
+    border_.top = doc->cvt_units(m_css_borders.top.width, font_size_);
+    border_.bottom = doc->cvt_units(m_css_borders.bottom.width, font_size_);
 
     CSSLength line_height = get_length(kCSSPropertyLineHeight);
 
@@ -533,7 +533,7 @@ int HTMLElement::get_baseline()
     }
     int bl = 0;
     if (!m_boxes.empty()) {
-        bl = m_boxes.back()->baseline() + content_margins_bottom();
+        bl = m_boxes.back()->baseline() + content_margin_bottom();
     }
     return bl;
 }
@@ -1456,20 +1456,20 @@ void HTMLElement::add_positioned(const Element::ptr& el)
 
 void HTMLElement::calc_outlines(int parent_width)
 {
-    m_margins.left = m_css_margins.left.calc_percent(parent_width);
-    m_margins.right = m_css_margins.right.calc_percent(parent_width);
-    m_margins.top = m_css_margins.top.calc_percent(parent_width);
-    m_margins.bottom = m_css_margins.bottom.calc_percent(parent_width);
+    margin_.left = m_css_margins.left.calc_percent(parent_width);
+    margin_.right = m_css_margins.right.calc_percent(parent_width);
+    margin_.top = m_css_margins.top.calc_percent(parent_width);
+    margin_.bottom = m_css_margins.bottom.calc_percent(parent_width);
 
-    m_padding.left = m_css_padding.left.calc_percent(parent_width);
-    m_padding.right = m_css_padding.right.calc_percent(parent_width);
-    m_padding.top = m_css_padding.top.calc_percent(parent_width);
-    m_padding.bottom = m_css_padding.bottom.calc_percent(parent_width);
+    padding_.left = m_css_padding.left.calc_percent(parent_width);
+    padding_.right = m_css_padding.right.calc_percent(parent_width);
+    padding_.top = m_css_padding.top.calc_percent(parent_width);
+    padding_.bottom = m_css_padding.bottom.calc_percent(parent_width);
 
-    m_borders.left = m_css_borders.left.width.calc_percent(parent_width);
-    m_borders.right = m_css_borders.right.width.calc_percent(parent_width);
-    m_borders.top = m_css_borders.top.width.calc_percent(parent_width);
-    m_borders.bottom = m_css_borders.bottom.width.calc_percent(parent_width);
+    border_.left = m_css_borders.left.width.calc_percent(parent_width);
+    border_.right = m_css_borders.right.width.calc_percent(parent_width);
+    border_.top = m_css_borders.top.width.calc_percent(parent_width);
+    border_.bottom = m_css_borders.bottom.width.calc_percent(parent_width);
 }
 
 void HTMLElement::calc_auto_margins(int parent_width)
@@ -1478,29 +1478,29 @@ void HTMLElement::calc_auto_margins(int parent_width)
         (m_display == kDisplayBlock || m_display == kDisplayTable)) {
         if (m_css_margins.left.is_predefined() &&
             m_css_margins.right.is_predefined()) {
-            int el_width = position_.width + m_borders.left + m_borders.right +
-                           m_padding.left + m_padding.right;
+            int el_width = position_.width + border_.left + border_.right +
+                           padding_.left + padding_.right;
             if (el_width <= parent_width) {
-                m_margins.left = (parent_width - el_width) / 2;
-                m_margins.right = (parent_width - el_width) - m_margins.left;
+                margin_.left = (parent_width - el_width) / 2;
+                margin_.right = (parent_width - el_width) - margin_.left;
             } else {
-                m_margins.left = 0;
-                m_margins.right = 0;
+                margin_.left = 0;
+                margin_.right = 0;
             }
         } else if (m_css_margins.left.is_predefined() &&
                    !m_css_margins.right.is_predefined()) {
-            int el_width = position_.width + m_borders.left + m_borders.right +
-                           m_padding.left + m_padding.right + m_margins.right;
-            m_margins.left = parent_width - el_width;
-            if (m_margins.left < 0)
-                m_margins.left = 0;
+            int el_width = position_.width + border_.left + border_.right +
+                           padding_.left + padding_.right + margin_.right;
+            margin_.left = parent_width - el_width;
+            if (margin_.left < 0)
+                margin_.left = 0;
         } else if (!m_css_margins.left.is_predefined() &&
                    m_css_margins.right.is_predefined()) {
-            int el_width = position_.width + m_borders.left + m_borders.right +
-                           m_padding.left + m_padding.right + m_margins.left;
-            m_margins.right = parent_width - el_width;
-            if (m_margins.right < 0)
-                m_margins.right = 0;
+            int el_width = position_.width + border_.left + border_.right +
+                           padding_.left + padding_.right + margin_.left;
+            margin_.right = parent_width - el_width;
+            if (margin_.right < 0)
+                margin_.right = 0;
         }
     }
 }
@@ -1538,39 +1538,39 @@ void HTMLElement::get_inline_boxes(std::vector<Position>& boxes)
                 if (el->m_box != old_box) {
                     if (old_box) {
                         if (boxes.empty()) {
-                            pos.x -= m_padding.left + m_borders.left;
-                            pos.width += m_padding.left + m_borders.left;
+                            pos.x -= padding_.left + border_.left;
+                            pos.width += padding_.left + border_.left;
                         }
                         boxes.push_back(pos);
                     }
                     old_box = el->m_box;
-                    pos.x = el->left() + el->margin_left();
-                    pos.y = el->top() - m_padding.top - m_borders.top;
+                    pos.x = el->left() + el->margin().left;
+                    pos.y = el->top() - padding_.top - border_.top;
                     pos.width = 0;
                     pos.height = 0;
                 }
                 pos.width =
-                    el->right() - pos.x - el->margin_right() - el->margin_left();
+                    el->right() - pos.x - el->margin().right - el->margin().left;
                 pos.height = std::max(pos.height,
-                    el->height() + m_padding.top + m_padding.bottom +
-                        m_borders.top + m_borders.bottom);
+                    el->height() + padding_.top + padding_.bottom +
+                        border_.top + border_.bottom);
             } else if (el->get_display() == kDisplayInline) {
                 std::vector<Position> sub_boxes;
                 el->get_inline_boxes(sub_boxes);
                 if (!sub_boxes.empty()) {
-                    sub_boxes.rbegin()->width += el->margin_right();
+                    sub_boxes.rbegin()->width += el->margin().right;
                     if (boxes.empty()) {
-                        if (m_padding.left + m_borders.left > 0) {
+                        if (padding_.left + border_.left > 0) {
                             Position padding_box = (*sub_boxes.begin());
-                            padding_box.x -= m_padding.left + m_borders.left +
-                                             el->margin_left();
-                            padding_box.width = m_padding.left + m_borders.left +
-                                                el->margin_left();
+                            padding_box.x -= padding_.left + border_.left +
+                                             el->margin().left;
+                            padding_box.width = padding_.left + border_.left +
+                                                el->margin().left;
                             boxes.push_back(padding_box);
                         }
                     }
 
-                    sub_boxes.rbegin()->width += el->margin_right();
+                    sub_boxes.rbegin()->width += el->margin().right;
 
                     boxes.insert(boxes.end(), sub_boxes.begin(), sub_boxes.end());
                 }
@@ -1579,14 +1579,14 @@ void HTMLElement::get_inline_boxes(std::vector<Position>& boxes)
     }
     if (pos.width || pos.height) {
         if (boxes.empty()) {
-            pos.x -= m_padding.left + m_borders.left;
-            pos.width += m_padding.left + m_borders.left;
+            pos.x -= padding_.left + border_.left;
+            pos.width += padding_.left + border_.left;
         }
         boxes.push_back(pos);
     }
     if (!boxes.empty()) {
-        if (m_padding.right + m_borders.right > 0) {
-            boxes.back().width += m_padding.right + m_borders.right;
+        if (padding_.right + border_.right > 0) {
+            boxes.back().width += padding_.right + border_.right;
         }
     }
 }
@@ -1643,8 +1643,8 @@ bool HTMLElement::find_styles_changes(std::vector<Position>& redraw_boxes, int x
                 pos.x += x;
                 pos.y += y;
             }
-            pos += m_padding;
-            pos += m_borders;
+            pos += padding_;
+            pos += border_;
             redraw_boxes.push_back(pos);
         }
 
@@ -1845,8 +1845,8 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
     pos.y += y;
 
     Position el_pos = pos;
-    el_pos += m_padding;
-    el_pos += m_borders;
+    el_pos += padding_;
+    el_pos += border_;
 
     if (m_display != kDisplayInline && m_display != kDisplayTableRow) {
         if (el_pos.does_intersect(clip)) {
@@ -1858,8 +1858,8 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
                 get_document()->container()->draw_background(hdc, bg_paint);
             }
             Position border_box = pos;
-            border_box += m_padding;
-            border_box += m_borders;
+            border_box += padding_;
+            border_box += border_;
 
             Borders borders = m_css_borders.calculate_borders(border_box.width, border_box.height);
             get_document()->container()->draw_borders(hdc,
@@ -1883,8 +1883,8 @@ void HTMLElement::draw_background(uintptr_t hdc, int x, int y, const Position* c
 
             if (box->does_intersect(clip)) {
                 content_box = *box;
-                content_box -= m_borders;
-                content_box -= m_padding;
+                content_box -= border_;
+                content_box -= padding_;
 
                 if (bg) {
                     init_BackgroundPaint(content_box, bg_paint, bg);
@@ -1989,8 +1989,8 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
         }
 
         el->render(0, line_top, max_width);
-        el->position_.x += el->content_margins_left();
-        el->position_.y += el->content_margins_top();
+        el->position_.x += el->content_margin_left();
+        el->position_.y += el->content_margin_top();
 
         return 0;
     }
@@ -2016,8 +2016,8 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
             if (el->right() > line_right) {
                 int new_top =
                     find_next_line_top(el->top(), el->width(), max_width);
-                el->position_.x = get_line_left(new_top) + el->content_margins_left();
-                el->position_.y = new_top + el->content_margins_top();
+                el->position_.x = get_line_left(new_top) + el->content_margin_left();
+                el->position_.y = new_top + el->content_margin_top();
             }
             add_float(el, 0, 0);
             ret_width = fix_line_width(max_width, kFloatLeft);
@@ -2045,11 +2045,11 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
                 int new_top =
                     find_next_line_top(el->top(), el->width(), max_width);
                 el->position_.x = get_line_right(new_top, max_width) - el->width() +
-                              el->content_margins_left();
-                el->position_.y = new_top + el->content_margins_top();
+                              el->content_margin_left();
+                el->position_.y = new_top + el->content_margin_top();
             } else {
                 el->position_.x =
-                    line_right - el->width() + el->content_margins_left();
+                    line_right - el->width() + el->content_margin_left();
             }
             add_float(el, 0, 0);
             ret_width = fix_line_width(max_width, kFloatRight);
@@ -2123,7 +2123,7 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
             if (!el->is_inline_box()) {
                 if (m_boxes.size() == 1) {
                     if (collapse_top_margin()) {
-                        int shift = el->margin_top();
+                        int shift = el->margin().top;
                         if (shift >= 0) {
                             line_ctx.top -= shift;
                             m_boxes.back()->y_shift(-shift);
@@ -2133,8 +2133,8 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
                     int shift = 0;
                     int prev_margin = m_boxes[m_boxes.size() - 2]->bottom_margin();
 
-                    if (prev_margin > el->margin_top()) {
-                        shift = el->margin_top();
+                    if (prev_margin > el->margin().top) {
+                        shift = el->margin().top;
                     } else {
                         shift = prev_margin;
                     }
@@ -2536,9 +2536,9 @@ void HTMLElement::init_BackgroundPaint(Position pos,
     bg_paint = *bg;
     Position content_box = pos;
     Position padding_box = pos;
-    padding_box += m_padding;
+    padding_box += padding_;
     Position border_box = padding_box;
-    border_box += m_borders;
+    border_box += border_;
 
     switch (bg->m_clip) {
         case kBackgroundBoxPaddingBox:
@@ -2883,20 +2883,20 @@ void HTMLElement::render_positioned()
                 if (!css_left.is_predefined() || !css_right.is_predefined()) {
                     if (!css_left.is_predefined() && css_right.is_predefined()) {
                         el->position_.x = css_left.calc_percent(parent_width) +
-                                      el->content_margins_left();
+                                      el->content_margin_left();
                     } else if (css_left.is_predefined() &&
                                !css_right.is_predefined()) {
                         el->position_.x =
                             parent_width - css_right.calc_percent(parent_width) -
-                            el->position_.width - el->content_margins_right();
+                            el->position_.width - el->content_margin_right();
                     } else {
                         el->position_.x = css_left.calc_percent(parent_width) +
-                                      el->content_margins_left();
+                                      el->content_margin_left();
                         el->position_.width = parent_width -
                                           css_left.calc_percent(parent_width) -
                                           css_right.calc_percent(parent_width) -
-                                          (el->content_margins_left() +
-                                              el->content_margins_right());
+                                          (el->content_margin_left() +
+                                              el->content_margin_right());
                         need_render = true;
                     }
                 }
@@ -2904,21 +2904,21 @@ void HTMLElement::render_positioned()
                 if (!css_top.is_predefined() || !css_bottom.is_predefined()) {
                     if (!css_top.is_predefined() && css_bottom.is_predefined()) {
                         el->position_.y = css_top.calc_percent(parent_height) +
-                                      el->content_margins_top();
+                                      el->content_margin_top();
                     } else if (css_top.is_predefined() &&
                                !css_bottom.is_predefined()) {
                         el->position_.y = parent_height -
                                       css_bottom.calc_percent(parent_height) -
                                       el->position_.height -
-                                      el->content_margins_bottom();
+                                      el->content_margin_bottom();
                     } else {
                         el->position_.y = css_top.calc_percent(parent_height) +
-                                      el->content_margins_top();
+                                      el->content_margin_top();
                         el->position_.height =
                             parent_height - css_top.calc_percent(parent_height) -
                             css_bottom.calc_percent(parent_height) -
-                            (el->content_margins_top() +
-                                el->content_margins_bottom());
+                            (el->content_margin_top() +
+                                el->content_margin_bottom());
                         need_render = true;
                     }
                 }
@@ -2926,22 +2926,22 @@ void HTMLElement::render_positioned()
                 if (!css_left.is_predefined() || !css_right.is_predefined()) {
                     if (!css_left.is_predefined() && css_right.is_predefined()) {
                         el->position_.x = css_left.calc_percent(parent_width) +
-                                      el->content_margins_left() - m_padding.left;
+                                      el->content_margin_left() - padding_.left;
                     } else if (css_left.is_predefined() &&
                                !css_right.is_predefined()) {
-                        el->position_.x = position_.width + m_padding.right -
+                        el->position_.x = position_.width + padding_.right -
                                       css_right.calc_percent(parent_width) -
                                       el->position_.width -
-                                      el->content_margins_right();
+                                      el->content_margin_right();
                     } else {
                         el->position_.x = css_left.calc_percent(parent_width) +
-                                      el->content_margins_left() - m_padding.left;
-                        el->position_.width = position_.width + m_padding.left +
-                                          m_padding.right -
+                                      el->content_margin_left() - padding_.left;
+                        el->position_.width = position_.width + padding_.left +
+                                          padding_.right -
                                           css_left.calc_percent(parent_width) -
                                           css_right.calc_percent(parent_width) -
-                                          (el->content_margins_left() +
-                                              el->content_margins_right());
+                                          (el->content_margin_left() +
+                                              el->content_margin_right());
                         if (new_width != -1) {
                             el->position_.x += (el->position_.width - new_width) / 2;
                             el->position_.width = new_width;
@@ -2954,22 +2954,22 @@ void HTMLElement::render_positioned()
                 if (!css_top.is_predefined() || !css_bottom.is_predefined()) {
                     if (!css_top.is_predefined() && css_bottom.is_predefined()) {
                         el->position_.y = css_top.calc_percent(parent_height) +
-                                      el->content_margins_top() - m_padding.top;
+                                      el->content_margin_top() - padding_.top;
                     } else if (css_top.is_predefined() &&
                                !css_bottom.is_predefined()) {
-                        el->position_.y = position_.height + m_padding.bottom -
+                        el->position_.y = position_.height + padding_.bottom -
                                       css_bottom.calc_percent(parent_height) -
                                       el->position_.height -
-                                      el->content_margins_bottom();
+                                      el->content_margin_bottom();
                     } else {
                         el->position_.y = css_top.calc_percent(parent_height) +
-                                      el->content_margins_top() - m_padding.top;
+                                      el->content_margin_top() - padding_.top;
                         el->position_.height =
-                            position_.height + m_padding.top + m_padding.bottom -
+                            position_.height + padding_.top + padding_.bottom -
                             css_top.calc_percent(parent_height) -
                             css_bottom.calc_percent(parent_height) -
-                            (el->content_margins_top() +
-                                el->content_margins_bottom());
+                            (el->content_margin_top() +
+                                el->content_margin_bottom());
                         if (new_height != -1) {
                             el->position_.y += (el->position_.height - new_height) / 2;
                             el->position_.height = new_height;
@@ -3173,9 +3173,9 @@ void HTMLElement::calc_document_size(Size& sz, int x /*= 0*/, int y /*= 0*/)
         if (!have_parent()) {
             Position client_pos = get_document()->container()->get_client_rect();
             position_.height = std::max(sz.height, client_pos.height) -
-                           content_margins_top() - content_margins_bottom();
+                           content_margin_top() - content_margin_bottom();
             position_.width = std::max(sz.width, client_pos.width) -
-                          content_margins_left() - content_margins_right();
+                          content_margin_left() - content_margin_right();
         }
     }
 }
@@ -3657,8 +3657,8 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
     position_.clear();
     position_.move_to(x, y);
 
-    position_.x += content_margins_left();
-    position_.y += content_margins_top();
+    position_.x += content_margin_left();
+    position_.y += content_margin_top();
 
     int ret_width = 0;
 
@@ -3668,12 +3668,12 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
         int w = calc_width(parent_width);
 
         if (box_sizing_ == kBoxSizingBorderBox) {
-            w -= m_padding.width() + m_borders.width();
+            w -= padding_.width() + border_.width();
         }
         ret_width = max_width = block_width = w;
     } else {
         if (max_width) {
-            max_width -= content_margins_left() + content_margins_right();
+            max_width -= content_margin_left() + content_margin_right();
         }
     }
 
@@ -3682,8 +3682,8 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
         int mw =
             get_document()->cvt_units(m_css_max_width, font_size_, parent_width);
         if (box_sizing_ == kBoxSizingBorderBox) {
-            mw -= m_padding.left + m_borders.left + m_padding.right +
-                  m_borders.right;
+            mw -= padding_.left + border_.left + padding_.right +
+                  border_.right;
         }
         if (max_width > mw) {
             max_width = mw;
@@ -3756,15 +3756,15 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
 
     if (!m_boxes.empty()) {
         if (collapse_top_margin()) {
-            int old_top = m_margins.top;
-            m_margins.top = std::max(m_boxes.front()->top_margin(), m_margins.top);
-            if (m_margins.top != old_top) {
-                update_floats(m_margins.top - old_top, this);
+            int old_top = margin_.top;
+            margin_.top = std::max(m_boxes.front()->top_margin(), margin_.top);
+            if (margin_.top != old_top) {
+                update_floats(margin_.top - old_top, this);
             }
         }
         if (collapse_bottom_margin()) {
-            m_margins.bottom =
-                std::max(m_boxes.back()->bottom_margin(), m_margins.bottom);
+            margin_.bottom =
+                std::max(m_boxes.back()->bottom_margin(), margin_.bottom);
             position_.height =
                 m_boxes.back()->bottom() - m_boxes.back()->bottom_margin();
         } else {
@@ -3783,8 +3783,8 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
     // calculate the final position
 
     position_.move_to(x, y);
-    position_.x += content_margins_left();
-    position_.y += content_margins_top();
+    position_.x += content_margin_left();
+    position_.y += content_margin_top();
 
     if (get_predefined_height(block_height)) {
         position_.height = block_height;
@@ -3804,7 +3804,7 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
     }
     if (min_height != 0 && box_sizing_ == kBoxSizingBorderBox) {
         min_height -=
-            m_padding.top + m_borders.top + m_padding.bottom + m_borders.bottom;
+            padding_.top + border_.top + padding_.bottom + border_.bottom;
         if (min_height < 0)
             min_height = 0;
     }
@@ -3835,7 +3835,7 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
 
     if (min_width != 0 && box_sizing_ == kBoxSizingBorderBox) {
         min_width -=
-            m_padding.left + m_borders.left + m_padding.right + m_borders.right;
+            padding_.left + border_.left + padding_.right + border_.right;
         if (min_width < 0)
             min_width = 0;
     }
@@ -3849,7 +3849,7 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
         }
     }
 
-    ret_width += content_margins_left() + content_margins_right();
+    ret_width += content_margin_left() + content_margin_right();
 
     // re-render with new width
     if (ret_width < max_width && !second_pass && have_parent()) {
@@ -3860,7 +3860,7 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
                     m_el_position == kPositionFixed))) {
             render(x, y, ret_width, true);
             position_.width =
-                ret_width - (content_margins_left() + content_margins_right());
+                ret_width - (content_margin_left() + content_margin_right());
         }
     }
 
@@ -3886,17 +3886,17 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
     position_.clear();
     position_.move_to(x, y);
 
-    position_.x += content_margins_left();
-    position_.y += content_margins_top();
+    position_.x += content_margin_left();
+    position_.y += content_margin_top();
 
     DefaultValue<int> block_width(0);
 
     if (!m_css_width.is_predefined()) {
         max_width = block_width =
-            calc_width(parent_width) - m_padding.width() - m_borders.width();
+            calc_width(parent_width) - padding_.width() - border_.width();
     } else {
         if (max_width) {
-            max_width -= content_margins_left() + content_margins_right();
+            max_width -= content_margin_left() + content_margin_right();
         }
     }
 
@@ -3909,8 +3909,8 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
 
         if (m_grid->cols_count()) {
             table_width_spacing -=
-                std::min(border_left(), m_grid->column(0).border_left);
-            table_width_spacing -= std::min(border_right(),
+                std::min(border().left, m_grid->column(0).border_left);
+            table_width_spacing -= std::min(border().right,
                 m_grid->column(m_grid->cols_count() - 1).border_right);
         }
 
@@ -3936,8 +3936,8 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
                 cell->min_width = cell->max_width =
                     cell->el->render(0, 0, max_width - table_width_spacing);
                 cell->el->position_.width = cell->min_width -
-                                        cell->el->content_margins_left() -
-                                        cell->el->content_margins_right();
+                                        cell->el->content_margin_left() -
+                                        cell->el->content_margin_right();
             }
         }
     } else {
@@ -3953,8 +3953,8 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
                         int el_w = cell->el->render(0, 0, css_w);
                         cell->min_width = cell->max_width = std::max(css_w, el_w);
                         cell->el->position_.width =
-                            cell->min_width - cell->el->content_margins_left() -
-                            cell->el->content_margins_right();
+                            cell->min_width - cell->el->content_margin_left() -
+                            cell->el->content_margin_right();
                     } else {
                         // calculate minimum content width
                         cell->min_width = cell->el->render(0, 0, 1);
@@ -4052,7 +4052,7 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
     min_table_width += table_width_spacing;
     max_table_width += table_width_spacing;
     table_width += table_width_spacing;
-    m_grid->calc_horizontal_positions(m_borders,
+    m_grid->calc_horizontal_positions(border_,
         m_border_collapse,
         m_border_spacing_x);
 
@@ -4072,15 +4072,15 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
                     m_grid->column(span_col).right - m_grid->column(col).left;
 
                 if (cell->el->position_.width !=
-                    cell_width - cell->el->content_margins_left() -
-                        cell->el->content_margins_right()) {
+                    cell_width - cell->el->content_margin_left() -
+                        cell->el->content_margin_right()) {
                     cell->el->render(m_grid->column(col).left, 0, cell_width);
                     cell->el->position_.width = cell_width -
-                                            cell->el->content_margins_left() -
-                                            cell->el->content_margins_right();
+                                            cell->el->content_margin_left() -
+                                            cell->el->content_margin_right();
                 } else {
                     cell->el->position_.x = m_grid->column(col).left +
-                                        cell->el->content_margins_left();
+                                        cell->el->content_margin_left();
                 }
 
                 if (cell->rowspan <= 1) {
@@ -4125,8 +4125,8 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
 
         if (m_grid->rows_count()) {
             table_height_spacing -=
-                std::min(border_top(), m_grid->row(0).border_top);
-            table_height_spacing -= std::min(border_bottom(),
+                std::min(border().top, m_grid->row(0).border_top);
+            table_height_spacing -= std::min(border().bottom,
                 m_grid->row(m_grid->rows_count() - 1).border_bottom);
         }
 
@@ -4140,7 +4140,7 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
     // calculate block height
     int block_height = 0;
     if (get_predefined_height(block_height)) {
-        block_height -= m_padding.height() + m_borders.height();
+        block_height -= padding_.height() + border_.height();
     }
 
     // calculate minimum height from m_css_min_height
@@ -4162,7 +4162,7 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
 
     m_grid->calc_rows_height(minimum_table_height - table_height_spacing,
         m_border_spacing_y);
-    m_grid->calc_vertical_positions(m_borders, m_border_collapse, m_border_spacing_y);
+    m_grid->calc_vertical_positions(border_, m_border_collapse, m_border_spacing_y);
 
     int table_height = 0;
 
@@ -4176,11 +4176,11 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
                     span_row = m_grid->rows_count() - 1;
                 }
                 cell->el->position_.y =
-                    m_grid->row(row).top + cell->el->content_margins_top();
+                    m_grid->row(row).top + cell->el->content_margin_top();
                 cell->el->position_.height = m_grid->row(span_row).bottom -
                                          m_grid->row(row).top -
-                                         cell->el->content_margins_top() -
-                                         cell->el->content_margins_bottom();
+                                         cell->el->content_margin_top() -
+                                         cell->el->content_margin_bottom();
                 table_height =
                     std::max(table_height, m_grid->row(span_row).bottom);
                 cell->el->apply_vertical_align();
@@ -4190,7 +4190,7 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
 
     if (m_border_collapse == border_collapse_collapse) {
         if (m_grid->rows_count()) {
-            table_height -= std::min(border_bottom(),
+            table_height -= std::min(border().bottom,
                 m_grid->row(m_grid->rows_count() - 1).border_bottom);
         }
     } else {
@@ -4202,8 +4202,8 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
     calc_auto_margins(parent_width);
 
     position_.move_to(x, y);
-    position_.x += content_margins_left();
-    position_.y += content_margins_top();
+    position_.x += content_margin_left();
+    position_.y += content_margin_top();
     position_.width = table_width;
     position_.height = table_height;
 
@@ -4225,13 +4225,13 @@ void HTMLElement::draw_children_box(uintptr_t hdc,
 
     if (overflow_ > kOverflowVisible) {
         Position border_box = pos;
-        border_box += m_padding;
-        border_box += m_borders;
+        border_box += padding_;
+        border_box += border_;
 
         BorderRadii border_radii = m_css_borders.radii.calculate_radii(border_box.width, border_box.height);
 
-        border_radii -= m_borders;
-        border_radii -= m_padding;
+        border_radii -= border_;
+        border_radii -= padding_;
 
         doc->container()->set_clip(pos, border_radii, true, true);
     }

@@ -113,8 +113,8 @@ bool Element::is_point_inside(int x, int y)
 {
     if (get_display() != kDisplayInline && get_display() != kDisplayTableRow) {
         Position pos = position_;
-        pos += m_padding;
-        pos += m_borders;
+        pos += padding_;
+        pos += border_;
         if (pos.is_point_inside(x, y)) {
             return true;
         } else {
@@ -178,8 +178,8 @@ bool Element::is_inline_box() const
 
 bool Element::collapse_top_margin() const
 {
-    if (!m_borders.top && !m_padding.top && in_normal_flow() &&
-        get_float() == kFloatNone && m_margins.top >= 0 && have_parent()) {
+    if (!border_.top && !padding_.top && in_normal_flow() &&
+        get_float() == kFloatNone && margin_.top >= 0 && have_parent()) {
         return true;
     }
     return false;
@@ -187,8 +187,8 @@ bool Element::collapse_top_margin() const
 
 bool Element::collapse_bottom_margin() const
 {
-    if (!m_borders.bottom && !m_padding.bottom && in_normal_flow() &&
-        get_float() == kFloatNone && m_margins.bottom >= 0 && have_parent()) {
+    if (!border_.bottom && !padding_.bottom && in_normal_flow() &&
+        get_float() == kFloatNone && margin_.bottom >= 0 && have_parent()) {
         return true;
     }
     return false;
@@ -212,7 +212,7 @@ bool Element::get_predefined_height(int& p_height) const
             if (el_parent->get_predefined_height(ph)) {
                 p_height = h.calc_percent(ph);
                 if (is_body()) {
-                    p_height -= content_margins_height();
+                    p_height -= content_margin_height();
                 }
                 return true;
             } else {
@@ -237,13 +237,13 @@ void Element::get_redraw_box(Position& pos, int x /*= 0*/, int y /*= 0*/)
 {
     if (is_visible()) {
         int p_left = std::min(pos.left(),
-            x + position_.left() - m_padding.left - m_borders.left);
+            x + position_.left() - padding_.left - border_.left);
         int p_right = std::max(pos.right(),
-            x + position_.right() + m_padding.left + m_borders.left);
+            x + position_.right() + padding_.left + border_.left);
         int p_top =
-            std::min(pos.top(), y + position_.top() - m_padding.top - m_borders.top);
+            std::min(pos.top(), y + position_.top() - padding_.top - border_.top);
         int p_bottom = std::max(pos.bottom(),
-            y + position_.bottom() + m_padding.bottom + m_borders.bottom);
+            y + position_.bottom() + padding_.bottom + border_.bottom);
 
         pos.x = p_left;
         pos.y = p_top;
@@ -266,7 +266,7 @@ int Element::calc_width(int defVal) const
         } else {
             int pw = el_parent->calc_width(defVal);
             if (is_body()) {
-                pw -= content_margins_width();
+                pw -= content_margin_width();
             }
             return w.calc_percent(pw);
         }
@@ -298,8 +298,7 @@ int Element::get_inline_shift_left()
                 Element* el = this;
                 while (el_parent && el_parent->get_display() == kDisplayInline) {
                     if (el_parent->is_first_child_inline(el)) {
-                        ret += el_parent->padding_left() +
-                               el_parent->border_left() + el_parent->margin_left();
+                        ret += el_parent->padding().left + el_parent->border().left + el_parent->margin().left;
                     }
                     el = el_parent;
                     el_parent = el_parent->parent();
@@ -323,9 +322,7 @@ int Element::get_inline_shift_right()
                 Element* el = this;
                 while (el_parent && el_parent->get_display() == kDisplayInline) {
                     if (el_parent->is_last_child_inline(el)) {
-                        ret += el_parent->padding_right() +
-                               el_parent->border_right() +
-                               el_parent->margin_right();
+                        ret += el_parent->padding().right + el_parent->border().right + el_parent->margin().right;
                     }
                     el = el_parent;
                     el_parent = el_parent->parent();

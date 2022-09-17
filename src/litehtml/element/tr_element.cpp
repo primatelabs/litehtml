@@ -65,13 +65,13 @@ void TrElement::get_inline_boxes(std::vector<Position>& boxes)
     Position pos;
     for (auto& el : m_children) {
         if (el->get_display() == kDisplayTableCell) {
-            pos.x = el->left() + el->margin_left();
-            pos.y = el->top() - m_padding.top - m_borders.top;
+            pos.x = el->left() + el->margin().left;
+            pos.y = el->top() - padding_.top - border_.top;
 
             pos.width =
-                el->right() - pos.x - el->margin_right() - el->margin_left();
-            pos.height = el->height() + m_padding.top + m_padding.bottom +
-                         m_borders.top + m_borders.bottom;
+                el->right() - pos.x - el->margin().right - el->margin().left;
+            pos.height = el->height() + padding_.top + padding_.bottom +
+                         border_.top + border_.bottom;
 
             boxes.push_back(pos);
         }
