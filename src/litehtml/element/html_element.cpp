@@ -2819,14 +2819,12 @@ void HTMLElement::render_positioned()
 {
     Position wnd_position = get_document()->container()->get_client_rect();
 
-    ElementPosition el_position;
-    bool process;
     for (auto& el : m_positioned) {
-        el_position = el->get_element_position();
+        ElementPosition position = el->get_element_position();
 
-        process = false;
+        bool process = false;
         if (el->get_display() != kDisplayNone) {
-            if (el_position == kPositionAbsolute || el_position == kPositionFixed) {
+            if (position == kPositionAbsolute || position == kPositionFixed) {
                 process = true;
             }
         }
@@ -2836,7 +2834,7 @@ void HTMLElement::render_positioned()
             int parent_width = 0;
             //int client_x = 0;
             //int client_y = 0;
-            if (el_position == kPositionFixed) {
+            if (position == kPositionFixed) {
                 parent_height = wnd_position.height;
                 parent_width = wnd_position.width;
                 //client_x = wnd_position.left();
@@ -2880,7 +2878,7 @@ void HTMLElement::render_positioned()
             bool cvt_x = false;
             bool cvt_y = false;
 
-            if (el_position == kPositionFixed) {
+            if (position == kPositionFixed) {
                 if (!css_left.is_predefined() || !css_right.is_predefined()) {
                     if (!css_left.is_predefined() && css_right.is_predefined()) {
                         el->position_.x = css_left.calc_percent(parent_width) +
@@ -3003,7 +3001,7 @@ void HTMLElement::render_positioned()
                 el->position_ = pos;
             }
 
-            if (el_position == kPositionFixed) {
+            if (position == kPositionFixed) {
                 Position fixed_pos;
                 el->get_redraw_box(fixed_pos);
                 get_document()->add_fixed_box(fixed_pos);
