@@ -2784,7 +2784,11 @@ void HTMLElement::draw_children(uintptr_t hdc,
     }
 }
 
+// Returns true if any children are "positioned" (i.e., the element position
+// is not static), false otherwise. Adds "positioned" element to the internal
+// positioned elements vector.
 //
+// fetch_positioned() calls itself recursively on all children.
 bool HTMLElement::fetch_positioned()
 {
     bool result = false;
@@ -2795,12 +2799,6 @@ bool HTMLElement::fetch_positioned()
         ElementPosition position = element->get_element_position();
         if (position != kPositionStatic) {
             add_positioned(element);
-        }
-
-        // FIXME: Should this be position != kPositionStatic to match the
-        // check above? It's not clear to me why fetch_positioned() would
-        // add elements to m_positioned but not return true.
-        if (position == kPositionAbsolute || position == kPositionFixed) {
             result = true;
         }
 
