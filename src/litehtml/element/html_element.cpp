@@ -34,6 +34,7 @@
 #include <locale>
 
 #include "litehtml/css/css_stylesheet.h"
+#include "litehtml/default_value.h"
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
 #include "litehtml/element/before_after_element.h"
@@ -3667,7 +3668,7 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
 
     int ret_width = 0;
 
-    def_value<int> block_width(0);
+    DefaultValue<int> block_width(0);
 
     if (m_display != kDisplayTableCell && !m_css_width.is_predefined()) {
         int w = calc_width(parent_width);
@@ -3894,7 +3895,7 @@ int HTMLElement::render_table(int x, int y, int max_width, bool /* second_pass *
     position_.x += content_margins_left();
     position_.y += content_margins_top();
 
-    def_value<int> block_width(0);
+    DefaultValue<int> block_width(0);
 
     if (!m_css_width.is_predefined()) {
         max_width = block_width =

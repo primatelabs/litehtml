@@ -596,38 +596,6 @@ enum select_result {
     select_match_with_after = 0x20,
 };
 
-template <class T>
-class def_value {
-    T m_val;
-    bool m_is_default;
-
-public:
-    def_value(T def_val)
-    {
-        m_is_default = true;
-        m_val = def_val;
-    }
-    void reset(T def_val)
-    {
-        m_is_default = true;
-        m_val = def_val;
-    }
-    bool is_default()
-    {
-        return m_is_default;
-    }
-    T operator=(T new_val)
-    {
-        m_val = new_val;
-        m_is_default = false;
-        return m_val;
-    }
-    operator T()
-    {
-        return m_val;
-    }
-};
-
 enum BoxSizing {
     kBoxSizingContentBox,
     kBoxSizingBorderBox,
