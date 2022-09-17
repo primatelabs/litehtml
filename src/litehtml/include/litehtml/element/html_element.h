@@ -181,7 +181,7 @@ public:
         const litehtml::CSSStylesheet& stylesheet) override;
     virtual void refresh_styles() override;
 
-    virtual bool is_white_space() const override;
+    virtual bool is_whitespace() const override;
     virtual bool is_body() const override;
     virtual bool is_break() const override;
     virtual int get_baseline() override;

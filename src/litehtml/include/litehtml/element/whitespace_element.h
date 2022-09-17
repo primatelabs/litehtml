@@ -28,28 +28,25 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_SPACE_ELEMENT_H__
-#define LITEHTML_SPACE_ELEMENT_H__
+#pragma once
 
 #include "litehtml/element/text_element.h"
 #include "litehtml/element/html_element.h"
 
 namespace litehtml {
 
-class SpaceElement : public TextElement {
+class WhitespaceElement : public TextElement {
 public:
-    SpaceElement(const tchar_t* text, Document* doc);
-    virtual ~SpaceElement() override;
+    WhitespaceElement(const tchar_t* text, Document* doc);
+    virtual ~WhitespaceElement() override;
 
     virtual ElementType type() const override
     {
-        return kElementSpace;
+        return kElementWhitespace;
     }
 
-    virtual bool is_white_space() const override;
+    virtual bool is_whitespace() const override;
     virtual bool is_break() const override;
 };
 
 } // namespace litehtml
-
-#endif // LITEHTML_SPACE_ELEMENT_H__

@@ -516,7 +516,7 @@ int HTMLElement::render(int x, int y, int max_width, bool second_pass)
     return render_box(x, y, max_width, second_pass);
 }
 
-bool HTMLElement::is_white_space() const
+bool HTMLElement::is_whitespace() const
 {
     return false;
 }
@@ -1942,7 +1942,7 @@ int HTMLElement::render_inline(const Element::ptr& container, int max_width)
     for (auto& el : m_children) {
         // skip spaces to make rendering a bit faster
         if (skip_spaces) {
-            if (el->is_white_space()) {
+            if (el->is_whitespace()) {
                 if (was_space) {
                     el->skip(true);
                     continue;
@@ -2385,7 +2385,7 @@ bool HTMLElement::is_first_child_inline(const Element::ptr& el) const
 {
     if (!m_children.empty()) {
         for (const auto& this_el : m_children) {
-            if (!this_el->is_white_space()) {
+            if (!this_el->is_whitespace()) {
                 if (el == this_el) {
                     return true;
                 }
@@ -2407,7 +2407,7 @@ bool HTMLElement::is_last_child_inline(const Element::ptr& el)
     if (!m_children.empty()) {
         for (auto this_el = m_children.rbegin(); this_el < m_children.rend();
              ++this_el) {
-            if (!(*this_el)->is_white_space()) {
+            if (!(*this_el)->is_whitespace()) {
                 if (el == (*this_el)) {
                     return true;
                 }
@@ -3357,7 +3357,7 @@ bool HTMLElement::have_inline_child() const
 {
     if (!m_children.empty()) {
         for (const auto& el : m_children) {
-            if (!el->is_white_space()) {
+            if (!el->is_whitespace()) {
                 return true;
             }
         }
@@ -3726,7 +3726,7 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
 
         // skip spaces to make rendering a bit faster
         if (skip_spaces) {
-            if (el->is_white_space()) {
+            if (el->is_whitespace()) {
                 if (was_space) {
                     el->skip(true);
                     continue;

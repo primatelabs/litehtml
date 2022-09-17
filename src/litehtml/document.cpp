@@ -52,7 +52,7 @@
 #include "litehtml/element/link_element.h"
 #include "litehtml/element/paragraph_element.h"
 #include "litehtml/element/script_element.h"
-#include "litehtml/element/space_element.h"
+#include "litehtml/element/whitespace_element.h"
 #include "litehtml/element/style_element.h"
 #include "litehtml/element/table_element.h"
 #include "litehtml/element/td_element.h"
@@ -115,7 +115,7 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
                 str.clear();
             }
             str += (wchar_t)c;
-            elements.push_back(new SpaceElement(litehtml_from_wchar(str.c_str()), document));
+            elements.push_back(new WhitespaceElement(litehtml_from_wchar(str.c_str()), document));
             str.clear();
         }
         // CJK character range
@@ -790,7 +790,7 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
         case GUMBO_NODE_WHITESPACE: {
             String str = node->v.text.text;
             for (size_t i = 0; i < str.length(); i++) {
-                elements.push_back(new SpaceElement(str.substr(i, 1).c_str(), this));
+                elements.push_back(new WhitespaceElement(str.substr(i, 1).c_str(), this));
             }
         } break;
         default:
@@ -869,8 +869,8 @@ void Document::fix_table_children(Element::ptr& el_ptr,
 
     while (cur_iter != el_ptr->m_children.end()) {
         if ((*cur_iter)->get_display() != disp) {
-            if (!(*cur_iter)->is_white_space() ||
-                ((*cur_iter)->is_white_space() && !tmp.empty())) {
+            if (!(*cur_iter)->is_whitespace() ||
+                ((*cur_iter)->is_whitespace() && !tmp.empty())) {
                 if (tmp.empty()) {
                     first_iter = cur_iter;
                 }
@@ -915,7 +915,7 @@ void Document::fix_table_parent(Element::ptr& el_ptr,
                 if (cur == parent->m_children.begin())
                     break;
                 cur--;
-                if ((*cur)->is_white_space() || (*cur)->get_display() == el_disp) {
+                if ((*cur)->is_whitespace() || (*cur)->get_display() == el_disp) {
                     first = cur;
                 } else {
                     break;
@@ -929,7 +929,7 @@ void Document::fix_table_parent(Element::ptr& el_ptr,
                 if (cur == parent->m_children.end())
                     break;
 
-                if ((*cur)->is_white_space() || (*cur)->get_display() == el_disp) {
+                if ((*cur)->is_whitespace() || (*cur)->get_display() == el_disp) {
                     last = cur;
                 } else {
                     break;

@@ -28,22 +28,22 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "litehtml/element/space_element.h"
+#include "litehtml/element/whitespace_element.h"
 
 #include "litehtml/document.h"
 
 namespace litehtml {
 
-SpaceElement::SpaceElement(const tchar_t* text, Document* doc)
+WhitespaceElement::WhitespaceElement(const tchar_t* text, Document* doc)
 : TextElement(text, doc)
 {
 }
 
-SpaceElement::~SpaceElement()
+WhitespaceElement::~WhitespaceElement()
 {
 }
 
-bool SpaceElement::is_white_space() const
+bool WhitespaceElement::is_whitespace() const
 {
     WhiteSpace ws = get_white_space();
     if (ws == kWhiteSpaceNormal || ws == kWhiteSpaceNowrap ||
@@ -53,7 +53,7 @@ bool SpaceElement::is_white_space() const
     return false;
 }
 
-bool SpaceElement::is_break() const
+bool WhitespaceElement::is_break() const
 {
     WhiteSpace ws = get_white_space();
     if (ws == kWhiteSpacePre || ws == kWhiteSpacePreLine ||

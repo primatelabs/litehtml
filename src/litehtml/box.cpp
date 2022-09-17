@@ -147,9 +147,9 @@ void LineBox::add_element(const Element::ptr& el)
     el->m_skip = false;
     el->m_box = nullptr;
     bool add = true;
-    if ((m_items.empty() && el->is_white_space()) || el->is_break()) {
+    if ((m_items.empty() && el->is_whitespace()) || el->is_break()) {
         el->m_skip = true;
-    } else if (el->is_white_space()) {
+    } else if (el->is_whitespace()) {
         if (have_last_space()) {
             add = false;
             el->m_skip = true;
@@ -180,7 +180,7 @@ void LineBox::finish(bool last_box)
     }
 
     for (auto i = m_items.rbegin(); i != m_items.rend(); i++) {
-        if ((*i)->is_white_space() || (*i)->is_break()) {
+        if ((*i)->is_whitespace() || (*i)->is_break()) {
             if (!(*i)->m_skip) {
                 (*i)->m_skip = true;
                 m_width -= (*i)->width();
@@ -336,7 +336,7 @@ bool LineBox::have_last_space()
 {
     bool ret = false;
     for (auto i = m_items.rbegin(); i != m_items.rend() && !ret; i++) {
-        if ((*i)->is_white_space() || (*i)->is_break()) {
+        if ((*i)->is_whitespace() || (*i)->is_break()) {
             ret = true;
         } else {
             break;

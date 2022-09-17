@@ -61,13 +61,13 @@ enum ElementType {
     kElementLink,
     kElementParagraph,
     kElementScript,
-    kElementSpace,
     kElementStyle,
     kElementTable,
     kElementTD,
     kElementText,
     kElementTitle,
     kElementTR,
+    kElementWhitespace,
 };
 
 String element_type_name(ElementType type);
@@ -336,7 +336,7 @@ public:
         const tchar_t* def = nullptr) const;
     virtual void apply_stylesheet(const CSSStylesheet& stylesheet);
     virtual void refresh_styles();
-    virtual bool is_white_space() const;
+    virtual bool is_whitespace() const;
     virtual bool is_body() const;
     virtual bool is_break() const;
     virtual int get_baseline();

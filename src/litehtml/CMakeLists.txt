@@ -57,7 +57,7 @@ set(SOURCE_LITEHTML
     element/link_element.cpp
     element/paragraph_element.cpp
     element/script_element.cpp
-    element/space_element.cpp
+    element/whitespace_element.cpp
     element/style_element.cpp
     element/table_element.cpp
     element/td_element.cpp
@@ -126,7 +126,7 @@ set(HEADER_LITEHTML
     include/litehtml/element/link_element.h
     include/litehtml/element/paragraph_element.h
     include/litehtml/element/script_element.h
-    include/litehtml/element/space_element.h
+    include/litehtml/element/whitespace_element.h
     include/litehtml/element/style_element.h
     include/litehtml/element/table_element.h
     include/litehtml/element/td_element.h

@@ -31,7 +31,7 @@
 #include "litehtml/element/before_after_element.h"
 
 #include "litehtml/element/image_element.h"
-#include "litehtml/element/space_element.h"
+#include "litehtml/element/whitespace_element.h"
 #include "litehtml/element/text_element.h"
 #include "litehtml/html.h"
 
@@ -115,7 +115,7 @@ void BeforeAfterBaseElement::add_text(const tstring& txt)
                     word.clear();
                 }
 
-                Element* element = new SpaceElement(txt.substr(i, 1).c_str(), get_document());
+                Element* element = new WhitespaceElement(txt.substr(i, 1).c_str(), get_document());
                 append_child(element);
             } else {
                 word += convert_escape(esc.c_str() + 1);
