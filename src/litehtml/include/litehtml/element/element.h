@@ -85,16 +85,31 @@ public:
     typedef std::weak_ptr<litehtml::Element> weak_ptr;
 
 protected:
+    // Pointer to the document that contains the element.
     Document* m_doc;
 
+    // Pointer to the parent element.
     Element* m_parent;
 
+    // Pointer to the box that contains the element.
     Box* m_box;
+
+    // Pointers to the children of the element.
     ElementsVector m_children;
+
+    // Element position. The origin is unclear (it may be relative to the
+    // parent element, it may be relative to the document, it may depend on
+    // the CSS position attribute).
     Position position_;
+
     margins m_margins;
+
     margins m_padding;
+
     margins m_borders;
+
+    // Flag used by LineBox (and elsewhere). May control visibility since
+    // skip is always true for certain elements (e.g., comments).
     bool m_skip;
 
     virtual void select_all(const CSSSelector& selector, ElementsVector& res);
