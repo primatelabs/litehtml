@@ -397,7 +397,6 @@ int Document::render(int max_width)
     if (root_) {
         ret = root_->render(0, 0, max_width);
         if (root_->fetch_positioned()) {
-            m_fixed_boxes.clear();
             root_->render_positioned();
         }
         m_size.width = 0;
@@ -671,16 +670,6 @@ Element::ptr Document::create_element(const tchar_t* tag_name,
     }
 
     return newTag;
-}
-
-void Document::get_fixed_boxes(std::vector<Position>& fixed_boxes)
-{
-    fixed_boxes = m_fixed_boxes;
-}
-
-void Document::add_fixed_box(const Position& pos)
-{
-    m_fixed_boxes.push_back(pos);
 }
 
 bool Document::media_changed()

@@ -3001,12 +3001,6 @@ void HTMLElement::render_positioned()
                 el->render(el->left(), el->top(), el->width(), true);
                 el->position_ = pos;
             }
-
-            if (position == kPositionFixed) {
-                Position fixed_pos;
-                el->get_redraw_box(fixed_pos);
-                get_document()->add_fixed_box(fixed_pos);
-            }
         }
 
         el->render_positioned();

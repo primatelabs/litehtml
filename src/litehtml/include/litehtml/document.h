@@ -94,8 +94,6 @@ private:
 
     litehtml::Size m_size;
 
-    std::vector<Position> m_fixed_boxes;
-
     MediaQueryList::vector m_media_lists;
 
     Element::ptr m_over_element;
@@ -180,8 +178,7 @@ public:
     bool on_mouse_leave(std::vector<Position>& redraw_boxes);
     litehtml::Element::ptr create_element(const tchar_t* tag_name,
         const string_map& attributes);
-    void get_fixed_boxes(std::vector<Position>& fixed_boxes);
-    void add_fixed_box(const Position& pos);
+
     void add_media_list(MediaQueryList::ptr list);
     bool media_changed();
     bool lang_changed();
