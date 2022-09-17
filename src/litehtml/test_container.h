@@ -105,7 +105,7 @@ public:
 
     virtual litehtml::tstring import_css(const litehtml::URL& url) override;
 
-    virtual void get_client_rect(litehtml::Position& client) const override;
+    virtual litehtml::Position get_client_rect() const override;
 };
 
 #endif // TEST_TEST_CONTAINER_H__

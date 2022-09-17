@@ -637,8 +637,7 @@ void HeadlessContainer::draw_list_marker(uintptr_t hdc,
 
 void HeadlessContainer::get_media_features(litehtml::MediaFeatures& media) const
 {
-    litehtml::Position client;
-    get_client_rect(client);
+    litehtml::Position client = get_client_rect();
     media.type = litehtml::kMediaTypeScreen;
     media.width = client.width;
     media.height = client.height;
@@ -702,10 +701,14 @@ litehtml::tstring HeadlessContainer::import_css(const litehtml::URL& url)
     return response.body;
 }
 
-void HeadlessContainer::get_client_rect(litehtml::Position& client) const
+litehtml::Position HeadlessContainer::get_client_rect() const
 {
+    litehtml::Position client;
+
     client.width = kDefaultWidth;
     client.height = kDefaultHeight;
+
+    return client;
 }
 
 } // namespace headless

@@ -2817,8 +2817,7 @@ int HTMLElement::get_zindex() const
 
 void HTMLElement::render_positioned()
 {
-    Position wnd_position;
-    get_document()->container()->get_client_rect(wnd_position);
+    Position wnd_position = get_document()->container()->get_client_rect();
 
     ElementPosition el_position;
     bool process;
@@ -3179,8 +3178,7 @@ void HTMLElement::calc_document_size(Size& sz, int x /*= 0*/, int y /*= 0*/)
 
         // root element (<html>) must to cover entire window
         if (!have_parent()) {
-            Position client_pos;
-            get_document()->container()->get_client_rect(client_pos);
+            Position client_pos = get_document()->container()->get_client_rect();
             position_.height = std::max(sz.height, client_pos.height) -
                            content_margins_top() - content_margins_bottom();
             position_.width = std::max(sz.width, client_pos.width) -
@@ -4245,8 +4243,7 @@ void HTMLElement::draw_children_box(uintptr_t hdc,
         doc->container()->set_clip(pos, border_radii, true, true);
     }
 
-    Position browser_wnd;
-    doc->container()->get_client_rect(browser_wnd);
+    Position browser_wnd = doc->container()->get_client_rect();
 
     Element::ptr el;
     for (auto& item : m_children) {

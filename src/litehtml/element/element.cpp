@@ -204,8 +204,7 @@ bool Element::get_predefined_height(int& p_height) const
     if (h.units() == kCSSUnitsPercent) {
         Element::ptr el_parent = parent();
         if (!el_parent) {
-            Position client_pos;
-            get_document()->container()->get_client_rect(client_pos);
+            Position client_pos = get_document()->container()->get_client_rect();
             p_height = h.calc_percent(client_pos.height);
             return true;
         } else {
@@ -262,8 +261,7 @@ int Element::calc_width(int defVal) const
     if (w.units() == kCSSUnitsPercent) {
         Element::ptr el_parent = parent();
         if (!el_parent) {
-            Position client_pos;
-            get_document()->container()->get_client_rect(client_pos);
+            Position client_pos = get_document()->container()->get_client_rect();
             return w.calc_percent(client_pos.width);
         } else {
             int pw = el_parent->calc_width(defVal);

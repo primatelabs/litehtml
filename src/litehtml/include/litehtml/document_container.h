@@ -108,7 +108,7 @@ public:
 
     virtual void del_clip() = 0;
 
-    virtual void get_client_rect(litehtml::Position& client) const = 0;
+    virtual litehtml::Position get_client_rect() const = 0;
 
     virtual void get_media_features(litehtml::MediaFeatures& media) const = 0;
 

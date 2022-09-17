@@ -151,14 +151,14 @@ void test_container::del_clip()
 {
 }
 
-void test_container::get_client_rect(litehtml::Position& client) const
+litehtml::Position test_container::get_client_rect() const
 {
+    return litehtml::Position();
 }
 
 void test_container::get_media_features(litehtml::MediaFeatures& media) const
 {
-    litehtml::Position client;
-    get_client_rect(client);
+    litehtml::Position client = get_client_rect();
     media.type = litehtml::kMediaTypeScreen;
     media.width = client.width;
     media.height = client.height;
