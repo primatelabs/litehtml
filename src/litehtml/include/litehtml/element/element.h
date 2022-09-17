@@ -37,6 +37,7 @@
 #include "litehtml/color.h"
 #include "litehtml/css/css_offsets.h"
 #include "litehtml/css/css_stylesheet.h"
+#include "litehtml/debug/json.h"
 
 namespace litehtml {
 
@@ -359,6 +360,8 @@ public:
 
     virtual ElementType type() const;
 
+    String type_name() const;
+
     virtual const tchar_t* get_tagName() const;
     virtual void set_tagName(const tchar_t* tag);
     virtual void set_data(const tchar_t* data);
@@ -481,8 +484,11 @@ public:
         DrawFlag flag,
         int zindex);
     virtual const Background* get_background(bool own_only = false);
-};
 
+#if defined(ENABLE_JSON)
+    virtual nlohmann::json json() const;
+#endif // ENABLE_JSON
+};
 
 } // namespace litehtml
 

@@ -37,6 +37,7 @@
 #include "litehtml/color.h"
 #include "litehtml/context.h"
 #include "litehtml/css/css_style.h"
+#include "litehtml/debug/json.h"
 #include "litehtml/element/element.h"
 #include "litehtml/types.h"
 #include "litehtml/url.h"
@@ -246,6 +247,11 @@ private:
     void fix_table_parent(Element::ptr& el_ptr,
         Display disp,
         const tchar_t* disp_str);
+
+public:
+#if defined(ENABLE_JSON)
+    nlohmann::json json() const;
+#endif // ENABLE_JSON
 };
 
 } // namespace litehtml

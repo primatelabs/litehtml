@@ -1020,4 +1020,15 @@ void Document::append_children_from_utf8(Element& parent, const char* str)
     }
 }
 
+#if defined(ENABLE_JSON)
+
+nlohmann::json Document::json() const
+{
+    return nlohmann::json{
+        {"root", root_->json()}
+    };
+}
+
+#endif // ENABLE_JSON
+
 } // namespace litehtml

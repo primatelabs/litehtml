@@ -37,6 +37,7 @@
 #include <string>
 #include <vector>
 
+#include "litehtml/debug/json.h"
 #include "litehtml/string.h"
 
 namespace litehtml {
@@ -92,24 +93,19 @@ struct Size {
 };
 
 struct Position {
-    typedef std::vector<Position> vector;
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
 
-    int x;
-    int y;
-    int width;
-    int height;
-
-    Position()
-    {
-        x = y = width = height = 0;
-    }
+    Position() = default;
 
     Position(int x, int y, int width, int height)
+    : x(x)
+    , y(y)
+    , width(width)
+    , height(height)
     {
-        this->x = x;
-        this->y = y;
-        this->width = width;
-        this->height = height;
     }
 
     int right() const
@@ -191,6 +187,19 @@ struct Position {
         }
         return false;
     }
+
+#if defined(ENABLE_JSON)
+    virtual nlohmann::json json() const
+    {
+        return nlohmann::json{
+            {"x", x},
+            {"y", y},
+            {"width", width},
+            {"height", height},
+        };
+    }
+#endif // ENABLE_JSON
+
 };
 
 struct FontMetrics {

@@ -664,6 +664,11 @@ ElementType Element::type() const
     return kElement;
 }
 
+String Element::type_name() const
+{
+    return element_type_name(type());
+}
+
 const tchar_t* Element::get_tagName() const
 {
     return _t("");
@@ -864,5 +869,29 @@ bool Element::have_inline_child() const
 {
     return false;
 }
+
+#if defined(ENABLE_JSON)
+
+nlohmann::json Element::json() const
+{
+    nlohmann::json result{
+        {"type", type_name()},
+        {"position", position_.json()}
+    };
+
+    if (type() == kElementText) {
+        String text;
+        get_text(text);
+        result["text"] = text;
+    }
+
+    if (!m_children.empty()) {
+        result["children"] = json_vector(m_children);
+    }
+
+    return result;
+}
+
+#endif
 
 } // namespace litehtml
