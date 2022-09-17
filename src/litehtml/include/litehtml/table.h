@@ -179,7 +179,7 @@ struct table_cell {
     int max_height;
     int width;
     int height;
-    margins borders;
+    Margins borders;
 
     table_cell()
     {
@@ -273,10 +273,10 @@ public:
         bool is_auto,
         int& min_table_width,
         int& max_table_width);
-    void calc_horizontal_positions(margins& table_borders,
+    void calc_horizontal_positions(Margins& table_borders,
         border_collapse bc,
         int bdr_space_x);
-    void calc_vertical_positions(margins& table_borders,
+    void calc_vertical_positions(Margins& table_borders,
         border_collapse bc,
         int bdr_space_y);
     void calc_rows_height(int blockHeight, int borderSpacingY);

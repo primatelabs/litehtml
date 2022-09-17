@@ -94,7 +94,7 @@ struct BorderRadii {
 
     BorderRadii() = default;
 
-    void operator+=(const margins& mg)
+    void operator+=(const Margins& mg)
     {
         top_left.x += mg.left;
         top_left.y += mg.top;
@@ -107,7 +107,7 @@ struct BorderRadii {
         fix_values();
     }
 
-    void operator-=(const margins& mg)
+    void operator-=(const Margins& mg)
     {
         top_left.x -= mg.left;
         top_left.y -= mg.top;

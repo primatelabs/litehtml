@@ -102,11 +102,11 @@ protected:
     // the CSS position attribute).
     Position position_;
 
-    margins m_margins;
+    Margins m_margins;
 
-    margins m_padding;
+    Margins m_padding;
 
-    margins m_borders;
+    Margins m_borders;
 
     // Flag used by LineBox (and elsewhere). May control visibility since
     // skip is always true for certain elements (e.g., comments).
@@ -188,15 +188,9 @@ public:
         return content_margins_top() + content_margins_bottom();
     }
 
-    litehtml::margins get_margins() const
+    litehtml::Margins get_margins() const
     {
-        margins ret;
-        ret.left = margin_left();
-        ret.right = margin_right();
-        ret.top = margin_top();
-        ret.bottom = margin_bottom();
-
-        return ret;
+        return m_margins;
     }
 
     int margin_top() const
@@ -219,7 +213,7 @@ public:
         return m_margins.right;
     }
 
-    litehtml::margins get_paddings() const
+    litehtml::Margins get_paddings() const
     {
         return m_padding;
     }
@@ -245,7 +239,7 @@ public:
     }
 
 
-    litehtml::margins get_borders() const
+    litehtml::Margins get_borders() const
     {
         return m_borders;
     }

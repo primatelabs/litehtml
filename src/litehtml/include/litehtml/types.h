@@ -58,21 +58,19 @@ const unsigned int font_decoration_overline = 0x04;
 typedef unsigned char byte;
 typedef unsigned int ucode_t;
 
-struct margins {
-    int left;
-    int right;
-    int top;
-    int bottom;
+struct Margins {
+    int left = 0;
+    int right = 0;
+    int top = 0;
+    int bottom = 0;
 
-    margins()
-    {
-        left = right = top = bottom = 0;
-    }
+    Margins() = default;
 
     int width() const
     {
         return left + right;
     }
+
     int height() const
     {
         return top + bottom;
@@ -128,7 +126,7 @@ struct Position {
         return y;
     }
 
-    void operator+=(const margins& mg)
+    void operator+=(const Margins& mg)
     {
         x -= mg.left;
         y -= mg.top;
@@ -136,7 +134,7 @@ struct Position {
         height += mg.top + mg.bottom;
     }
 
-    void operator-=(const margins& mg)
+    void operator-=(const Margins& mg)
     {
         x += mg.left;
         y += mg.top;

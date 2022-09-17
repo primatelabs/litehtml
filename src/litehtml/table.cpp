@@ -375,7 +375,7 @@ void litehtml::table_grid::clear()
     m_rows.clear();
 }
 
-void litehtml::table_grid::calc_horizontal_positions(margins& table_borders,
+void litehtml::table_grid::calc_horizontal_positions(Margins& table_borders,
     border_collapse bc,
     int bdr_space_x)
 {
@@ -404,7 +404,7 @@ void litehtml::table_grid::calc_horizontal_positions(margins& table_borders,
     }
 }
 
-void litehtml::table_grid::calc_vertical_positions(margins& table_borders,
+void litehtml::table_grid::calc_vertical_positions(Margins& table_borders,
     border_collapse bc,
     int bdr_space_y)
 {
