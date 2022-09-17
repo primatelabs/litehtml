@@ -52,9 +52,7 @@ TEST(DocumentTest, Render)
     test_container container;
     Document* doc =
         Document::createFromString(_t("<html>Body</html>"), &container, &ctx);
-    doc->render(100, kRenderFixedOnly);
-    doc->render(100, kRenderNoFixed);
-    doc->render(100, kRenderAll);
+    doc->render(100);
 }
 
 TEST(DocumentTest, Draw)

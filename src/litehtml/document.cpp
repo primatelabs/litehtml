@@ -391,23 +391,18 @@ uintptr_t Document::get_font(const tchar_t* name,
     return add_font(name, size, weight, style, decoration, fm);
 }
 
-int Document::render(int max_width, RenderType rt)
+int Document::render(int max_width)
 {
     int ret = 0;
     if (root_) {
-        if (rt == kRenderFixedOnly) {
+        ret = root_->render(0, 0, max_width);
+        if (root_->fetch_positioned()) {
             m_fixed_boxes.clear();
-            root_->render_positioned(rt);
-        } else {
-            ret = root_->render(0, 0, max_width);
-            if (root_->fetch_positioned()) {
-                m_fixed_boxes.clear();
-                root_->render_positioned(rt);
-            }
-            m_size.width = 0;
-            m_size.height = 0;
-            root_->calc_document_size(m_size);
+            root_->render_positioned();
         }
+        m_size.width = 0;
+        m_size.height = 0;
+        root_->calc_document_size(m_size);
     }
     return ret;
 }

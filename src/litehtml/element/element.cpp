@@ -483,7 +483,7 @@ void Element::draw_stacking_context(uintptr_t,
 {
 }
 
-void Element::render_positioned(RenderType)
+void Element::render_positioned()
 {
 }
 

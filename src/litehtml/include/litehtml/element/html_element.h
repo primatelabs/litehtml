@@ -145,7 +145,7 @@ public:
     virtual int render_inline(const Element::ptr& container, int max_width) override;
     virtual int place_element(const Element::ptr& el, int max_width) override;
     virtual bool fetch_positioned() override;
-    virtual void render_positioned(RenderType rt = kRenderAll) override;
+    virtual void render_positioned() override;
 
     int new_box(const Element::ptr& el, int max_width, line_context& line_ctx);
 

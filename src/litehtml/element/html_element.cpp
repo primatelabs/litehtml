@@ -2784,28 +2784,32 @@ void HTMLElement::draw_children(uintptr_t hdc,
     }
 }
 
+//
 bool HTMLElement::fetch_positioned()
 {
-    bool ret = false;
+    bool result = false;
 
     m_positioned.clear();
 
-    ElementPosition el_pos;
+    for (auto& element : m_children) {
+        ElementPosition position = element->get_element_position();
+        if (position != kPositionStatic) {
+            add_positioned(element);
+        }
 
-    for (auto& el : m_children) {
-        el_pos = el->get_element_position();
-        if (el_pos != kPositionStatic) {
-            add_positioned(el);
+        // FIXME: Should this be position != kPositionStatic to match the
+        // check above? It's not clear to me why fetch_positioned() would
+        // add elements to m_positioned but not return true.
+        if (position == kPositionAbsolute || position == kPositionFixed) {
+            result = true;
         }
-        if (!ret && (el_pos == kPositionAbsolute ||
-                        el_pos == kPositionFixed)) {
-            ret = true;
-        }
-        if (el->fetch_positioned()) {
-            ret = true;
+
+        if (element->fetch_positioned()) {
+            result = true;
         }
     }
-    return ret;
+
+    return result;
 }
 
 int HTMLElement::get_zindex() const
@@ -2813,7 +2817,7 @@ int HTMLElement::get_zindex() const
     return m_z_index;
 }
 
-void HTMLElement::render_positioned(RenderType rt)
+void HTMLElement::render_positioned()
 {
     Position wnd_position;
     get_document()->container()->get_client_rect(wnd_position);
@@ -2825,14 +2829,8 @@ void HTMLElement::render_positioned(RenderType rt)
 
         process = false;
         if (el->get_display() != kDisplayNone) {
-            if (el_position == kPositionAbsolute) {
-                if (rt != kRenderFixedOnly) {
-                    process = true;
-                }
-            } else if (el_position == kPositionFixed) {
-                if (rt != kRenderNoFixed) {
-                    process = true;
-                }
+            if (el_position == kPositionAbsolute || el_position == kPositionFixed) {
+                process = true;
             }
         }
 

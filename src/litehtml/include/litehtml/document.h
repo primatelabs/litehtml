@@ -141,7 +141,7 @@ public:
         const tchar_t* decoration,
         FontMetrics* fm);
 
-    int render(int max_width, RenderType rt = kRenderAll);
+    int render(int max_width);
 
     void draw(uintptr_t hdc, int x, int y, const Position* clip);
 

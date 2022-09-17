@@ -348,7 +348,7 @@ public:
     virtual void calc_auto_margins(int parent_width);
     virtual void apply_vertical_align();
     virtual bool fetch_positioned();
-    virtual void render_positioned(RenderType rt = kRenderAll);
+    virtual void render_positioned();
 
     // Returns true if the parent elemenet appends the child element and
     // adopts ownership of it, false otherwise.

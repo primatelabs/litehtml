@@ -42,5 +42,5 @@ TEST(LayoutGlobal, Smoke)
         _t("<html>Body</html>"),
         &container,
         &ctx);
-    doc->render(50, kRenderAll);
+    doc->render(50);
 }
