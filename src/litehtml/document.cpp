@@ -66,6 +66,7 @@
 #include "litehtml/utf8_strings.h"
 #include "litehtml/logging.h"
 #include "litehtml/text.h"
+#include "litehtml/string_view.h"
 
 #if defined(USE_ICU)
 
@@ -104,35 +105,6 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
 
 #else
 
-struct StringView {
-    const char* begin = nullptr;
-    const char* end = nullptr;
-
-    StringView() = default;
-
-    const char* ptr()
-    {
-        return begin;
-    }
-
-    size_t length()
-    {
-        return (end - begin);
-    }
-
-    void reset()
-    {
-        begin = nullptr;
-        end = nullptr;
-    }
-
-
-    bool empty()
-    {
-        return (begin == end);
-    }
-};
-
 void split_text_node(Document* document, ElementsVector& elements, const char* text)
 {
     const char* end = text + strlen(text);
@@ -148,21 +120,22 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
 
         if (is_whitespace(c)) {
             if (!str.empty()) {
-                elements.push_back(new TextElement(document, str.ptr(), str.length()));
-                str.reset();
+                elements.push_back(new TextElement(document, str.data(), str.length()));
+                str = StringView();
             }
             elements.push_back(new WhitespaceElement(document, p, 1));
         } else {
-            if (!str.begin) {
-                str.begin = prev;
+            if (str.empty()) {
+              str = StringView(prev, (p - prev));
+            } else {
+              str = StringView(str.data(), (p - str.data()));
             }
-            str.end = p;
         }
     }
 
     if (!str.empty()) {
-        elements.push_back(new TextElement(document, str.ptr(), str.length()));
-        str.reset();
+        elements.push_back(new TextElement(document, str.data(), str.length()));
+        str = StringView();
     }
 }
 
