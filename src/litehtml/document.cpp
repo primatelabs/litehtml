@@ -110,6 +110,7 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
     const char* end = text + strlen(text);
 
     StringView str;
+    StringView wss;
 
     utf8::iterator<const char*> iterator(text, text, text + strlen(text));
 
@@ -123,12 +124,20 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
                 elements.push_back(new TextElement(document, str.data(), str.length()));
                 str = StringView();
             }
-            elements.push_back(new WhitespaceElement(document, p, 1));
-        } else {
-            if (str.empty()) {
-              str = StringView(prev, (p - prev));
+            if (wss.empty()) {
+                wss = StringView(prev, (p - prev));
             } else {
-              str = StringView(str.data(), (p - str.data()));
+                wss = StringView(wss.data(), (p - wss.data()));
+            }
+        } else {
+            if (!wss.empty()) {
+                elements.push_back(new WhitespaceElement(document, wss.data(), wss.length()));
+                wss = StringView();
+            }
+            if (str.empty()) {
+                str = StringView(prev, (p - prev));
+            } else {
+                str = StringView(str.data(), (p - str.data()));
             }
         }
     }
@@ -136,6 +145,11 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
     if (!str.empty()) {
         elements.push_back(new TextElement(document, str.data(), str.length()));
         str = StringView();
+    }
+
+    if (!wss.empty()) {
+        elements.push_back(new WhitespaceElement(document, wss.data(), wss.length()));
+        wss = StringView();
     }
 }
 
@@ -791,10 +805,8 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
             elements.push_back(ret);
         } break;
         case GUMBO_NODE_WHITESPACE: {
-            String str = node->v.text.text;
-            for (size_t i = 0; i < str.length(); i++) {
-                elements.push_back(new WhitespaceElement(this, str.substr(i, 1).c_str()));
-            }
+            const char* text = node->v.text.text;
+            elements.push_back(new WhitespaceElement(this, text));
         } break;
         default:
             break;
