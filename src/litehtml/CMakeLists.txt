@@ -217,6 +217,9 @@ if (ENABLE_JSON)
     target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/json/include)
 endif()
 
+# UTFCPP
+target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/utfcpp/source)
+
 # install and export
 install(TARGETS ${PROJECT_NAME}
     EXPORT litehtmlTargets
