@@ -27,51 +27,19 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "litehtml/tstring_view.h"
+#include "litehtml/string_view.h"
 
-#include <gtest/gtest.h>
+namespace litehtml {
 
-#include "litehtml/logging.h"
-
-using namespace litehtml;
-
-TEST(TStringViewTest, DefaultConstructor)
+std::basic_ostream<StringView::value_type>& operator<<(
+    std::basic_ostream<StringView::value_type>& os,
+    StringView str)
 {
-    tstring_view view;
-
-    EXPECT_EQ(nullptr, view.data());
-    EXPECT_EQ(0, view.size());
-    EXPECT_TRUE(view.empty());
-}
-
-TEST(TStringViewTest, Constructor)
-{
-    constexpr size_t offset = 5;
-    constexpr size_t length = 10;
-
-    tstring string = _t("the quick brown fox jumps over the lazy dog");
-    tstring_view view(string.data() + offset, length);
-
-    EXPECT_EQ(string.data() + offset, view.data());
-    EXPECT_EQ(length, view.size());
-    EXPECT_FALSE(view.empty());
-
-    for (size_t i = 0; i < view.size(); i++) {
-        EXPECT_EQ(string[offset + i], view[i]);
+    if (os.good()) {
+        os.write(str.data(), str.size());
     }
+
+    return os;
 }
 
-TEST(TStringViewTest, RangeForLoop)
-{
-    constexpr size_t offset = 5;
-    constexpr size_t length = 10;
-
-    tstring string = _t("the quick brown fox jumps over the lazy dog");
-    tstring_view view(string.data() + offset, length);
-
-    for (auto c : view) {
-        // TODO: How can we automatically (rather than manually) verify the
-        // iterator is working properly here?
-        LOG(INFO) << c;
-    }
-}
+} // namespace litehtml

@@ -36,25 +36,25 @@
 
 namespace litehtml {
 
-// tstring_view is a string reference type that provides a view into a string
+// StringView is a string reference type that provides a view into a string
 // that is owned elsewhere (e.g., by a std::string object).
 
-// tstring_view implements the same interface as std::base_string_view in the
+// StringView implements the same interface as std::base_string_view in the
 // standard library.  When litehtml moves to C++17 consider replacing the
-// tstring_view implementation with the standard library implementations
+// StringView implementation with the standard library implementations
 // (e.g., via a using statement).
 
-class tstring_view {
+class StringView {
 public:
-    using value_type = tchar_t;
+    using value_type = char;
 
-    using pointer = tchar_t*;
+    using pointer = char*;
 
-    using const_pointer = const tchar_t*;
+    using const_pointer = const char*;
 
-    using reference = tchar_t&;
+    using reference = char&;
 
-    using const_reference = const tchar_t&;
+    using const_reference = const char&;
 
     using iterator = const_pointer;
 
@@ -65,11 +65,11 @@ public:
     using difference_type = ptrdiff_t;
 
 public:
-    tstring_view() = default;
+    StringView() = default;
 
-    tstring_view(const tstring_view& other) = default;
+    StringView(const StringView& other) = default;
 
-    tstring_view(const_pointer s, size_type size)
+    StringView(const_pointer s, size_type size)
     : data_(s)
     , size_(size)
     {
@@ -126,11 +126,9 @@ private:
     size_type size_ = 0;
 };
 
-std::basic_ostream<tstring_view::value_type>& operator<<(
-    std::basic_ostream<tstring_view::value_type>&,
-    tstring_view str);
-
-using StringView = tstring_view;
+std::basic_ostream<StringView::value_type>& operator<<(
+    std::basic_ostream<StringView::value_type>&,
+    StringView str);
 
 } // namespace litehtml
 
