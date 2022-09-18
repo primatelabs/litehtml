@@ -37,7 +37,12 @@ namespace litehtml {
 
 class WhitespaceElement : public TextElement {
 public:
-    WhitespaceElement(const tchar_t* text, Document* doc);
+    explicit WhitespaceElement(Document* document);
+
+    WhitespaceElement(Document* document, const tchar_t* text);
+
+    WhitespaceElement(Document* document, const tchar_t* text, size_t length);
+
     virtual ~WhitespaceElement() override;
 
     virtual ElementType type() const override

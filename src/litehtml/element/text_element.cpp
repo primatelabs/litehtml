@@ -38,15 +38,25 @@
 
 namespace litehtml {
 
-TextElement::TextElement(const tchar_t* text, Document* doc)
-: Element(doc)
+TextElement::TextElement(Document* document)
+: Element(document)
+{
+}
+
+TextElement::TextElement(Document* document, const char* text)
+: Element(document)
 {
     if (text) {
         text_ = text;
     }
-    text_transform_ = kTextTransformNone;
-    use_transformed_ = false;
-    draw_spaces_ = true;
+}
+
+TextElement::TextElement(Document* document, const char* text, size_t length)
+: Element(document)
+{
+    if (text) {
+        text_ = String(text, length);
+    }
 }
 
 TextElement::~TextElement()

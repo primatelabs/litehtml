@@ -44,14 +44,20 @@ protected:
 
     Size size_;
 
-    TextTransform text_transform_;
+    TextTransform text_transform_ = kTextTransformNone;
 
-    bool use_transformed_;
+    bool use_transformed_ = false;
 
-    bool draw_spaces_;
+    bool draw_spaces_ = true;
 
 public:
-    TextElement(const tchar_t* text, Document* doc);
+    TextElement() = delete;
+
+    explicit TextElement(Document* document);
+
+    TextElement(Document* document, const char* text);
+
+    TextElement(Document* document, const char* text, size_t length);
 
     virtual ~TextElement() override;
 

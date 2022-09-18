@@ -34,8 +34,18 @@
 
 namespace litehtml {
 
-WhitespaceElement::WhitespaceElement(const tchar_t* text, Document* doc)
-: TextElement(text, doc)
+WhitespaceElement::WhitespaceElement(Document* document)
+: TextElement(document)
+{
+}
+
+WhitespaceElement::WhitespaceElement(Document* document, const char* text)
+: TextElement(document, text)
+{
+}
+
+WhitespaceElement::WhitespaceElement(Document* document, const char* text, size_t length)
+: TextElement(document, text, length)
 {
 }
 
