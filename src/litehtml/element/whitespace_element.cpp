@@ -1,3 +1,4 @@
+// Copyright (c) 2013, Yuri Kobets (tordex)
 // Copyright (C) 2020-2021 Primate Labs Inc.
 // All rights reserved.
 //
@@ -27,51 +28,51 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "litehtml/tstring_view.h"
+#include "litehtml/element/whitespace_element.h"
 
-#include <gtest/gtest.h>
+#include "litehtml/document.h"
 
-#include "litehtml/logging.h"
+namespace litehtml {
 
-using namespace litehtml;
-
-TEST(TStringViewTest, DefaultConstructor)
+WhitespaceElement::WhitespaceElement(Document* document)
+: TextElement(document)
 {
-    tstring_view view;
-
-    EXPECT_EQ(nullptr, view.data());
-    EXPECT_EQ(0, view.size());
-    EXPECT_TRUE(view.empty());
 }
 
-TEST(TStringViewTest, Constructor)
+WhitespaceElement::WhitespaceElement(Document* document, const char* text)
+: TextElement(document, text)
 {
-    constexpr size_t offset = 5;
-    constexpr size_t length = 10;
+}
 
-    tstring string = _t("the quick brown fox jumps over the lazy dog");
-    tstring_view view(string.data() + offset, length);
+WhitespaceElement::WhitespaceElement(Document* document, const char* text, size_t length)
+: TextElement(document, text, length)
+{
+}
 
-    EXPECT_EQ(string.data() + offset, view.data());
-    EXPECT_EQ(length, view.size());
-    EXPECT_FALSE(view.empty());
+WhitespaceElement::~WhitespaceElement()
+{
+}
 
-    for (size_t i = 0; i < view.size(); i++) {
-        EXPECT_EQ(string[offset + i], view[i]);
+bool WhitespaceElement::is_whitespace() const
+{
+    WhiteSpace ws = get_white_space();
+    if (ws == kWhiteSpaceNormal || ws == kWhiteSpaceNowrap ||
+        ws == kWhiteSpacePreLine) {
+        return true;
     }
+    return false;
 }
 
-TEST(TStringViewTest, RangeForLoop)
+bool WhitespaceElement::is_break() const
 {
-    constexpr size_t offset = 5;
-    constexpr size_t length = 10;
-
-    tstring string = _t("the quick brown fox jumps over the lazy dog");
-    tstring_view view(string.data() + offset, length);
-
-    for (auto c : view) {
-        // TODO: How can we automatically (rather than manually) verify the
-        // iterator is working properly here?
-        LOG(INFO) << c;
+    WhiteSpace ws = get_white_space();
+    if (ws == kWhiteSpacePre || ws == kWhiteSpacePreLine ||
+        ws == kWhiteSpacePreWrap) {
+        if (text_ == _t("\n")) {
+            return true;
+        }
     }
+    return false;
 }
+
+} // namespace litehtml

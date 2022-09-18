@@ -1,5 +1,4 @@
-// Copyright (c) 2013, Yuri Kobets (tordex)
-// Copyright (C) 2020-2021 Primate Labs Inc.
+// Copyright (C) 2020-2022 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +11,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//    * Neither the names of the copyright holders nor the names of their
+//    * Neither the name of the copyright holder nor the names of its
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -28,41 +27,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "litehtml/element/space_element.h"
-
-#include "litehtml/document.h"
+#include "litehtml/text.h"
 
 namespace litehtml {
 
-SpaceElement::SpaceElement(const tchar_t* text, Document* doc)
-: TextElement(text, doc)
-{
-}
-
-SpaceElement::~SpaceElement()
-{
-}
-
-bool SpaceElement::is_white_space() const
-{
-    WhiteSpace ws = get_white_space();
-    if (ws == kWhiteSpaceNormal || ws == kWhiteSpaceNowrap ||
-        ws == kWhiteSpacePreLine) {
-        return true;
-    }
-    return false;
-}
-
-bool SpaceElement::is_break() const
-{
-    WhiteSpace ws = get_white_space();
-    if (ws == kWhiteSpacePre || ws == kWhiteSpacePreLine ||
-        ws == kWhiteSpacePreWrap) {
-        if (text_ == _t("\n")) {
-            return true;
-        }
-    }
-    return false;
-}
 
 } // namespace litehtml

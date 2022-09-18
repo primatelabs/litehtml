@@ -41,7 +41,7 @@ namespace litehtml {
 URL::URL(const tstring& str)
 : str_(str)
 {
-    // TODO: Rewrite using tstring_view to avoid unnecessary allocations.
+    // TODO: Rewrite using StringView to avoid unnecessary allocations.
     tstring tmp = str_;
 
     // Does the URL include a scheme?

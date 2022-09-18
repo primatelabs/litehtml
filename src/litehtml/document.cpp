@@ -35,7 +35,9 @@
 
 #include <algorithm>
 
-#include "gumbo.h"
+#include <gumbo.h>
+#include <utf8.h>
+
 #include "litehtml/css/css_stylesheet.h"
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
@@ -52,7 +54,7 @@
 #include "litehtml/element/link_element.h"
 #include "litehtml/element/paragraph_element.h"
 #include "litehtml/element/script_element.h"
-#include "litehtml/element/space_element.h"
+#include "litehtml/element/whitespace_element.h"
 #include "litehtml/element/style_element.h"
 #include "litehtml/element/table_element.h"
 #include "litehtml/element/td_element.h"
@@ -62,6 +64,9 @@
 #include "litehtml/html.h"
 #include "litehtml/element/html_element.h"
 #include "litehtml/utf8_strings.h"
+#include "litehtml/logging.h"
+#include "litehtml/text.h"
+#include "litehtml/string_view.h"
 
 #if defined(USE_ICU)
 
@@ -94,7 +99,7 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
     for (int32_t end = break_iterator->next(); end != BreakIterator::DONE;
          start = end, end = break_iterator->next()) {
         std::string str(text + start, end - start);
-        elements.push_back(new TextElement(str.c_str(), document));
+        elements.push_back(new TextElement(document, str.c_str()));
     }
 }
 
@@ -102,37 +107,49 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
 
 void split_text_node(Document* document, ElementsVector& elements, const char* text)
 {
-    std::wstring str_in = (const wchar_t*)utf8_to_wchar(text);
-    std::wstring str;
-    ucode_t c;
-    for (size_t i = 0; i < str_in.length(); i++) {
-        c = (ucode_t)str_in[i];
-        if (c <= ' ' &&
-            (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f')) {
-            if (!str.empty()) {
+    const char* end = text + strlen(text);
 
-                elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
-                str.clear();
-            }
-            str += (wchar_t)c;
-            elements.push_back(new SpaceElement(litehtml_from_wchar(str.c_str()), document));
-            str.clear();
-        }
-        // CJK character range
-        else if (c >= 0x4E00 && c <= 0x9FCC) {
+    StringView str;
+    StringView wss;
+
+    utf8::iterator<const char*> iterator(text, text, text + strlen(text));
+
+    const char* p = text;
+    while (p != end) {
+        const char* prev = p;
+        char32_t c = utf8::next(p, end);
+
+        if (is_whitespace(c)) {
             if (!str.empty()) {
-                elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
-                str.clear();
+                elements.push_back(new TextElement(document, str.data(), str.length()));
+                str = StringView();
             }
-            str += (wchar_t)c;
-            elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
-            str.clear();
+            if (wss.empty()) {
+                wss = StringView(prev, (p - prev));
+            } else {
+                wss = StringView(wss.data(), (p - wss.data()));
+            }
         } else {
-            str += (wchar_t)c;
+            if (!wss.empty()) {
+                elements.push_back(new WhitespaceElement(document, wss.data(), wss.length()));
+                wss = StringView();
+            }
+            if (str.empty()) {
+                str = StringView(prev, (p - prev));
+            } else {
+                str = StringView(str.data(), (p - str.data()));
+            }
         }
     }
+
     if (!str.empty()) {
-        elements.push_back(new TextElement(litehtml_from_wchar(str.c_str()), document));
+        elements.push_back(new TextElement(document, str.data(), str.length()));
+        str = StringView();
+    }
+
+    if (!wss.empty()) {
+        elements.push_back(new WhitespaceElement(document, wss.data(), wss.length()));
+        wss = StringView();
     }
 }
 
@@ -771,7 +788,7 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
             const char* text = node->v.text.text;
 
             if (!parseTextNode) {
-                elements.push_back(new TextElement(text, this));
+                elements.push_back(new TextElement(this, text));
                 break;
             } else {
                 split_text_node(this, elements, text);
@@ -788,10 +805,8 @@ void Document::create_node(void* gnode, ElementsVector& elements, bool parseText
             elements.push_back(ret);
         } break;
         case GUMBO_NODE_WHITESPACE: {
-            String str = node->v.text.text;
-            for (size_t i = 0; i < str.length(); i++) {
-                elements.push_back(new SpaceElement(str.substr(i, 1).c_str(), this));
-            }
+            const char* text = node->v.text.text;
+            elements.push_back(new WhitespaceElement(this, text));
         } break;
         default:
             break;
@@ -869,8 +884,8 @@ void Document::fix_table_children(Element::ptr& el_ptr,
 
     while (cur_iter != el_ptr->m_children.end()) {
         if ((*cur_iter)->get_display() != disp) {
-            if (!(*cur_iter)->is_white_space() ||
-                ((*cur_iter)->is_white_space() && !tmp.empty())) {
+            if (!(*cur_iter)->is_whitespace() ||
+                ((*cur_iter)->is_whitespace() && !tmp.empty())) {
                 if (tmp.empty()) {
                     first_iter = cur_iter;
                 }
@@ -915,7 +930,7 @@ void Document::fix_table_parent(Element::ptr& el_ptr,
                 if (cur == parent->m_children.begin())
                     break;
                 cur--;
-                if ((*cur)->is_white_space() || (*cur)->get_display() == el_disp) {
+                if ((*cur)->is_whitespace() || (*cur)->get_display() == el_disp) {
                     first = cur;
                 } else {
                     break;
@@ -929,7 +944,7 @@ void Document::fix_table_parent(Element::ptr& el_ptr,
                 if (cur == parent->m_children.end())
                     break;
 
-                if ((*cur)->is_white_space() || (*cur)->get_display() == el_disp) {
+                if ((*cur)->is_whitespace() || (*cur)->get_display() == el_disp) {
                     last = cur;
                 } else {
                     break;

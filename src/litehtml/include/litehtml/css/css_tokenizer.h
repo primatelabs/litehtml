@@ -83,10 +83,10 @@ protected:
     CSSToken* consume_url();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-escaped-code-point
-    tchar_t consume_escape();
+    char32_t consume_escape();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-name
-    tstring consume_name(tchar_t first);
+    String consume_name(tchar_t first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-number
     CSSNumber consume_number(tchar_t first);

@@ -1,5 +1,4 @@
-// Copyright (c) 2013, Yuri Kobets (tordex)
-// Copyright (C) 2020-2021 Primate Labs Inc.
+// Copyright (C) 2020-2022 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,28 +27,18 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LITEHTML_SPACE_ELEMENT_H__
-#define LITEHTML_SPACE_ELEMENT_H__
+#include "litehtml/text.h"
 
-#include "litehtml/element/text_element.h"
-#include "litehtml/element/html_element.h"
+#include <gtest/gtest.h>
 
-namespace litehtml {
+#include "litehtml/logging.h"
 
-class SpaceElement : public TextElement {
-public:
-    SpaceElement(const tchar_t* text, Document* doc);
-    virtual ~SpaceElement() override;
+using namespace litehtml;
 
-    virtual ElementType type() const override
-    {
-        return kElementSpace;
-    }
-
-    virtual bool is_white_space() const override;
-    virtual bool is_break() const override;
-};
-
-} // namespace litehtml
-
-#endif // LITEHTML_SPACE_ELEMENT_H__
+TEST(TextTest, Whitespace)
+{
+  EXPECT_TRUE(is_whitespace(' '));
+  EXPECT_TRUE(is_whitespace('\t'));
+  EXPECT_TRUE(is_whitespace('\r'));
+  EXPECT_TRUE(is_whitespace('\n'));
+}

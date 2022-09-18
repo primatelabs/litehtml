@@ -27,13 +27,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "litehtml/tstring_view.h"
+#include "litehtml/string_view.h"
 
 namespace litehtml {
 
-std::basic_ostream<tstring_view::value_type>& operator<<(
-    std::basic_ostream<tstring_view::value_type>& os,
-    tstring_view str)
+std::basic_ostream<StringView::value_type>& operator<<(
+    std::basic_ostream<StringView::value_type>& os,
+    StringView str)
 {
     if (os.good()) {
         os.write(str.data(), str.size());

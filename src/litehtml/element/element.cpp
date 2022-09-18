@@ -75,8 +75,6 @@ String element_type_name(ElementType type)
         return "paragraph";
     case kElementScript:
         return "script";
-    case kElementSpace:
-        return "space";
     case kElementStyle:
         return "style";
     case kElementTable:
@@ -89,6 +87,8 @@ String element_type_name(ElementType type)
         return "title";
     case kElementTR:
         return "tr";
+    case kElementWhitespace:
+        return "whitespace";
     };
 
     return "unknown";
@@ -711,7 +711,7 @@ const tchar_t* Element::get_attr(const tchar_t*,
     return def;
 }
 
-bool Element::is_white_space() const
+bool Element::is_whitespace() const
 {
     return false;
 }

@@ -38,15 +38,25 @@
 
 namespace litehtml {
 
-TextElement::TextElement(const tchar_t* text, Document* doc)
-: Element(doc)
+TextElement::TextElement(Document* document)
+: Element(document)
+{
+}
+
+TextElement::TextElement(Document* document, const char* text)
+: Element(document)
 {
     if (text) {
         text_ = text;
     }
-    text_transform_ = kTextTransformNone;
-    use_transformed_ = false;
-    draw_spaces_ = true;
+}
+
+TextElement::TextElement(Document* document, const char* text, size_t length)
+: Element(document)
+{
+    if (text) {
+        text_ = String(text, length);
+    }
 }
 
 TextElement::~TextElement()
@@ -98,7 +108,7 @@ void TextElement::parse_styles(bool /* is_reparse */)
             text_transform_);
     }
 
-    if (is_white_space()) {
+    if (is_whitespace()) {
         transformed_text_ = _t(" ");
         use_transformed_ = true;
     } else {
@@ -141,7 +151,7 @@ int TextElement::get_baseline()
 
 void TextElement::draw(uintptr_t hdc, int x, int y, const Position* clip)
 {
-    if (is_white_space() && !draw_spaces_) {
+    if (is_whitespace() && !draw_spaces_) {
         return;
     }
 

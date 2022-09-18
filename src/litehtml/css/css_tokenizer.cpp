@@ -33,55 +33,19 @@
 #include <iostream>
 
 #include "litehtml/css/css_number.h"
+#include "litehtml/text.h"
+
+namespace litehtml {
 
 namespace {
 
-bool lookup(const uint32_t* table, litehtml::tchar_t c)
+bool is_eof(char32_t c)
 {
-    return table[c >> 5] & (1 << (c & 0x1f));
-}
-
-// https://www.w3.org/TR/css-syntax-3/#non-ascii-code-point
-bool is_non_ascii_code_point(litehtml::tchar_t c)
-{
-    return (c > 127);
-}
-
-bool is_eof(litehtml::tchar_t c)
-{
-    return (c == _t('\0'));
-}
-
-// https://www.w3.org/TR/css-syntax-3/#digit
-bool is_digit(litehtml::tchar_t c)
-{
-    static const uint32_t digit_lookup[] = {0x00000000,
-        0x03ff0000,
-        0x00000000,
-        0x00000000};
-
-    if (is_non_ascii_code_point(c)) {
-        return false;
-    }
-    return lookup(digit_lookup, c);
-}
-
-// https://www.w3.org/TR/css-syntax-3/#hex-digit
-bool is_hex_digit(litehtml::tchar_t c)
-{
-    static const uint32_t hex_digit_lookup[] = {0x00000000,
-        0x03ff0000,
-        0x0000007e,
-        0x0000007e};
-
-    if (is_non_ascii_code_point(c)) {
-        return false;
-    }
-    return lookup(hex_digit_lookup, c);
+    return (c == '\0');
 }
 
 // https://www.w3.org/TR/css-syntax-3/#name-start-code-point
-bool is_name_start_code_point(litehtml::tchar_t c)
+bool is_name_start_code_point(char32_t c)
 {
     static const uint32_t start_lookup[] = {0x00000000,
         0x00000000,
@@ -95,7 +59,7 @@ bool is_name_start_code_point(litehtml::tchar_t c)
 }
 
 // https://www.w3.org/TR/css-syntax-3/#name-code-point
-bool is_name_code_point(litehtml::tchar_t c)
+bool is_name_code_point(char32_t c)
 {
     static const uint32_t name_lookup[] = {0x00000000,
         0x03ff2000,
@@ -108,51 +72,9 @@ bool is_name_code_point(litehtml::tchar_t c)
     return lookup(name_lookup, c);
 }
 
-// https://www.w3.org/TR/css-syntax-3/#newline
-bool is_newline(litehtml::tchar_t c)
-{
-    static const uint32_t newline_lookup[] = {0x00003400,
-        0x00000000,
-        0x00000000,
-        0x00000000};
-
-    if (is_non_ascii_code_point(c)) {
-        return false;
-    }
-    return lookup(newline_lookup, c);
-}
-
-// https://www.w3.org/TR/css-syntax-3/#non-printable-code-point
-bool is_non_printable_code_point(litehtml::tchar_t c)
-{
-    static const uint32_t non_printable_lookup[] = {0xffffc9ff,
-        0x00000000,
-        0x00000000,
-        0x80000000};
-
-    if (is_non_ascii_code_point(c)) {
-        return false;
-    }
-    return lookup(non_printable_lookup, c);
-}
-
-// https://www.w3.org/TR/css-syntax-3/#whitespace
-bool is_whitespace(litehtml::tchar_t c)
-{
-    static const uint32_t whitespace_lookup[] = {0x00003600,
-        0x00000001,
-        0x00000000,
-        0x00000000};
-
-    if (is_non_ascii_code_point(c)) {
-        return false;
-    }
-    return lookup(whitespace_lookup, c);
-}
-
 // Returns true if the two code points are a valid escape.
 // https://www.w3.org/TR/css-syntax-3/#starts-with-a-valid-escape
-bool is_valid_escape(litehtml::tchar_t c0, litehtml::tchar_t c1)
+bool is_valid_escape(char32_t c0, char32_t c1)
 {
     if (c0 != _t('\\')) {
         return false;
@@ -165,9 +87,9 @@ bool is_valid_escape(litehtml::tchar_t c0, litehtml::tchar_t c1)
 
 // Returns true if the three code points would start an identifier.
 // https://www.w3.org/TR/css-syntax-3/#would-start-an-identifier
-bool would_start_identifier(litehtml::tchar_t c0,
-    litehtml::tchar_t c1,
-    litehtml::tchar_t c2)
+bool would_start_identifier(char32_t c0,
+    char32_t c1,
+    char32_t c2)
 {
     if (c0 == _t('-')) {
         if (is_name_start_code_point(c1) || c1 == _t('-') ||
@@ -187,9 +109,9 @@ bool would_start_identifier(litehtml::tchar_t c0,
 
 // Returns true if the three code points would start a number.
 // https://www.w3.org/TR/css-syntax-3/#starts-with-a-number
-bool would_start_number(litehtml::tchar_t c0,
-    litehtml::tchar_t c1,
-    litehtml::tchar_t c2)
+bool would_start_number(char32_t c0,
+    char32_t c1,
+    char32_t c2)
 {
     if (c0 == _t('+') || c0 == _t('-')) {
         if (is_digit(c1)) {
@@ -208,9 +130,7 @@ bool would_start_number(litehtml::tchar_t c0,
 
 } // namespace
 
-namespace litehtml {
-
-CSSTokenizer::CSSTokenizer(litehtml::tstring input)
+CSSTokenizer::CSSTokenizer(String input)
 : stream_(input)
 {
     while (true) {
@@ -256,7 +176,7 @@ CSSToken* CSSTokenizer::consume_number_sign(tchar_t c0)
             // TODO: Set the hash token type flag to `id`.
         }
         stream_.advance();
-        tstring value = consume_name(c1);
+        String value = consume_name(c1);
         result = new CSSToken(kCSSTokenHash, value);
     }
 
@@ -410,7 +330,7 @@ CSSToken* CSSTokenizer::consume_numeric(tchar_t first)
 // https://www.w3.org/TR/css-syntax-3/#consume-ident-like-token
 CSSToken* CSSTokenizer::consume_ident(tchar_t first)
 {
-    tstring name = consume_name(first);
+    String name = consume_name(first);
 
     if (name == _t("url") && stream_.peek(0) == _t('(')) {
         stream_.consume();
@@ -532,10 +452,10 @@ CSSToken* CSSTokenizer::consume_url()
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-escaped-code-point
-tchar_t CSSTokenizer::consume_escape()
+char32_t CSSTokenizer::consume_escape()
 {
-    tchar_t result = 0;
-    tchar_t c = stream_.consume();
+    char32_t result = 0;
+    char32_t c = stream_.consume();
 
     if (is_hex_digit(c)) {
         // FIXME: Implement
@@ -550,9 +470,9 @@ tchar_t CSSTokenizer::consume_escape()
 }
 
 // https://www.w3.org/TR/css-syntax-3/#consume-name
-tstring CSSTokenizer::consume_name(tchar_t first)
+String CSSTokenizer::consume_name(tchar_t first)
 {
-    tstring result;
+    String result;
     result.push_back(first);
 
     while (true) {

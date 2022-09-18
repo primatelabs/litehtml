@@ -57,7 +57,7 @@ set(SOURCE_LITEHTML
     element/link_element.cpp
     element/paragraph_element.cpp
     element/script_element.cpp
-    element/space_element.cpp
+    element/whitespace_element.cpp
     element/style_element.cpp
     element/table_element.cpp
     element/td_element.cpp
@@ -73,8 +73,9 @@ set(SOURCE_LITEHTML
     media_query_expression.cpp
     media_query_list.cpp
     num_cvt.cpp
+    string_view.cpp
     table.cpp
-    tstring_view.cpp
+    text.cpp
     url.cpp
     url_path.cpp
     utf8_strings.cpp
@@ -126,7 +127,7 @@ set(HEADER_LITEHTML
     include/litehtml/element/link_element.h
     include/litehtml/element/paragraph_element.h
     include/litehtml/element/script_element.h
-    include/litehtml/element/space_element.h
+    include/litehtml/element/whitespace_element.h
     include/litehtml/element/style_element.h
     include/litehtml/element/table_element.h
     include/litehtml/element/td_element.h
@@ -144,8 +145,9 @@ set(HEADER_LITEHTML
     include/litehtml/media_query_list.h
     include/litehtml/num_cvt.h
     include/litehtml/string.h
+    include/litehtml/string_view.h
     include/litehtml/table.h
-    include/litehtml/tstring_view.h
+    include/litehtml/text.h
     include/litehtml/types.h
     include/litehtml/url.h
     include/litehtml/url_path.h
@@ -167,7 +169,8 @@ set(TEST_LITEHTML
     layout_global_test.cpp
     media_query_expression_test.cpp
     media_query_test.cpp
-    tstring_view_test.cpp
+    string_view_test.cpp
+    text_test.cpp
     url_path_test.cpp
     url_test.cpp
 
@@ -216,6 +219,9 @@ if (ENABLE_JSON)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_JSON)
     target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/json/include)
 endif()
+
+# UTFCPP
+target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/utfcpp/source)
 
 # install and export
 install(TARGETS ${PROJECT_NAME}
