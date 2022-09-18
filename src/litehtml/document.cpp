@@ -65,6 +65,7 @@
 #include "litehtml/element/html_element.h"
 #include "litehtml/utf8_strings.h"
 #include "litehtml/logging.h"
+#include "litehtml/text.h"
 
 #if defined(USE_ICU)
 
@@ -102,32 +103,6 @@ void split_text_node(Document* document, ElementsVector& elements, const char* t
 }
 
 #else
-
-// FIXME: Find a way to share lookup() with other modules.
-bool lookup(const uint32_t* table, char32_t c)
-{
-    return table[c >> 5] & (1 << (c & 0x1f));
-}
-
-// FIXME: Find a way to share is_non_ascii_code_point() with other modules.
-bool is_non_ascii_code_point(char32_t c)
-{
-    return (c > 127);
-}
-
-// FIXME: Find a way to share is_whitespace() with other modules.
-bool is_whitespace(char32_t c)
-{
-    static const uint32_t whitespace_lookup[] = {0x00003600,
-        0x00000001,
-        0x00000000,
-        0x00000000};
-
-    if (is_non_ascii_code_point(c)) {
-        return false;
-    }
-    return lookup(whitespace_lookup, c);
-}
 
 struct StringView {
     const char* begin = nullptr;

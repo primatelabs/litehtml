@@ -74,6 +74,7 @@ set(SOURCE_LITEHTML
     media_query_list.cpp
     num_cvt.cpp
     table.cpp
+    text.cpp
     tstring_view.cpp
     url.cpp
     url_path.cpp
@@ -145,6 +146,7 @@ set(HEADER_LITEHTML
     include/litehtml/num_cvt.h
     include/litehtml/string.h
     include/litehtml/table.h
+    include/litehtml/text.h
     include/litehtml/tstring_view.h
     include/litehtml/types.h
     include/litehtml/url.h
@@ -167,6 +169,7 @@ set(TEST_LITEHTML
     layout_global_test.cpp
     media_query_expression_test.cpp
     media_query_test.cpp
+    text_test.cpp
     tstring_view_test.cpp
     url_path_test.cpp
     url_test.cpp
