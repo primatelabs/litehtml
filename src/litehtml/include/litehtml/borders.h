@@ -31,6 +31,8 @@
 #ifndef LITEHTML_BORDERS_H__
 #define LITEHTML_BORDERS_H__
 
+#include <algorithm>
+
 #include "litehtml/color.h"
 #include "litehtml/css/css_length.h"
 #include "litehtml/types.h"
