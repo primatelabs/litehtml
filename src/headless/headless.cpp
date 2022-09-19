@@ -88,7 +88,7 @@ int main(int argc, char** argv)
         &container,
         &ctx));
 
-    document->render(1000);
+    document->render(1800);
 
     OrionRenderContext orc(document->width(), document->height());
 

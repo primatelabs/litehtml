@@ -84,8 +84,8 @@ namespace headless {
 
 namespace {
 
-constexpr int kDefaultWidth = 1000;
-constexpr int kDefaultHeight = 1000;
+constexpr int kDefaultWidth = 1800;
+constexpr int kDefaultHeight = 900;
 
 // We cannot use a higher DPI setting until media queries are implemented.
 constexpr int kDefaultDPI = 72;
