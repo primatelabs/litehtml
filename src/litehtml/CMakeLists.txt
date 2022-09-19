@@ -205,7 +205,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 # ICU
-
 if (USE_ICU)
     target_compile_definitions(${PROJECT_NAME} PUBLIC USE_ICU)
     target_link_libraries(${PROJECT_NAME} PUBLIC icui18n icuuc icudata)
@@ -220,8 +219,8 @@ if (ENABLE_JSON)
     target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/json/include)
 endif()
 
-# UTFCPP
-target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/utfcpp/source)
+# UTF8CPP
+target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/utf8cpp/include)
 
 # install and export
 install(TARGETS ${PROJECT_NAME}

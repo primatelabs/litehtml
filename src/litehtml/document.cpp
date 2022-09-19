@@ -36,7 +36,7 @@
 #include <algorithm>
 
 #include <gumbo.h>
-#include <utf8.h>
+#include <utf8cpp/utf8.h>
 
 #include "litehtml/css/css_stylesheet.h"
 #include "litehtml/document.h"
