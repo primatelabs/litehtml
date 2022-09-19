@@ -71,11 +71,11 @@ public:
 
     virtual void delete_font(uintptr_t hFont) override;
 
-    virtual int text_width(const litehtml::tchar_t* text,
+    virtual int text_width(const char* text,
         uintptr_t hFont) override;
 
     virtual void draw_text(uintptr_t hdc,
-        const litehtml::tchar_t* text,
+        const char* text,
         uintptr_t hFont,
         litehtml::Color color,
         const litehtml::Position& pos) override;

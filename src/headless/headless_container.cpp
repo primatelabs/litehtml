@@ -35,6 +35,7 @@
 #include <orion/arc.h>
 #include <orion/conv_stroke.h>
 #include <orion/rounded_rect.h>
+#include <utf8cpp/utf8.h>
 
 #include "http.h"
 #include "image/jpeg_codec.h"
@@ -215,7 +216,7 @@ void HeadlessContainer::delete_font(uintptr_t hFont)
     FT_CALL(FT_Done_Face(face));
 }
 
-int HeadlessContainer::text_width(const litehtml::tchar_t* text,
+int HeadlessContainer::text_width(const char* text,
     uintptr_t hFont)
 {
     // Don't bother tracing this function as it's called once per token (where
@@ -230,8 +231,12 @@ int HeadlessContainer::text_width(const litehtml::tchar_t* text,
     FT_GlyphSlot glyph = face->glyph;
     int width = 0;
 
-    for (int i = 0; i < strlen(text); i++) {
-        FT_CALL(FT_Load_Char(face, text[i], FT_LOAD_DEFAULT));
+    const char* end = text + strlen(text);
+    const char* p = text;
+
+    while (p != end) {
+        char32_t c = utf8::next(p, end);
+        FT_CALL(FT_Load_Char(face, c, FT_LOAD_DEFAULT));
         width += glyph->advance.x;
     }
 
@@ -243,7 +248,7 @@ int HeadlessContainer::text_width(const litehtml::tchar_t* text,
 }
 
 void HeadlessContainer::draw_text(uintptr_t hdc,
-    const litehtml::tchar_t* text,
+    const char* text,
     uintptr_t hFont,
     litehtml::Color color,
     const litehtml::Position& pos)
@@ -271,9 +276,11 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
 
     // pos.x and pos.y represent the upper left corner where the text should render
 
-    // TODO: UNICODE
-    for (int i = 0; i < strlen(text); i++) {
-        char c = text[i];
+    const char* end = text + strlen(text);
+    const char* p = text;
+
+    while (p != end) {
+        char32_t c = utf8::next(p, end);
 
         // Stop rendering text if the pen falls outside the image bounds.
         // Otherwise FreeType may return a "raster overflow" error.  Given

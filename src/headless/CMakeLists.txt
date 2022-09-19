@@ -12,8 +12,6 @@ pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
 pkg_search_module(FREETYPE REQUIRED freetype2)
 pkg_search_module(LIBPNG REQUIRED libpng>=1.6.0)
 
-
-
 set(HEADLESS_NAME headless)
 
 set(SOURCE_HEADLESS
@@ -108,3 +106,6 @@ if (ENABLE_JSON)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_JSON)
     target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/json/include)
 endif()
+
+# UTF8-CPP
+target_include_directories(${PROJECT_NAME} PRIVATE ../../third_party/utf8cpp/include)
