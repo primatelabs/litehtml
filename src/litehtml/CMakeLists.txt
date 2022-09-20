@@ -161,6 +161,7 @@ set(TEST_LITEHTML
     css/css_length_test.cpp
     css/css_parser_test.cpp
     css/css_regenerate_test.cpp
+    css/css_selector_test.cpp
     css/css_stylesheet_test.cpp
     css/css_test.cpp
     css/css_tokenizer_input_stream_test.cpp
