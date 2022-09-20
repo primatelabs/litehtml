@@ -43,8 +43,8 @@ TEST(DocumentParserTest, EmptyString)
 
     Document* document = DocumentParser::parse("",
       URL(),
-      container,
-      context);
+      &container,
+      &context);
 
     EXPECT_NE(nullptr, document);
 }

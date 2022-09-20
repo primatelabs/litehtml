@@ -167,6 +167,7 @@ set(TEST_LITEHTML
     css/css_test.cpp
     css/css_tokenizer_input_stream_test.cpp
     css/css_tokenizer_test.cpp
+    document_parser_test.cpp
     document_test.cpp
     layout_global_test.cpp
     media_query_expression_test.cpp
