@@ -1,4 +1,5 @@
 // Copyright (c) 2013, Yuri Kobets (tordex)
+// Copyright (c) 2020-2022 Primate Labs Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,21 +28,23 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "litehtml/document_parser.h"
+
 #include <gtest/gtest.h>
 
-#include "litehtml/document_parser.h"
-#include "litehtml/litehtml.h"
 #include "test_container.h"
 
 using namespace litehtml;
 
-TEST(LayoutGlobal, Smoke)
+TEST(DocumentParserTest, EmptyString)
 {
     Context context;
     test_container container;
-    Document* document = DocumentParser::parse("<html>Body</html>",
-        URL(),
-        &container,
-        &context);
-    document->render(50);
+
+    Document* document = DocumentParser::parse("",
+      URL(),
+      container,
+      context);
+
+    EXPECT_NE(nullptr, document);
 }

@@ -41,6 +41,7 @@ set(SOURCE_LITEHTML
     css/css_value.cpp
     document.cpp
     document_container.cpp
+    document_parser.cpp
     element/anchor_element.cpp
     element/base_element.cpp
     element/before_after_element.cpp

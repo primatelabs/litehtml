@@ -27,9 +27,11 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "litehtml/document.h"
+
 #include <gtest/gtest.h>
 
-#include "litehtml/litehtml.h"
+#include "litehtml/document_parser.h"
 #include "test_container.h"
 
 using namespace litehtml;
@@ -48,21 +50,25 @@ TEST(DocumentTest, AddFont)
 
 TEST(DocumentTest, Render)
 {
-    Context ctx;
+    Context context;
     test_container container;
-    Document* doc =
-        Document::createFromString(_t("<html>Body</html>"), &container, &ctx);
-    doc->render(100);
+    Document* document = DocumentParser::parse("<html>Body</html>",
+        URL(),
+        &container,
+        &context);
+    document->render(100);
 }
 
 TEST(DocumentTest, Draw)
 {
-    Context ctx;
+    Context context;
     test_container container;
-    Document* doc =
-        Document::createFromString(_t("<html>Body</html>"), &container, &ctx);
-    Position pos(0, 0, 100, 100);
-    doc->draw((uintptr_t)0, 0, 0, &pos);
+    Document* document = DocumentParser::parse("<html>Body</html>",
+        URL(),
+        &container,
+        &context);
+    Position position(0, 0, 100, 100);
+    document->draw((uintptr_t)0, 0, 0, &position);
 }
 
 TEST(DocumentTest, CvtUnits)
@@ -126,11 +132,4 @@ TEST(DocumentTest, DeviceChange)
     Document* doc = new Document(&container, nullptr);
     doc->media_changed();
     doc->lang_changed();
-}
-
-TEST(DocumentTest, Parse)
-{
-    Context ctx;
-    test_container container;
-    Document::createFromString(_t(""), &container, &ctx);
 }

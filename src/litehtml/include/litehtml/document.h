@@ -211,22 +211,6 @@ public:
 
     void append_children_from_utf8(Element& parent, const char* str);
 
-    static Document* createFromString(const tchar_t* str,
-        litehtml::DocumentContainer* objPainter,
-        Context* ctx,
-        litehtml::CSSStylesheet* user_styles = nullptr);
-
-    static Document* createFromUTF8(const char* str,
-        litehtml::DocumentContainer* objPainter,
-        Context* ctx,
-        litehtml::CSSStylesheet* user_styles = nullptr);
-
-    static Document* create(const std::string& str,
-        const URL& base_url,
-        litehtml::DocumentContainer* objPainter,
-        Context* ctx,
-        litehtml::CSSStylesheet* user_styles = nullptr);
-
 private:
     uintptr_t add_font(const tchar_t* name,
         int size,
@@ -249,6 +233,8 @@ public:
 #if defined(ENABLE_JSON)
     nlohmann::json json() const;
 #endif // ENABLE_JSON
+
+    friend class DocumentParser;
 };
 
 } // namespace litehtml

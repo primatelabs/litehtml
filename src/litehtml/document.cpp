@@ -38,6 +38,7 @@
 #include <gumbo.h>
 #include <utf8cpp/utf8.h>
 
+
 #include "litehtml/css/css_stylesheet.h"
 #include "litehtml/document.h"
 #include "litehtml/document_container.h"
@@ -180,107 +181,6 @@ Document::~Document()
             container_->delete_font(f->second.font);
         }
     }
-}
-
-Document* Document::createFromString(const tchar_t* str,
-    DocumentContainer* container,
-    Context* context,
-    CSSStylesheet* user_styles)
-{
-    return create(str, URL(), container, context, user_styles);
-}
-
-Document* Document::createFromUTF8(const char* str,
-    DocumentContainer* container,
-    Context* context,
-    CSSStylesheet* user_styles)
-{
-    return create(str, URL(), container, context, user_styles);
-}
-
-Document* Document::create(const std::string& str,
-    const URL& url,
-    DocumentContainer* container,
-    Context* context,
-    CSSStylesheet* user_styles)
-{
-    // parse document into GumboOutput
-    GumboOutput* output = gumbo_parse(str.c_str());
-
-    // Create document
-    Document* doc = new Document(url, container, context);
-
-    // Create elements.
-    ElementsVector root_elements;
-    doc->create_node(output->root, root_elements, true);
-    if (!root_elements.empty()) {
-        assert(root_elements.size() == 1);
-        doc->root_.reset(root_elements.back());
-    }
-    // Destroy GumboOutput
-    gumbo_destroy_output(&kGumboDefaultOptions, output);
-
-    // Let's process created elements tree
-    if (doc->root_) {
-        doc->container()->get_media_features(doc->m_media);
-
-        // apply master CSS
-        doc->root_->apply_stylesheet(context->master_stylesheet());
-
-        // parse elements attributes
-        doc->root_->parse_attributes();
-
-        // parse style sheets linked in document
-        MediaQueryList::ptr media = nullptr;
-        for (auto& css : doc->m_css) {
-            if (!css.media.empty()) {
-                media = MediaQueryList::create_from_string(css.media, doc);
-            }
-
-            doc->stylesheet_.parse(css.text, css.baseurl, doc, media);
-        }
-        for (css_text::vector::iterator css = doc->m_css.begin();
-             css != doc->m_css.end();
-             css++) {
-            if (!css->media.empty()) {
-                media = MediaQueryList::create_from_string(css->media, doc);
-            } else {
-                media = nullptr;
-            }
-            doc->stylesheet_.parse(css->text,
-                css->baseurl,
-                doc,
-                media);
-        }
-        // Sort css selectors using CSS rules.
-        doc->stylesheet_.sort_selectors();
-
-        // get current media features
-        if (!doc->m_media_lists.empty()) {
-            doc->update_media_lists(doc->m_media);
-        }
-
-        // Apply parsed styles.
-        doc->root_->apply_stylesheet(doc->stylesheet_);
-
-        // Apply user styles if any
-        if (user_styles) {
-            doc->root_->apply_stylesheet(*user_styles);
-        }
-
-        // Parse applied styles in the elements
-        doc->root_->parse_styles();
-
-        // Now the m_tabular_elements is filled with tabular elements.
-        // We have to check the tabular elements for missing table elements
-        // and create the anonymous boxes in visual table layout
-        doc->fix_tables_layout();
-
-        // Fanaly initialize elements
-        doc->root_->init();
-    }
-
-    return doc;
 }
 
 uintptr_t Document::add_font(const tchar_t* name,

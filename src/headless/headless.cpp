@@ -32,6 +32,7 @@
 
 #include "headless_container.h"
 #include "http.h"
+#include "litehtml/document_parser.h"
 #include "litehtml/litehtml.h"
 #include "litehtml/logging.h"
 #include "image/png_codec.h"
@@ -82,7 +83,7 @@ int main(int argc, char** argv)
 
     HeadlessContainer container;
 
-    std::unique_ptr<Document> document(Document::create(
+    std::unique_ptr<Document> document(DocumentParser::parse(
         html,
         url,
         &container,
