@@ -371,7 +371,7 @@ public:
     virtual void get_text(tstring& text) const;
     virtual void parse_attributes();
     virtual int select(const CSSSelector& selector, bool apply_pseudo = true);
-    virtual int select(const css_element_selector& selector,
+    virtual int select(const CSSElementSelector& selector,
         bool apply_pseudo = true);
     virtual Element::ptr find_ancestor(const CSSSelector& selector,
         bool apply_pseudo = true,

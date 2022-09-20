@@ -40,13 +40,13 @@ namespace litehtml {
 
 //////////////////////////////////////////////////////////////////////////
 
-struct selector_specificity {
+struct CSSSelectorSpecificity {
     int a;
     int b;
     int c;
     int d;
 
-    selector_specificity(int va = 0, int vb = 0, int vc = 0, int vd = 0)
+    CSSSelectorSpecificity(int va = 0, int vb = 0, int vc = 0, int vd = 0)
     {
         a = va;
         b = vb;
@@ -54,7 +54,7 @@ struct selector_specificity {
         d = vd;
     }
 
-    void operator+=(const selector_specificity& val)
+    void operator+=(const CSSSelectorSpecificity& val)
     {
         a += val.a;
         b += val.b;
@@ -62,7 +62,7 @@ struct selector_specificity {
         d += val.d;
     }
 
-    bool operator==(const selector_specificity& val) const
+    bool operator==(const CSSSelectorSpecificity& val) const
     {
         if (a == val.a && b == val.b && c == val.c && d == val.d) {
             return true;
@@ -70,7 +70,7 @@ struct selector_specificity {
         return false;
     }
 
-    bool operator!=(const selector_specificity& val) const
+    bool operator!=(const CSSSelectorSpecificity& val) const
     {
         if (a != val.a || b != val.b || c != val.c || d != val.d) {
             return true;
@@ -78,7 +78,7 @@ struct selector_specificity {
         return false;
     }
 
-    bool operator>(const selector_specificity& val) const
+    bool operator>(const CSSSelectorSpecificity& val) const
     {
         if (a > val.a) {
             return true;
@@ -106,7 +106,7 @@ struct selector_specificity {
         return false;
     }
 
-    bool operator>=(const selector_specificity& val) const
+    bool operator>=(const CSSSelectorSpecificity& val) const
     {
         if ((*this) == val)
             return true;
@@ -115,7 +115,7 @@ struct selector_specificity {
         return false;
     }
 
-    bool operator<=(const selector_specificity& val) const
+    bool operator<=(const CSSSelectorSpecificity& val) const
     {
         if ((*this) > val) {
             return false;
@@ -123,7 +123,7 @@ struct selector_specificity {
         return true;
     }
 
-    bool operator<(const selector_specificity& val) const
+    bool operator<(const CSSSelectorSpecificity& val) const
     {
         if ((*this) <= val && (*this) != val) {
             return true;
@@ -146,29 +146,29 @@ struct selector_specificity {
 
 //////////////////////////////////////////////////////////////////////////
 
-enum attr_select_condition {
-    select_exists,
-    select_equal,
-    select_contain_str,
-    select_start_str,
-    select_end_str,
-    select_pseudo_class,
-    select_pseudo_element,
+enum CSSAttributeSelectCondition {
+    kSelectExists,
+    kSelectEqual,
+    kSelectContainStr,
+    kSelectStartStr,
+    kSelectEndStr,
+    kSelectPseudoClass,
+    kSelectPseudoElement,
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-struct css_attribute_selector {
-    typedef std::vector<css_attribute_selector> vector;
+struct CSSAttributeSelector {
+    typedef std::vector<CSSAttributeSelector> vector;
 
     tstring attribute;
     tstring val;
     string_vector class_val;
-    attr_select_condition condition;
+    CSSAttributeSelectCondition condition;
 
-    css_attribute_selector()
+    CSSAttributeSelector()
     {
-        condition = select_exists;
+        condition = kSelectExists;
     }
 
 #if defined(ENABLE_JSON)
@@ -186,13 +186,13 @@ struct css_attribute_selector {
 
 //////////////////////////////////////////////////////////////////////////
 
-class css_element_selector {
+class CSSElementSelector {
 public:
-    tstring m_tag;
-    css_attribute_selector::vector m_attrs;
+    String m_tag;
+    CSSAttributeSelector::vector m_attrs;
 
 public:
-    void parse(const tstring& txt);
+    void parse(const String& txt);
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const
@@ -208,11 +208,11 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-enum css_combinator {
-    combinator_descendant,
-    combinator_child,
-    combinator_adjacent_sibling,
-    combinator_general_sibling
+enum CSSCombinator {
+    kCombinatorDescendant,
+    kCombinatorChild,
+    kCombinatorAdjacentSibling,
+    kCombinatorGeneralSibling
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -223,10 +223,10 @@ public:
     typedef std::vector<CSSSelector::ptr> vector;
 
 public:
-    selector_specificity m_specificity;
-    css_element_selector m_right;
+    CSSSelectorSpecificity m_specificity;
+    CSSElementSelector m_right;
     CSSSelector::ptr m_left;
-    css_combinator m_combinator;
+    CSSCombinator m_combinator;
     CSSStyle::ptr m_style;
     size_t m_order;
     MediaQueryList::ptr media_query_list_;
@@ -235,7 +235,7 @@ public:
     CSSSelector(MediaQueryList::ptr media)
     {
         media_query_list_ = media;
-        m_combinator = combinator_descendant;
+        m_combinator = kCombinatorDescendant;
         m_order = 0;
     }
 

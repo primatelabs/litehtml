@@ -218,7 +218,7 @@ public:
 
     virtual int select(const CSSSelector& selector,
         bool apply_pseudo = true) override;
-    virtual int select(const css_element_selector& selector,
+    virtual int select(const CSSElementSelector& selector,
         bool apply_pseudo = true) override;
 
     virtual ElementsVector select_all(const tstring& selector) override;

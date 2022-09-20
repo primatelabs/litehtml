@@ -35,7 +35,7 @@
 
 namespace litehtml {
 
-void css_element_selector::parse(const tstring& txt)
+void CSSElementSelector::parse(const tstring& txt)
 {
     tstring::size_type el_end = txt.find_first_of(_t(".#[:"));
     m_tag = txt.substr(0, el_end);
@@ -43,22 +43,22 @@ void css_element_selector::parse(const tstring& txt)
     m_attrs.clear();
     while (el_end != tstring::npos) {
         if (txt[el_end] == _t('.')) {
-            css_attribute_selector attribute;
+            CSSAttributeSelector attribute;
 
             tstring::size_type pos = txt.find_first_of(_t(".#[:"), el_end + 1);
             attribute.val = txt.substr(el_end + 1, pos - el_end - 1);
             split_string(attribute.val, attribute.class_val, _t(" "));
-            attribute.condition = select_equal;
+            attribute.condition = kSelectEqual;
             attribute.attribute = _t("class");
             m_attrs.push_back(attribute);
             el_end = pos;
         } else if (txt[el_end] == _t(':')) {
-            css_attribute_selector attribute;
+            CSSAttributeSelector attribute;
 
             if (txt[el_end + 1] == _t(':')) {
                 tstring::size_type pos = txt.find_first_of(_t(".#[:"), el_end + 2);
                 attribute.val = txt.substr(el_end + 2, pos - el_end - 2);
-                attribute.condition = select_pseudo_element;
+                attribute.condition = kSelectPseudoElement;
                 lcase(attribute.val);
                 attribute.attribute = _t("pseudo-el");
                 m_attrs.push_back(attribute);
@@ -83,25 +83,25 @@ void css_element_selector::parse(const tstring& txt)
                 lcase(attribute.val);
                 if (attribute.val == _t("after") ||
                     attribute.val == _t("before")) {
-                    attribute.condition = select_pseudo_element;
+                    attribute.condition = kSelectPseudoElement;
                 } else {
-                    attribute.condition = select_pseudo_class;
+                    attribute.condition = kSelectPseudoClass;
                 }
                 attribute.attribute = _t("pseudo");
                 m_attrs.push_back(attribute);
                 el_end = pos;
             }
         } else if (txt[el_end] == _t('#')) {
-            css_attribute_selector attribute;
+            CSSAttributeSelector attribute;
 
             tstring::size_type pos = txt.find_first_of(_t(".#[:"), el_end + 1);
             attribute.val = txt.substr(el_end + 1, pos - el_end - 1);
-            attribute.condition = select_equal;
+            attribute.condition = kSelectEqual;
             attribute.attribute = _t("id");
             m_attrs.push_back(attribute);
             el_end = pos;
         } else if (txt[el_end] == _t('[')) {
-            css_attribute_selector attribute;
+            CSSAttributeSelector attribute;
 
             tstring::size_type pos = txt.find_first_of(_t("]~=|$*^"), el_end + 1);
             tstring attr = txt.substr(el_end + 1, pos - el_end - 1);
@@ -109,27 +109,27 @@ void css_element_selector::parse(const tstring& txt)
             lcase(attr);
             if (pos != tstring::npos) {
                 if (txt[pos] == _t(']')) {
-                    attribute.condition = select_exists;
+                    attribute.condition = kSelectExists;
                 } else if (txt[pos] == _t('=')) {
-                    attribute.condition = select_equal;
+                    attribute.condition = kSelectEqual;
                     pos++;
                 } else if (txt.substr(pos, 2) == _t("~=")) {
-                    attribute.condition = select_contain_str;
+                    attribute.condition = kSelectContainStr;
                     pos += 2;
                 } else if (txt.substr(pos, 2) == _t("|=")) {
-                    attribute.condition = select_start_str;
+                    attribute.condition = kSelectStartStr;
                     pos += 2;
                 } else if (txt.substr(pos, 2) == _t("^=")) {
-                    attribute.condition = select_start_str;
+                    attribute.condition = kSelectStartStr;
                     pos += 2;
                 } else if (txt.substr(pos, 2) == _t("$=")) {
-                    attribute.condition = select_end_str;
+                    attribute.condition = kSelectEndStr;
                     pos += 2;
                 } else if (txt.substr(pos, 2) == _t("*=")) {
-                    attribute.condition = select_contain_str;
+                    attribute.condition = kSelectContainStr;
                     pos += 2;
                 } else {
-                    attribute.condition = select_exists;
+                    attribute.condition = kSelectExists;
                     pos += 1;
                 }
                 pos = txt.find_first_not_of(_t(" \t"), pos);
@@ -152,7 +152,7 @@ void css_element_selector::parse(const tstring& txt)
                     }
                 }
             } else {
-                attribute.condition = select_exists;
+                attribute.condition = kSelectExists;
             }
             attribute.attribute = attr;
             m_attrs.push_back(attribute);
@@ -207,16 +207,16 @@ bool CSSSelector::parse(const tstring& text)
 
     switch (combinator) {
         case _t('>'):
-            m_combinator = combinator_child;
+            m_combinator = kCombinatorChild;
             break;
         case _t('+'):
-            m_combinator = combinator_adjacent_sibling;
+            m_combinator = kCombinatorAdjacentSibling;
             break;
         case _t('~'):
-            m_combinator = combinator_general_sibling;
+            m_combinator = kCombinatorGeneralSibling;
             break;
         default:
-            m_combinator = combinator_descendant;
+            m_combinator = kCombinatorDescendant;
             break;
     }
 
@@ -237,7 +237,7 @@ void CSSSelector::calc_specificity()
     if (!m_right.m_tag.empty() && m_right.m_tag != _t("*")) {
         m_specificity.d = 1;
     }
-    for (css_attribute_selector::vector::iterator i = m_right.m_attrs.begin();
+    for (CSSAttributeSelector::vector::iterator i = m_right.m_attrs.begin();
          i != m_right.m_attrs.end();
          i++) {
         if (i->attribute == _t("id")) {
@@ -279,10 +279,10 @@ nlohmann::json CSSSelector::json() const
     }
 
 #if 0
-    selector_specificity m_specificity;
-    css_element_selector m_right;
+    CSSSelectorSpecificity m_specificity;
+    CSSElementSelector m_right;
     CSSSelector::ptr m_left;
-    css_combinator m_combinator;
+    CSSCombinator m_combinator;
     CSSStyle::ptr m_style;
     int m_order;
     MediaQueryList::ptr media_query_list_;

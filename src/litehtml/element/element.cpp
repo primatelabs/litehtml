@@ -837,7 +837,7 @@ int Element::select(const CSSSelector&, bool)
     return select_no_match;
 }
 
-int Element::select(const css_element_selector&,
+int Element::select(const CSSElementSelector&,
     bool)
 {
     return select_no_match;

@@ -587,7 +587,7 @@ int HTMLElement::select(const CSSSelector& selector, bool apply_pseudo)
             return select_no_match;
         }
         switch (selector.m_combinator) {
-            case combinator_descendant: {
+            case kCombinatorDescendant: {
                 bool is_pseudo = false;
                 Element::ptr res =
                     find_ancestor(*selector.m_left, apply_pseudo, &is_pseudo);
@@ -599,7 +599,7 @@ int HTMLElement::select(const CSSSelector& selector, bool apply_pseudo)
                     }
                 }
             } break;
-            case combinator_child: {
+            case kCombinatorChild: {
                 int res = el_parent->select(*selector.m_left, apply_pseudo);
                 if (res == select_no_match) {
                     return select_no_match;
@@ -609,7 +609,7 @@ int HTMLElement::select(const CSSSelector& selector, bool apply_pseudo)
                     }
                 }
             } break;
-            case combinator_adjacent_sibling: {
+            case kCombinatorAdjacentSibling: {
                 bool is_pseudo = false;
                 Element::ptr res =
                     el_parent->find_adjacent_sibling(this,
@@ -624,7 +624,7 @@ int HTMLElement::select(const CSSSelector& selector, bool apply_pseudo)
                     }
                 }
             } break;
-            case combinator_general_sibling: {
+            case kCombinatorGeneralSibling: {
                 bool is_pseudo = false;
                 Element::ptr res = el_parent->find_sibling(this,
                     *selector.m_left,
@@ -645,7 +645,7 @@ int HTMLElement::select(const CSSSelector& selector, bool apply_pseudo)
     return right_res;
 }
 
-int HTMLElement::select(const css_element_selector& selector, bool apply_pseudo)
+int HTMLElement::select(const CSSElementSelector& selector, bool apply_pseudo)
 {
     if (!selector.m_tag.empty() && selector.m_tag != _t("*")) {
         if (selector.m_tag != m_tag) {
@@ -656,18 +656,15 @@ int HTMLElement::select(const css_element_selector& selector, bool apply_pseudo)
     int res = select_match;
     Element::ptr el_parent = parent();
 
-    for (css_attribute_selector::vector::const_iterator i =
-             selector.m_attrs.begin();
-         i != selector.m_attrs.end();
-         i++) {
+    for (auto i = selector.m_attrs.begin(); i != selector.m_attrs.end(); i++) {
         const tchar_t* attr_value = get_attr(i->attribute.c_str());
         switch (i->condition) {
-            case select_exists:
+            case kSelectExists:
                 if (!attr_value) {
                     return select_no_match;
                 }
                 break;
-            case select_equal:
+            case kSelectEqual:
                 if (!attr_value) {
                     return select_no_match;
                 } else {
@@ -701,21 +698,21 @@ int HTMLElement::select(const css_element_selector& selector, bool apply_pseudo)
                     }
                 }
                 break;
-            case select_contain_str:
+            case kSelectContainStr:
                 if (!attr_value) {
                     return select_no_match;
                 } else if (!t_strstr(attr_value, i->val.c_str())) {
                     return select_no_match;
                 }
                 break;
-            case select_start_str:
+            case kSelectStartStr:
                 if (!attr_value) {
                     return select_no_match;
                 } else if (t_strncmp(attr_value, i->val.c_str(), i->val.length())) {
                     return select_no_match;
                 }
                 break;
-            case select_end_str:
+            case kSelectEndStr:
                 if (!attr_value) {
                     return select_no_match;
                 } else if (t_strncmp(attr_value, i->val.c_str(), i->val.length())) {
@@ -729,7 +726,7 @@ int HTMLElement::select(const css_element_selector& selector, bool apply_pseudo)
                     }
                 }
                 break;
-            case select_pseudo_element:
+            case kSelectPseudoElement:
                 if (i->val == _t("after")) {
                     res |= select_match_with_after;
                 } else if (i->val == _t("before")) {
@@ -738,7 +735,7 @@ int HTMLElement::select(const css_element_selector& selector, bool apply_pseudo)
                     return select_no_match;
                 }
                 break;
-            case select_pseudo_class:
+            case kSelectPseudoClass:
                 if (apply_pseudo) {
                     if (!el_parent)
                         return select_no_match;
@@ -857,7 +854,7 @@ int HTMLElement::select(const css_element_selector& selector, bool apply_pseudo)
 
                         } break;
                         case pseudo_class_not: {
-                            css_element_selector sel;
+                            CSSElementSelector sel;
                             sel.parse(selector_param);
                             if (select(sel, apply_pseudo)) {
                                 return select_no_match;
