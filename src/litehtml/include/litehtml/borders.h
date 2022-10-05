@@ -145,7 +145,7 @@ struct CSSBorderRadius {
         BorderRadius border_radius;
 
         border_radius.x = x.calc_percent(width);
-        border_radius.y = x.calc_percent(height);
+        border_radius.y = y.calc_percent(height);
 
         return border_radius;
     }
