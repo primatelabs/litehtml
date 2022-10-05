@@ -17,6 +17,7 @@ set(SOURCE_LITEHTML
     background.cpp
     background_paint.cpp
     box.cpp
+    borders.cpp
     codepoint.cpp
     color.cpp
     context.cpp
