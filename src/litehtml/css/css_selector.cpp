@@ -71,8 +71,7 @@ void CSSElementSelector::parse(const tstring& txt)
                     if (pos != tstring::npos) {
                         pos++;
                     } else {
-                        int iii = 0;
-                        iii++;
+                        // FIXME: What do we do here?
                     }
                 }
                 if (pos != tstring::npos) {
