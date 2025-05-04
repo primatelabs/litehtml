@@ -45,6 +45,16 @@ headless demonstrates how to use litehtml and integrate it into an application. 
   * libpng
   * libjpeg
 
+On macOS the easiest way to install the prerequisites is with Homebrew:
+
+    brew install curl \
+        fmt \
+        fontconfig \
+        freetype \
+        libjpeg-turbo \
+        libpng \
+        pkgconf
+
 On Ubuntu the easiest way to install the prerequisites is with the following command:
 
     sudo apt install libcurl4-openssl-dev \
