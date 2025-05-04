@@ -29,6 +29,8 @@
 
 #include "litehtml/codepoint.h"
 
+#include <stdint.h>
+
 #include <iostream>
 
 namespace {
