@@ -10,6 +10,7 @@ find_package(PkgConfig)
 pkg_search_module(FMT REQUIRED fmt)
 pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
 pkg_search_module(FREETYPE REQUIRED freetype2)
+pkg_search_module(HARFBUZZ REQUIRED harfbuzz)
 pkg_search_module(LIBPNG REQUIRED libpng>=1.6.0)
 
 set(HEADLESS_NAME headless)
@@ -79,6 +80,7 @@ target_include_directories(
 target_link_directories(
     ${HEADLESS_NAME}
     PUBLIC
+    ${HARFBUZZ_LIBRARY_DIRS}
     ${FONTCONFIG_LIBRARY_DIRS}
     ${FMT_LIBRARY_DIRS}
     ${LIBPNG_LIBRARY_DIRS}
@@ -87,6 +89,7 @@ target_link_directories(
 target_link_libraries(
     ${HEADLESS_NAME}
     litehtml
+    ${HARFBUZZ_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${LIBPNG_LIBRARIES}
