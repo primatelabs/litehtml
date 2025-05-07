@@ -248,6 +248,8 @@ uintptr_t HeadlessContainer::create_font(const char* family_name,
 
     FT_CALL(FT_Set_Char_Size(font->ft_face, size * 64, 0, dpi_, 0));
 
+    font->hb_font = hb_ft_font_create_referenced(font->ft_face);
+
     if (fm) {
         // Freetype descender is usually negative, while litehtml expects it
         // to be positive.
@@ -275,6 +277,7 @@ void HeadlessContainer::delete_font(uintptr_t hFont)
     HEADLESS_TRACE1(HeadlessContainer::delete_font, hFont);
 
     HeadlessFont* font = (HeadlessFont*)(hFont);
+    hb_font_destroy(font->hb_font);
     FT_CALL(FT_Done_Face(font->ft_face));
 }
 
@@ -290,17 +293,25 @@ int HeadlessContainer::text_width(const char* text,
     // HEADLESS_TRACE1(HeadlessContainer::text_width, text);
 
     HeadlessFont* font = (HeadlessFont*)(hFont);
-    FT_GlyphSlot glyph = font->ft_face->glyph;
+
+    hb_buffer_t* buffer = hb_buffer_create();
+    hb_buffer_add_utf8(buffer, text, -1, 0, -1);
+    hb_buffer_guess_segment_properties(buffer);
+
+    hb_shape(font->hb_font, buffer, nullptr, 0);
+
+    unsigned int glyph_count = 0;
+    hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos(buffer, &glyph_count);
+    hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions(buffer, &glyph_count);
+
     int width = 0;
 
-    const char* end = text + strlen(text);
-    const char* p = text;
-
-    while (p != end) {
-        char32_t c = utf8::next(p, end);
-        FT_CALL(FT_Load_Char(font->ft_face, c, FT_LOAD_DEFAULT));
-        width += glyph->advance.x;
+    // FIXME: Handle RTL text.
+    for (unsigned int i = 0; i < glyph_count; ++i) {
+        width += glyph_pos[i].x_advance;
     }
+
+    hb_buffer_destroy(buffer);
 
     // Convert from fractional pixels to whole pixels.
     // TODO: Should we round the result rather than truncating the result?
@@ -327,7 +338,16 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
     Image<uint8_t>& canvas = orc->canvas;
 
     HeadlessFont* font = (HeadlessFont*)(hFont);
-    FT_GlyphSlot glyph = font->ft_face->glyph;
+
+    hb_buffer_t* buffer = hb_buffer_create();
+    hb_buffer_add_utf8(buffer, text, -1, 0, -1);
+    hb_buffer_guess_segment_properties(buffer);
+
+    hb_shape(font->hb_font, buffer, nullptr, 0);
+
+    unsigned int glyph_count = 0;
+    hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos(buffer, &glyph_count);
+    hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions(buffer, &glyph_count);
 
     // TODO: Should we round the result rather than truncating the result?
     int target_height = font->ft_face->size->metrics.height / 64;
@@ -338,12 +358,8 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
 
     // pos.x and pos.y represent the upper left corner where the text should render
 
-    const char* end = text + strlen(text);
-    const char* p = text;
-
-    while (p != end) {
-        char32_t c = utf8::next(p, end);
-
+    // FIXME: Handle RTL text.
+    for (unsigned int i = 0; i < glyph_count; i++) {
         // Stop rendering text if the pen falls outside the image bounds.
         // Otherwise FreeType may return a "raster overflow" error.  Given
         // that the FreeType documentation doesn't provide guidance on how to
@@ -352,8 +368,11 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
             break;
         }
 
+        FT_UInt glyph_index = glyph_info[i].codepoint;
+        FT_GlyphSlot glyph = font->ft_face->glyph;
+
         FT_Set_Transform(font->ft_face, nullptr, &pen);
-        FT_CALL(FT_Load_Char(font->ft_face, c, FT_LOAD_RENDER));
+        FT_CALL(FT_Load_Glyph(font->ft_face, glyph_index, FT_LOAD_RENDER));
 
         // target_height - glyph->bitmap_top effectively move the pen from the top
         // of the line to the bottom of the line then backtrack to where the glyph starts.
