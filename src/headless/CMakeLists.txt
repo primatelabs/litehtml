@@ -100,11 +100,15 @@ target_link_libraries(
     ${requiredlibs}
 )
 
-add_custom_command(
-    TARGET ${HEADLESS_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_CURRENT_SOURCE_DIR}/fonts/Roboto-Regular.ttf
-    ${CMAKE_BINARY_DIR}/Roboto-Regular.ttf)
+file(GLOB FONTS ${CMAKE_CURRENT_SOURCE_DIR}/fonts/*.ttf)
+foreach(CurrentFontFile IN LISTS FONTS)
+    add_custom_command(
+        TARGET ${HEADLESS_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CurrentFontFile}
+        ${CMAKE_BINARY_DIR}
+        COMMENT "Copying font: ${CurrentFontFile}")
+endforeach()
 
 # JSON
 if (ENABLE_JSON)
