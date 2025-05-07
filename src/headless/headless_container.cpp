@@ -237,45 +237,45 @@ uintptr_t HeadlessContainer::create_font(const char* family_name,
         italic,
         decoration);
 
-    FT_Face face = nullptr;
+    HeadlessFont* font = new HeadlessFont();
 
     const std::filesystem::path& path = lookup_font_path(family_name, weight, italic);
 
     FT_CALL(FT_New_Face(library_,
         path.c_str(),
         0,
-        &face));
+        &font->ft_face));
 
-    FT_CALL(FT_Set_Char_Size(face, size * 64, 0, dpi_, 0));
+    FT_CALL(FT_Set_Char_Size(font->ft_face, size * 64, 0, dpi_, 0));
 
     if (fm) {
         // Freetype descender is usually negative, while litehtml expects it
         // to be positive.
-        fm->ascent = face->size->metrics.ascender / 64;
-        fm->descent = abs(face->size->metrics.descender / 64);
+        fm->ascent = font->ft_face->size->metrics.ascender / 64;
+        fm->descent = abs(font->ft_face->size->metrics.descender / 64);
 
         // The height fields should be equal to the sum of the ascent and
         // descent fields.  During testing it is but we've only tested on a
         // handful of fonts.  Does litehtml break anywhere if this
         // relationship doesn't hold?  Other containers compute height using
         // ascent and descent.
-        fm->height = face->size->metrics.height / 64;
+        fm->height = font->ft_face->size->metrics.height / 64;
 
         // Calculate x_height using the width of the lower-case x character in
         // the current font.  It's not clear how litehtml uses this variable
         // but other containers compute this value in the same way.
-        fm->x_height = text_width("x", (uintptr_t)face);
+        fm->x_height = text_width("x", (uintptr_t)font);
     }
 
-    return (uintptr_t)(face);
+    return (uintptr_t)(font);
 }
 
 void HeadlessContainer::delete_font(uintptr_t hFont)
 {
     HEADLESS_TRACE1(HeadlessContainer::delete_font, hFont);
 
-    FT_Face face = (FT_Face)(hFont);
-    FT_CALL(FT_Done_Face(face));
+    HeadlessFont* font = (HeadlessFont*)(hFont);
+    FT_CALL(FT_Done_Face(font->ft_face));
 }
 
 int HeadlessContainer::text_width(const char* text,
@@ -289,8 +289,8 @@ int HeadlessContainer::text_width(const char* text,
     //
     // HEADLESS_TRACE1(HeadlessContainer::text_width, text);
 
-    FT_Face face = (FT_Face)(hFont);
-    FT_GlyphSlot glyph = face->glyph;
+    HeadlessFont* font = (HeadlessFont*)(hFont);
+    FT_GlyphSlot glyph = font->ft_face->glyph;
     int width = 0;
 
     const char* end = text + strlen(text);
@@ -298,7 +298,7 @@ int HeadlessContainer::text_width(const char* text,
 
     while (p != end) {
         char32_t c = utf8::next(p, end);
-        FT_CALL(FT_Load_Char(face, c, FT_LOAD_DEFAULT));
+        FT_CALL(FT_Load_Char(font->ft_face, c, FT_LOAD_DEFAULT));
         width += glyph->advance.x;
     }
 
@@ -326,11 +326,11 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
     OrionRenderContext* orc = reinterpret_cast<OrionRenderContext*>(hdc);
     Image<uint8_t>& canvas = orc->canvas;
 
-    FT_Face face = (FT_Face)(hFont);
-    FT_GlyphSlot glyph = face->glyph;
+    HeadlessFont* font = (HeadlessFont*)(hFont);
+    FT_GlyphSlot glyph = font->ft_face->glyph;
 
     // TODO: Should we round the result rather than truncating the result?
-    int target_height = face->size->metrics.height / 64;
+    int target_height = font->ft_face->size->metrics.height / 64;
 
     FT_Vector pen;
     pen.x = pos.x * 64;
@@ -352,8 +352,8 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
             break;
         }
 
-        FT_Set_Transform(face, nullptr, &pen);
-        FT_CALL(FT_Load_Char(face, c, FT_LOAD_RENDER));
+        FT_Set_Transform(font->ft_face, nullptr, &pen);
+        FT_CALL(FT_Load_Char(font->ft_face, c, FT_LOAD_RENDER));
 
         // target_height - glyph->bitmap_top effectively move the pen from the top
         // of the line to the bottom of the line then backtrack to where the glyph starts.

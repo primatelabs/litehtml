@@ -34,6 +34,7 @@
 
 #include "font_description.h"
 #include "freetype.h"
+#include "headless_font.h"
 #include "image/image.h"
 #include "litehtml/litehtml.h"
 #include "litehtml/url.h"
