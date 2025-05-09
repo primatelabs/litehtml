@@ -109,6 +109,49 @@ Element::~Element()
     }
 }
 
+
+// https://html.spec.whatwg.org/multipage/dom.html#the-dir-attribute
+Directionality Element::get_directionality() const
+{
+    if (direction_ != kDirectionUndefined) {
+        switch (direction_) {
+            case kDirectionLTR:
+                return kDirectionalityLTR;
+
+            case kDirectionRTL:
+                return kDirectionalityRTL;
+
+            case kDirectionAuto:
+                // FIXME: Compute the auto directionality of the element using
+                // the heuristics from the HTML standard:
+                //  https://html.spec.whatwg.org/multipage/dom.html#auto-directionality
+                return kDirectionalityLTR;
+
+            default:
+                break;
+        }
+    }
+
+    // FIXME: Add support for bdi elements
+
+    return get_parent_directionality();
+}
+
+
+// https://html.spec.whatwg.org/multipage/dom.html#parent-directionality
+Directionality Element::get_parent_directionality() const
+{
+    if (m_parent) {
+        // LiteHTML does not support shadow root nodes so we cannot check if
+        // the parent node is a shadow root node or an element. Assume it is
+        // an element and return the directionality of the parent node.
+        return m_parent->get_directionality();
+    }
+
+    return kDirectionalityLTR;
+}
+
+
 bool Element::is_point_inside(int x, int y)
 {
     if (get_display() != kDisplayInline && get_display() != kDisplayTableRow) {
@@ -871,6 +914,8 @@ nlohmann::json Element::json() const
 {
     nlohmann::json result{
         {"type", type_name()},
+        {"direction", direction_},
+        {"directionality", get_directionality()},
         {"position", position_.json()}
     };
 

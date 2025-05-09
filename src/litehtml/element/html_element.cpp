@@ -91,18 +91,36 @@ const char* HTMLElement::get_tagName() const
     return m_tag.c_str();
 }
 
-void HTMLElement::set_attr(const char* name, const char* val)
+void HTMLElement::set_attr(const char* name, const char* value)
 {
-    if (name && val) {
-        std::string s_val = name;
-        for (size_t i = 0; i < s_val.length(); i++) {
-            s_val[i] = std::tolower(s_val[i], std::locale::classic());
-        }
-        m_attrs[s_val] = val;
+    if (!name || !value) {
+        return;
+    }
 
-        if (t_strcasecmp(name, "class") == 0) {
-            m_class_values.resize(0);
-            split_string(val, m_class_values, " ");
+    std::string s_name = name;
+    for (size_t i = 0; i < s_name.length(); i++) {
+        s_name[i] = std::tolower(s_name[i], std::locale::classic());
+    }
+    m_attrs[s_name] = value;
+
+    std::string s_value = value;
+    for (size_t i = 0; i < s_value.length(); i++) {
+        s_value[i] = std::tolower(s_value[i], std::locale::classic());
+    }
+
+    if (s_name == "class") {
+        m_class_values.resize(0);
+        split_string(value, m_class_values, " ");
+    } else if (s_name == "dir") {
+        // https://html.spec.whatwg.org/multipage/dom.html#attr-dir
+        if (s_value == "ltr") {
+            direction_ = kDirectionLTR;
+        } else if (s_value == "rtl") {
+            direction_ = kDirectionRTL;
+        } else if (s_value == "auto") {
+            direction_ = kDirectionAuto;
+        } else {
+            direction_ = kDirectionUndefined;
         }
     }
 }
