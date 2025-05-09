@@ -187,7 +187,7 @@ struct Position {
     }
 
 #if defined(ENABLE_JSON)
-    virtual nlohmann::json json() const
+    nlohmann::json json() const
     {
         return nlohmann::json{
             {"x", x},
