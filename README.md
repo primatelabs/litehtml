@@ -47,8 +47,7 @@ headless demonstrates how to use litehtml and integrate it into an application. 
 
 On macOS the easiest way to install the prerequisites is with Homebrew:
 
-    brew install curl \
-        fmt \
+    brew install fmt \
         fontconfig \
         freetype \
         libjpeg-turbo \
