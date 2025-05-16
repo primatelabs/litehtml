@@ -164,10 +164,13 @@ void LineBox::add_element(const Element::ptr& el)
             int el_shift_left = el->get_inline_shift_left();
             int el_shift_right = el->get_inline_shift_right();
 
-            el->position_.x = m_box_left + m_width + el_shift_left +
-                          el->content_margin_left();
-            el->position_.y = m_box_top + el->content_margin_top();
+            if (directionality_ == kDirectionalityLTR) {
+                el->position_.x = m_box_left + m_width + el_shift_left + el->content_margin_left();
+            } else if (directionality_ == kDirectionalityRTL) {
+                el->position_.x = m_box_right - (el->width() + m_width + el_shift_right + el->content_margin_right());
+            }
             m_width += el->width() + el_shift_left + el_shift_right;
+            el->position_.y = m_box_top + el->content_margin_top();
         }
     }
 }
@@ -323,9 +326,11 @@ bool LineBox::can_hold(const Element::ptr& el, CSSKeyword ws)
         return true;
     }
 
-    if (m_box_left + m_width + el->width() + el->get_inline_shift_left() +
-            el->get_inline_shift_right() >
-        m_box_right) {
+    // TODO: Verify that can_hold() does not need to consider directionality.
+
+    int element_width = el->width() + el->get_inline_shift_left() + el->get_inline_shift_right();
+
+    if (m_box_left + m_width + element_width > m_box_right) {
         return false;
     }
 
