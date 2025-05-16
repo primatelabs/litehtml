@@ -1984,13 +1984,13 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
     }
 
     if (el->get_display() == kDisplayInline) {
-        return el->render_inline(this, max_width);
+        int width = el->render_inline(this, max_width);
+        return width;
     }
 
     ElementPosition el_position = el->get_element_position();
 
-    if (el_position == kPositionAbsolute ||
-        el_position == kPositionFixed) {
+    if (el_position == kPositionAbsolute || el_position == kPositionFixed) {
         int line_top = 0;
         if (!m_boxes.empty()) {
             if (m_boxes.back()->get_type() == kBoxLine) {
@@ -2040,6 +2040,7 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
                 ret_width = el->right();
             }
         } break;
+
         case kFloatRight: {
             int line_top = 0;
             if (!m_boxes.empty()) {
@@ -2077,6 +2078,7 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
                 ret_width = ret_width + (max_width - line_right);
             }
         } break;
+
         default: {
             line_context line_ctx;
             line_ctx.top = 0;
@@ -2091,9 +2093,9 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
             switch (el->get_display()) {
                 case kDisplayInlineBlock:
                 case kDisplayInlineTable:
-                    ret_width =
-                        el->render(line_ctx.left, line_ctx.top, line_ctx.right);
+                    ret_width = el->render(line_ctx.left, line_ctx.top, line_ctx.right);
                     break;
+
                 case kDisplayBlock:
                     if (el->is_replaced() || el->is_floats_holder()) {
                         Element::ptr el_parent = el->parent();
@@ -2104,10 +2106,12 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
                     }
                     el->calc_outlines(line_ctx.right - line_ctx.left);
                     break;
+
                 case kDisplayInlineText: {
                     Size sz = el->get_content_size(line_ctx.right);
                     el->position_ = sz;
                 } break;
+
                 default:
                     ret_width = 0;
                     break;
@@ -2333,7 +2337,8 @@ int HTMLElement::new_box(const Element::ptr& el, int max_width, line_context& li
             line_ctx.right,
             line_height(),
             fm,
-            m_text_align)));
+            m_text_align,
+            get_directionality())));
     } else {
         m_boxes.emplace_back(std::unique_ptr<BlockBox>(
             new BlockBox(line_ctx.top, line_ctx.left, line_ctx.right)));
