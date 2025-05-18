@@ -1,4 +1,5 @@
-// Copyright (C) 2020-2021 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020-2021 Primate Labs Inc.
+// All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -10,7 +11,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//    * Neither the name of the copyright holder nor the names of its
+//    * Neither the names of the copyright holders nor the names of their
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -27,52 +28,48 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <assert.h>
+#include <benchmark/benchmark.h>
 
 #include <fstream>
 
-#include <benchmark/benchmark.h>
-
-#include "litehtml/css/css_stylesheet.h"
 #include "litehtml/document.h"
+#include "litehtml/document_parser.h"
 #include "test_container.h"
+
+using namespace litehtml;
 
 namespace {
 
 std::string load(const std::string& filename)
 {
-  std::ifstream ifs(filename.c_str());
+    std::ifstream ifs(filename.c_str());
 
-  if (ifs.bad()) {
-    assert(false);
-  }
+    if (ifs.bad()) {
+        assert(false);
+    }
 
-  std::string text;
-  char c;
-  // TODO: Is there a better way to load a file into memory?
-  while (ifs.get(c)) {
-    text += c;
-  }
+    std::string text;
+    char c;
+    // TODO: Is there a better way to load a file into memory?
+    while (ifs.get(c)) {
+        text += c;
+    }
 
-  return text;
+    return text;
 }
 
 } // namespace
 
-
-void CSSStylesheetPerfTestParse(benchmark::State& state)
+void DocumentPerfTestCreate(benchmark::State& state)
 {
-  std::string css = load("/Users/jfpoole/Projects/geekbench/third_party/litehtml/test/css/bootstrap-3.4.1.css");
-  test_container container;
-  Context context;
+    std::string html = load("../test/html/obama.html");
 
-  for (auto _ : state) {
-    litehtml::Document::ptr doc = std::make_shared<litehtml::document>(&container, nullptr);
-    litehtml::CSSStylesheet s;
-    litehtml::MediaQueryList::ptr media;
+    test_container container;
+    Context context;
 
-    s.parse_stylesheet(css.c_str(), litehtml::URL(), doc, media);
-  }
+    for (auto _ : state) {
+        Document* document = DocumentParser::parse(html, URL(), &container, &context);
+    }
 }
 
-
-BENCHMARK(CSSStylesheetPerfTestParse);
+BENCHMARK(DocumentPerfTestCreate);

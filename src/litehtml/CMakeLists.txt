@@ -181,6 +181,13 @@ set(TEST_LITEHTML
     test_container.cpp
 )
 
+set(PERFTEST_LITEHTML
+    css/css_parser_perftest.cpp
+    document_parser_perftest.cpp
+
+    test_container.cpp
+)
+
 set(PROJECT_LIB_VERSION ${PROJECT_MAJOR}.${PROJECT_MINOR}.0)
 set(PROJECT_SO_VERSION ${PROJECT_MAJOR})
 
@@ -290,7 +297,7 @@ endif()
 if (BUILD_TESTING)
     enable_testing()
 
-    set(TEST_NAME ${PROJECT_NAME}_tests)
+    set(TEST_NAME ${PROJECT_NAME}_test)
 
     add_executable(
         ${TEST_NAME}
@@ -318,6 +325,51 @@ if (BUILD_TESTING)
         ${TEST_NAME}
         ${PROJECT_NAME}
         gtest_main
+    )
+
+    include(GoogleTest)
+    gtest_discover_tests(${TEST_NAME})
+endif()
+
+if (BUILD_PERFTEST)
+    FetchContent_Declare(
+      benchmark
+      URL https://github.com/google/benchmark/archive/refs/tags/v1.9.3.zip
+    )
+    FetchContent_GetProperties(benchmark)
+    if(NOT benchmark_POPULATED)
+      FetchContent_Populate(benchmark)
+      add_subdirectory(${benchmark_SOURCE_DIR} ${benchmark_BINARY_DIR})
+    endif()
+
+    set(PERFTEST_NAME ${PROJECT_NAME}_perftest)
+
+    add_executable(
+        ${PERFTEST_NAME}
+        ${PERFTEST_LITEHTML}
+        ${CMAKE_CURRENT_SOURCE_DIR}/master.css.inc
+    )
+
+    set_target_properties(${PERFTEST_NAME} PROPERTIES
+        CXX_STANDARD 17
+        C_STANDARD 99
+        PUBLIC_HEADER "${HEADER_LITEHTML}"
+    )
+
+    target_include_directories(
+        ${PERFTEST_NAME}
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/containers
+    )
+
+    if (ENABLE_JSON)
+        target_compile_definitions(${PERFTEST_NAME} PRIVATE ENABLE_JSON)
+        target_include_directories(${PERFTEST_NAME} PRIVATE ../../third_party/json/include)
+    endif()
+
+    target_link_libraries(
+        ${PERFTEST_NAME}
+        ${PROJECT_NAME}
+        benchmark_main
     )
 
     include(GoogleTest)

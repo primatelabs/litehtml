@@ -27,10 +27,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <assert.h>
+#include <benchmark/benchmark.h>
 
 #include <fstream>
-
-#include <benchmark/benchmark.h>
 
 #include "litehtml/css/css_parser.h"
 #include "litehtml/css/css_stylesheet.h"
@@ -41,33 +40,32 @@ namespace {
 
 std::string load(const std::string& filename)
 {
-  std::ifstream ifs(filename.c_str());
+    std::ifstream ifs(filename.c_str());
 
-  if (ifs.bad()) {
-    assert(false);
-  }
+    if (ifs.bad()) {
+        assert(false);
+    }
 
-  std::string text;
-  char c;
-  // TODO: Is there a better way to load a file into memory?
-  while (ifs.get(c)) {
-    text += c;
-  }
+    std::string text;
+    char c;
+    // TODO: Is there a better way to load a file into memory?
+    while (ifs.get(c)) {
+        text += c;
+    }
 
-  return text;
+    return text;
 }
 
 } // namespace
 
-
 void CSSParserPerfTestParseStylesheet(benchmark::State& state)
 {
-  std::string css = load("/Users/jfpoole/Projects/geekbench/third_party/litehtml/test/css/bootstrap-3.4.1.css");
+    std::string css = load("../test/css/bootstrap-3.4.1.css");
 
-  for (auto _ : state) {
-    litehtml::CSSParser parser(css);
-    litehtml::CSSStylesheet stylesheet = parser.parse_stylesheet();
-  }
+    for (auto _ : state) {
+        litehtml::CSSParser parser(css);
+        litehtml::CSSStylesheet* stylesheet = parser.parse_stylesheet();
+    }
 }
 
 BENCHMARK(CSSParserPerfTestParseStylesheet);
