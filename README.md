@@ -18,9 +18,23 @@ litehtml uses CMake as its build system.  Build litehtml on macOS or Linux by ex
     cmake ..
     make
 
-You can also build and run the litehtml unit tests by executing the following command from the build directory using the terminal:
+### Building unit tests
+
+Build the unit tests by executing the following comamnds from the build directory using the terminal:
 
     make test
+
+### Building performance tests
+
+litehtml includes performance tests that require some additional configuration. Build the performance tests by executing the following comamnds from the source directory using the terminal:
+
+    mkdir build
+    cd build
+    cmake .. -DBUILD_PERFTEST=1 -DCMAKE_BUILD_TYPE=Release
+
+Run the performance tests by executing the following command from the build directory using the terminal:
+
+    ./src/litehtml/litehtml_perftest --benchmark_time_unit=ms
 
 ## litehtml Goals
 
