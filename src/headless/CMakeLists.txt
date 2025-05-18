@@ -15,6 +15,7 @@ pkg_search_module(LIBPNG REQUIRED libpng>=1.6.0)
 set(HEADLESS_NAME headless)
 
 set(SOURCE_HEADLESS
+    flags.cpp
     headless.cpp
     headless_container.cpp
     http.cpp

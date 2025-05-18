@@ -30,6 +30,7 @@
 #include <iostream>
 #include <string>
 
+#include "flags.h"
 #include "headless_container.h"
 #include "http.h"
 #include "litehtml/document_parser.h"
@@ -69,10 +70,25 @@ std::string load(const std::string& filename)
 
 int main(int argc, char** argv)
 {
-    litehtml::URL url(argv[1]);
+    Flags flags;
+
+    if (flags.parse(argc, argv) != kParseSuccess) {
+        flags.usage(-1);
+    }
+
+    if (flags.do_usage) {
+        flags.usage(0);
+    }
+
+    if (flags.url.empty() && flags.file.empty()) {
+        flags.usage(-1);
+    }
+
+    litehtml::URL url(flags.url);
+
     std::string html;
 
-    if (url.scheme() == "file") {
+    if (!flags.file.empty()) {
         html = load(url.path());
     } else {
         http_response response = http_request(url);
@@ -98,7 +114,7 @@ int main(int argc, char** argv)
     ras.auto_close(false);
 
     document->draw(reinterpret_cast<uintptr_t>(&orc), 0, 0, nullptr);
-    orc.canvas.save<PNGCodec>("headless.png");
+    orc.canvas.save<PNGCodec>(flags.output);
 
 #if defined(ENABLE_JSON)
     std::ofstream ofs_stylesheet("stylesheet.json");
