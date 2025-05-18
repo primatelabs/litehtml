@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - uses: actions/setup-python@v5
       with:
         cache: 'pip'
@@ -46,6 +48,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - uses: actions/setup-python@v5
       with:
         cache: 'pip'
