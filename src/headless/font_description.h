@@ -1,4 +1,5 @@
-// Copyright (C) 2020-2025 Primate Labs Inc. All rights reserved.
+// Copyright (C) 2020-2025 Primate Labs Inc.
+// All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -10,7 +11,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//    * Neither the name of the copyright holder nor the names of its
+//    * Neither the names of the copyright holders nor the names of their
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -31,33 +32,22 @@
 #include <filesystem>
 #include <string>
 
-enum ParseStatus {
-    kParseSuccess,
-    kParseErrorUsage,
+struct FontDescription {
+  std::string family;
+  int weight = -1;
+  int slope = -1;
+
+  FontDescription() = default;
+
+  FontDescription(std::string family, int weight, int slope)
+  : family(family)
+  , weight(weight)
+  , slope(slope)
+  {
+  }
+
+  bool operator==(const FontDescription& other) const
+  {
+    return (family == other.family) && (weight == other.weight) && (slope == other.slope);
+  }
 };
-
-struct Flags {
-    Flags();
-
-    ParseStatus parse(int argc, char** argv);
-
-    void usage(int exit_code);
-
-    bool do_usage = false;
-
-    std::string argv0;
-
-    std::filesystem::path font_directory;
-
-    std::string file;
-
-    std::string url;
-
-    int width;
-
-    int height;
-
-    std::string output;
-};
-
-extern "C" const char* argv0;

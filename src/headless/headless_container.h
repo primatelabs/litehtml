@@ -30,6 +30,9 @@
 #ifndef HEADLESS_HEADLESS_CONTAINER_H__
 #define HEADLESS_HEADLESS_CONTAINER_H__
 
+#include <filesystem>
+
+#include "font_description.h"
 #include "freetype.h"
 #include "image/image.h"
 #include "litehtml/litehtml.h"
@@ -40,6 +43,12 @@ namespace headless {
 class HeadlessContainer : public litehtml::DocumentContainer {
 public:
     FT_Library library_;
+
+    const std::filesystem::path font_directory_;
+
+    const std::filesystem::path default_font_path_;
+
+    std::vector<std::pair<FontDescription, std::filesystem::path>> font_paths_;
 
     int width_;
 
@@ -62,9 +71,13 @@ public:
 
     std::unordered_map<std::string, Image<uint8_t>> image_cache_;
 
-    HeadlessContainer(int width, int height);
+    HeadlessContainer(const std::filesystem::path&, int width, int height);
 
     virtual ~HeadlessContainer();
+
+    virtual const std::filesystem::path& lookup_font_path(const char* family_name,
+        int weight,
+        litehtml::font_style italic);
 
     virtual uintptr_t create_font(const char* faceName,
         int size,

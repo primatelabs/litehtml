@@ -148,20 +148,82 @@ orion::rgba8 convert_color(const litehtml::Color& color)
 
 } // namespace
 
-HeadlessContainer::HeadlessContainer(int width, int height)
+HeadlessContainer::HeadlessContainer(const std::filesystem::path& font_directory,
+    int width,
+    int height)
 : DocumentContainer()
+, font_directory_(font_directory)
+, default_font_path_(font_directory_ / "Roboto-Regular.ttf")
 , width_(width)
 , height_(height)
 , dpi_(kDefaultDPI)
 {
     FT_CALL(FT_Init_FreeType(&library_));
+
+    // Iterate over the fonts in the font directory so the container can
+    // enumerate the available fonts for the lookup_font_path() method.
+
+    for (const auto& entry : std::filesystem::directory_iterator(font_directory_)) {
+        if (entry.is_regular_file()) {
+            std::string extension = entry.path().extension().string();
+            if (extension == ".ttf") {
+
+                FT_Face face = nullptr;
+
+                FT_CALL(FT_New_Face(library_,
+                    entry.path().c_str(),
+                    0,
+                    &face));
+
+                FontDescription description;
+
+                description.family = face->family_name;
+
+                description.weight = 400;
+                if (face->style_flags & FT_STYLE_FLAG_BOLD) {
+                    description.weight = 700;
+                }
+
+                description.slope = 0;
+                if (face->style_flags & FT_STYLE_FLAG_ITALIC) {
+                    description.slope = 1;
+                }
+
+                font_paths_.push_back({description, entry.path()});
+
+                FT_CALL(FT_Done_Face(face));
+            }
+        }
+    }
 }
 
 HeadlessContainer::~HeadlessContainer()
 {
 }
 
-uintptr_t HeadlessContainer::create_font(const char* faceName,
+const std::filesystem::path& HeadlessContainer::lookup_font_path(const char* family_name,
+    int weight,
+    litehtml::font_style italic)
+{
+    FontDescription lookup(family_name, weight, italic);
+
+    // lookup_font_path() doesn't implement the matching font styles algorithm
+    // outlined in the CSS specification[1]. Instead, lookup_font_path()
+    // matches the requested font exactly. If a match isn't found, it returns
+    // the default font.
+    //
+    // [1] https://www.w3.org/TR/css-fonts-3/#font-style-matching
+
+    for (const auto& paths : font_paths_) {
+        if (lookup == paths.first) {
+            return paths.second;
+        }
+    }
+
+    return default_font_path_;
+}
+
+uintptr_t HeadlessContainer::create_font(const char* family_name,
     int size,
     int weight,
     litehtml::font_style italic,
@@ -175,11 +237,12 @@ uintptr_t HeadlessContainer::create_font(const char* faceName,
         italic,
         decoration);
 
-    // TODO: Is this the correct way to allocate FT_Face structures?
     FT_Face face = nullptr;
 
+    const std::filesystem::path& path = lookup_font_path(family_name, weight, italic);
+
     FT_CALL(FT_New_Face(library_,
-        "Roboto-Regular.ttf",
+        path.c_str(),
         0,
         &face));
 

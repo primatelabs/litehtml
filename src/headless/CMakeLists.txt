@@ -16,6 +16,7 @@ set(HEADLESS_NAME headless)
 
 set(SOURCE_HEADLESS
     flags.cpp
+    font_description.cpp
     headless.cpp
     headless_container.cpp
     http.cpp

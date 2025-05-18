@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 
     litehtml::Context ctx(master_stylesheet);
 
-    HeadlessContainer container(flags.width, flags.height);
+    HeadlessContainer container(flags.font_directory, flags.width, flags.height);
 
     std::unique_ptr<Document> document(DocumentParser::parse(
         html,

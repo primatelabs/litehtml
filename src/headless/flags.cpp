@@ -43,6 +43,8 @@ enum Switches {
 
     kSwitchHelp,
 
+    kSwitchFontDirectory,
+
     kSwitchFile,
     kSwitchURL,
 
@@ -57,7 +59,8 @@ constexpr int kDefaultHeight = 1366;
 } // namespace
 
 Flags::Flags()
-: width(kDefaultWidth)
+: font_directory(std::filesystem::current_path())
+, width(kDefaultWidth)
 , height(kDefaultHeight)
 , output("headless.png")
 {
@@ -70,6 +73,8 @@ ParseStatus Flags::parse(int argc, char** argv)
     int c;
     struct option longopts[] = {
         {"help", no_argument, nullptr, kSwitchHelp},
+
+        {"font-directory", required_argument, nullptr, kSwitchFontDirectory},
 
         {"file", required_argument, nullptr, kSwitchFile},
         {"url", required_argument, nullptr, kSwitchURL},
@@ -87,6 +92,10 @@ ParseStatus Flags::parse(int argc, char** argv)
             case 'h':
             case '?':
                 do_usage = true;
+                break;
+
+            case kSwitchFontDirectory:
+                font_directory = optarg;
                 break;
 
             case kSwitchFile:
@@ -122,6 +131,7 @@ void Flags::usage(int exit_code)
     std::cout << fmt::format("{} [ options ]\n\n", argv0);
     std::cout << "Options:\n";
     std::cout << "  -h, --help                  print this message\n";
+    std::cout << "  ---font-directory DIR       load fonts from DIR directory\n";
     std::cout << "  ---file FILE                load and render the web page from FILE\n";
     std::cout << "  ---url URL                  load and render the web page from URL\n";
     std::cout << "  ---width WIDTH              set the viewport to WIDTH pixels wide\n";
