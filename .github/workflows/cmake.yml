@@ -43,6 +43,10 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}} --rerun-failed --output-on-failure
 
+    - name: Render Test
+      working-directory: ${{github.workspace}}/build
+      run: python3 ../test/render/render-driver.py test --headless-executable src/headless/headless --html-path ../test/render/html --reference-path ../test/render/reference
+
   build-macos:
     runs-on: [ 'macos-latest' ]
 
