@@ -17,6 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
+        lfs: true
         submodules: recursive
     - uses: actions/setup-python@v5
       with:
@@ -53,6 +54,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
+        lfs: true
         submodules: recursive
     - uses: actions/setup-python@v5
       with:
