@@ -35,119 +35,119 @@
 
 namespace litehtml {
 
-void CSSElementSelector::parse(const tstring& txt)
+void CSSElementSelector::parse(const std::string& txt)
 {
-    tstring::size_type el_end = txt.find_first_of(_t(".#[:"));
+    std::string::size_type el_end = txt.find_first_of(".#[:");
     m_tag = txt.substr(0, el_end);
     lcase(m_tag);
     m_attrs.clear();
-    while (el_end != tstring::npos) {
-        if (txt[el_end] == _t('.')) {
+    while (el_end != std::string::npos) {
+        if (txt[el_end] == '.') {
             CSSAttributeSelector attribute;
 
-            tstring::size_type pos = txt.find_first_of(_t(".#[:"), el_end + 1);
+            std::string::size_type pos = txt.find_first_of(".#[:", el_end + 1);
             attribute.val = txt.substr(el_end + 1, pos - el_end - 1);
-            split_string(attribute.val, attribute.class_val, _t(" "));
+            split_string(attribute.val, attribute.class_val, " ");
             attribute.condition = kSelectEqual;
-            attribute.attribute = _t("class");
+            attribute.attribute = "class";
             m_attrs.push_back(attribute);
             el_end = pos;
-        } else if (txt[el_end] == _t(':')) {
+        } else if (txt[el_end] == ':') {
             CSSAttributeSelector attribute;
 
-            if (txt[el_end + 1] == _t(':')) {
-                tstring::size_type pos = txt.find_first_of(_t(".#[:"), el_end + 2);
+            if (txt[el_end + 1] == ':') {
+                std::string::size_type pos = txt.find_first_of(".#[:", el_end + 2);
                 attribute.val = txt.substr(el_end + 2, pos - el_end - 2);
                 attribute.condition = kSelectPseudoElement;
                 lcase(attribute.val);
-                attribute.attribute = _t("pseudo-el");
+                attribute.attribute = "pseudo-el";
                 m_attrs.push_back(attribute);
                 el_end = pos;
             } else {
-                tstring::size_type pos =
-                    txt.find_first_of(_t(".#[:("), el_end + 1);
-                if (pos != tstring::npos && txt.at(pos) == _t('(')) {
+                std::string::size_type pos =
+                    txt.find_first_of(".#[:(", el_end + 1);
+                if (pos != std::string::npos && txt.at(pos) == '(') {
                     pos = find_close_bracket(txt, pos);
-                    if (pos != tstring::npos) {
+                    if (pos != std::string::npos) {
                         pos++;
                     } else {
                         // FIXME: What do we do here?
                     }
                 }
-                if (pos != tstring::npos) {
+                if (pos != std::string::npos) {
                     attribute.val = txt.substr(el_end + 1, pos - el_end - 1);
                 } else {
                     attribute.val = txt.substr(el_end + 1);
                 }
                 lcase(attribute.val);
-                if (attribute.val == _t("after") ||
-                    attribute.val == _t("before")) {
+                if (attribute.val == "after" ||
+                    attribute.val == "before") {
                     attribute.condition = kSelectPseudoElement;
                 } else {
                     attribute.condition = kSelectPseudoClass;
                 }
-                attribute.attribute = _t("pseudo");
+                attribute.attribute = "pseudo";
                 m_attrs.push_back(attribute);
                 el_end = pos;
             }
-        } else if (txt[el_end] == _t('#')) {
+        } else if (txt[el_end] == '#') {
             CSSAttributeSelector attribute;
 
-            tstring::size_type pos = txt.find_first_of(_t(".#[:"), el_end + 1);
+            std::string::size_type pos = txt.find_first_of(".#[:", el_end + 1);
             attribute.val = txt.substr(el_end + 1, pos - el_end - 1);
             attribute.condition = kSelectEqual;
-            attribute.attribute = _t("id");
+            attribute.attribute = "id";
             m_attrs.push_back(attribute);
             el_end = pos;
-        } else if (txt[el_end] == _t('[')) {
+        } else if (txt[el_end] == '[') {
             CSSAttributeSelector attribute;
 
-            tstring::size_type pos = txt.find_first_of(_t("]~=|$*^"), el_end + 1);
-            tstring attr = txt.substr(el_end + 1, pos - el_end - 1);
+            std::string::size_type pos = txt.find_first_of("]~=|$*^", el_end + 1);
+            std::string attr = txt.substr(el_end + 1, pos - el_end - 1);
             trim(attr);
             lcase(attr);
-            if (pos != tstring::npos) {
-                if (txt[pos] == _t(']')) {
+            if (pos != std::string::npos) {
+                if (txt[pos] == ']') {
                     attribute.condition = kSelectExists;
-                } else if (txt[pos] == _t('=')) {
+                } else if (txt[pos] == '=') {
                     attribute.condition = kSelectEqual;
                     pos++;
-                } else if (txt.substr(pos, 2) == _t("~=")) {
+                } else if (txt.substr(pos, 2) == "~=") {
                     attribute.condition = kSelectContainStr;
                     pos += 2;
-                } else if (txt.substr(pos, 2) == _t("|=")) {
+                } else if (txt.substr(pos, 2) == "|=") {
                     attribute.condition = kSelectStartStr;
                     pos += 2;
-                } else if (txt.substr(pos, 2) == _t("^=")) {
+                } else if (txt.substr(pos, 2) == "^=") {
                     attribute.condition = kSelectStartStr;
                     pos += 2;
-                } else if (txt.substr(pos, 2) == _t("$=")) {
+                } else if (txt.substr(pos, 2) == "$=") {
                     attribute.condition = kSelectEndStr;
                     pos += 2;
-                } else if (txt.substr(pos, 2) == _t("*=")) {
+                } else if (txt.substr(pos, 2) == "*=") {
                     attribute.condition = kSelectContainStr;
                     pos += 2;
                 } else {
                     attribute.condition = kSelectExists;
                     pos += 1;
                 }
-                pos = txt.find_first_not_of(_t(" \t"), pos);
-                if (pos != tstring::npos) {
-                    if (txt[pos] == _t('"')) {
-                        tstring::size_type pos2 =
-                            txt.find_first_of(_t("\""), pos + 1);
+                pos = txt.find_first_not_of(" \t", pos);
+                if (pos != std::string::npos) {
+                    if (txt[pos] == '"') {
+                        std::string::size_type pos2 =
+                            txt.find_first_of("\"", pos + 1);
                         attribute.val = txt.substr(pos + 1,
-                            pos2 == tstring::npos ? pos2 : (pos2 - pos - 1));
-                        pos = pos2 == tstring::npos ? pos2 : (pos2 + 1);
-                    } else if (txt[pos] == _t(']')) {
+                            pos2 == std::string::npos ? pos2 : (pos2 - pos - 1));
+                        pos = pos2 == std::string::npos ? pos2 : (pos2 + 1);
+                    } else if (txt[pos] == ']') {
                         pos++;
                     } else {
-                        tstring::size_type pos2 =
-                            txt.find_first_of(_t("]"), pos + 1);
+                        std::string::size_type pos2 =
+                            txt.find_first_of("]", pos + 1);
                         attribute.val = txt.substr(pos,
-                            pos2 == tstring::npos ? pos2 : (pos2 - pos));
+                            pos2 == std::string::npos ? pos2 : (pos2 - pos));
                         trim(attribute.val);
-                        pos = pos2 == tstring::npos ? pos2 : (pos2 + 1);
+                        pos = pos2 == std::string::npos ? pos2 : (pos2 + 1);
                     }
                 }
             } else {
@@ -159,33 +159,33 @@ void CSSElementSelector::parse(const tstring& txt)
         } else {
             el_end++;
         }
-        el_end = txt.find_first_of(_t(".#[:"), el_end);
+        el_end = txt.find_first_of(".#[:", el_end);
     }
 }
 
 
-bool CSSSelector::parse(const tstring& text)
+bool CSSSelector::parse(const std::string& text)
 {
     if (text.empty()) {
         return false;
     }
     string_vector tokens;
-    split_string(text, tokens, _t(""), _t(" \t>+~"), _t("(["));
+    split_string(text, tokens, "", " \t>+~", "([");
 
     if (tokens.empty()) {
         return false;
     }
 
-    tstring left;
-    tstring right = tokens.back();
-    tchar_t combinator = 0;
+    std::string left;
+    std::string right = tokens.back();
+    char combinator = 0;
 
     tokens.pop_back();
     while (!tokens.empty() &&
-           (tokens.back() == _t(" ") || tokens.back() == _t("\t") ||
-               tokens.back() == _t("+") || tokens.back() == _t("~") ||
-               tokens.back() == _t(">"))) {
-        if (combinator == _t(' ') || combinator == 0) {
+           (tokens.back() == " " || tokens.back() == "\t" ||
+               tokens.back() == "+" || tokens.back() == "~" ||
+               tokens.back() == ">")) {
+        if (combinator == ' ' || combinator == 0) {
             combinator = tokens.back()[0];
         }
         tokens.pop_back();
@@ -205,13 +205,13 @@ bool CSSSelector::parse(const tstring& text)
     m_right.parse(right);
 
     switch (combinator) {
-        case _t('>'):
+        case '>':
             m_combinator = kCombinatorChild;
             break;
-        case _t('+'):
+        case '+':
             m_combinator = kCombinatorAdjacentSibling;
             break;
-        case _t('~'):
+        case '~':
             m_combinator = kCombinatorGeneralSibling;
             break;
         default:
@@ -233,16 +233,16 @@ bool CSSSelector::parse(const tstring& text)
 
 void CSSSelector::calc_specificity()
 {
-    if (!m_right.m_tag.empty() && m_right.m_tag != _t("*")) {
+    if (!m_right.m_tag.empty() && m_right.m_tag != "*") {
         m_specificity.d = 1;
     }
     for (CSSAttributeSelector::vector::iterator i = m_right.m_attrs.begin();
          i != m_right.m_attrs.end();
          i++) {
-        if (i->attribute == _t("id")) {
+        if (i->attribute == "id") {
             m_specificity.b++;
         } else {
-            if (i->attribute == _t("class")) {
+            if (i->attribute == "class") {
                 m_specificity.c += (int)i->class_val.size();
             } else {
                 m_specificity.c++;

@@ -39,9 +39,9 @@ class WhitespaceElement : public TextElement {
 public:
     explicit WhitespaceElement(Document* document);
 
-    WhitespaceElement(Document* document, const tchar_t* text);
+    WhitespaceElement(Document* document, const char* text);
 
-    WhitespaceElement(Document* document, const tchar_t* text, size_t length);
+    WhitespaceElement(Document* document, const char* text, size_t length);
 
     virtual ~WhitespaceElement() override;
 

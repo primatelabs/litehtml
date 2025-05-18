@@ -44,7 +44,7 @@ namespace {
 
 namespace litehtml {
 
-CSSParser::CSSParser(const tstring& input)
+CSSParser::CSSParser(const std::string& input)
 : tokenizer_(input)
 {
 }
@@ -338,8 +338,8 @@ CSSDeclaration* CSSParser::consume_declaration(CSSComponentValueRange& range)
         CSSComponentValue* delim = values[values.size() - 2];
         CSSComponentValue* ident = values[values.size() - 1];
 
-        if (delim->type() == kCSSTokenDelim && delim->token()->value() == _t("!")) {
-            if (ident->type() == kCSSTokenIdent && ident->token()->value() == _t("important")) {
+        if (delim->type() == kCSSTokenDelim && delim->token()->value() == "!") {
+            if (ident->type() == kCSSTokenIdent && ident->token()->value() == "important") {
                 important = true;
                 values.resize(values.size() - 1);
             }

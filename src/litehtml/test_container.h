@@ -38,7 +38,7 @@ public:
 
     virtual ~test_container();
 
-    virtual uintptr_t create_font(const litehtml::tchar_t* faceName,
+    virtual uintptr_t create_font(const char* faceName,
         int size,
         int weight,
         litehtml::font_style italic,
@@ -47,11 +47,11 @@ public:
 
     virtual void delete_font(uintptr_t hFont) override;
 
-    virtual int text_width(const litehtml::tchar_t* text,
+    virtual int text_width(const char* text,
         uintptr_t hFont) override;
 
     virtual void draw_text(uintptr_t hdc,
-        const litehtml::tchar_t* text,
+        const char* text,
         uintptr_t hFont,
         litehtml::Color color,
         const litehtml::Position& pos) override;
@@ -60,7 +60,7 @@ public:
 
     virtual int get_default_font_size() const override;
 
-    virtual const litehtml::tchar_t* get_default_font_name() const override;
+    virtual const char* get_default_font_name() const override;
 
     virtual void load_image(const litehtml::URL& src,
         bool redraw_on_ready) override;
@@ -80,13 +80,13 @@ public:
 
     virtual void get_media_features(litehtml::MediaFeatures& media) const override;
 
-    virtual void get_language(litehtml::tstring& language,
-        litehtml::tstring& culture) const override;
+    virtual void get_language(std::string& language,
+        std::string& culture) const override;
 
     virtual void link(const litehtml::Document* ptr,
         const litehtml::Element::ptr& el) override;
 
-    virtual void transform_text(litehtml::tstring& text,
+    virtual void transform_text(std::string& text,
         litehtml::TextTransform tt) override;
 
     virtual void set_clip(const litehtml::Position& pos,
@@ -96,14 +96,14 @@ public:
 
     virtual void del_clip() override;
 
-    virtual void set_caption(const litehtml::tchar_t* caption) override;
+    virtual void set_caption(const char* caption) override;
 
-    virtual void on_anchor_click(const litehtml::tchar_t* url,
+    virtual void on_anchor_click(const char* url,
         const litehtml::Element* el) override;
 
-    virtual void set_cursor(const litehtml::tchar_t* cursor) override;
+    virtual void set_cursor(const char* cursor) override;
 
-    virtual litehtml::tstring import_css(const litehtml::URL& url) override;
+    virtual std::string import_css(const litehtml::URL& url) override;
 
     virtual litehtml::Position get_client_rect() const override;
 };

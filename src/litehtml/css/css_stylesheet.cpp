@@ -40,7 +40,7 @@
 
 namespace litehtml {
 
-void CSSStylesheet::parse(const tstring& str,
+void CSSStylesheet::parse(const std::string& str,
     const URL&,
     const Document*,
     const MediaQueryList::ptr&)
@@ -49,21 +49,21 @@ void CSSStylesheet::parse(const tstring& str,
     parser.parse_stylesheet(this);
 }
 
-void CSSStylesheet::parse_css_url(const tstring& str, tstring& url)
+void CSSStylesheet::parse_css_url(const std::string& str, std::string& url)
 {
-    url = _t("");
-    size_t pos1 = str.find(_t('('));
-    size_t pos2 = str.find(_t(')'));
-    if (pos1 != tstring::npos && pos2 != tstring::npos) {
+    url = "";
+    size_t pos1 = str.find('(');
+    size_t pos2 = str.find(')');
+    if (pos1 != std::string::npos && pos2 != std::string::npos) {
         url = str.substr(pos1 + 1, pos2 - pos1 - 1);
         if (url.length()) {
-            if (url[0] == _t('\'') || url[0] == _t('"')) {
+            if (url[0] == '\'' || url[0] == '"') {
                 url.erase(0, 1);
             }
         }
         if (url.length()) {
-            if (url[url.length() - 1] == _t('\'') ||
-                url[url.length() - 1] == _t('"')) {
+            if (url[url.length() - 1] == '\'' ||
+                url[url.length() - 1] == '"') {
                 url.erase(url.length() - 1, 1);
             }
         }

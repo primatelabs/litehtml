@@ -51,13 +51,13 @@ void LinkElement::parse_attributes()
     Document* doc = get_document();
     DocumentContainer* ctr = doc->container();
 
-    const tchar_t* rel = get_attr(_t("rel"));
-    if (rel && !t_strcmp(rel, _t("stylesheet"))) {
-        const tchar_t* media = get_attr(_t("media"));
-        const tchar_t* href = get_attr(_t("href"));
+    const char* rel = get_attr("rel");
+    if (rel && !strcmp(rel, "stylesheet")) {
+        const char* media = get_attr("media");
+        const char* href = get_attr("href");
         if (href && href[0]) {
             URL css_url = resolve(doc->base_url(), URL(href));
-            tstring css_text = ctr->import_css(css_url);
+            std::string css_text = ctr->import_css(css_url);
             if (!css_text.empty()) {
                 doc->add_stylesheet(css_text, css_url, media);
                 processed = true;

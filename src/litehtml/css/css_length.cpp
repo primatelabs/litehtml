@@ -34,10 +34,10 @@
 
 namespace litehtml {
 
-void CSSLength::parse_length_string(const tstring& str, const tstring& predefs, int defValue)
+void CSSLength::parse_length_string(const std::string& str, const std::string& predefs, int defValue)
 {
     // TODO: Make support for calc
-    if (str.substr(0, 4) == _t("calc")) {
+    if (str.substr(0, 4) == "calc") {
         m_is_predefined = true;
         m_predef = 0;
         return;
@@ -50,13 +50,13 @@ void CSSLength::parse_length_string(const tstring& str, const tstring& predefs, 
     } else {
         m_is_predefined = false;
 
-        tstring num;
-        tstring un;
+        std::string num;
+        std::string un;
         bool is_unit = false;
-        for (tstring::const_iterator chr = str.begin(); chr != str.end(); chr++) {
+        for (std::string::const_iterator chr = str.begin(); chr != str.end(); chr++) {
             if (!is_unit) {
-                if (t_isdigit(*chr) || *chr == _t('.') || *chr == _t('+') ||
-                    *chr == _t('-')) {
+                if (isdigit(*chr) || *chr == '.' || *chr == '+' ||
+                    *chr == '-') {
                     num += *chr;
                 } else {
                     is_unit = true;
@@ -67,7 +67,7 @@ void CSSLength::parse_length_string(const tstring& str, const tstring& predefs, 
             }
         }
         if (!num.empty()) {
-            m_value = (float)t_strtod(num.c_str(), nullptr);
+            m_value = (float)strtod(num.c_str(), nullptr);
             m_units = (CSSUnits)value_index(un.c_str(),
                 CSS_UNITS_STRINGS,
                 kCSSUnitsNone);
@@ -80,7 +80,7 @@ void CSSLength::parse_length_string(const tstring& str, const tstring& predefs, 
 }
 
 
-void CSSLength::parse_length_string(const tstring& str, const KeywordVector& keywords, int default_keyword)
+void CSSLength::parse_length_string(const std::string& str, const KeywordVector& keywords, int default_keyword)
 {
     for (auto& keyword : keywords) {
         if (!t_strcasecmp(keyword.first.c_str(), str.c_str())) {
@@ -92,13 +92,13 @@ void CSSLength::parse_length_string(const tstring& str, const KeywordVector& key
 
     m_is_predefined = false;
 
-    tstring num;
-    tstring un;
+    std::string num;
+    std::string un;
     bool is_unit = false;
-    for (tstring::const_iterator chr = str.begin(); chr != str.end(); chr++) {
+    for (std::string::const_iterator chr = str.begin(); chr != str.end(); chr++) {
         if (!is_unit) {
-            if (t_isdigit(*chr) || *chr == _t('.') || *chr == _t('+') ||
-                *chr == _t('-')) {
+            if (isdigit(*chr) || *chr == '.' || *chr == '+' ||
+                *chr == '-') {
                 num += *chr;
             } else {
                 is_unit = true;
@@ -109,7 +109,7 @@ void CSSLength::parse_length_string(const tstring& str, const KeywordVector& key
         }
     }
     if (!num.empty()) {
-        m_value = (float)t_strtod(num.c_str(), nullptr);
+        m_value = (float)strtod(num.c_str(), nullptr);
         m_units = (CSSUnits)value_index(un.c_str(),
             CSS_UNITS_STRINGS,
             kCSSUnitsNone);

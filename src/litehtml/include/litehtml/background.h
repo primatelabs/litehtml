@@ -40,14 +40,14 @@
 
 namespace litehtml {
 
-#define BACKGROUND_ATTACHMENT_STRINGS _t("scroll;fixed")
+#define BACKGROUND_ATTACHMENT_STRINGS "scroll;fixed"
 
 enum BackgroundAttachment {
     kBackgroundAttachmentScroll,
     kBackgroundAttachmentFixed
 };
 
-#define BACKGROUND_REPEAT_STRINGS _t("repeat;repeat-x;repeat-y;no-repeat")
+#define BACKGROUND_REPEAT_STRINGS "repeat;repeat-x;repeat-y;no-repeat"
 
 enum BackgroundRepeat {
     kBackgroundRepeatRepeat,
@@ -56,7 +56,7 @@ enum BackgroundRepeat {
     kBackgroundRepeatNoRepeat
 };
 
-#define BACKGROUND_BOX_STRINGS _t("border-box;padding-box;content-box")
+#define BACKGROUND_BOX_STRINGS "border-box;padding-box;content-box"
 
 enum BackgroundBox {
     kBackgroundBoxBorderBox,

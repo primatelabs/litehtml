@@ -45,9 +45,9 @@ public:
         const litehtml::CSSStylesheet& stylesheet) override;
 
 private:
-    void add_text(const tstring& txt);
-    void add_function(const tstring& fnc, const tstring& params);
-    tchar_t convert_escape(const tchar_t* txt);
+    void add_text(const std::string& txt);
+    void add_function(const std::string& fnc, const std::string& params);
+    char convert_escape(const char* txt);
 };
 
 class BeforeElement : public BeforeAfterBaseElement {

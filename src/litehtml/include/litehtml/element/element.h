@@ -285,10 +285,10 @@ public:
         return m_doc;
     }
 
-    virtual ElementsVector select_all(const tstring& selector);
+    virtual ElementsVector select_all(const std::string& selector);
     virtual ElementsVector select_all(const CSSSelector& selector);
 
-    virtual Element::ptr select_one(const tstring& selector);
+    virtual Element::ptr select_one(const std::string& selector);
     virtual Element::ptr select_one(const CSSSelector& selector);
 
     virtual int render(int x, int y, int max_width, bool second_pass = false);
@@ -312,9 +312,9 @@ public:
 
     String type_name() const;
 
-    virtual const tchar_t* get_tagName() const;
-    virtual void set_tagName(const tchar_t* tag);
-    virtual void set_data(const tchar_t* data);
+    virtual const char* get_tagName() const;
+    virtual void set_tagName(const char* tag);
+    virtual void set_data(const char* data);
     virtual ElementFloat get_float() const;
     virtual VerticalAlign get_vertical_align() const;
     virtual ElementClear get_clear() const;
@@ -331,9 +331,9 @@ public:
     virtual void set_css_width(CSSLength& w);
     virtual CSSLength get_css_height() const;
 
-    virtual void set_attr(const tchar_t* name, const tchar_t* val);
-    virtual const tchar_t* get_attr(const tchar_t* name,
-        const tchar_t* def = nullptr) const;
+    virtual void set_attr(const char* name, const char* val);
+    virtual const char* get_attr(const char* name,
+        const char* def = nullptr) const;
     virtual void apply_stylesheet(const CSSStylesheet& stylesheet);
     virtual void refresh_styles();
     virtual bool is_whitespace() const;
@@ -346,11 +346,11 @@ public:
     virtual bool on_lbutton_up();
     virtual void on_click();
     virtual bool find_styles_changes(std::vector<Position>& redraw_boxes, int x, int y);
-    virtual const tchar_t* get_cursor();
+    virtual const char* get_cursor();
     virtual void init_font();
     virtual bool is_point_inside(int x, int y);
-    virtual bool set_pseudo_class(const tchar_t* pclass, bool add);
-    virtual bool set_class(const tchar_t* pclass, bool add);
+    virtual bool set_pseudo_class(const char* pclass, bool add);
+    virtual bool set_class(const char* pclass, bool add);
     virtual bool is_replaced() const;
     virtual int line_height() const;
     virtual WhiteSpace get_white_space() const;
@@ -362,13 +362,13 @@ public:
     virtual void draw(uintptr_t hdc, int x, int y, const Position* clip);
     virtual void draw_background(uintptr_t hdc, int x, int y, const Position* clip);
 
-    virtual const tchar_t* get_style_property(CSSProperty name);
+    virtual const char* get_style_property(CSSProperty name);
 
     virtual const CSSValue* get_style_property_value(CSSProperty property) const;
 
     virtual uintptr_t get_font(FontMetrics* fm = nullptr);
     virtual int get_font_size() const;
-    virtual void get_text(tstring& text) const;
+    virtual void get_text(std::string& text) const;
     virtual void parse_attributes();
     virtual int select(const CSSSelector& selector, bool apply_pseudo = true);
     virtual int select(const CSSElementSelector& selector,

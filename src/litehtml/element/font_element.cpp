@@ -43,36 +43,36 @@ FontElement::~FontElement()
 
 void FontElement::parse_attributes()
 {
-    const tchar_t* str = get_attr(_t("color"));
+    const char* str = get_attr("color");
     if (str) {
         m_style.add_property(kCSSPropertyColor, str, URL(), false);
     }
 
-    str = get_attr(_t("face"));
+    str = get_attr("face");
     if (str) {
-        m_style.add_property(_t("font-face"), str, URL(), false);
+        m_style.add_property("font-face", str, URL(), false);
     }
 
-    str = get_attr(_t("size"));
+    str = get_attr("size");
     if (str) {
-        int sz = t_atoi(str);
+        int sz = atoi(str);
         if (sz <= 1) {
-            m_style.add_property(kCSSPropertyFontSize, _t("x-small"), URL(), false);
+            m_style.add_property(kCSSPropertyFontSize, "x-small", URL(), false);
         } else if (sz >= 6) {
-            m_style.add_property(kCSSPropertyFontSize, _t("xx-large"), URL(), false);
+            m_style.add_property(kCSSPropertyFontSize, "xx-large", URL(), false);
         } else {
             switch (sz) {
                 case 2:
-                    m_style.add_property(kCSSPropertyFontSize, _t("small"), URL(), false);
+                    m_style.add_property(kCSSPropertyFontSize, "small", URL(), false);
                     break;
                 case 3:
-                    m_style.add_property(kCSSPropertyFontSize, _t("medium"), URL(), false);
+                    m_style.add_property(kCSSPropertyFontSize, "medium", URL(), false);
                     break;
                 case 4:
-                    m_style.add_property(kCSSPropertyFontSize, _t("large"), URL(), false);
+                    m_style.add_property(kCSSPropertyFontSize, "large", URL(), false);
                     break;
                 case 5:
-                    m_style.add_property(kCSSPropertyFontSize, _t("x-large"), URL(), false);
+                    m_style.add_property(kCSSPropertyFontSize, "x-large", URL(), false);
                     break;
             }
         }

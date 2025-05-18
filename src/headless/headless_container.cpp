@@ -162,7 +162,7 @@ HeadlessContainer::~HeadlessContainer()
 {
 }
 
-uintptr_t HeadlessContainer::create_font(const litehtml::tchar_t* faceName,
+uintptr_t HeadlessContainer::create_font(const char* faceName,
     int size,
     int weight,
     litehtml::font_style italic,
@@ -318,7 +318,7 @@ int HeadlessContainer::get_default_font_size() const
     return 16;
 }
 
-const litehtml::tchar_t* HeadlessContainer::get_default_font_name() const
+const char* HeadlessContainer::get_default_font_name() const
 {
     return "Roboto";
 }
@@ -656,11 +656,11 @@ void HeadlessContainer::get_media_features(litehtml::MediaFeatures& media) const
     media.resolution = dpi_;
 }
 
-void HeadlessContainer::get_language(litehtml::tstring& language,
-    litehtml::tstring& culture) const
+void HeadlessContainer::get_language(std::string& language,
+    std::string& culture) const
 {
-    language = _t("en");
-    culture = _t("");
+    language = "en";
+    culture = "";
 }
 
 void HeadlessContainer::link(const litehtml::Document* ptr,
@@ -668,7 +668,7 @@ void HeadlessContainer::link(const litehtml::Document* ptr,
 {
 }
 
-void HeadlessContainer::transform_text(litehtml::tstring& text,
+void HeadlessContainer::transform_text(std::string& text,
     litehtml::TextTransform tt)
 {
     HEADLESS_TRACE0(HeadlessContainer::transform_text);
@@ -687,20 +687,20 @@ void HeadlessContainer::del_clip()
     HEADLESS_TRACE0(HeadlessContainer::del_clip);
 }
 
-void HeadlessContainer::set_caption(const litehtml::tchar_t* caption)
+void HeadlessContainer::set_caption(const char* caption)
 {
 }
 
-void HeadlessContainer::on_anchor_click(const litehtml::tchar_t* url,
+void HeadlessContainer::on_anchor_click(const char* url,
     const litehtml::Element* el)
 {
 }
 
-void HeadlessContainer::set_cursor(const litehtml::tchar_t* cursor)
+void HeadlessContainer::set_cursor(const char* cursor)
 {
 }
 
-litehtml::tstring HeadlessContainer::import_css(const litehtml::URL& url)
+std::string HeadlessContainer::import_css(const litehtml::URL& url)
 {
     HEADLESS_TRACE1(HeadlessContainer::import_css, url.string());
 

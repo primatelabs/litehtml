@@ -46,7 +46,7 @@ TitleElement::~TitleElement()
 
 void TitleElement::parse_attributes()
 {
-    tstring text;
+    std::string text;
     get_text(text);
     get_document()->container()->set_caption(text.c_str());
 }

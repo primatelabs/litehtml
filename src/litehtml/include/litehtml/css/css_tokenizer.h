@@ -47,37 +47,37 @@ protected:
     CSSToken* consume_whitespace();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    CSSToken* consume_number_sign(tchar_t c0);
+    CSSToken* consume_number_sign(char c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    CSSToken* consume_plus_sign(tchar_t c0);
+    CSSToken* consume_plus_sign(char c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    CSSToken* consume_hyphen_minus(tchar_t c0);
+    CSSToken* consume_hyphen_minus(char c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    CSSToken* consume_full_stop(tchar_t c0);
+    CSSToken* consume_full_stop(char c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    CSSToken* consume_less_than(tchar_t c0);
+    CSSToken* consume_less_than(char c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    CSSToken* consume_at(tchar_t c0);
+    CSSToken* consume_at(char c0);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-token
-    CSSToken* consume_backslash(tchar_t first);
+    CSSToken* consume_backslash(char first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-comment
     void consume_comment();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-number
-    CSSToken* consume_numeric(tchar_t first);
+    CSSToken* consume_numeric(char first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-ident-like-token
-    CSSToken* consume_ident(tchar_t first);
+    CSSToken* consume_ident(char first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-string-token
-    CSSToken* consume_string(tchar_t opening);
+    CSSToken* consume_string(char opening);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-url-token
     CSSToken* consume_url();
@@ -86,10 +86,10 @@ protected:
     char32_t consume_escape();
 
     // https://www.w3.org/TR/css-syntax-3/#consume-name
-    String consume_name(tchar_t first);
+    String consume_name(char first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-number
-    CSSNumber consume_number(tchar_t first);
+    CSSNumber consume_number(char first);
 
     // https://www.w3.org/TR/css-syntax-3/#consume-remnants-of-bad-url
     CSSToken* consume_bad_url();

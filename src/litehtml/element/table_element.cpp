@@ -55,9 +55,9 @@ bool TableElement::append_child(Element* element)
 {
     if (!element)
         return false;
-    if (!t_strcmp(element->get_tagName(), _t("tbody")) ||
-        !t_strcmp(element->get_tagName(), _t("thead")) ||
-        !t_strcmp(element->get_tagName(), _t("tfoot"))) {
+    if (!strcmp(element->get_tagName(), "tbody") ||
+        !strcmp(element->get_tagName(), "thead") ||
+        !strcmp(element->get_tagName(), "tfoot")) {
         return HTMLElement::append_child(element);
     }
     return false;
@@ -98,40 +98,40 @@ void TableElement::parse_styles(bool is_reparse)
 
 void TableElement::parse_attributes()
 {
-    const tchar_t* str = get_attr(_t("width"));
+    const char* str = get_attr("width");
     if (str) {
         m_style.add_property(kCSSPropertyWidth, str, URL(), false);
     }
 
-    str = get_attr(_t("align"));
+    str = get_attr("align");
     if (str) {
-        int align = value_index(str, _t("left;center;right"));
+        int align = value_index(str, "left;center;right");
         switch (align) {
             case 1:
-                m_style.add_property(kCSSPropertyMarginLeft, _t("auto"), URL(), false);
-                m_style.add_property(kCSSPropertyMarginRight, _t("auto"), URL(), false);
+                m_style.add_property(kCSSPropertyMarginLeft, "auto", URL(), false);
+                m_style.add_property(kCSSPropertyMarginRight, "auto", URL(), false);
                 break;
             case 2:
-                m_style.add_property(kCSSPropertyMarginLeft, _t("auto"), URL(), false);
-                m_style.add_property(kCSSPropertyMarginRight, _t("0"), URL(), false);
+                m_style.add_property(kCSSPropertyMarginLeft, "auto", URL(), false);
+                m_style.add_property(kCSSPropertyMarginRight, "0", URL(), false);
                 break;
         }
     }
 
-    str = get_attr(_t("cellspacing"));
+    str = get_attr("cellspacing");
     if (str) {
-        tstring val = str;
-        val += _t(" ");
+        std::string val = str;
+        val += " ";
         val += str;
         m_style.add_property(kCSSPropertyBorderSpacing, val.c_str(), URL(), false);
     }
 
-    str = get_attr(_t("border"));
+    str = get_attr("border");
     if (str) {
         m_style.add_property(kCSSPropertyBorderWidth, str, URL(), false);
     }
 
-    str = get_attr(_t("bgcolor"));
+    str = get_attr("bgcolor");
     if (str) {
         m_style.add_property(kCSSPropertyBackgroundColor, str, URL(), false);
     }

@@ -43,7 +43,7 @@ DivElement::~DivElement()
 
 void DivElement::parse_attributes()
 {
-    const tchar_t* str = get_attr(_t("align"));
+    const char* str = get_attr("align");
     if (str) {
         m_style.add_property(kCSSPropertyTextAlign, str, URL(), false);
     }

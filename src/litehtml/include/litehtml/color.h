@@ -46,7 +46,7 @@ struct Color {
 
     Color() = default;
 
-    Color(const tstring& str);
+    Color(const std::string& str);
 
     Color(byte r, byte g, byte b, byte a = 255)
     {
@@ -56,9 +56,9 @@ struct Color {
         alpha = a;
     }
 
-    static Color from_string(const tchar_t* str);
+    static Color from_string(const char* str);
 
-    static bool is_color(const tchar_t* str);
+    static bool is_color(const char* str);
 };
 
 } // namespace litehtml

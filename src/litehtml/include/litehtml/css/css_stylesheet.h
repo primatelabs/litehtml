@@ -62,14 +62,14 @@ public:
         selectors_.clear();
     }
 
-    void parse(const tstring& str,
+    void parse(const std::string& str,
         const URL& url,
         const Document* doc,
         const MediaQueryList::ptr& media);
 
     void sort_selectors();
 
-    static void parse_css_url(const tstring& str, tstring& url);
+    static void parse_css_url(const std::string& str, std::string& url);
 
 public:
     void add_selector(CSSSelector::ptr selector)

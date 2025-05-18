@@ -410,7 +410,7 @@ ElementsVector Element::select_all(const CSSSelector&)
     return ElementsVector();
 }
 
-ElementsVector Element::select_all(const tstring&)
+ElementsVector Element::select_all(const std::string&)
 {
     return ElementsVector();
 }
@@ -420,7 +420,7 @@ Element::ptr Element::select_one(const CSSSelector&)
     return nullptr;
 }
 
-Element::ptr Element::select_one(const tstring&)
+Element::ptr Element::select_one(const std::string&)
 {
     return nullptr;
 }
@@ -664,20 +664,20 @@ String Element::type_name() const
     return element_type_name(type());
 }
 
-const tchar_t* Element::get_tagName() const
+const char* Element::get_tagName() const
 {
-    return _t("");
+    return "";
 }
 
-void Element::set_tagName(const tchar_t*)
-{
-}
-
-void Element::set_data(const tchar_t*)
+void Element::set_tagName(const char*)
 {
 }
 
-void Element::set_attr(const tchar_t*, const tchar_t*)
+void Element::set_data(const char*)
+{
+}
+
+void Element::set_attr(const char*, const char*)
 {
 }
 
@@ -705,8 +705,8 @@ void Element::parse_styles(bool)
 {
 }
 
-const tchar_t* Element::get_attr(const tchar_t*,
-    const tchar_t* def /*= 0*/) const
+const char* Element::get_attr(const char*,
+    const char* def /*= 0*/) const
 {
     return def;
 }
@@ -756,7 +756,7 @@ bool Element::find_styles_changes(std::vector<Position>&, int, int)
     return false;
 }
 
-const tchar_t* Element::get_cursor()
+const char* Element::get_cursor()
 {
     return nullptr;
 }
@@ -771,12 +771,12 @@ Display Element::get_display() const
     return kDisplayNone;
 }
 
-bool Element::set_pseudo_class(const tchar_t*, bool)
+bool Element::set_pseudo_class(const char*, bool)
 {
     return false;
 }
 
-bool Element::set_class(const tchar_t*, bool)
+bool Element::set_class(const char*, bool)
 {
     return false;
 }
@@ -804,7 +804,7 @@ void Element::draw_background(uintptr_t, int, int, const Position*)
 {
 }
 
-const tchar_t* Element::get_style_property(CSSProperty)
+const char* Element::get_style_property(CSSProperty)
 {
     return nullptr;
 }
@@ -824,7 +824,7 @@ int Element::get_font_size() const
     return 0;
 }
 
-void Element::get_text(tstring&) const
+void Element::get_text(std::string&) const
 {
 }
 

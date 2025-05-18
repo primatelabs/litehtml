@@ -45,12 +45,12 @@ StyleElement::~StyleElement()
 
 void StyleElement::parse_attributes()
 {
-    tstring text;
+    std::string text;
 
     for (auto& el : m_children) {
         el->get_text(text);
     }
-    get_document()->add_stylesheet(text.c_str(), URL(), get_attr(_t("media")));
+    get_document()->add_stylesheet(text.c_str(), URL(), get_attr("media"));
 }
 
 bool StyleElement::append_child(Element* element)
@@ -59,9 +59,9 @@ bool StyleElement::append_child(Element* element)
     return true;
 }
 
-const tchar_t* StyleElement::get_tagName() const
+const char* StyleElement::get_tagName() const
 {
-    return _t("style");
+    return "style";
 }
 
 } // namespace litehtml

@@ -161,8 +161,8 @@ enum CSSAttributeSelectCondition {
 struct CSSAttributeSelector {
     typedef std::vector<CSSAttributeSelector> vector;
 
-    tstring attribute;
-    tstring val;
+    std::string attribute;
+    std::string val;
     string_vector class_val;
     CSSAttributeSelectCondition condition;
 
@@ -257,7 +257,7 @@ public:
         media_query_list_ = val.media_query_list_;
     }
 
-    bool parse(const tstring& text);
+    bool parse(const std::string& text);
     void calc_specificity();
     bool is_media_valid() const;
     void add_media_to_doc(Document* doc) const;

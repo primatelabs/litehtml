@@ -68,7 +68,7 @@ bool WhitespaceElement::is_break() const
     WhiteSpace ws = get_white_space();
     if (ws == kWhiteSpacePre || ws == kWhiteSpacePreLine ||
         ws == kWhiteSpacePreWrap) {
-        if (text_ == _t("\n")) {
+        if (text_ == "\n") {
             return true;
         }
     }

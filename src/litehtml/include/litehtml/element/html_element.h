@@ -73,7 +73,7 @@ public:
 protected:
     Box::vector m_boxes;
     string_vector m_class_values;
-    tstring m_tag;
+    std::string m_tag;
     CSSStyle m_style;
     string_map m_attrs;
     VerticalAlign vertical_align_;
@@ -154,9 +154,9 @@ public:
 
     virtual bool append_child(Element* element) override;
 
-    virtual const tchar_t* get_tagName() const override;
-    virtual void set_tagName(const tchar_t* tag) override;
-    virtual void set_data(const tchar_t* data) override;
+    virtual const char* get_tagName() const override;
+    virtual void set_tagName(const char* tag) override;
+    virtual void set_data(const char* data) override;
     virtual ElementFloat get_float() const override;
     virtual VerticalAlign get_vertical_align() const override;
     virtual CSSLength get_css_left() const override;
@@ -174,9 +174,9 @@ public:
         CSSOffsets* offsets = nullptr) const override;
     virtual Overflow get_overflow() const override;
 
-    virtual void set_attr(const tchar_t* name, const tchar_t* val) override;
-    virtual const tchar_t* get_attr(const tchar_t* name,
-        const tchar_t* def = nullptr) const override;
+    virtual void set_attr(const char* name, const char* val) override;
+    virtual const char* get_attr(const char* name,
+        const char* def = nullptr) const override;
     virtual void apply_stylesheet(
         const litehtml::CSSStylesheet& stylesheet) override;
     virtual void refresh_styles() override;
@@ -193,10 +193,10 @@ public:
     virtual bool find_styles_changes(std::vector<Position>& redraw_boxes,
         int x,
         int y) override;
-    virtual const tchar_t* get_cursor() override;
+    virtual const char* get_cursor() override;
     virtual void init_font() override;
-    virtual bool set_pseudo_class(const tchar_t* pclass, bool add) override;
-    virtual bool set_class(const tchar_t* pclass, bool add) override;
+    virtual bool set_pseudo_class(const char* pclass, bool add) override;
+    virtual bool set_class(const char* pclass, bool add) override;
     virtual bool is_replaced() const override;
     virtual int line_height() const override;
     virtual WhiteSpace get_white_space() const override;
@@ -206,7 +206,7 @@ public:
     virtual void draw(uintptr_t hdc, int x, int y, const Position* clip) override;
     virtual void draw_background(uintptr_t hdc, int x, int y, const Position* clip) override;
 
-    virtual const tchar_t* get_style_property(CSSProperty name) override;
+    virtual const char* get_style_property(CSSProperty name) override;
 
     virtual const CSSValue* get_style_property_value(CSSProperty property) const override;
 
@@ -221,10 +221,10 @@ public:
     virtual int select(const CSSElementSelector& selector,
         bool apply_pseudo = true) override;
 
-    virtual ElementsVector select_all(const tstring& selector) override;
+    virtual ElementsVector select_all(const std::string& selector) override;
     virtual ElementsVector select_all(const CSSSelector& selector) override;
 
-    virtual Element::ptr select_one(const tstring& selector) override;
+    virtual Element::ptr select_one(const std::string& selector) override;
     virtual Element::ptr select_one(const CSSSelector& selector) override;
 
     virtual Element::ptr find_ancestor(const CSSSelector& selector,
@@ -238,7 +238,7 @@ public:
         const CSSSelector& selector,
         bool apply_pseudo = true,
         bool* is_pseudo = nullptr) override;
-    virtual void get_text(tstring& text) const override;
+    virtual void get_text(std::string& text) const override;
     virtual void parse_attributes() override;
 
     virtual bool is_first_child_inline(const Element::ptr& el) const override;
@@ -320,8 +320,8 @@ protected:
         BackgroundPaint& bg_paint,
         const Background* bg);
     void draw_list_marker(uintptr_t hdc, const Position& pos);
-    tstring get_list_marker_text(int index);
-    void parse_nth_child_params(tstring param, int& num, int& off);
+    std::string get_list_marker_text(int index);
+    void parse_nth_child_params(std::string param, int& num, int& off);
     void remove_before_after();
     litehtml::Element::ptr get_element_before();
     litehtml::Element::ptr get_element_after();

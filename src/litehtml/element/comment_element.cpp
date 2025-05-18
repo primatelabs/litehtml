@@ -42,12 +42,12 @@ CommentElement::~CommentElement()
 {
 }
 
-void CommentElement::get_text(tstring& text) const
+void CommentElement::get_text(std::string& text) const
 {
     text += m_text;
 }
 
-void CommentElement::set_data(const tchar_t* data)
+void CommentElement::set_data(const char* data)
 {
     if (data) {
         m_text += data;

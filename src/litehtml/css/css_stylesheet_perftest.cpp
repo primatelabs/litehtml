@@ -61,7 +61,7 @@ std::string load(const std::string& filename)
 
 void CSSStylesheetPerfTestParse(benchmark::State& state)
 {
-  litehtml::tstring css = load("/Users/jfpoole/Projects/geekbench/third_party/litehtml/test/css/bootstrap-3.4.1.css");
+  std::string css = load("/Users/jfpoole/Projects/geekbench/third_party/litehtml/test/css/bootstrap-3.4.1.css");
   test_container container;
   Context context;
 

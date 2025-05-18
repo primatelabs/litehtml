@@ -78,7 +78,7 @@ class CSSToken {
 protected:
     CSSTokenType type_;
 
-    tstring value_;
+    std::string value_;
 
     CSSNumber numeric_value_;
 
@@ -87,9 +87,9 @@ public:
 
     explicit CSSToken(CSSTokenType type);
 
-    CSSToken(CSSTokenType type, tchar_t value);
+    CSSToken(CSSTokenType type, char value);
 
-    CSSToken(CSSTokenType type, const tstring& value);
+    CSSToken(CSSTokenType type, const std::string& value);
 
     CSSToken(CSSTokenType type, const CSSNumber& numeric_value);
 
@@ -98,7 +98,7 @@ public:
         return type_;
     }
 
-    const tstring& value() const
+    const std::string& value() const
     {
         return value_;
     }

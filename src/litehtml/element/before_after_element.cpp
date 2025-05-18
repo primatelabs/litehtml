@@ -41,9 +41,9 @@ BeforeAfterBaseElement::BeforeAfterBaseElement(Document* doc, bool before)
 : HTMLElement(doc)
 {
     if (before) {
-        set_tagName(_t("::before"));
+        set_tagName("::before");
     } else {
-        set_tagName(_t("::after"));
+        set_tagName("::after");
     }
 }
 
@@ -55,35 +55,35 @@ void BeforeAfterBaseElement::add_style(const CSSStyle& st)
 {
     HTMLElement::add_style(st);
 
-    tstring content = get_style_property(kCSSPropertyContent);
+    std::string content = get_style_property(kCSSPropertyContent);
     if (!content.empty()) {
         int idx = value_index(content.c_str(), CONTENT_PROPERTY_STRING);
         if (idx < 0) {
-            tstring fnc;
-            tstring::size_type i = 0;
-            while (i < content.length() && i != tstring::npos) {
-                if (content.at(i) == _t('"')) {
+            std::string fnc;
+            std::string::size_type i = 0;
+            while (i < content.length() && i != std::string::npos) {
+                if (content.at(i) == '"') {
                     fnc.clear();
                     i++;
-                    tstring::size_type pos = content.find(_t('"'), i);
-                    tstring txt;
-                    if (pos == tstring::npos) {
+                    std::string::size_type pos = content.find('"', i);
+                    std::string txt;
+                    if (pos == std::string::npos) {
                         txt = content.substr(i);
-                        i = tstring::npos;
+                        i = std::string::npos;
                     } else {
                         txt = content.substr(i, pos - i);
                         i = pos + 1;
                     }
                     add_text(txt);
-                } else if (content.at(i) == _t('(')) {
+                } else if (content.at(i) == '(') {
                     i++;
                     trim(fnc);
                     lcase(fnc);
-                    tstring::size_type pos = content.find(_t(')'), i);
-                    tstring params;
-                    if (pos == tstring::npos) {
+                    std::string::size_type pos = content.find(')', i);
+                    std::string params;
+                    if (pos == std::string::npos) {
                         params = content.substr(i);
-                        i = tstring::npos;
+                        i = std::string::npos;
                     } else {
                         params = content.substr(i, pos - i);
                         i = pos + 1;
@@ -101,13 +101,13 @@ void BeforeAfterBaseElement::add_style(const CSSStyle& st)
 
 // TODO: Is this code similar enough to split_text_node() that we should
 // consolidate the two functions?
-void BeforeAfterBaseElement::add_text(const tstring& txt)
+void BeforeAfterBaseElement::add_text(const std::string& txt)
 {
-    tstring word;
-    tstring esc;
-    for (tstring::size_type i = 0; i < txt.length(); i++) {
-        if ((txt.at(i) == _t(' ')) || (txt.at(i) == _t('\t')) ||
-            (txt.at(i) == _t('\\') && !esc.empty())) {
+    std::string word;
+    std::string esc;
+    for (std::string::size_type i = 0; i < txt.length(); i++) {
+        if ((txt.at(i) == ' ') || (txt.at(i) == '\t') ||
+            (txt.at(i) == '\\' && !esc.empty())) {
             if (esc.empty()) {
                 if (!word.empty()) {
                     Element::ptr el = new TextElement(get_document(), word.c_str());
@@ -120,12 +120,12 @@ void BeforeAfterBaseElement::add_text(const tstring& txt)
             } else {
                 word += convert_escape(esc.c_str() + 1);
                 esc.clear();
-                if (txt.at(i) == _t('\\')) {
+                if (txt.at(i) == '\\') {
                     esc += txt.at(i);
                 }
             }
         } else {
-            if (!esc.empty() || txt.at(i) == _t('\\')) {
+            if (!esc.empty() || txt.at(i) == '\\') {
                 esc += txt.at(i);
             } else {
                 word += txt.at(i);
@@ -143,18 +143,18 @@ void BeforeAfterBaseElement::add_text(const tstring& txt)
     }
 }
 
-void BeforeAfterBaseElement::add_function(const tstring& fnc, const tstring& params)
+void BeforeAfterBaseElement::add_function(const std::string& fnc, const std::string& params)
 {
-    int idx = value_index(fnc.c_str(), _t("attr;counter;url"));
+    int idx = value_index(fnc.c_str(), "attr;counter;url");
     switch (idx) {
         // attr
         case 0: {
-            tstring p_name = params;
+            std::string p_name = params;
             trim(p_name);
             lcase(p_name);
             Element::ptr el_parent = parent();
             if (el_parent) {
-                const tchar_t* attr_value = el_parent->get_attr(p_name.c_str());
+                const char* attr_value = el_parent->get_attr(p_name.c_str());
                 if (attr_value) {
                     add_text(attr_value);
                 }
@@ -165,24 +165,24 @@ void BeforeAfterBaseElement::add_function(const tstring& fnc, const tstring& par
             break;
         // url
         case 2: {
-            tstring p_url = params;
+            std::string p_url = params;
             trim(p_url);
             if (!p_url.empty()) {
-                if (p_url.at(0) == _t('\'') || p_url.at(0) == _t('\"')) {
+                if (p_url.at(0) == '\'' || p_url.at(0) == '\"') {
                     p_url.erase(0, 1);
                 }
             }
             if (!p_url.empty()) {
-                if (p_url.at(p_url.length() - 1) == _t('\'') ||
-                    p_url.at(p_url.length() - 1) == _t('\"')) {
+                if (p_url.at(p_url.length() - 1) == '\'' ||
+                    p_url.at(p_url.length() - 1) == '\"') {
                     p_url.erase(p_url.length() - 1, 1);
                 }
             }
             if (!p_url.empty()) {
                 Element::ptr el = new ImageElement(get_document());
-                el->set_attr(_t("src"), p_url.c_str());
-                el->set_attr(_t("style"), _t("display:inline-block"));
-                el->set_tagName(_t("img"));
+                el->set_attr("src", p_url.c_str());
+                el->set_attr("style", "display:inline-block");
+                el->set_tagName("img");
                 append_child(el);
                 el->parse_attributes();
             }
@@ -190,10 +190,10 @@ void BeforeAfterBaseElement::add_function(const tstring& fnc, const tstring& par
     }
 }
 
-tchar_t BeforeAfterBaseElement::convert_escape(const tchar_t* txt)
+char BeforeAfterBaseElement::convert_escape(const char* txt)
 {
-    tchar_t* sss = nullptr;
-    return (tchar_t)t_strtol(txt, &sss, 16);
+    char* sss = nullptr;
+    return (char)strtol(txt, &sss, 16);
 }
 
 void BeforeAfterBaseElement::apply_stylesheet(const CSSStylesheet&)

@@ -49,7 +49,7 @@ private:
 public:
     MediaQueryList() = default;
 
-    static MediaQueryList::ptr create_from_string(const tstring& str,
+    static MediaQueryList::ptr create_from_string(const std::string& str,
         const Document* doc);
 
     bool is_used() const

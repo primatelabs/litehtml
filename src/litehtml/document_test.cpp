@@ -41,11 +41,11 @@ TEST(DocumentTest, AddFont)
     test_container container;
     Document* doc = new Document(&container, nullptr);
     FontMetrics fm;
-    doc->get_font(nullptr, 0, _t("normal"), _t("normal"), _t(""), &fm);
-    doc->get_font(_t("inherit"), 0, _t("normal"), _t("normal"), _t(""), &fm);
-    doc->get_font(_t("Arial"), 0, _t("bold"), _t("normal"), _t("underline"), &fm);
-    doc->get_font(_t("Arial"), 0, _t("bold"), _t("normal"), _t("line-through"), &fm);
-    doc->get_font(_t("Arial"), 0, _t("bold"), _t("normal"), _t("overline"), &fm);
+    doc->get_font(nullptr, 0, "normal", "normal", "", &fm);
+    doc->get_font("inherit", 0, "normal", "normal", "", &fm);
+    doc->get_font("Arial", 0, "bold", "normal", "underline", &fm);
+    doc->get_font("Arial", 0, "bold", "normal", "line-through", &fm);
+    doc->get_font("Arial", 0, "bold", "normal", "overline", &fm);
 }
 
 TEST(DocumentTest, Render)
@@ -76,19 +76,19 @@ TEST(DocumentTest, CvtUnits)
     test_container container;
     Document* doc = new Document(&container, nullptr);
     bool is_percent;
-    doc->cvt_units(_t(""), 10, &is_percent);
+    doc->cvt_units("", 10, &is_percent);
     CSSLength c;
-    c.parse_length_string(_t("10%")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10em")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10pt")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10in")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10cm")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10mm")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10vm")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10vh")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10vmin")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10vmax")), doc->cvt_units(c, 10, 100);
-    c.parse_length_string(_t("10")), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10%"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10em"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10pt"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10in"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10cm"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10mm"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10vm"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10vh"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10vmin"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10vmax"), doc->cvt_units(c, 10, 100);
+    c.parse_length_string("10"), doc->cvt_units(c, 10, 100);
 }
 
 TEST(DocumentTest, MouseEvents)
@@ -107,23 +107,23 @@ TEST(DocumentTest, CreateElement)
     test_container container;
     Document* doc = new Document(&container, nullptr);
     string_map map;
-    doc->create_element(_t("container"), map);
-    doc->create_element(_t("br"), map);
-    doc->create_element(_t("p"), map);
-    doc->create_element(_t("img"), map);
-    doc->create_element(_t("table"), map);
-    doc->create_element(_t("td"), map);
-    doc->create_element(_t("th"), map);
-    doc->create_element(_t("link"), map);
-    doc->create_element(_t("title"), map);
-    doc->create_element(_t("a"), map);
-    doc->create_element(_t("tr"), map);
-    doc->create_element(_t("style"), map);
-    doc->create_element(_t("base"), map);
-    doc->create_element(_t("div"), map);
-    doc->create_element(_t("script"), map);
-    doc->create_element(_t("font"), map);
-    doc->create_element(_t("tag"), map);
+    doc->create_element("container", map);
+    doc->create_element("br", map);
+    doc->create_element("p", map);
+    doc->create_element("img", map);
+    doc->create_element("table", map);
+    doc->create_element("td", map);
+    doc->create_element("th", map);
+    doc->create_element("link", map);
+    doc->create_element("title", map);
+    doc->create_element("a", map);
+    doc->create_element("tr", map);
+    doc->create_element("style", map);
+    doc->create_element("base", map);
+    doc->create_element("div", map);
+    doc->create_element("script", map);
+    doc->create_element("font", map);
+    doc->create_element("tag", map);
 }
 
 TEST(DocumentTest, DeviceChange)

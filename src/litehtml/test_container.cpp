@@ -37,7 +37,7 @@ test_container::~test_container()
 {
 }
 
-uintptr_t test_container::create_font(const litehtml::tchar_t* faceName,
+uintptr_t test_container::create_font(const char* faceName,
     int size,
     int weight,
     litehtml::font_style italic,
@@ -57,14 +57,14 @@ void test_container::delete_font(uintptr_t hFont)
 {
 }
 
-int test_container::text_width(const litehtml::tchar_t* text,
+int test_container::text_width(const char* text,
     uintptr_t hFont)
 {
     return 0;
 }
 
 void test_container::draw_text(uintptr_t hdc,
-    const litehtml::tchar_t* text,
+    const char* text,
     uintptr_t hFont,
     litehtml::Color color,
     const litehtml::Position& pos)
@@ -81,9 +81,9 @@ int test_container::get_default_font_size() const
     return 16;
 }
 
-const litehtml::tchar_t* test_container::get_default_font_name() const
+const char* test_container::get_default_font_name() const
 {
-    return _t("Times New Roman");
+    return "Times New Roman";
 }
 
 void test_container::draw_list_marker(uintptr_t hdc,
@@ -113,7 +113,7 @@ void test_container::draw_borders(uintptr_t hdc,
 {
 }
 
-void test_container::set_caption(const litehtml::tchar_t* caption)
+void test_container::set_caption(const char* caption)
 {
 }
 
@@ -121,21 +121,21 @@ void test_container::link(const litehtml::Document* ptr,
     const litehtml::Element::ptr& el)
 {
 }
-void test_container::on_anchor_click(const litehtml::tchar_t* url,
+void test_container::on_anchor_click(const char* url,
     const litehtml::Element* el)
 {
 }
 
-void test_container::set_cursor(const litehtml::tchar_t* cursor)
+void test_container::set_cursor(const char* cursor)
 {
 }
 
-void test_container::transform_text(litehtml::tstring& text,
+void test_container::transform_text(std::string& text,
     litehtml::TextTransform tt)
 {
 }
 
-litehtml::tstring test_container::import_css(const litehtml::URL& url)
+std::string test_container::import_css(const litehtml::URL& url)
 {
     return "";
 }
@@ -170,9 +170,9 @@ void test_container::get_media_features(litehtml::MediaFeatures& media) const
     media.resolution = 96;
 }
 
-void test_container::get_language(litehtml::tstring& language,
-    litehtml::tstring& culture) const
+void test_container::get_language(std::string& language,
+    std::string& culture) const
 {
-    language = _t("en");
-    culture = _t("");
+    language = "en";
+    culture = "";
 }

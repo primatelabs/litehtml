@@ -53,7 +53,7 @@ class CSSValue {
 protected:
     CSSValueType type_ = kCSSValueString;
 
-    tstring value_;
+    std::string value_;
 
     bool important_ = false;
 
@@ -63,9 +63,9 @@ public:
     CSSValue() = delete;
 
     // FIXME: Legacy interface.
-    CSSValue(const tstring& value, bool important);
+    CSSValue(const std::string& value, bool important);
 
-    CSSValue(CSSValueType type, const tstring& value, bool important);
+    CSSValue(CSSValueType type, const std::string& value, bool important);
 
     CSSValueType type() const
     {
@@ -92,12 +92,12 @@ public:
         return type_ == kCSSValueLength;
     }
 
-    const tstring& string() const
+    const std::string& string() const
     {
         return value_;
     }
 
-    void string(tstring& value)
+    void string(std::string& value)
     {
         value_ = value;
     }
@@ -117,7 +117,7 @@ public:
         return inherit_;
     }
 
-    static CSSValue* factory(CSSProperty property, const tstring& value, bool important);
+    static CSSValue* factory(CSSProperty property, const std::string& value, bool important);
 
 #if defined(ENABLE_JSON)
     nlohmann::json json() const;
@@ -129,7 +129,7 @@ protected:
     Color color_;
 
 public:
-    CSSColorValue(Color color, const tstring& value, bool important);
+    CSSColorValue(Color color, const std::string& value, bool important);
 
     Color color() const
     {
@@ -142,7 +142,7 @@ protected:
   CSSKeyword keyword_;
 
 public:
-    CSSKeywordValue(CSSKeyword keyword, const tstring& value, bool important);
+    CSSKeywordValue(CSSKeyword keyword, const std::string& value, bool important);
 
     CSSKeyword keyword() const
     {
@@ -155,7 +155,7 @@ protected:
   CSSLength length_;
 
 public:
-    CSSLengthValue(const CSSLength& length, const tstring& value, bool important);
+    CSSLengthValue(const CSSLength& length, const std::string& value, bool important);
 
     const CSSLength& length() const
     {

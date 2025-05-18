@@ -150,11 +150,11 @@ public:
         return 0;
     }
 
-    void parse_length_string(const tstring& str,
-        const tstring& predefs = _t(""),
+    void parse_length_string(const std::string& str,
+        const std::string& predefs = "",
         int defValue = 0);
 
-    void parse_length_string(const tstring& str,
+    void parse_length_string(const std::string& str,
         const KeywordVector& keywords,
         int default_keyword);
 };

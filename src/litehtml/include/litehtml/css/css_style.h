@@ -63,14 +63,14 @@ public:
 
     virtual ~CSSStyle();
 
-    void add(const tstring& txt, const URL& baseurl)
+    void add(const std::string& txt, const URL& baseurl)
     {
         parse(txt, baseurl);
     }
 
     // TODO: Old interface, remove
-    void add_property(const tchar_t* str,
-        const tchar_t* val,
+    void add_property(const char* str,
+        const char* val,
         const URL& baseurl,
         bool important)
     {
@@ -82,13 +82,13 @@ public:
     }
 
     void add_property(CSSProperty name,
-        const tchar_t* val,
+        const char* val,
         const URL& baseurl,
         bool important);
 
     void add_property(CSSDeclaration* declaration);
 
-    const tchar_t* get_property(CSSProperty name) const
+    const char* get_property(CSSProperty name) const
     {
         auto declaration = properties_.find(name);
         if (declaration != properties_.end()) {
@@ -120,20 +120,20 @@ public:
 #endif
 
 private:
-    void parse_property(const tstring& txt, const URL& url);
+    void parse_property(const std::string& txt, const URL& url);
 
-    void parse(const tstring& txt, const URL& url);
+    void parse(const std::string& txt, const URL& url);
 
-    void parse_short_border(CSSProperty prefix, const tstring& val, bool important);
+    void parse_short_border(CSSProperty prefix, const std::string& val, bool important);
 
-    void parse_short_background(const tstring& val,
+    void parse_short_background(const std::string& val,
         const URL& url,
         bool important);
 
-    void parse_short_font(const tstring& val, bool important);
+    void parse_short_font(const std::string& val, bool important);
 
     // TODO: Old interface, remove
-    void add_parsed_property(const tstring& str, const tstring& val, bool important)
+    void add_parsed_property(const std::string& str, const std::string& val, bool important)
     {
         CSSProperty name = css_property_from_string(str);
         if (name == kCSSPropertyUnknown) {
@@ -142,7 +142,7 @@ private:
         add_parsed_property(name, val, important);
     }
 
-    void add_parsed_property(CSSProperty name, const tstring& val, bool important);
+    void add_parsed_property(CSSProperty name, const std::string& val, bool important);
 
     void remove_property(CSSProperty name, bool important);
 };

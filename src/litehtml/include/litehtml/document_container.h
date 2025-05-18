@@ -46,7 +46,7 @@ class DocumentContainer {
 public:
     virtual ~DocumentContainer() = default;
 
-    virtual uintptr_t create_font(const litehtml::tchar_t* faceName,
+    virtual uintptr_t create_font(const char* faceName,
         int size,
         int weight,
         litehtml::font_style italic,
@@ -55,11 +55,11 @@ public:
 
     virtual void delete_font(uintptr_t hFont) = 0;
 
-    virtual int text_width(const litehtml::tchar_t* text,
+    virtual int text_width(const char* text,
         uintptr_t hFont) = 0;
 
     virtual void draw_text(uintptr_t hdc,
-        const litehtml::tchar_t* text,
+        const char* text,
         uintptr_t hFont,
         litehtml::Color color,
         const litehtml::Position& pos) = 0;
@@ -68,7 +68,7 @@ public:
 
     virtual int get_default_font_size() const = 0;
 
-    virtual const litehtml::tchar_t* get_default_font_name() const = 0;
+    virtual const char* get_default_font_name() const = 0;
 
     virtual void draw_list_marker(uintptr_t hdc,
         const litehtml::list_marker& marker) = 0;
@@ -86,20 +86,20 @@ public:
         const litehtml::Position& draw_pos,
         bool root) = 0;
 
-    virtual void set_caption(const litehtml::tchar_t* caption) = 0;
+    virtual void set_caption(const char* caption) = 0;
 
     virtual void link(const Document* doc,
         const litehtml::Element::ptr& el) = 0;
 
-    virtual void on_anchor_click(const litehtml::tchar_t* url,
+    virtual void on_anchor_click(const char* url,
         const litehtml::Element* el) = 0;
 
-    virtual void set_cursor(const litehtml::tchar_t* cursor) = 0;
+    virtual void set_cursor(const char* cursor) = 0;
 
-    virtual void transform_text(litehtml::tstring& text,
+    virtual void transform_text(std::string& text,
         litehtml::TextTransform tt) = 0;
 
-    virtual tstring import_css(const URL& css_url) = 0;
+    virtual std::string import_css(const URL& css_url) = 0;
 
     virtual void set_clip(const litehtml::Position& pos,
         const litehtml::BorderRadii& border_radii,
@@ -112,8 +112,8 @@ public:
 
     virtual void get_media_features(litehtml::MediaFeatures& media) const = 0;
 
-    virtual void get_language(litehtml::tstring& language,
-        litehtml::tstring& culture) const = 0;
+    virtual void get_language(std::string& language,
+        std::string& culture) const = 0;
 };
 
 } // namespace litehtml

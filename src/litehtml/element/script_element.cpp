@@ -54,9 +54,9 @@ bool ScriptElement::append_child(Element* element)
     return false;
 }
 
-const tchar_t* ScriptElement::get_tagName() const
+const char* ScriptElement::get_tagName() const
 {
-    return _t("script");
+    return "script";
 }
 
 } // namespace litehtml

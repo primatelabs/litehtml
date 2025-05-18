@@ -45,10 +45,10 @@ namespace litehtml {
 class Document;
 class Element;
 
-typedef std::map<litehtml::tstring, litehtml::tstring> string_map;
+typedef std::map<std::string, std::string> string_map;
 typedef std::vector<Element*> ElementsVector;
 typedef std::vector<int> int_vector;
-typedef std::vector<litehtml::tstring> string_vector;
+typedef std::vector<std::string> string_vector;
 
 const unsigned int font_decoration_none = 0x00;
 const unsigned int font_decoration_underline = 0x01;
@@ -227,7 +227,7 @@ struct FontItem {
     FontMetrics metrics;
 };
 
-typedef std::map<tstring, FontItem> FontMap;
+typedef std::map<std::string, FontItem> FontMap;
 
 enum DrawFlag {
     kDrawRoot,
@@ -276,7 +276,7 @@ enum Length {
 };
 
 #define FONT_SIZE_STRINGS \
-    _t("xx-small;x-small;small;medium;large;x-large;xx-large;smaller;larger")
+    "xx-small;x-small;small;medium;large;x-large;xx-large;smaller;larger"
 
 enum FontSize {
     kFontSizeXXSmall,
@@ -290,16 +290,16 @@ enum FontSize {
     kFontSizeLarger,
 };
 
-#define font_style_strings _t("normal;italic")
+#define font_style_strings "normal;italic"
 
 enum font_style { fontStyleNormal, fontStyleItalic };
 
-#define font_variant_strings _t("normal;small-caps")
+#define font_variant_strings "normal;small-caps"
 
 enum font_variant { font_variant_normal, font_variant_italic };
 
 #define FONT_WEIGHT_STRINGS \
-    _t("normal;bold;bolder;lighter;100;200;300;400;500;600;700")
+    "normal;bold;bolder;lighter;100;200;300;400;500;600;700"
 
 enum FontWeight {
     kFontWeightNormal,
@@ -315,11 +315,11 @@ enum FontWeight {
     kFontWeight700
 };
 
-#define LIST_STYLE_TYPE_STRINGS                                                \
-    _t("none;circle;disc;square;armenian;cjk-ideographic;decimal;decimal-"     \
-       "leading-zero;georgian;hebrew;hiragana;hiragana-iroha;katakana;"        \
-       "katakana-iroha;lower-alpha;lower-greek;lower-latin;lower-roman;upper-" \
-       "alpha;upper-latin;upper-roman")
+#define LIST_STYLE_TYPE_STRINGS                                             \
+    "none;circle;disc;square;armenian;cjk-ideographic;decimal;decimal-"     \
+    "leading-zero;georgian;hebrew;hiragana;hiragana-iroha;katakana;"        \
+    "katakana-iroha;lower-alpha;lower-greek;lower-latin;lower-roman;upper-" \
+    "alpha;upper-latin;upper-roman"
 
 enum ListStyleType {
     kListStyleTypeNone,
@@ -345,7 +345,7 @@ enum ListStyleType {
     kListStyleTypeUpperRoman,
 };
 
-#define LIST_STYLE_POSITION_STRINGS _t("inside;outside")
+#define LIST_STYLE_POSITION_STRINGS "inside;outside"
 
 enum ListStylePosition {
     kListStylePositionInside,
@@ -353,7 +353,7 @@ enum ListStylePosition {
 };
 
 #define VerticalAlign_strings \
-    _t("baseline;sub;super;top;text-top;middle;bottom;text-bottom")
+    "baseline;sub;super;top;text-top;middle;bottom;text-bottom"
 
 enum VerticalAlign {
     kVerticalAlignBaseline,
@@ -366,7 +366,7 @@ enum VerticalAlign {
     kVerticalAlignTextBottom
 };
 
-#define border_width_strings _t("thin;medium;thick")
+#define border_width_strings "thin;medium;thick"
 
 enum border_width {
     border_width_thin,
@@ -375,7 +375,7 @@ enum border_width {
 };
 
 #define BORDER_STYLE_STRINGS \
-    _t("none;hidden;dotted;dashed;solid;double;groove;ridge;inset;outset")
+    "none;hidden;dotted;dashed;solid;double;groove;ridge;inset;outset"
 
 enum BorderStyle {
     kBorderStyleNone,
@@ -404,7 +404,7 @@ enum ElementClear {
 };
 
 #define CSS_UNITS_STRINGS \
-    _t("none;%;in;cm;mm;em;ex;pt;pc;px;dpi;dpcm;vw;vh;vmin;vmax;rem")
+    "none;%;in;cm;mm;em;ex;pt;pc;px;dpi;dpcm;vw;vh;vmin;vmax;rem"
 
 enum CSSUnits {
     kCSSUnitsNone,
@@ -440,7 +440,7 @@ enum TextAlign {
     kTextAlignJustify
 };
 
-#define TEXT_TRANSFORM_STRINGS _t("none;capitalize;uppercase;lowercase")
+#define TEXT_TRANSFORM_STRINGS "none;capitalize;uppercase;lowercase"
 
 enum TextTransform {
     kTextTransformNone,
@@ -466,7 +466,7 @@ enum Overflow {
     kOverflowNoContent
 };
 
-#define BACKGROUND_SIZE_STRINGS _t("auto;cover;contain")
+#define BACKGROUND_SIZE_STRINGS "auto;cover;contain"
 
 enum background_size {
     background_size_auto,
@@ -480,7 +480,7 @@ enum Visibility {
     kVisibilityCollapse,
 };
 
-#define BORDER_COLLAPSE_STRINGS _t("collapse;separate")
+#define BORDER_COLLAPSE_STRINGS "collapse;separate"
 
 enum border_collapse {
     border_collapse_collapse,
@@ -488,9 +488,9 @@ enum border_collapse {
 };
 
 
-#define PSEUDO_CLASS_STRINGS                                                   \
-    _t("only-child;only-of-type;first-child;first-of-type;last-child;last-of-" \
-       "type;nth-child;nth-of-type;nth-last-child;nth-last-of-type;not;lang")
+#define PSEUDO_CLASS_STRINGS                                                \
+    "only-child;only-of-type;first-child;first-of-type;last-child;last-of-" \
+    "type;nth-child;nth-of-type;nth-last-child;nth-last-of-type;not;lang"
 
 enum pseudo_class {
     pseudo_class_only_child,
@@ -508,7 +508,7 @@ enum pseudo_class {
 };
 
 #define CONTENT_PROPERTY_STRING \
-    _t("none;normal;open-quote;close-quote;no-open-quote;no-close-quote")
+    "none;normal;open-quote;close-quote;no-open-quote;no-close-quote"
 
 enum content_property {
     content_property_none,
@@ -600,9 +600,9 @@ enum BoxSizing {
 };
 
 // List of the Void Elements (can't have any contents)
-const litehtml::tchar_t* const void_elements =
-    _t("area;base;br;col;command;embed;hr;img;input;keygen;link;meta;param;"
-       "source;track;wbr");
+const char* const void_elements =
+    "area;base;br;col;command;embed;hr;img;input;keygen;link;meta;param;"
+    "source;track;wbr";
 
 } // namespace litehtml
 

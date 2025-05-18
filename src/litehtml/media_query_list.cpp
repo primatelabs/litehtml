@@ -36,13 +36,13 @@
 
 namespace litehtml {
 
-MediaQueryList::ptr MediaQueryList::create_from_string(const tstring& str,
+MediaQueryList::ptr MediaQueryList::create_from_string(const std::string& str,
     const Document* doc)
 {
     MediaQueryList::ptr list = std::make_shared<MediaQueryList>();
 
     string_vector tokens;
-    split_string(str, tokens, _t(","));
+    split_string(str, tokens, ",");
 
     for (string_vector::iterator tok = tokens.begin(); tok != tokens.end(); tok++) {
         trim(*tok);

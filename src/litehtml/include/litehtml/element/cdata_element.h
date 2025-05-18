@@ -36,7 +36,7 @@
 namespace litehtml {
 
 class CDATAElement : public Element {
-    tstring m_text;
+    std::string m_text;
 
 public:
     CDATAElement(Document* doc);
@@ -47,8 +47,8 @@ public:
         return kElementCDATA;
     }
 
-    virtual void get_text(tstring& text) const override;
-    virtual void set_data(const tchar_t* data) override;
+    virtual void get_text(std::string& text) const override;
+    virtual void set_data(const char* data) override;
 };
 
 } // namespace litehtml

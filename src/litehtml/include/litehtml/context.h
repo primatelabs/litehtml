@@ -40,9 +40,9 @@ class Context {
 public:
     Context() = default;
 
-    explicit Context(const tstring& css);
+    explicit Context(const std::string& css);
 
-    void load_master_stylesheet(const tstring& css);
+    void load_master_stylesheet(const std::string& css);
 
     CSSStylesheet& master_stylesheet()
     {

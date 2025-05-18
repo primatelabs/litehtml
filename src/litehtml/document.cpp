@@ -183,16 +183,16 @@ Document::~Document()
     }
 }
 
-uintptr_t Document::add_font(const tchar_t* name,
+uintptr_t Document::add_font(const char* name,
     int size,
-    const tchar_t* weight,
-    const tchar_t* style,
-    const tchar_t* decoration,
+    const char* weight,
+    const char* style,
+    const char* decoration,
     FontMetrics* fm)
 {
     uintptr_t ret = 0;
 
-    if (!name || (name && !t_strcasecmp(name, _t("inherit")))) {
+    if (!name || (name && !t_strcasecmp(name, "inherit"))) {
         name = container_->get_default_font_name();
     }
 
@@ -200,17 +200,17 @@ uintptr_t Document::add_font(const tchar_t* name,
         size = container()->get_default_font_size();
     }
 
-    tchar_t strSize[20];
+    char strSize[20];
     t_itoa(size, strSize, 20, 10);
 
-    tstring key = name;
-    key += _t(":");
+    std::string key = name;
+    key += ":";
     key += strSize;
-    key += _t(":");
+    key += ":";
     key += weight;
-    key += _t(":");
+    key += ":";
     key += style;
-    key += _t(":");
+    key += ":";
     key += decoration;
 
     if (m_fonts.find(key) == m_fonts.end()) {
@@ -233,7 +233,7 @@ uintptr_t Document::add_font(const tchar_t* name,
                     break;
             }
         } else {
-            fw = t_atoi(weight);
+            fw = atoi(weight);
             if (fw < 100) {
                 fw = 400;
             }
@@ -242,16 +242,16 @@ uintptr_t Document::add_font(const tchar_t* name,
         unsigned int decor = 0;
 
         if (decoration) {
-            std::vector<tstring> tokens;
-            split_string(decoration, tokens, _t(" "));
-            for (std::vector<tstring>::iterator i = tokens.begin();
+            std::vector<std::string> tokens;
+            split_string(decoration, tokens, " ");
+            for (std::vector<std::string>::iterator i = tokens.begin();
                  i != tokens.end();
                  i++) {
-                if (!t_strcasecmp(i->c_str(), _t("underline"))) {
+                if (!t_strcasecmp(i->c_str(), "underline")) {
                     decor |= font_decoration_underline;
-                } else if (!t_strcasecmp(i->c_str(), _t("line-through"))) {
+                } else if (!t_strcasecmp(i->c_str(), "line-through")) {
                     decor |= font_decoration_linethrough;
-                } else if (!t_strcasecmp(i->c_str(), _t("overline"))) {
+                } else if (!t_strcasecmp(i->c_str(), "overline")) {
                     decor |= font_decoration_overline;
                 }
             }
@@ -269,14 +269,14 @@ uintptr_t Document::add_font(const tchar_t* name,
     return ret;
 }
 
-uintptr_t Document::get_font(const tchar_t* name,
+uintptr_t Document::get_font(const char* name,
     int size,
-    const tchar_t* weight,
-    const tchar_t* style,
-    const tchar_t* decoration,
+    const char* weight,
+    const char* style,
+    const char* decoration,
     FontMetrics* fm)
 {
-    if (!name || (name && !t_strcasecmp(name, _t("inherit")))) {
+    if (!name || (name && !t_strcasecmp(name, "inherit"))) {
         name = container_->get_default_font_name();
     }
 
@@ -284,17 +284,17 @@ uintptr_t Document::get_font(const tchar_t* name,
         size = container_->get_default_font_size();
     }
 
-    tchar_t strSize[20];
+    char strSize[20];
     t_itoa(size, strSize, 20, 10);
 
-    tstring key = name;
-    key += _t(":");
+    std::string key = name;
+    key += ":";
     key += strSize;
-    key += _t(":");
+    key += ":";
     key += weight;
-    key += _t(":");
+    key += ":";
     key += style;
-    key += _t(":");
+    key += ":";
     key += decoration;
 
     FontMap::iterator el = m_fonts.find(key);
@@ -331,7 +331,7 @@ void Document::draw(uintptr_t hdc, int x, int y, const Position* clip)
     }
 }
 
-int Document::cvt_units(const tchar_t* str,
+int Document::cvt_units(const char* str,
     int fontSize,
     bool* is_percent /*= 0*/) const
 {
@@ -411,9 +411,9 @@ int Document::height() const
     return m_size.height;
 }
 
-void Document::add_stylesheet(const tstring& str,
+void Document::add_stylesheet(const std::string& str,
     const URL& url,
-    const tchar_t* media)
+    const char* media)
 {
     if (!str.empty()) {
         m_css.push_back(css_text(str, url, media));
@@ -443,7 +443,7 @@ bool Document::on_mouse_over(int x,
         m_over_element = over_el;
     }
 
-    const tchar_t* cursor = nullptr;
+    const char* cursor = nullptr;
 
     if (m_over_element) {
         if (m_over_element->on_mouse_over()) {
@@ -452,7 +452,7 @@ bool Document::on_mouse_over(int x,
         cursor = m_over_element->get_cursor();
     }
 
-    container_->set_cursor(cursor ? cursor : _t("auto"));
+    container_->set_cursor(cursor ? cursor : "auto");
 
     if (state_was_changed) {
         return root_->find_styles_changes(redraw_boxes, 0, 0);
@@ -501,7 +501,7 @@ bool Document::on_lbutton_down(int x,
         }
     }
 
-    const tchar_t* cursor = nullptr;
+    const char* cursor = nullptr;
 
     if (m_over_element) {
         if (m_over_element->on_lbutton_down()) {
@@ -510,7 +510,7 @@ bool Document::on_lbutton_down(int x,
         cursor = m_over_element->get_cursor();
     }
 
-    container_->set_cursor(cursor ? cursor : _t("auto"));
+    container_->set_cursor(cursor ? cursor : "auto");
 
     if (state_was_changed) {
         return root_->find_styles_changes(redraw_boxes, 0, 0);
@@ -536,42 +536,42 @@ bool Document::on_lbutton_up(int,
     return false;
 }
 
-Element::ptr Document::create_element(const tchar_t* tag_name,
+Element::ptr Document::create_element(const char* tag_name,
     const string_map& attributes)
 {
     Element* newTag = nullptr;
 
-    if (!t_strcmp(tag_name, _t("br"))) {
+    if (!strcmp(tag_name, "br")) {
         newTag = new BreakElement(this);
-    } else if (!t_strcmp(tag_name, _t("p"))) {
+    } else if (!strcmp(tag_name, "p")) {
         newTag = new ParagraphElement(this);
-    } else if (!t_strcmp(tag_name, _t("img"))) {
+    } else if (!strcmp(tag_name, "img")) {
         newTag = new ImageElement(this);
-    } else if (!t_strcmp(tag_name, _t("table"))) {
+    } else if (!strcmp(tag_name, "table")) {
         newTag = new TableElement(this);
-    } else if (!t_strcmp(tag_name, _t("td")) || !t_strcmp(tag_name, _t("th"))) {
+    } else if (!strcmp(tag_name, "td") || !strcmp(tag_name, "th")) {
         newTag = new TdElement(this);
-    } else if (!t_strcmp(tag_name, _t("link"))) {
+    } else if (!strcmp(tag_name, "link")) {
         newTag = new LinkElement(this);
-    } else if (!t_strcmp(tag_name, _t("title"))) {
+    } else if (!strcmp(tag_name, "title")) {
         newTag = new TitleElement(this);
-    } else if (!t_strcmp(tag_name, _t("a"))) {
+    } else if (!strcmp(tag_name, "a")) {
         newTag = new AnchorElement(this);
-    } else if (!t_strcmp(tag_name, _t("tr"))) {
+    } else if (!strcmp(tag_name, "tr")) {
         newTag = new TrElement(this);
-    } else if (!t_strcmp(tag_name, _t("style"))) {
+    } else if (!strcmp(tag_name, "style")) {
         newTag = new StyleElement(this);
-    } else if (!t_strcmp(tag_name, _t("base"))) {
+    } else if (!strcmp(tag_name, "base")) {
         newTag = new BaseElement(this);
-    } else if (!t_strcmp(tag_name, _t("body"))) {
+    } else if (!strcmp(tag_name, "body")) {
         newTag = new BodyElement(this);
-    } else if (!t_strcmp(tag_name, _t("div"))) {
+    } else if (!strcmp(tag_name, "div")) {
         newTag = new DivElement(this);
-    } else if (!t_strcmp(tag_name, _t("script"))) {
+    } else if (!strcmp(tag_name, "script")) {
         newTag = new ScriptElement(this);
-    } else if (!t_strcmp(tag_name, _t("font"))) {
+    } else if (!strcmp(tag_name, "font")) {
         newTag = new FontElement(this);
-    } else if (!t_strcmp(tag_name, _t("li"))) {
+    } else if (!strcmp(tag_name, "li")) {
         newTag = new LiElement(this);
     } else {
         newTag = new HTMLElement(this);
@@ -605,10 +605,10 @@ bool Document::media_changed()
 bool Document::lang_changed()
 {
     if (!m_media_lists.empty()) {
-        tstring culture;
+        std::string culture;
         container()->get_language(language_, culture);
         if (!culture.empty()) {
-            culture_ = language_ + _t('-') + culture;
+            culture_ = language_ + '-' + culture;
         } else {
             culture_.clear();
         }
@@ -724,7 +724,7 @@ void Document::fix_tables_layout()
             case kDisplayTable:
                 fix_table_children(el_ptr,
                     kDisplayTableRowGroup,
-                    _t("table-row-group"));
+                    "table-row-group");
                 break;
             case kDisplayTableFooterGroup:
             case kDisplayTableRowGroup:
@@ -732,18 +732,18 @@ void Document::fix_tables_layout()
                 Element::ptr parent = el_ptr->parent();
                 if (parent) {
                     if (parent->get_display() != kDisplayInlineTable)
-                        fix_table_parent(el_ptr, kDisplayTable, _t("table"));
+                        fix_table_parent(el_ptr, kDisplayTable, "table");
                 }
-                fix_table_children(el_ptr, kDisplayTableRow, _t("table-row"));
+                fix_table_children(el_ptr, kDisplayTableRow, "table-row");
             } break;
             case kDisplayTableRow:
                 fix_table_parent(el_ptr,
                     kDisplayTableRowGroup,
-                    _t("table-row-group"));
-                fix_table_children(el_ptr, kDisplayTableCell, _t("table-cell"));
+                    "table-row-group");
+                fix_table_children(el_ptr, kDisplayTableCell, "table-cell");
                 break;
             case kDisplayTableCell:
-                fix_table_parent(el_ptr, kDisplayTableRow, _t("table-row"));
+                fix_table_parent(el_ptr, kDisplayTableRow, "table-row");
                 break;
             // TODO: make table layout fix for table-caption, table-column etc. elements
             case kDisplayTableCaption:
@@ -758,7 +758,7 @@ void Document::fix_tables_layout()
 
 void Document::fix_table_children(Element::ptr& el_ptr,
     Display disp,
-    const tchar_t* disp_str)
+    const char* disp_str)
 {
     ElementsVector tmp;
     ElementsVector::iterator first_iter = el_ptr->m_children.begin();
@@ -805,7 +805,7 @@ void Document::fix_table_children(Element::ptr& el_ptr,
 
 void Document::fix_table_parent(Element::ptr& el_ptr,
     Display disp,
-    const tchar_t* disp_str)
+    const char* disp_str)
 {
     Element::ptr parent = el_ptr->parent();
 
@@ -869,7 +869,7 @@ void Document::fix_table_parent(Element::ptr& el_ptr,
     }
 }
 
-void Document::append_children_from_string(Element& parent, const tchar_t* str)
+void Document::append_children_from_string(Element& parent, const char* str)
 {
     append_children_from_utf8(parent, str);
 }

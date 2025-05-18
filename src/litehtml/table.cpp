@@ -38,8 +38,8 @@ void litehtml::table_grid::add_cell(Element::ptr& el)
 {
     table_cell cell;
     cell.el = el;
-    cell.colspan = t_atoi(el->get_attr(_t("colspan"), _t("1")));
-    cell.rowspan = t_atoi(el->get_attr(_t("rowspan"), _t("1")));
+    cell.colspan = atoi(el->get_attr("colspan", "1"));
+    cell.rowspan = atoi(el->get_attr("rowspan", "1"));
     cell.borders = el->border();
 
     while (is_rowspanned((int)m_cells.size() - 1, (int)m_cells.back().size())) {

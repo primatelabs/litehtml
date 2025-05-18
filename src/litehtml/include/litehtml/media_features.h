@@ -42,21 +42,21 @@
 
 namespace litehtml {
 
-#define MEDIA_ORIENTATION_STRINGS _t("portrait;landscape")
+#define MEDIA_ORIENTATION_STRINGS "portrait;landscape"
 
 enum MediaOrientation {
     kMediaOrientationPortrait,
     kMediaOrientationLandscape,
 };
 
-#define MEDIA_FEATURE_STRINGS                                                 \
-    _t("none;width;min-width;max-width;height;min-height;max-height;device-"  \
-       "width;min-device-width;max-device-width;device-height;min-device-"    \
-       "height;max-device-height;orientation;aspect-ratio;min-aspect-ratio;"  \
-       "max-aspect-ratio;device-aspect-ratio;min-device-aspect-ratio;max-"    \
-       "device-aspect-ratio;color;min-color;max-color;color-index;min-color-" \
-       "index;max-color-index;monochrome;min-monochrome;max-monochrome;"      \
-       "resolution;min-resolution;max-resolution")
+#define MEDIA_FEATURE_STRINGS                                              \
+    "none;width;min-width;max-width;height;min-height;max-height;device-"  \
+    "width;min-device-width;max-device-width;device-height;min-device-"    \
+    "height;max-device-height;orientation;aspect-ratio;min-aspect-ratio;"  \
+    "max-aspect-ratio;device-aspect-ratio;min-device-aspect-ratio;max-"    \
+    "device-aspect-ratio;color;min-color;max-color;color-index;min-color-" \
+    "index;max-color-index;monochrome;min-monochrome;max-monochrome;"      \
+    "resolution;min-resolution;max-resolution"
 
 enum MediaFeature {
     kMediaFeatureNone,
@@ -104,9 +104,9 @@ enum MediaFeature {
     kMediaFeatureMaxResolution,
 };
 
-#define MEDIA_TYPE_STRINGS                                                  \
-    _t("none;all;screen;print;braille;embossed;handheld;projection;speech;" \
-       "tty;tv")
+#define MEDIA_TYPE_STRINGS                                               \
+    "none;all;screen;print;braille;embossed;handheld;projection;speech;" \
+    "tty;tv"
 
 enum MediaType {
     kMediaTypeNone,

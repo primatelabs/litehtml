@@ -195,16 +195,16 @@ void ImageElement::parse_attributes()
     // Resolve the image URL using the document base URL.  Store the
     // absolute image URL rather than the (possibly) relative image URL so
     // we don't need to resolve the URL later.
-    tstring src = get_attr(_t("src"), _t(""));
+    std::string src = get_attr("src", "");
     if (!src.empty()) {
         src_ = resolve(get_document()->base_url(), URL(src));
     }
 
-    const tchar_t* attr_height = get_attr(_t("height"));
+    const char* attr_height = get_attr("height");
     if (attr_height) {
         m_style.add_property(kCSSPropertyHeight, attr_height, URL(), false);
     }
-    const tchar_t* attr_width = get_attr(_t("width"));
+    const char* attr_width = get_attr("width");
     if (attr_width) {
         m_style.add_property(kCSSPropertyWidth, attr_width, URL(), false);
     }

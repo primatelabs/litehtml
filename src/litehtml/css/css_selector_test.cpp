@@ -42,360 +42,360 @@ TEST(CSSSelectorTest, ElementSelectorParse)
 {
     CSSElementSelector selector;
     // https://www.w3schools.com/cssref/CSSSelectors.asp
-    selector.parse(_t(".class"));
+    selector.parse(".class");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("class")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("class")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "class"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "class"));
 
-    selector.parse(_t(".class1.class2"));
+    selector.parse(".class1.class2");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 2);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("class1")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[1].val.c_str(), _t("class2")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("class")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "class1"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[1].val.c_str(), "class2"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "class"));
 
-    selector.parse(_t("#id"));
+    selector.parse("#id");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("id")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("id")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "id"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "id"));
 
-    selector.parse(_t("*"));
-    EXPECT_TRUE(!t_strcmp(selector.m_tag.c_str(), _t("*")));
+    selector.parse("*");
+    EXPECT_TRUE(!strcmp(selector.m_tag.c_str(), "*"));
     EXPECT_TRUE(selector.m_attrs.empty());
 
-    selector.parse(_t("element"));
-    EXPECT_TRUE(!t_strcmp(selector.m_tag.c_str(), _t("element")));
+    selector.parse("element");
+    EXPECT_TRUE(!strcmp(selector.m_tag.c_str(), "element"));
     EXPECT_TRUE(selector.m_attrs.empty());
 
-    selector.parse(_t("[attribute]"));
+    selector.parse("[attribute]");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("attribute")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), ""));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "attribute"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectExists);
 
-    selector.parse(_t("[attribute=value]"));
+    selector.parse("[attribute=value]");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("value")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("attribute")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "value"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "attribute"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectEqual);
 
-    selector.parse(_t("[attribute~=value]"));
+    selector.parse("[attribute~=value]");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("value")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("attribute")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "value"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "attribute"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectContainStr);
 
-    selector.parse(_t("[attribute|=value]"));
+    selector.parse("[attribute|=value]");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("value")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("attribute")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "value"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "attribute"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectStartStr);
 
-    selector.parse(_t("[attribute^=value]"));
+    selector.parse("[attribute^=value]");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("value")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("attribute")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "value"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "attribute"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectStartStr);
 
-    selector.parse(_t("[attribute$=value]"));
+    selector.parse("[attribute$=value]");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("value")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("attribute")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "value"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "attribute"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectEndStr);
 
-    selector.parse(_t("[attribute*=value]"));
+    selector.parse("[attribute*=value]");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("value")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("attribute")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "value"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "attribute"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectContainStr);
 
-    selector.parse(_t(":active"));
+    selector.parse(":active");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("active")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "active"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t("::after"));
+    selector.parse("::after");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("after")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo-el")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "after"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo-el"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoElement);
 
-    selector.parse(_t("::before"));
+    selector.parse("::before");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("before")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo-el")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "before"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo-el"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoElement);
 
-    selector.parse(_t(":checked"));
+    selector.parse(":checked");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("checked")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "checked"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":default"));
+    selector.parse(":default");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("default")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "default"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":disabled"));
+    selector.parse(":disabled");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("disabled")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "disabled"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":empty"));
+    selector.parse(":empty");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("empty")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "empty"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":enabled"));
+    selector.parse(":enabled");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("enabled")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "enabled"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":first-child"));
+    selector.parse(":first-child");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("first-child")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "first-child"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t("::first-letter"));
+    selector.parse("::first-letter");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("first-letter")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo-el")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "first-letter"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo-el"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoElement);
 
-    selector.parse(_t("::first-line"));
+    selector.parse("::first-line");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("first-line")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo-el")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "first-line"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo-el"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoElement);
 
-    selector.parse(_t(":first-of-type"));
+    selector.parse(":first-of-type");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("first-of-type")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "first-of-type"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":focus"));
+    selector.parse(":focus");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("focus")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "focus"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":hover"));
+    selector.parse(":hover");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("hover")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "hover"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":in-range"));
+    selector.parse(":in-range");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("in-range")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "in-range"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":indeterminate"));
+    selector.parse(":indeterminate");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("indeterminate")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "indeterminate"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":invalid"));
+    selector.parse(":invalid");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("invalid")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "invalid"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":lang(language)"));
+    selector.parse(":lang(language)");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("lang(language)")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "lang(language)"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":last-child"));
+    selector.parse(":last-child");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("last-child")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "last-child"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":last-of-type"));
+    selector.parse(":last-of-type");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("last-of-type")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "last-of-type"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":link"));
+    selector.parse(":link");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("link")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "link"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":not(selector)"));
+    selector.parse(":not(selector)");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("not(selector)")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "not(selector)"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":nth-child(n)"));
+    selector.parse(":nth-child(n)");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("nth-child(n)")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "nth-child(n)"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":nth-last-child(n)"));
+    selector.parse(":nth-last-child(n)");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
     EXPECT_TRUE(
-        !t_strcmp(selector.m_attrs[0].val.c_str(), _t("nth-last-child(n)")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+        !strcmp(selector.m_attrs[0].val.c_str(), "nth-last-child(n)"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":nth-last-of-type(n)"));
+    selector.parse(":nth-last-of-type(n)");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
     EXPECT_TRUE(
-        !t_strcmp(selector.m_attrs[0].val.c_str(), _t("nth-last-of-type(n)")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+        !strcmp(selector.m_attrs[0].val.c_str(), "nth-last-of-type(n)"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":nth-of-type(n)"));
+    selector.parse(":nth-of-type(n)");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("nth-of-type(n)")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "nth-of-type(n)"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":only-of-type"));
+    selector.parse(":only-of-type");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("only-of-type")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "only-of-type"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":only-child"));
+    selector.parse(":only-child");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("only-child")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "only-child"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":optional"));
+    selector.parse(":optional");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("optional")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "optional"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":out-of-range"));
+    selector.parse(":out-of-range");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("out-of-range")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "out-of-range"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t("::placeholder"));
+    selector.parse("::placeholder");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("placeholder")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo-el")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "placeholder"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo-el"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoElement);
 
-    selector.parse(_t(":read-only"));
+    selector.parse(":read-only");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("read-only")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "read-only"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":read-write"));
+    selector.parse(":read-write");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("read-write")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "read-write"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":required"));
+    selector.parse(":required");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("required")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "required"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":root"));
+    selector.parse(":root");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("root")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "root"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t("::selection"));
+    selector.parse("::selection");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("selection")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo-el")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "selection"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo-el"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoElement);
 
-    selector.parse(_t(":target"));
+    selector.parse(":target");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("target")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "target"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":valid"));
+    selector.parse(":valid");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("valid")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "valid"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
-    selector.parse(_t(":visited"));
+    selector.parse(":visited");
     EXPECT_TRUE(selector.m_tag.empty());
     EXPECT_TRUE(selector.m_attrs.size() == 1);
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].val.c_str(), _t("visited")));
-    EXPECT_TRUE(!t_strcmp(selector.m_attrs[0].attribute.c_str(), _t("pseudo")));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].val.c_str(), "visited"));
+    EXPECT_TRUE(!strcmp(selector.m_attrs[0].attribute.c_str(), "pseudo"));
     EXPECT_TRUE(selector.m_attrs[0].condition == kSelectPseudoClass);
 
     // other
-    selector.parse(_t("tag:psudo#anchor"));
-    EXPECT_TRUE(!t_strcmp(selector.m_tag.c_str(), _t("tag")));
+    selector.parse("tag:psudo#anchor");
+    EXPECT_TRUE(!strcmp(selector.m_tag.c_str(), "tag"));
     EXPECT_TRUE(selector.m_attrs.size() == 2);
 }
 
@@ -407,45 +407,45 @@ TEST(CSSSelectorTest, DISABLED_SelectorParse)
 {
     CSSSelector selector(nullptr);
     // https://www.w3schools.com/cssref/CSSSelectors.asp
-    assert(!selector.parse(_t("")));
-    EXPECT_TRUE(selector.parse(_t("element")));
+    assert(!selector.parse(""));
+    EXPECT_TRUE(selector.parse("element"));
     EXPECT_TRUE(selector.m_combinator == kCombinatorDescendant);
-    EXPECT_TRUE(!t_strcmp(selector.m_right.m_tag.c_str(), _t("element")));
+    EXPECT_TRUE(!strcmp(selector.m_right.m_tag.c_str(), "element"));
     EXPECT_TRUE(selector.m_right.m_attrs.empty());
     EXPECT_TRUE(selector.m_left == nullptr);
 
-    // assert(selector.parse(_t("element,element")));
+    // assert(selector.parse("element,element"));
     // EXPECT_TRUE(selector.m_combinator == kCombinatorDescendant);
-    // EXPECT_TRUE(selector.m_right.m_tag.c_str(), _t("element"));
+    // EXPECT_TRUE(selector.m_right.m_tag.c_str(), "element");
     // EXPECT_TRUE(selector.m_right.m_attrs.empty());
 
-    EXPECT_TRUE(selector.parse(_t(".class1 .class2")));
+    EXPECT_TRUE(selector.parse(".class1 .class2"));
     EXPECT_TRUE(selector.m_combinator == kCombinatorDescendant);
     EXPECT_TRUE(selector.m_right.m_tag.empty());
     EXPECT_TRUE(selector.m_right.m_attrs.size() == 1);
     EXPECT_TRUE(selector.m_left->m_right.m_attrs.size() == 1);
 
-    assert(selector.parse(_t("element element")));
+    assert(selector.parse("element element"));
     EXPECT_TRUE(selector.m_combinator == kCombinatorDescendant);
-    EXPECT_TRUE(!t_strcmp(selector.m_right.m_tag.c_str(), _t("element")));
+    EXPECT_TRUE(!strcmp(selector.m_right.m_tag.c_str(), "element"));
     EXPECT_TRUE(selector.m_right.m_attrs.empty());
-    EXPECT_TRUE(!t_strcmp(selector.m_left->m_right.m_tag.c_str(), _t("element")));
+    EXPECT_TRUE(!strcmp(selector.m_left->m_right.m_tag.c_str(), "element"));
 
-    assert(selector.parse(_t("element>element")));
+    assert(selector.parse("element>element"));
     EXPECT_TRUE(selector.m_combinator == kCombinatorChild);
-    EXPECT_TRUE(!t_strcmp(selector.m_right.m_tag.c_str(), _t("element")));
+    EXPECT_TRUE(!strcmp(selector.m_right.m_tag.c_str(), "element"));
     EXPECT_TRUE(selector.m_right.m_attrs.empty());
-    EXPECT_TRUE(!t_strcmp(selector.m_left->m_right.m_tag.c_str(), _t("element")));
+    EXPECT_TRUE(!strcmp(selector.m_left->m_right.m_tag.c_str(), "element"));
 
-    assert(selector.parse(_t("element+element")));
+    assert(selector.parse("element+element"));
     EXPECT_TRUE(selector.m_combinator == kCombinatorAdjacentSibling);
-    EXPECT_TRUE(!t_strcmp(selector.m_right.m_tag.c_str(), _t("element")));
+    EXPECT_TRUE(!strcmp(selector.m_right.m_tag.c_str(), "element"));
     EXPECT_TRUE(selector.m_right.m_attrs.empty());
-    EXPECT_TRUE(!t_strcmp(selector.m_left->m_right.m_tag.c_str(), _t("element")));
+    EXPECT_TRUE(!strcmp(selector.m_left->m_right.m_tag.c_str(), "element"));
 
-    assert(selector.parse(_t("element1~element2")));
+    assert(selector.parse("element1~element2"));
     EXPECT_TRUE(selector.m_combinator == kCombinatorGeneralSibling);
-    EXPECT_TRUE(!t_strcmp(selector.m_right.m_tag.c_str(), _t("element2")));
+    EXPECT_TRUE(!strcmp(selector.m_right.m_tag.c_str(), "element2"));
     EXPECT_TRUE(selector.m_right.m_attrs.empty());
-    EXPECT_TRUE(!t_strcmp(selector.m_left->m_right.m_tag.c_str(), _t("element1")));
+    EXPECT_TRUE(!strcmp(selector.m_left->m_right.m_tag.c_str(), "element1"));
 }

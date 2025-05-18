@@ -34,7 +34,7 @@
 
 namespace litehtml {
 
-Context::Context(const tstring& css)
+Context::Context(const std::string& css)
 {
     MediaQueryList::ptr media;
 
@@ -45,7 +45,7 @@ Context::Context(const tstring& css)
     master_stylesheet_.sort_selectors();
 }
 
-void Context::load_master_stylesheet(const tstring& css)
+void Context::load_master_stylesheet(const std::string& css)
 {
     MediaQueryList::ptr media;
 

@@ -47,19 +47,19 @@ namespace litehtml {
 struct css_text {
     typedef std::vector<css_text> vector;
 
-    tstring text;
+    std::string text;
     URL baseurl;
-    tstring media;
+    std::string media;
 
     css_text()
     {
     }
 
-    css_text(const tstring& txt, const URL& url, const tchar_t* media_str)
+    css_text(const std::string& txt, const URL& url, const char* media_str)
     : text(txt)
     , baseurl(url)
     {
-        media = media_str ? media_str : _t("");
+        media = media_str ? media_str : "";
     }
 
     css_text(const css_text& val)
@@ -102,9 +102,9 @@ private:
 
     MediaFeatures m_media;
 
-    tstring language_;
+    std::string language_;
 
-    tstring culture_;
+    std::string culture_;
 
     URL base_url_;
 
@@ -132,11 +132,11 @@ public:
         return stylesheet_;
     }
 
-    uintptr_t get_font(const tchar_t* name,
+    uintptr_t get_font(const char* name,
         int size,
-        const tchar_t* weight,
-        const tchar_t* style,
-        const tchar_t* decoration,
+        const char* weight,
+        const char* style,
+        const char* decoration,
         FontMetrics* fm);
 
     int render(int max_width);
@@ -148,7 +148,7 @@ public:
         return default_color_;
     }
 
-    int cvt_units(const tchar_t* str, int fontSize, bool* is_percent = nullptr) const;
+    int cvt_units(const char* str, int fontSize, bool* is_percent = nullptr) const;
 
     int cvt_units(CSSLength& val, int fontSize, int size = 0) const;
 
@@ -156,9 +156,9 @@ public:
 
     int height() const;
 
-    void add_stylesheet(const tstring& str,
+    void add_stylesheet(const std::string& str,
         const URL& url,
-        const tchar_t* media);
+        const char* media);
 
     bool on_mouse_over(int x,
         int y,
@@ -176,13 +176,13 @@ public:
         int client_y,
         std::vector<Position>& redraw_boxes);
     bool on_mouse_leave(std::vector<Position>& redraw_boxes);
-    litehtml::Element::ptr create_element(const tchar_t* tag_name,
+    litehtml::Element::ptr create_element(const char* tag_name,
         const string_map& attributes);
 
     void add_media_list(MediaQueryList::ptr list);
     bool media_changed();
     bool lang_changed();
-    bool match_lang(const tstring& lang)
+    bool match_lang(const std::string& lang)
     {
         return lang == language_ || lang == culture_;
     }
@@ -207,16 +207,16 @@ public:
         base_url_ = base_url;
     }
 
-    void append_children_from_string(Element& parent, const tchar_t* str);
+    void append_children_from_string(Element& parent, const char* str);
 
     void append_children_from_utf8(Element& parent, const char* str);
 
 private:
-    uintptr_t add_font(const tchar_t* name,
+    uintptr_t add_font(const char* name,
         int size,
-        const tchar_t* weight,
-        const tchar_t* style,
-        const tchar_t* decoration,
+        const char* weight,
+        const char* style,
+        const char* decoration,
         FontMetrics* fm);
 
     void create_node(void* gnode, ElementsVector& elements, bool parseTextNode);
@@ -224,10 +224,10 @@ private:
     void fix_tables_layout();
     void fix_table_children(Element::ptr& el_ptr,
         Display disp,
-        const tchar_t* disp_str);
+        const char* disp_str);
     void fix_table_parent(Element::ptr& el_ptr,
         Display disp,
-        const tchar_t* disp_str);
+        const char* disp_str);
 
 public:
 #if defined(ENABLE_JSON)

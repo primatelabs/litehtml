@@ -38,15 +38,15 @@
 
 namespace litehtml {
 
-URL::URL(const tstring& str)
+URL::URL(const std::string& str)
 : str_(str)
 {
     // TODO: Rewrite using StringView to avoid unnecessary allocations.
-    tstring tmp = str_;
+    std::string tmp = str_;
 
     // Does the URL include a scheme?
-    size_t offset = tmp.find(_t(':'));
-    if (offset != tstring::npos) {
+    size_t offset = tmp.find(':');
+    if (offset != std::string::npos) {
         bool valid_scheme = true;
         for (size_t i = 0; i < offset; i++) {
             if (!is_url_scheme_codepoint(tmp[i])) {
@@ -64,12 +64,12 @@ URL::URL(const tstring& str)
     // by a double slash ("//") and is terminated by the next slash ("/"),
     // question mark ("?"), number sign ("#"), or the end of the URL.
 
-    if (tmp.size() >= 2 && tmp[0] == _t('/') && tmp[1] == _t('/')) {
+    if (tmp.size() >= 2 && tmp[0] == '/' && tmp[1] == '/') {
         tmp = tmp.substr(2);
         offset = tmp.size();
-        offset = std::min(offset, tmp.find(_t('/')));
-        offset = std::min(offset, tmp.find(_t('?')));
-        offset = std::min(offset, tmp.find(_t('#')));
+        offset = std::min(offset, tmp.find('/'));
+        offset = std::min(offset, tmp.find('?'));
+        offset = std::min(offset, tmp.find('#'));
         authority_ = tmp.substr(0, offset);
         tmp = tmp.substr(offset);
 
@@ -77,15 +77,15 @@ URL::URL(const tstring& str)
     }
 
     // Does the URL include a fragment?
-    offset = tmp.find(_t('#'));
-    if (offset != tstring::npos) {
+    offset = tmp.find('#');
+    if (offset != std::string::npos) {
         fragment_ = tmp.substr(offset + 1);
         tmp = tmp.substr(0, offset);
     }
 
     // Does the URL include a query?
-    offset = tmp.find(_t('?'));
-    if (offset != tstring::npos) {
+    offset = tmp.find('?');
+    if (offset != std::string::npos) {
         query_ = tmp.substr(offset + 1);
         tmp = tmp.substr(0, offset);
     }
@@ -95,35 +95,35 @@ URL::URL(const tstring& str)
     path_ = tmp;
 }
 
-URL::URL(const tstring& scheme,
-    const tstring& authority,
-    const tstring& path,
-    const tstring& query,
-    const tstring& fragment)
+URL::URL(const std::string& scheme,
+    const std::string& authority,
+    const std::string& path,
+    const std::string& query,
+    const std::string& fragment)
 : scheme_(scheme)
 , authority_(authority)
 , path_(path)
 , query_(query)
 , fragment_(fragment)
 {
-    tstringstream tss;
+    std::ostringstream oss;
 
     if (!scheme_.empty()) {
-        tss << scheme_ << ":";
+        oss << scheme_ << ":";
     }
     if (!authority_.empty()) {
-        tss << "//" << authority_;
+        oss << "//" << authority_;
     }
     if (!path_.empty()) {
-        tss << path_;
+        oss << path_;
     }
     if (!query_.empty()) {
-        tss << "?" << query_;
+        oss << "?" << query_;
     }
     if (!fragment_.empty()) {
-        tss << "#" << fragment_;
+        oss << "#" << fragment_;
     }
-    str_ = tss.str();
+    str_ = oss.str();
 }
 
 URL resolve(const URL& b, const URL& r)
@@ -146,7 +146,7 @@ URL resolve(const URL& b, const URL& r)
         if (is_url_path_absolute(r.path())) {
             return URL(b.scheme(), b.authority(), r.path(), r.query(), r.fragment());
         } else {
-            tstring path = url_path_resolve(b.path(), r.path());
+            std::string path = url_path_resolve(b.path(), r.path());
             return URL(b.scheme(), b.authority(), path, r.query(), r.fragment());
         }
 

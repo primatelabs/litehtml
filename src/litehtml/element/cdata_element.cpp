@@ -42,12 +42,12 @@ CDATAElement::~CDATAElement()
 {
 }
 
-void CDATAElement::get_text(tstring& text) const
+void CDATAElement::get_text(std::string& text) const
 {
     text += m_text;
 }
 
-void CDATAElement::set_data(const tchar_t* data)
+void CDATAElement::set_data(const char* data)
 {
     if (data) {
         m_text += data;

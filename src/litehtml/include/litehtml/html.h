@@ -50,25 +50,25 @@
 
 namespace litehtml {
 
-void trim(tstring& s);
-void lcase(tstring& s);
-int value_index(const tstring& val,
-    const tstring& strings,
+void trim(std::string& s);
+void lcase(std::string& s);
+int value_index(const std::string& val,
+    const std::string& strings,
     int defValue = -1,
-    tchar_t delim = _t(';'));
-bool value_in_list(const tstring& val,
-    const tstring& strings,
-    tchar_t delim = _t(';'));
-tstring::size_type find_close_bracket(const tstring& s,
-    tstring::size_type off,
-    tchar_t open_b = _t('('),
-    tchar_t close_b = _t(')'));
-void split_string(const tstring& str,
+    char delim = ';');
+bool value_in_list(const std::string& val,
+    const std::string& strings,
+    char delim = ';');
+std::string::size_type find_close_bracket(const std::string& s,
+    std::string::size_type off,
+    char open_b = '(',
+    char close_b = ')');
+void split_string(const std::string& str,
     string_vector& tokens,
-    const tstring& delims,
-    const tstring& delims_preserve = _t(""),
-    const tstring& quote = _t("\""));
-void join_string(tstring& str, const string_vector& tokens, const tstring& delims);
+    const std::string& delims,
+    const std::string& delims_preserve = "",
+    const std::string& quote = "\"");
+void join_string(std::string& str, const string_vector& tokens, const std::string& delims);
 
 inline int round_f(float val)
 {

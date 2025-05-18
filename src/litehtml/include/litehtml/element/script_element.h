@@ -36,7 +36,7 @@
 namespace litehtml {
 
 class ScriptElement : public Element {
-    tstring m_text;
+    std::string m_text;
 
 public:
     ScriptElement(Document* doc);
@@ -49,7 +49,7 @@ public:
 
     virtual void parse_attributes() override;
     virtual bool append_child(Element* element) override;
-    virtual const tchar_t* get_tagName() const override;
+    virtual const char* get_tagName() const override;
 };
 
 } // namespace litehtml

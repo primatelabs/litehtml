@@ -37,23 +37,6 @@
 
 namespace litehtml {
 
-typedef std::string tstring;
-typedef char tchar_t;
-typedef std::stringstream tstringstream;
-
-#define _t(quote) quote
-
-#define t_strlen strlen
-#define t_strcmp strcmp
-#define t_strncmp strncmp
-#define t_strtol strtol
-#define t_atoi atoi
-#define t_strtod strtod
-#define t_strstr strstr
-#define t_tolower tolower
-#define t_isdigit isdigit
-#define t_to_string(val) std::to_string(val)
-
 #if defined(WIN32) || defined(_WIN32)
 
 #define t_strcasecmp _stricmp
@@ -68,7 +51,7 @@ typedef std::stringstream tstringstream;
 
 #endif
 
-using String = tstring;
+using String = std::string;
 
 } // namespace litehtml
 

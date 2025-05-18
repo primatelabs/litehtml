@@ -39,8 +39,8 @@
 namespace litehtml {
 
 struct list_marker {
-    tstring image;
-    const tchar_t* baseurl;
+    std::string image;
+    const char* baseurl;
     ListStyleType marker_type;
     Color color;
     Position pos;

@@ -35,7 +35,7 @@
 
 namespace {
 
-bool lookup(const uint32_t* table, litehtml::tchar_t c)
+bool lookup(const uint32_t* table, char c)
 {
     return table[c >> 5] & (1 << (c & 0x1f));
 }
@@ -44,13 +44,13 @@ bool lookup(const uint32_t* table, litehtml::tchar_t c)
 
 namespace litehtml {
 
-bool is_ascii_codepoint(litehtml::tchar_t c)
+bool is_ascii_codepoint(char c)
 {
     return (c <= 127);
 }
 
 // https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
-bool is_url_reserved_codepoint(litehtml::tchar_t c)
+bool is_url_reserved_codepoint(char c)
 {
     static const uint32_t reserved_lookup[] = {0x00000000,
         0xac009fda,
@@ -64,7 +64,7 @@ bool is_url_reserved_codepoint(litehtml::tchar_t c)
 }
 
 // https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
-bool is_url_scheme_codepoint(litehtml::tchar_t c)
+bool is_url_scheme_codepoint(char c)
 {
     static const uint32_t scheme_lookup[] = {
         0x00000000,

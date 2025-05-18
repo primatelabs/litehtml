@@ -45,28 +45,28 @@ TdElement::~TdElement()
 
 void TdElement::parse_attributes()
 {
-    const tchar_t* str = get_attr(_t("width"));
+    const char* str = get_attr("width");
     if (str) {
         m_style.add_property(kCSSPropertyWidth, str, URL(), false);
     }
-    str = get_attr(_t("background"));
+    str = get_attr("background");
     if (str) {
-        tstring url = _t("url('");
+        std::string url = "url('";
         url += str;
-        url += _t("')");
+        url += "')";
         m_style.add_property(kCSSPropertyBackgroundImage, url.c_str(), URL(), false);
     }
-    str = get_attr(_t("align"));
+    str = get_attr("align");
     if (str) {
         m_style.add_property(kCSSPropertyTextAlign, str, URL(), false);
     }
 
-    str = get_attr(_t("bgcolor"));
+    str = get_attr("bgcolor");
     if (str) {
         m_style.add_property(kCSSPropertyBackgroundColor, str, URL(), false);
     }
 
-    str = get_attr(_t("valign"));
+    str = get_attr("valign");
     if (str) {
         m_style.add_property(kCSSPropertyVerticalAlign, str, URL(), false);
     }

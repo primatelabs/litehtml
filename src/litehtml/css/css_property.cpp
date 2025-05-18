@@ -546,7 +546,7 @@ CSSProperty css_property_from_string(const String& name)
     return kCSSPropertyUnknown;
 }
 
-const tchar_t* css_property_default(CSSProperty property)
+const char* css_property_default(CSSProperty property)
 {
     switch (property) {
         case kCSSPropertyNone:

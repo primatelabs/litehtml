@@ -40,7 +40,7 @@ utf8_to_wchar::utf8_to_wchar(const char* val)
         ucode_t wch = get_char();
         if (!wch)
             break;
-        m_str += (tchar_t)wch;
+        m_str += (char)wch;
     }
 }
 

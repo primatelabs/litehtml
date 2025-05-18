@@ -46,7 +46,7 @@ BaseElement::~BaseElement()
 
 void BaseElement::parse_attributes()
 {
-    URL base_url(get_attr(_t("href")));
+    URL base_url(get_attr("href"));
     get_document()->base_url(base_url);
 }
 

@@ -42,25 +42,25 @@ class URL {
 public:
     URL() = default;
 
-    explicit URL(const tstring& str);
+    explicit URL(const std::string& str);
 
-    URL(const tstring& scheme,
-        const tstring& authority,
-        const tstring& path,
-        const tstring& query,
-        const tstring& fragment);
+    URL(const std::string& scheme,
+        const std::string& authority,
+        const std::string& path,
+        const std::string& query,
+        const std::string& fragment);
 
     bool empty() const
     {
         return str_.empty();
     }
 
-    const tstring& string() const
+    const std::string& string() const
     {
         return str_;
     }
 
-    const tstring& scheme() const
+    const std::string& scheme() const
     {
         return scheme_;
     }
@@ -70,7 +70,7 @@ public:
         return !scheme_.empty();
     }
 
-    const tstring& authority() const
+    const std::string& authority() const
     {
         return authority_;
     }
@@ -80,7 +80,7 @@ public:
         return !authority_.empty();
     }
 
-    const tstring& path() const
+    const std::string& path() const
     {
         return path_;
     }
@@ -90,7 +90,7 @@ public:
         return !path_.empty();
     }
 
-    const tstring& query() const
+    const std::string& query() const
     {
         return query_;
     }
@@ -100,7 +100,7 @@ public:
         return !query_.empty();
     }
 
-    const tstring& fragment() const
+    const std::string& fragment() const
     {
         return fragment_;
     }
@@ -111,7 +111,7 @@ public:
     }
 
 protected:
-    tstring str_;
+    std::string str_;
 
     // Assume URLs are relative by default.  See RFC 3986 Section 4.3 for
     // information on which URLs are considered relative and which URLs are
@@ -121,15 +121,15 @@ protected:
 
     bool absolute_ = false;
 
-    tstring scheme_;
+    std::string scheme_;
 
-    tstring authority_;
+    std::string authority_;
 
-    tstring path_;
+    std::string path_;
 
-    tstring query_;
+    std::string query_;
 
-    tstring fragment_;
+    std::string fragment_;
 };
 
 // Returns a URL that is resolved from the reference URL that might be

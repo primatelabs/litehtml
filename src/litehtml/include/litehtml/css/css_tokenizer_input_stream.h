@@ -35,21 +35,21 @@ namespace litehtml {
 
 class CSSTokenizerInputStream {
 protected:
-    litehtml::tstring input_;
+    std::string input_;
     int offset_;
 
 public:
-    explicit CSSTokenizerInputStream(litehtml::tstring input);
+    explicit CSSTokenizerInputStream(std::string input);
 
     void advance(int offset = 1);
 
-    tchar_t consume();
+    char consume();
 
-    tchar_t next();
+    char next();
 
-    tchar_t peek(int);
+    char peek(int);
 
-    void replace(tchar_t c);
+    void replace(char c);
 };
 
 } // namespace litehtml

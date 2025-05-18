@@ -156,7 +156,7 @@ CSSProperty css_property_from_string(const String& name);
 
 // Returns the default (or initial) value of the specified CSS property as a
 // string.  May return nullptr if the default value is unspecified.
-const tchar_t* css_property_default(CSSProperty property);
+const char* css_property_default(CSSProperty property);
 
 // Returns the default (or initial) value of the specified CSS property as a
 // CSSValue.  May return nullptr if the default value is unspecified.

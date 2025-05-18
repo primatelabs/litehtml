@@ -36,25 +36,25 @@
 
 namespace litehtml {
 
-MediaQuery::ptr MediaQuery::create_from_string(const tstring& str,
+MediaQuery::ptr MediaQuery::create_from_string(const std::string& str,
     const Document* doc)
 {
     MediaQuery::ptr query = std::make_shared<MediaQuery>();
 
     string_vector tokens;
-    split_string(str, tokens, _t(" \t\r\n"), _t(""), _t("("));
+    split_string(str, tokens, " \t\r\n", "", "(");
 
     for (string_vector::iterator tok = tokens.begin(); tok != tokens.end(); tok++) {
-        if ((*tok) == _t("not")) {
+        if ((*tok) == "not") {
             query->not_ = true;
-        } else if (tok->at(0) == _t('(')) {
+        } else if (tok->at(0) == '(') {
             tok->erase(0, 1);
-            if (tok->at(tok->length() - 1) == _t(')')) {
+            if (tok->at(tok->length() - 1) == ')') {
                 tok->erase(tok->length() - 1, 1);
             }
             MediaQueryExpression expr;
             string_vector expr_tokens;
-            split_string((*tok), expr_tokens, _t(":"));
+            split_string((*tok), expr_tokens, ":");
             if (!expr_tokens.empty()) {
                 trim(expr_tokens[0]);
                 expr.feature = (MediaFeature)value_index(expr_tokens[0],
@@ -71,16 +71,16 @@ MediaQuery::ptr MediaQuery::create_from_string(const tstring& str,
                                 MEDIA_ORIENTATION_STRINGS,
                                 kMediaOrientationLandscape);
                         } else {
-                            tstring::size_type slash_pos =
-                                expr_tokens[1].find(_t('/'));
-                            if (slash_pos != tstring::npos) {
-                                tstring val1 = expr_tokens[1].substr(0, slash_pos);
-                                tstring val2 =
+                            std::string::size_type slash_pos =
+                                expr_tokens[1].find('/');
+                            if (slash_pos != std::string::npos) {
+                                std::string val1 = expr_tokens[1].substr(0, slash_pos);
+                                std::string val2 =
                                     expr_tokens[1].substr(slash_pos + 1);
                                 trim(val1);
                                 trim(val2);
-                                expr.val = t_atoi(val1.c_str());
-                                expr.val2 = t_atoi(val2.c_str());
+                                expr.val = atoi(val1.c_str());
+                                expr.val2 = atoi(val2.c_str());
                             } else {
                                 CSSLength length;
                                 length.parse_length_string(expr_tokens[1]);

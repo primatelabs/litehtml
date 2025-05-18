@@ -38,14 +38,14 @@ using namespace litehtml;
 
 TEST(CSSStylesheetTest, Parse)
 {
-    tstring css =
-        _t("/* A simple CSS stylesheet */\n"
-           "body {\n"
-           "  margin: 25px;\n"
-           "  background-color: rgb(240,240,240);\n"
-           "  font-family: roboto, arial, sans-serif;\n"
-           "  font-size: 14px;\n"
-           "}\n");
+    std::string css =
+        "/* A simple CSS stylesheet */\n"
+        "body {\n"
+        "  margin: 25px;\n"
+        "  background-color: rgb(240,240,240);\n"
+        "  font-family: roboto, arial, sans-serif;\n"
+        "  font-size: 14px;\n"
+        "}\n";
 
     test_container container;
     Document* document = new Document(&container, nullptr);

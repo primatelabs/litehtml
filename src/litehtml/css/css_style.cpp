@@ -50,22 +50,22 @@ CSSStyle::~CSSStyle()
 {
 }
 
-void CSSStyle::parse(const tstring& txt, const URL& baseurl)
+void CSSStyle::parse(const std::string& txt, const URL& baseurl)
 {
-    std::vector<tstring> properties;
-    split_string(txt, properties, _t(";"), _t(""), _t("\"'"));
+    std::vector<std::string> properties;
+    split_string(txt, properties, ";", "", "\"'");
 
     for (auto& property : properties) {
         parse_property(property, baseurl);
     }
 }
 
-void CSSStyle::parse_property(const tstring& txt, const URL& baseurl)
+void CSSStyle::parse_property(const std::string& txt, const URL& baseurl)
 {
-    tstring::size_type pos = txt.find_first_of(_t(":"));
-    if (pos != tstring::npos) {
-        tstring name = txt.substr(0, pos);
-        tstring val = txt.substr(pos + 1);
+    std::string::size_type pos = txt.find_first_of(":");
+    if (pos != std::string::npos) {
+        std::string name = txt.substr(0, pos);
+        std::string val = txt.substr(pos + 1);
 
         trim(name);
         lcase(name);
@@ -73,7 +73,7 @@ void CSSStyle::parse_property(const tstring& txt, const URL& baseurl)
 
         if (!name.empty() && !val.empty()) {
             string_vector vals;
-            split_string(val, vals, _t("!"));
+            split_string(val, vals, "!");
             if (vals.size() == 1) {
                 add_property(name.c_str(), val.c_str(), baseurl, false);
             } else if (vals.size() > 1) {
@@ -82,7 +82,7 @@ void CSSStyle::parse_property(const tstring& txt, const URL& baseurl)
                 add_property(name.c_str(),
                     vals[0].c_str(),
                     baseurl,
-                    vals[1] == _t("important"));
+                    vals[1] == "important");
             }
         }
     }
@@ -116,7 +116,7 @@ nlohmann::json CSSStyle::json() const
 
 
 void CSSStyle::add_property(CSSProperty name,
-    const tchar_t* val,
+    const char* val,
     const URL& url,
     bool important)
 {
@@ -133,7 +133,7 @@ void CSSStyle::add_property(CSSProperty name,
     } else if (name == kCSSPropertyBorderSpacing) {
         // Parse border spacing properties
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() == 1) {
             add_parsed_property(kCSSPropertyLitehtmlBorderSpacingX,
                 tokens[0].c_str(),
@@ -153,9 +153,9 @@ void CSSStyle::add_property(CSSProperty name,
 
         // Parse borders shorthand properties
         string_vector tokens;
-        split_string(val, tokens, _t(" "), _t(""), _t("("));
+        split_string(val, tokens, " ", "", "(");
         int idx;
-        tstring str;
+        std::string str;
         for (string_vector::const_iterator tok = tokens.begin();
              tok != tokens.end();
              tok++) {
@@ -166,8 +166,8 @@ void CSSStyle::add_property(CSSProperty name,
                 add_property(kCSSPropertyBorderTopStyle, tok->c_str(), url, important);
                 add_property(kCSSPropertyBorderBottomStyle, tok->c_str(), url, important);
             } else {
-                if (t_isdigit((*tok)[0]) || (*tok)[0] == _t('.') ||
-                    value_in_list((*tok), _t("thin;medium;thick"))) {
+                if (isdigit((*tok)[0]) || (*tok)[0] == '.' ||
+                    value_in_list((*tok), "thin;medium;thick")) {
                     add_property(kCSSPropertyBorderLeftWidth,
                         tok->c_str(),
                         url,
@@ -209,25 +209,25 @@ void CSSStyle::add_property(CSSProperty name,
                (name == kCSSPropertyBorderTop) ||
                (name == kCSSPropertyBorderBottom)) {
         string_vector tokens;
-        split_string(val, tokens, _t(" "), _t(""), _t("("));
+        split_string(val, tokens, " ", "", "(");
         int idx;
-        tstring str;
+        std::string str;
         for (string_vector::const_iterator tok = tokens.begin();
              tok != tokens.end();
              tok++) {
             idx = value_index(tok->c_str(), BORDER_STYLE_STRINGS, -1);
             if (idx >= 0) {
                 str = css_property_string(name);
-                str += _t("-style");
+                str += "-style";
                 add_property(str.c_str(), tok->c_str(), url, important);
             } else {
                 if (Color::is_color(tok->c_str())) {
                     str = css_property_string(name);
-                    str += _t("-color");
+                    str += "-color";
                     add_property(str.c_str(), tok->c_str(), url, important);
                 } else {
                     str = css_property_string(name);
-                    str += _t("-width");
+                    str += "-width";
                     add_property(str.c_str(), tok->c_str(), url, important);
                 }
             }
@@ -237,7 +237,7 @@ void CSSStyle::add_property(CSSProperty name,
         // Parse border radius shorthand properties
 
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() >= 2) {
             add_property(kCSSPropertyBorderBottomLeftRadiusX,
                 tokens[0].c_str(),
@@ -260,7 +260,7 @@ void CSSStyle::add_property(CSSProperty name,
 
     } else if (name == kCSSPropertyBorderBottomRightRadius) {
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() >= 2) {
             add_property(kCSSPropertyBorderBottomRightRadiusX,
                 tokens[0].c_str(),
@@ -283,7 +283,7 @@ void CSSStyle::add_property(CSSProperty name,
 
     } else if (name == kCSSPropertyBorderTopRightRadius) {
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() >= 2) {
             add_property(kCSSPropertyBorderTopRightRadiusX,
                 tokens[0].c_str(),
@@ -306,7 +306,7 @@ void CSSStyle::add_property(CSSProperty name,
 
     } else if (name == kCSSPropertyBorderTopLeftRadius) {
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() >= 2) {
             add_property(kCSSPropertyBorderTopLeftRadiusX,
                 tokens[0].c_str(),
@@ -332,7 +332,7 @@ void CSSStyle::add_property(CSSProperty name,
         // Parse border-radius shorthand properties
 
         string_vector tokens;
-        split_string(val, tokens, _t("/"));
+        split_string(val, tokens, "/");
         if (tokens.size() == 1) {
             add_property(kCSSPropertyBorderRadiusX, tokens[0].c_str(), url, important);
             add_property(kCSSPropertyBorderRadiusY, tokens[0].c_str(), url, important);
@@ -342,7 +342,7 @@ void CSSStyle::add_property(CSSProperty name,
         }
     } else if (name == kCSSPropertyBorderRadiusX) {
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() == 1) {
             add_property(kCSSPropertyBorderTopLeftRadiusX,
                 tokens[0].c_str(),
@@ -414,7 +414,7 @@ void CSSStyle::add_property(CSSProperty name,
         }
     } else if (name ==  kCSSPropertyBorderRadiusY) {
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() == 1) {
             add_property(kCSSPropertyBorderTopLeftRadiusY,
                 tokens[0].c_str(),
@@ -488,13 +488,13 @@ void CSSStyle::add_property(CSSProperty name,
 
         // Parse list-style shorthand properties
 
-        add_parsed_property(kCSSPropertyListStyleType, _t("disc"), important);
-        add_parsed_property(kCSSPropertyListStylePosition, _t("outside"), important);
-        add_parsed_property(kCSSPropertyListStyleImage, _t(""), important);
-        add_parsed_property(kCSSPropertyListStyleImageBaseurl, _t(""), important);
+        add_parsed_property(kCSSPropertyListStyleType, "disc", important);
+        add_parsed_property(kCSSPropertyListStylePosition, "outside", important);
+        add_parsed_property(kCSSPropertyListStyleImage, "", important);
+        add_parsed_property(kCSSPropertyListStyleImageBaseurl, "", important);
 
         string_vector tokens;
-        split_string(val, tokens, _t(" "), _t(""), _t("("));
+        split_string(val, tokens, " ", "", "(");
         for (string_vector::iterator tok = tokens.begin(); tok != tokens.end();
              tok++) {
             int idx = value_index(tok->c_str(), LIST_STYLE_TYPE_STRINGS, -1);
@@ -504,7 +504,7 @@ void CSSStyle::add_property(CSSProperty name,
                 idx = value_index(tok->c_str(), LIST_STYLE_POSITION_STRINGS, -1);
                 if (idx >= 0) {
                     add_parsed_property(kCSSPropertyListStylePosition, *tok, important);
-                } else if (!t_strncmp(val, _t("url"), 3)) {
+                } else if (!strncmp(val, "url", 3)) {
                     add_parsed_property(kCSSPropertyListStyleImage, *tok, important);
                     if (!url.empty()) {
                         add_parsed_property(kCSSPropertyListStyleImageBaseurl,
@@ -535,27 +535,27 @@ void CSSStyle::add_property(CSSProperty name,
         String hack = css_property_string(name);
 
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() >= 4) {
-            add_parsed_property(hack + _t("-top"), tokens[0], important);
-            add_parsed_property(hack + _t("-right"), tokens[1], important);
-            add_parsed_property(hack + _t("-bottom"), tokens[2], important);
-            add_parsed_property(hack + _t("-left"), tokens[3], important);
+            add_parsed_property(hack + "-top", tokens[0], important);
+            add_parsed_property(hack + "-right", tokens[1], important);
+            add_parsed_property(hack + "-bottom", tokens[2], important);
+            add_parsed_property(hack + "-left", tokens[3], important);
         } else if (tokens.size() == 3) {
-            add_parsed_property(hack + _t("-top"), tokens[0], important);
-            add_parsed_property(hack + _t("-right"), tokens[1], important);
-            add_parsed_property(hack + _t("-left"), tokens[1], important);
-            add_parsed_property(hack + _t("-bottom"), tokens[2], important);
+            add_parsed_property(hack + "-top", tokens[0], important);
+            add_parsed_property(hack + "-right", tokens[1], important);
+            add_parsed_property(hack + "-left", tokens[1], important);
+            add_parsed_property(hack + "-bottom", tokens[2], important);
         } else if (tokens.size() == 2) {
-            add_parsed_property(hack + _t("-top"), tokens[0], important);
-            add_parsed_property(hack + _t("-bottom"), tokens[0], important);
-            add_parsed_property(hack + _t("-right"), tokens[1], important);
-            add_parsed_property(hack + _t("-left"), tokens[1], important);
+            add_parsed_property(hack + "-top", tokens[0], important);
+            add_parsed_property(hack + "-bottom", tokens[0], important);
+            add_parsed_property(hack + "-right", tokens[1], important);
+            add_parsed_property(hack + "-left", tokens[1], important);
         } else if (tokens.size() == 1) {
-            add_parsed_property(hack + _t("-top"), tokens[0], important);
-            add_parsed_property(hack + _t("-bottom"), tokens[0], important);
-            add_parsed_property(hack + _t("-right"), tokens[0], important);
-            add_parsed_property(hack + _t("-left"), tokens[0], important);
+            add_parsed_property(hack + "-top", tokens[0], important);
+            add_parsed_property(hack + "-bottom", tokens[0], important);
+            add_parsed_property(hack + "-right", tokens[0], important);
+            add_parsed_property(hack + "-left", tokens[0], important);
         }
     } else if ((name == kCSSPropertyBorderLeft) ||
                (name == kCSSPropertyBorderRight) ||
@@ -570,60 +570,60 @@ void CSSStyle::add_property(CSSProperty name,
 
         // Parse border-width/style/color shorthand properties
         string_vector nametokens;
-        split_string(css_property_string(name), nametokens, _t("-"));
+        split_string(css_property_string(name), nametokens, "-");
 
         string_vector tokens;
-        split_string(val, tokens, _t(" "));
+        split_string(val, tokens, " ");
         if (tokens.size() >= 4) {
-            add_parsed_property(nametokens[0] + _t("-top-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-top-" + nametokens[1],
                 tokens[0],
                 important);
-            add_parsed_property(nametokens[0] + _t("-right-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-right-" + nametokens[1],
                 tokens[1],
                 important);
-            add_parsed_property(nametokens[0] + _t("-bottom-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-bottom-" + nametokens[1],
                 tokens[2],
                 important);
-            add_parsed_property(nametokens[0] + _t("-left-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-left-" + nametokens[1],
                 tokens[3],
                 important);
         } else if (tokens.size() == 3) {
-            add_parsed_property(nametokens[0] + _t("-top-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-top-" + nametokens[1],
                 tokens[0],
                 important);
-            add_parsed_property(nametokens[0] + _t("-right-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-right-" + nametokens[1],
                 tokens[1],
                 important);
-            add_parsed_property(nametokens[0] + _t("-left-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-left-" + nametokens[1],
                 tokens[1],
                 important);
-            add_parsed_property(nametokens[0] + _t("-bottom-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-bottom-" + nametokens[1],
                 tokens[2],
                 important);
         } else if (tokens.size() == 2) {
-            add_parsed_property(nametokens[0] + _t("-top-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-top-" + nametokens[1],
                 tokens[0],
                 important);
-            add_parsed_property(nametokens[0] + _t("-bottom-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-bottom-" + nametokens[1],
                 tokens[0],
                 important);
-            add_parsed_property(nametokens[0] + _t("-right-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-right-" + nametokens[1],
                 tokens[1],
                 important);
-            add_parsed_property(nametokens[0] + _t("-left-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-left-" + nametokens[1],
                 tokens[1],
                 important);
         } else if (tokens.size() == 1) {
-            add_parsed_property(nametokens[0] + _t("-top-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-top-" + nametokens[1],
                 tokens[0],
                 important);
-            add_parsed_property(nametokens[0] + _t("-bottom-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-bottom-" + nametokens[1],
                 tokens[0],
                 important);
-            add_parsed_property(nametokens[0] + _t("-right-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-right-" + nametokens[1],
                 tokens[0],
                 important);
-            add_parsed_property(nametokens[0] + _t("-left-") + nametokens[1],
+            add_parsed_property(nametokens[0] + "-left-" + nametokens[1],
                 tokens[0],
                 important);
         }
@@ -655,49 +655,49 @@ void CSSStyle::add_property(CSSDeclaration* declaration)
         declaration->important());
 }
 
-void CSSStyle::parse_short_border(CSSProperty prefix, const tstring& val, bool important)
+void CSSStyle::parse_short_border(CSSProperty prefix, const std::string& val, bool important)
 {
     String hack = css_property_string(prefix);
 
     string_vector tokens;
-    split_string(val, tokens, _t(" "), _t(""), _t("("));
+    split_string(val, tokens, " ", "", "(");
     if (tokens.size() >= 3) {
-        add_parsed_property(hack + _t("-width"), tokens[0], important);
-        add_parsed_property(hack + _t("-style"), tokens[1], important);
-        add_parsed_property(hack + _t("-color"), tokens[2], important);
+        add_parsed_property(hack + "-width", tokens[0], important);
+        add_parsed_property(hack + "-style", tokens[1], important);
+        add_parsed_property(hack + "-color", tokens[2], important);
     } else if (tokens.size() == 2) {
         if (iswdigit(tokens[0][0]) ||
             value_index(val.c_str(), border_width_strings) >= 0) {
-            add_parsed_property(hack + _t("-width"), tokens[0], important);
-            add_parsed_property(hack + _t("-style"), tokens[1], important);
+            add_parsed_property(hack + "-width", tokens[0], important);
+            add_parsed_property(hack + "-style", tokens[1], important);
         } else {
-            add_parsed_property(hack + _t("-style"), tokens[0], important);
-            add_parsed_property(hack + _t("-color"), tokens[1], important);
+            add_parsed_property(hack + "-style", tokens[0], important);
+            add_parsed_property(hack + "-color", tokens[1], important);
         }
     }
 }
 
-void CSSStyle::parse_short_background(const tstring& val,
+void CSSStyle::parse_short_background(const std::string& val,
     const URL& baseurl,
     bool important)
 {
-    add_parsed_property(kCSSPropertyBackgroundColor, _t("transparent"), important);
-    add_parsed_property(kCSSPropertyBackgroundImage, _t(""), important);
-    add_parsed_property(kCSSPropertyBackgroundImageBaseurl, _t(""), important);
-    add_parsed_property(kCSSPropertyBackgroundRepeat, _t("repeat"), important);
-    add_parsed_property(kCSSPropertyBackgroundOrigin, _t("padding-box"), important);
-    add_parsed_property(kCSSPropertyBackgroundClip, _t("border-box"), important);
-    add_parsed_property(kCSSPropertyBackgroundAttachment, _t("scroll"), important);
+    add_parsed_property(kCSSPropertyBackgroundColor, "transparent", important);
+    add_parsed_property(kCSSPropertyBackgroundImage, "", important);
+    add_parsed_property(kCSSPropertyBackgroundImageBaseurl, "", important);
+    add_parsed_property(kCSSPropertyBackgroundRepeat, "repeat", important);
+    add_parsed_property(kCSSPropertyBackgroundOrigin, "padding-box", important);
+    add_parsed_property(kCSSPropertyBackgroundClip, "border-box", important);
+    add_parsed_property(kCSSPropertyBackgroundAttachment, "scroll", important);
 
-    if (val == _t("none")) {
+    if (val == "none") {
         return;
     }
 
     string_vector tokens;
-    split_string(val, tokens, _t(" "), _t(""), _t("("));
+    split_string(val, tokens, " ", "", "(");
     bool origin_found = false;
     for (string_vector::iterator tok = tokens.begin(); tok != tokens.end(); tok++) {
-        if (tok->substr(0, 3) == _t("url")) {
+        if (tok->substr(0, 3) == "url") {
             add_parsed_property(kCSSPropertyBackgroundImage, *tok, important);
             if (!baseurl.empty()) {
                 add_parsed_property(kCSSPropertyBackgroundImageBaseurl,
@@ -716,11 +716,11 @@ void CSSStyle::parse_short_background(const tstring& val,
             } else {
                 add_parsed_property(kCSSPropertyBackgroundClip, *tok, important);
             }
-        } else if (value_in_list(tok->c_str(), _t("left;right;top;bottom;center")) ||
-                   iswdigit((*tok)[0]) || (*tok)[0] == _t('-') ||
-                   (*tok)[0] == _t('.') || (*tok)[0] == _t('+')) {
+        } else if (value_in_list(tok->c_str(), "left;right;top;bottom;center") ||
+                   iswdigit((*tok)[0]) || (*tok)[0] == '-' ||
+                   (*tok)[0] == '.' || (*tok)[0] == '+') {
             if (properties_.find(kCSSPropertyBackgroundPosition) != properties_.end()) {
-                tstring new_value = properties_[kCSSPropertyBackgroundPosition]->string() + _t(" ") + *tok;
+                std::string new_value = properties_[kCSSPropertyBackgroundPosition]->string() + " " + *tok;
                 assert(properties_[kCSSPropertyBackgroundPosition]->is_string());
                 properties_[kCSSPropertyBackgroundPosition]->string(new_value);
             } else {
@@ -732,21 +732,21 @@ void CSSStyle::parse_short_background(const tstring& val,
     }
 }
 
-void CSSStyle::parse_short_font(const tstring& val, bool important)
+void CSSStyle::parse_short_font(const std::string& val, bool important)
 {
-    add_parsed_property(kCSSPropertyFontStyle, _t("normal"), important);
-    add_parsed_property(kCSSPropertyFontVariant, _t("normal"), important);
-    add_parsed_property(kCSSPropertyFontWeight, _t("normal"), important);
-    add_parsed_property(kCSSPropertyFontSize, _t("medium"), important);
-    add_parsed_property(kCSSPropertyLineHeight, _t("normal"), important);
+    add_parsed_property(kCSSPropertyFontStyle, "normal", important);
+    add_parsed_property(kCSSPropertyFontVariant, "normal", important);
+    add_parsed_property(kCSSPropertyFontWeight, "normal", important);
+    add_parsed_property(kCSSPropertyFontSize, "medium", important);
+    add_parsed_property(kCSSPropertyLineHeight, "normal", important);
 
     string_vector tokens;
-    split_string(val, tokens, _t(" "), _t(""), _t("\""));
+    split_string(val, tokens, " ", "", "\"");
 
     int idx = 0;
     bool was_normal = false;
     bool is_family = false;
-    tstring font_family;
+    std::string font_family;
     for (string_vector::iterator tok = tokens.begin(); tok != tokens.end(); tok++) {
         idx = value_index(tok->c_str(), font_style_strings);
         if (!is_family) {
@@ -766,7 +766,7 @@ void CSSStyle::parse_short_font(const tstring& val, bool important)
                         add_parsed_property(kCSSPropertyFontVariant, *tok, important);
                     } else if (iswdigit((*tok)[0])) {
                         string_vector szlh;
-                        split_string(*tok, szlh, _t("/"));
+                        split_string(*tok, szlh, "/");
 
                         if (szlh.size() == 1) {
                             add_parsed_property(kCSSPropertyFontSize, szlh[0], important);
@@ -787,7 +787,7 @@ void CSSStyle::parse_short_font(const tstring& val, bool important)
     add_parsed_property(kCSSPropertyFontFamily, font_family, important);
 }
 
-void CSSStyle::add_parsed_property(CSSProperty name, const tstring& str, bool important)
+void CSSStyle::add_parsed_property(CSSProperty name, const std::string& str, bool important)
 {
     // FIXME: How do we validate property values?
 #if 0

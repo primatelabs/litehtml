@@ -79,14 +79,14 @@ CSSToken::CSSToken(CSSTokenType type)
 {
 }
 
-CSSToken::CSSToken(CSSTokenType type, tchar_t value)
+CSSToken::CSSToken(CSSTokenType type, char value)
 : type_(type)
 , value_(1, value)
 {
 
 }
 
-CSSToken::CSSToken(CSSTokenType type, const tstring& value)
+CSSToken::CSSToken(CSSTokenType type, const std::string& value)
 : type_(type)
 , value_(value)
 {

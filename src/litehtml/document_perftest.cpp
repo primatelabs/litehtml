@@ -36,7 +36,7 @@ using namespace litehtml;
 
 void DocumentPerfTestCreate(benchmark::State& state)
 {
-  litehtml::tstring html = _t("<html></html>");
+  std::string html = "<html></html>";
   test_container container;
   Context context;
 

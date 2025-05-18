@@ -34,32 +34,32 @@
 
 namespace litehtml {
 
-void trim(tstring& s)
+void trim(std::string& s)
 {
-    tstring::size_type pos = s.find_first_not_of(_t(" \n\r\t"));
-    if (pos != tstring::npos) {
+    std::string::size_type pos = s.find_first_not_of(" \n\r\t");
+    if (pos != std::string::npos) {
         s.erase(s.begin(), s.begin() + pos);
     }
-    pos = s.find_last_not_of(_t(" \n\r\t"));
-    if (pos != tstring::npos) {
+    pos = s.find_last_not_of(" \n\r\t");
+    if (pos != std::string::npos) {
         s.erase(s.begin() + pos + 1, s.end());
     }
 }
 
-void lcase(tstring& s)
+void lcase(std::string& s)
 {
-    for (tstring::iterator i = s.begin(); i != s.end(); i++) {
-        (*i) = (tchar_t)t_tolower(*i);
+    for (std::string::iterator i = s.begin(); i != s.end(); i++) {
+        (*i) = (char)tolower(*i);
     }
 }
 
-tstring::size_type find_close_bracket(const tstring& s,
-    tstring::size_type off,
-    tchar_t open_b,
-    tchar_t close_b)
+std::string::size_type find_close_bracket(const std::string& s,
+    std::string::size_type off,
+    char open_b,
+    char close_b)
 {
     int cnt = 0;
-    for (tstring::size_type i = off; i < s.length(); i++) {
+    for (std::string::size_type i = off; i < s.length(); i++) {
         if (s[i] == open_b) {
             cnt++;
         } else if (s[i] == close_b) {
@@ -69,21 +69,21 @@ tstring::size_type find_close_bracket(const tstring& s,
             }
         }
     }
-    return tstring::npos;
+    return std::string::npos;
 }
 
-int value_index(const tstring& val, const tstring& strings, int defValue, tchar_t delim)
+int value_index(const std::string& val, const std::string& strings, int defValue, char delim)
 {
     if (val.empty() || strings.empty() || !delim) {
         return defValue;
     }
 
     int idx = 0;
-    tstring::size_type delim_start = 0;
-    tstring::size_type delim_end = strings.find(delim, delim_start);
-    tstring::size_type item_len = 0;
+    std::string::size_type delim_start = 0;
+    std::string::size_type delim_end = strings.find(delim, delim_start);
+    std::string::size_type item_len = 0;
     while (true) {
-        if (delim_end == tstring::npos) {
+        if (delim_end == std::string::npos) {
             item_len = strings.length() - delim_start;
         } else {
             item_len = delim_end - delim_start;
@@ -95,7 +95,7 @@ int value_index(const tstring& val, const tstring& strings, int defValue, tchar_
         }
         idx++;
         delim_start = delim_end;
-        if (delim_start == tstring::npos)
+        if (delim_start == std::string::npos)
             break;
         delim_start++;
         if (delim_start == strings.length())
@@ -105,7 +105,7 @@ int value_index(const tstring& val, const tstring& strings, int defValue, tchar_
     return defValue;
 }
 
-bool value_in_list(const tstring& val, const tstring& strings, tchar_t delim)
+bool value_in_list(const std::string& val, const std::string& strings, char delim)
 {
     int idx = value_index(val, strings, -1, delim);
     if (idx >= 0) {
@@ -114,41 +114,41 @@ bool value_in_list(const tstring& val, const tstring& strings, tchar_t delim)
     return false;
 }
 
-void split_string(const tstring& str,
+void split_string(const std::string& str,
     string_vector& tokens,
-    const tstring& delims,
-    const tstring& delims_preserve,
-    const tstring& quote)
+    const std::string& delims,
+    const std::string& delims_preserve,
+    const std::string& quote)
 {
     if (str.empty() || (delims.empty() && delims_preserve.empty())) {
         return;
     }
 
-    tstring all_delims = delims + delims_preserve + quote;
+    std::string all_delims = delims + delims_preserve + quote;
 
-    tstring::size_type token_start = 0;
-    tstring::size_type token_end = str.find_first_of(all_delims, token_start);
-    tstring::size_type token_len = 0;
-    tstring token;
+    std::string::size_type token_start = 0;
+    std::string::size_type token_end = str.find_first_of(all_delims, token_start);
+    std::string::size_type token_len = 0;
+    std::string token;
     while (true) {
-        while (token_end != tstring::npos &&
-               quote.find_first_of(str[token_end]) != tstring::npos) {
-            if (str[token_end] == _t('(')) {
-                token_end = find_close_bracket(str, token_end, _t('('), _t(')'));
-            } else if (str[token_end] == _t('[')) {
-                token_end = find_close_bracket(str, token_end, _t('['), _t(']'));
-            } else if (str[token_end] == _t('{')) {
-                token_end = find_close_bracket(str, token_end, _t('{'), _t('}'));
+        while (token_end != std::string::npos &&
+               quote.find_first_of(str[token_end]) != std::string::npos) {
+            if (str[token_end] == '(') {
+                token_end = find_close_bracket(str, token_end, '(', ')');
+            } else if (str[token_end] == '[') {
+                token_end = find_close_bracket(str, token_end, '[', ']');
+            } else if (str[token_end] == '{') {
+                token_end = find_close_bracket(str, token_end, '{', '}');
             } else {
                 token_end = str.find_first_of(str[token_end], token_end + 1);
             }
-            if (token_end != tstring::npos) {
+            if (token_end != std::string::npos) {
                 token_end = str.find_first_of(all_delims, token_end + 1);
             }
         }
 
-        if (token_end == tstring::npos) {
-            token_len = tstring::npos;
+        if (token_end == std::string::npos) {
+            token_len = std::string::npos;
         } else {
             token_len = token_end - token_start;
         }
@@ -157,13 +157,13 @@ void split_string(const tstring& str,
         if (!token.empty()) {
             tokens.push_back(token);
         }
-        if (token_end != tstring::npos && !delims_preserve.empty() &&
-            delims_preserve.find_first_of(str[token_end]) != tstring::npos) {
+        if (token_end != std::string::npos && !delims_preserve.empty() &&
+            delims_preserve.find_first_of(str[token_end]) != std::string::npos) {
             tokens.push_back(str.substr(token_end, 1));
         }
 
         token_start = token_end;
-        if (token_start == tstring::npos)
+        if (token_start == std::string::npos)
             break;
         token_start++;
         if (token_start == str.length())
@@ -172,17 +172,18 @@ void split_string(const tstring& str,
     }
 }
 
-void join_string(tstring& str, const string_vector& tokens, const tstring& delims)
+void join_string(std::string& str, const string_vector& tokens, const std::string& delims)
 {
-    tstringstream ss;
+    std::ostringstream oss;
+
     for (size_t i = 0; i < tokens.size(); ++i) {
         if (i != 0) {
-            ss << delims;
+            oss << delims;
         }
-        ss << tokens[i];
+        oss << tokens[i];
     }
 
-    str = ss.str();
+    str = oss.str();
 }
 
 } // namespace litehtml

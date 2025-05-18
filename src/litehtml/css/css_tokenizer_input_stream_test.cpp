@@ -34,10 +34,10 @@ using namespace litehtml;
 
 namespace {
 
-std::vector<tstring> testcases = {
-    _t(""),
-    _t("/* Comment */"),
-    _t("html { display: none }"),
+std::vector<std::string> testcases = {
+    "",
+    "/* Comment */",
+    "html { display: none }",
 };
 
 } // namespace

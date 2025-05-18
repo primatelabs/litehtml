@@ -31,38 +31,38 @@
 
 namespace litehtml {
 
-bool is_url_path_absolute(const tstring& path)
+bool is_url_path_absolute(const std::string& path)
 {
-    return path.length() > 0 && path[0] == _t('/');
+    return path.length() > 0 && path[0] == '/';
 }
 
-tstring url_path_directory_name(const tstring& path)
+std::string url_path_directory_name(const std::string& path)
 {
-    size_t offset = path.find_last_of(_t('/'));
-    if (offset == tstring::npos) {
-        return _t(".");
+    size_t offset = path.find_last_of('/');
+    if (offset == std::string::npos) {
+        return ".";
     } else {
         return path.substr(0, offset + 1);
     }
 }
 
-tstring url_path_base_name(const tstring& path)
+std::string url_path_base_name(const std::string& path)
 {
-    size_t offset = path.find_last_of(_t('/'));
-    if (offset == tstring::npos) {
+    size_t offset = path.find_last_of('/');
+    if (offset == std::string::npos) {
         return path;
     } else {
         return path.substr(offset + 1);
     }
 }
 
-tstring url_path_append(const tstring& base, const tstring& path)
+std::string url_path_append(const std::string& base, const std::string& path)
 {
-    tstring result(base);
+    std::string result(base);
 
     // Only append a separator if both base and path are not empty and if the
     // last character of base is not already a separator.
-    if (result.size() > 0 && path.size() > 0 && result.back() != _t('/')) {
+    if (result.size() > 0 && path.size() > 0 && result.back() != '/') {
         result.append(1, '/');
     }
 
@@ -71,7 +71,7 @@ tstring url_path_append(const tstring& base, const tstring& path)
     return result;
 }
 
-tstring url_path_resolve(const tstring& base, const tstring& path)
+std::string url_path_resolve(const std::string& base, const std::string& path)
 {
     // If the possibly relative path is an absolute path then it is not
     // relative and the base path is irrelevant.

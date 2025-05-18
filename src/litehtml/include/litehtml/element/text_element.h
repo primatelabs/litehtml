@@ -38,9 +38,9 @@ namespace litehtml {
 
 class TextElement : public Element {
 protected:
-    tstring text_;
+    std::string text_;
 
-    tstring transformed_text_;
+    std::string transformed_text_;
 
     Size size_;
 
@@ -66,9 +66,9 @@ public:
         return kElementText;
     }
 
-    virtual void get_text(tstring& text) const override;
+    virtual void get_text(std::string& text) const override;
 
-    virtual const tchar_t* get_style_property(CSSProperty name) override;
+    virtual const char* get_style_property(CSSProperty name) override;
 
     virtual void parse_styles(bool is_reparse) override;
     virtual int get_baseline() override;

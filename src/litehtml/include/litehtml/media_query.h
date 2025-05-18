@@ -53,7 +53,7 @@ private:
 public:
     MediaQuery() = default;
 
-    static MediaQuery::ptr create_from_string(const tstring& str,
+    static MediaQuery::ptr create_from_string(const std::string& str,
         const Document* doc);
 
     bool check(const MediaFeatures& features) const;

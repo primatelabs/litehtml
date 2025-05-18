@@ -65,7 +65,7 @@ protected:
     CSSStyle* consume_declarations(CSSComponentValueRange& range);
 
 public:
-    explicit CSSParser(const tstring& input);
+    explicit CSSParser(const std::string& input);
 
     CSSStylesheet* parse_stylesheet();
 

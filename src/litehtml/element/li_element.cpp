@@ -47,13 +47,13 @@ int LiElement::render(int x, int y, int max_width, bool second_pass)
 {
     if (list_style_type_ >= kListStyleTypeArmenian && !m_index_initialized) {
         if (auto p = parent()) {
-            tchar_t val[2] = {1, 0};
+            char val[2] = {1, 0};
             for (int i = 0, n = (int)p->get_children_count(); i < n; ++i) {
                 auto child = p->get_child(i);
                 if (child == this) {
-                    set_attr(_t("list_index"), val);
+                    set_attr("list_index", val);
                     break;
-                } else if (!t_strcmp(child->get_tagName(), _t("li")))
+                } else if (!strcmp(child->get_tagName(), "li"))
                     ++val[0];
             }
         }

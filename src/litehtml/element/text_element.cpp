@@ -68,12 +68,12 @@ Size TextElement::get_content_size(int /* max_width */)
     return size_;
 }
 
-void TextElement::get_text(tstring& text) const
+void TextElement::get_text(std::string& text) const
 {
     text += text_;
 }
 
-const tchar_t* TextElement::get_style_property(CSSProperty name)
+const char* TextElement::get_style_property(CSSProperty name)
 {
     // TextElement is an internal element created by litehtml (i.e., text
     // elements do not appear in the HTML itself).  Since it does not appear
@@ -109,15 +109,15 @@ void TextElement::parse_styles(bool /* is_reparse */)
     }
 
     if (is_whitespace()) {
-        transformed_text_ = _t(" ");
+        transformed_text_ = " ";
         use_transformed_ = true;
     } else {
-        if (text_ == _t("\t")) {
-            transformed_text_ = _t("    ");
+        if (text_ == "\t") {
+            transformed_text_ = "    ";
             use_transformed_ = true;
         }
-        if (text_ == _t("\n") || text_ == _t("\r")) {
-            transformed_text_ = _t("");
+        if (text_ == "\n" || text_ == "\r") {
+            transformed_text_ = "";
             use_transformed_ = true;
         }
     }

@@ -42,14 +42,14 @@ TEST(MediaQueryTest, Parse)
     test_container container;
     Document* doc = new Document(&container, nullptr);
     MediaQuery::ptr q;
-    q = MediaQuery::create_from_string(_t(""), doc);
-    q = MediaQuery::create_from_string(_t("not"), doc);
-    q = MediaQuery::create_from_string(_t("(width)"), doc);
-    q = MediaQuery::create_from_string(_t("(orientation: portrait)"), doc);
-    q = MediaQuery::create_from_string(_t("(width: 1 / 2)"), doc);
-    q = MediaQuery::create_from_string(_t("(width: 300px)"), doc);
-    q = MediaQuery::create_from_string(_t("print"), doc);
+    q = MediaQuery::create_from_string("", doc);
+    q = MediaQuery::create_from_string("not", doc);
+    q = MediaQuery::create_from_string("(width)", doc);
+    q = MediaQuery::create_from_string("(orientation: portrait)", doc);
+    q = MediaQuery::create_from_string("(width: 1 / 2)", doc);
+    q = MediaQuery::create_from_string("(width: 300px)", doc);
+    q = MediaQuery::create_from_string("print", doc);
     q = MediaQuery::create_from_string(
-        _t("only screen and (max-width: 600px)"),
+        "only screen and (max-width: 600px)",
         doc);
 }

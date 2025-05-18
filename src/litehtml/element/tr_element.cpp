@@ -45,15 +45,15 @@ TrElement::~TrElement()
 
 void TrElement::parse_attributes()
 {
-    const tchar_t* str = get_attr(_t("align"));
+    const char* str = get_attr("align");
     if (str) {
         m_style.add_property(kCSSPropertyTextAlign, str, URL(), false);
     }
-    str = get_attr(_t("valign"));
+    str = get_attr("valign");
     if (str) {
         m_style.add_property(kCSSPropertyVerticalAlign, str, URL(), false);
     }
-    str = get_attr(_t("bgcolor"));
+    str = get_attr("bgcolor");
     if (str) {
         m_style.add_property(kCSSPropertyBackgroundColor, str, URL(), false);
     }

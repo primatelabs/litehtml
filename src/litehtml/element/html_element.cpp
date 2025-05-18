@@ -86,28 +86,28 @@ bool HTMLElement::append_child(Element* element)
     return false;
 }
 
-const tchar_t* HTMLElement::get_tagName() const
+const char* HTMLElement::get_tagName() const
 {
     return m_tag.c_str();
 }
 
-void HTMLElement::set_attr(const tchar_t* name, const tchar_t* val)
+void HTMLElement::set_attr(const char* name, const char* val)
 {
     if (name && val) {
-        tstring s_val = name;
+        std::string s_val = name;
         for (size_t i = 0; i < s_val.length(); i++) {
             s_val[i] = std::tolower(s_val[i], std::locale::classic());
         }
         m_attrs[s_val] = val;
 
-        if (t_strcasecmp(name, _t("class")) == 0) {
+        if (t_strcasecmp(name, "class") == 0) {
             m_class_values.resize(0);
-            split_string(val, m_class_values, _t(" "));
+            split_string(val, m_class_values, " ");
         }
     }
 }
 
-const tchar_t* HTMLElement::get_attr(const tchar_t* name, const tchar_t* def) const
+const char* HTMLElement::get_attr(const char* name, const char* def) const
 {
     string_map::const_iterator attr = m_attrs.find(name);
     if (attr != m_attrs.end()) {
@@ -116,7 +116,7 @@ const tchar_t* HTMLElement::get_attr(const tchar_t* name, const tchar_t* def) co
     return def;
 }
 
-ElementsVector HTMLElement::select_all(const tstring& selector)
+ElementsVector HTMLElement::select_all(const std::string& selector)
 {
     CSSSelector sel(MediaQueryList::ptr(nullptr));
     sel.parse(selector);
@@ -143,7 +143,7 @@ void HTMLElement::select_all(const CSSSelector& selector, ElementsVector& res)
 }
 
 
-Element::ptr HTMLElement::select_one(const tstring& selector)
+Element::ptr HTMLElement::select_one(const std::string& selector)
 {
     CSSSelector sel(MediaQueryList::ptr(nullptr));
     sel.parse(selector);
@@ -272,12 +272,12 @@ uintptr_t HTMLElement::get_font(FontMetrics* fm)
     return font_;
 }
 
-const tchar_t* HTMLElement::get_style_property(CSSProperty name)
+const char* HTMLElement::get_style_property(CSSProperty name)
 {
-    const tchar_t* value = m_style.get_property(name);
+    const char* value = m_style.get_property(name);
 
     if (parent()) {
-        if (value && !t_strcasecmp(value, _t("inherit"))) {
+        if (value && !t_strcasecmp(value, "inherit")) {
             value = parent()->get_style_property(name);
         } else if (!value && css_property_inherited(name)) {
             value = parent()->get_style_property(name);
@@ -312,7 +312,7 @@ const CSSValue* HTMLElement::get_style_property_value(CSSProperty property) cons
 
 void HTMLElement::parse_styles(bool is_reparse)
 {
-    const tchar_t* style = get_attr(_t("style"));
+    const char* style = get_attr("style");
 
     if (style) {
         m_style.add(style, URL());
@@ -336,9 +336,9 @@ void HTMLElement::parse_styles(bool is_reparse)
     box_sizing_ = get_keyword<BoxSizing>(kCSSPropertyBoxSizing);
 
     if (m_el_position != kPositionStatic) {
-        const tchar_t* val = get_style_property(kCSSPropertyZIndex);
+        const char* val = get_style_property(kCSSPropertyZIndex);
         if (val) {
-            m_z_index = t_atoi(val);
+            m_z_index = atoi(val);
         }
     }
 
@@ -482,12 +482,12 @@ void HTMLElement::parse_styles(bool is_reparse)
 
         list_style_position_ = get_keyword<ListStylePosition>(kCSSPropertyListStylePosition);
 
-        const tchar_t* list_image = get_style_property(kCSSPropertyListStyleImage);
+        const char* list_image = get_style_property(kCSSPropertyListStyleImage);
         if (list_image && list_image[0] && t_strcasecmp(list_image, "none")) {
-            tstring url;
+            std::string url;
             CSSStylesheet::parse_css_url(list_image, url);
 
-            // const tchar_t* list_image_baseurl = get_style_property(
+            // const char* list_image_baseurl = get_style_property(
             //     kCSSPropertyListStyleImageBaseurl,
             //     true,
             //     nullptr);
@@ -647,7 +647,7 @@ int HTMLElement::select(const CSSSelector& selector, bool apply_pseudo)
 
 int HTMLElement::select(const CSSElementSelector& selector, bool apply_pseudo)
 {
-    if (!selector.m_tag.empty() && selector.m_tag != _t("*")) {
+    if (!selector.m_tag.empty() && selector.m_tag != "*") {
         if (selector.m_tag != m_tag) {
             return select_no_match;
         }
@@ -657,7 +657,7 @@ int HTMLElement::select(const CSSElementSelector& selector, bool apply_pseudo)
     Element::ptr el_parent = parent();
 
     for (auto i = selector.m_attrs.begin(); i != selector.m_attrs.end(); i++) {
-        const tchar_t* attr_value = get_attr(i->attribute.c_str());
+        const char* attr_value = get_attr(i->attribute.c_str());
         switch (i->condition) {
             case kSelectExists:
                 if (!attr_value) {
@@ -668,7 +668,7 @@ int HTMLElement::select(const CSSElementSelector& selector, bool apply_pseudo)
                 if (!attr_value) {
                     return select_no_match;
                 } else {
-                    if (i->attribute == _t("class")) {
+                    if (i->attribute == "class") {
                         const string_vector& tokens1 = m_class_values;
                         const string_vector& tokens2 = i->class_val;
                         bool found = true;
@@ -701,23 +701,23 @@ int HTMLElement::select(const CSSElementSelector& selector, bool apply_pseudo)
             case kSelectContainStr:
                 if (!attr_value) {
                     return select_no_match;
-                } else if (!t_strstr(attr_value, i->val.c_str())) {
+                } else if (!strstr(attr_value, i->val.c_str())) {
                     return select_no_match;
                 }
                 break;
             case kSelectStartStr:
                 if (!attr_value) {
                     return select_no_match;
-                } else if (t_strncmp(attr_value, i->val.c_str(), i->val.length())) {
+                } else if (strncmp(attr_value, i->val.c_str(), i->val.length())) {
                     return select_no_match;
                 }
                 break;
             case kSelectEndStr:
                 if (!attr_value) {
                     return select_no_match;
-                } else if (t_strncmp(attr_value, i->val.c_str(), i->val.length())) {
-                    const tchar_t* s =
-                        attr_value + t_strlen(attr_value) - i->val.length() - 1;
+                } else if (strncmp(attr_value, i->val.c_str(), i->val.length())) {
+                    const char* s =
+                        attr_value + strlen(attr_value) - i->val.length() - 1;
                     if (s < attr_value) {
                         return select_no_match;
                     }
@@ -727,9 +727,9 @@ int HTMLElement::select(const CSSElementSelector& selector, bool apply_pseudo)
                 }
                 break;
             case kSelectPseudoElement:
-                if (i->val == _t("after")) {
+                if (i->val == "after") {
                     res |= select_match_with_after;
-                } else if (i->val == _t("before")) {
+                } else if (i->val == "before") {
                     res |= select_match_with_before;
                 } else {
                     return select_no_match;
@@ -740,18 +740,18 @@ int HTMLElement::select(const CSSElementSelector& selector, bool apply_pseudo)
                     if (!el_parent)
                         return select_no_match;
 
-                    tstring selector_param;
-                    tstring selector_name;
+                    std::string selector_param;
+                    std::string selector_name;
 
-                    tstring::size_type begin = i->val.find_first_of(_t('('));
-                    tstring::size_type end =
-                        (begin == tstring::npos)
-                            ? tstring::npos
+                    std::string::size_type begin = i->val.find_first_of('(');
+                    std::string::size_type end =
+                        (begin == std::string::npos)
+                            ? std::string::npos
                             : find_close_bracket(i->val, begin);
-                    if (begin != tstring::npos && end != tstring::npos) {
+                    if (begin != std::string::npos && end != std::string::npos) {
                         selector_param = i->val.substr(begin + 1, end - begin - 1);
                     }
-                    if (begin != tstring::npos) {
+                    if (begin != std::string::npos) {
                         selector_name = i->val.substr(0, begin);
                         trim(selector_name);
                     } else {
@@ -1311,38 +1311,38 @@ void HTMLElement::parse_background()
 {
     m_bg.m_color = get_color(kCSSPropertyBackgroundColor, Color(0, 0, 0, 0));
 
-    const tchar_t* str = get_style_property(kCSSPropertyBackgroundPosition);
+    const char* str = get_style_property(kCSSPropertyBackgroundPosition);
     if (str) {
         string_vector res;
-        split_string(str, res, _t(" \t"));
+        split_string(str, res, " \t");
         if (res.size() > 0) {
             if (res.size() == 1) {
-                if (value_in_list(res[0].c_str(), _t("left;right;center"))) {
-                    m_bg.m_position.x.parse_length_string(res[0], _t("left;right;center"));
+                if (value_in_list(res[0].c_str(), "left;right;center")) {
+                    m_bg.m_position.x.parse_length_string(res[0], "left;right;center");
                     m_bg.m_position.y.set_value(50, kCSSUnitsPercent);
-                } else if (value_in_list(res[0].c_str(), _t("top;bottom;center"))) {
-                    m_bg.m_position.y.parse_length_string(res[0], _t("top;bottom;center"));
+                } else if (value_in_list(res[0].c_str(), "top;bottom;center")) {
+                    m_bg.m_position.y.parse_length_string(res[0], "top;bottom;center");
                     m_bg.m_position.x.set_value(50, kCSSUnitsPercent);
                 } else {
-                    m_bg.m_position.x.parse_length_string(res[0], _t("left;right;center"));
+                    m_bg.m_position.x.parse_length_string(res[0], "left;right;center");
                     m_bg.m_position.y.set_value(50, kCSSUnitsPercent);
                 }
             } else {
-                if (value_in_list(res[0].c_str(), _t("left;right"))) {
-                    m_bg.m_position.x.parse_length_string(res[0], _t("left;right;center"));
-                    m_bg.m_position.y.parse_length_string(res[1], _t("top;bottom;center"));
-                } else if (value_in_list(res[0].c_str(), _t("top;bottom"))) {
-                    m_bg.m_position.x.parse_length_string(res[1], _t("left;right;center"));
-                    m_bg.m_position.y.parse_length_string(res[0], _t("top;bottom;center"));
-                } else if (value_in_list(res[1].c_str(), _t("left;right"))) {
-                    m_bg.m_position.x.parse_length_string(res[1], _t("left;right;center"));
-                    m_bg.m_position.y.parse_length_string(res[0], _t("top;bottom;center"));
-                } else if (value_in_list(res[1].c_str(), _t("top;bottom"))) {
-                    m_bg.m_position.x.parse_length_string(res[0], _t("left;right;center"));
-                    m_bg.m_position.y.parse_length_string(res[1], _t("top;bottom;center"));
+                if (value_in_list(res[0].c_str(), "left;right")) {
+                    m_bg.m_position.x.parse_length_string(res[0], "left;right;center");
+                    m_bg.m_position.y.parse_length_string(res[1], "top;bottom;center");
+                } else if (value_in_list(res[0].c_str(), "top;bottom")) {
+                    m_bg.m_position.x.parse_length_string(res[1], "left;right;center");
+                    m_bg.m_position.y.parse_length_string(res[0], "top;bottom;center");
+                } else if (value_in_list(res[1].c_str(), "left;right")) {
+                    m_bg.m_position.x.parse_length_string(res[1], "left;right;center");
+                    m_bg.m_position.y.parse_length_string(res[0], "top;bottom;center");
+                } else if (value_in_list(res[1].c_str(), "top;bottom")) {
+                    m_bg.m_position.x.parse_length_string(res[0], "left;right;center");
+                    m_bg.m_position.y.parse_length_string(res[1], "top;bottom;center");
                 } else {
-                    m_bg.m_position.x.parse_length_string(res[0], _t("left;right;center"));
-                    m_bg.m_position.y.parse_length_string(res[1], _t("top;bottom;center"));
+                    m_bg.m_position.x.parse_length_string(res[0], "left;right;center");
+                    m_bg.m_position.y.parse_length_string(res[1], "top;bottom;center");
                 }
             }
 
@@ -1384,7 +1384,7 @@ void HTMLElement::parse_background()
     str = get_style_property(kCSSPropertyBackgroundSize);
     if (str) {
         string_vector res;
-        split_string(str, res, _t(" \t"));
+        split_string(str, res, " \t");
         if (!res.empty()) {
             m_bg.m_position.width.parse_length_string(res[0], BACKGROUND_SIZE_STRINGS);
             if (res.size() > 1) {
@@ -1425,10 +1425,10 @@ void HTMLElement::parse_background()
 
     // Check that the kCSSPropertyBackgroundImageBaseurl property is empty.
     // If it's not empty we should track down what is setting the property.
-    tstring baseurl = get_style_property(kCSSPropertyBackgroundImageBaseurl);
+    std::string baseurl = get_style_property(kCSSPropertyBackgroundImageBaseurl);
     assert(baseurl.empty());
 
-    tstring url;
+    std::string url;
     CSSStylesheet::parse_css_url(
         get_style_property(kCSSPropertyBackgroundImage),
         url);
@@ -1509,7 +1509,7 @@ void HTMLElement::parse_attributes()
     }
 }
 
-void HTMLElement::get_text(tstring& text) const
+void HTMLElement::get_text(std::string& text) const
 {
     for (auto& el : m_children) {
         el->get_text(text);
@@ -1521,7 +1521,7 @@ bool HTMLElement::is_body() const
     return false;
 }
 
-void HTMLElement::set_data(const tchar_t*)
+void HTMLElement::set_data(const char*)
 {
 }
 
@@ -1594,7 +1594,7 @@ bool HTMLElement::on_mouse_over()
 
     Element::ptr el = this;
     while (el) {
-        if (el->set_pseudo_class(_t("hover"), true)) {
+        if (el->set_pseudo_class("hover", true)) {
             ret = true;
         }
         el = el->parent();
@@ -1671,10 +1671,10 @@ bool HTMLElement::on_mouse_leave()
 
     Element::ptr el = this;
     while (el) {
-        if (el->set_pseudo_class(_t("hover"), false)) {
+        if (el->set_pseudo_class("hover", false)) {
             ret = true;
         }
-        if (el->set_pseudo_class(_t("active"), false)) {
+        if (el->set_pseudo_class("active", false)) {
             ret = true;
         }
         el = el->parent();
@@ -1689,7 +1689,7 @@ bool HTMLElement::on_lbutton_down()
 
     Element::ptr el = this;
     while (el) {
-        if (el->set_pseudo_class(_t("active"), true)) {
+        if (el->set_pseudo_class("active", true)) {
             ret = true;
         }
         el = el->parent();
@@ -1704,7 +1704,7 @@ bool HTMLElement::on_lbutton_up()
 
     Element::ptr el = this;
     while (el) {
-        if (el->set_pseudo_class(_t("active"), false)) {
+        if (el->set_pseudo_class("active", false)) {
             ret = true;
         }
         el = el->parent();
@@ -1725,7 +1725,7 @@ void HTMLElement::on_click()
     }
 }
 
-const tchar_t* HTMLElement::get_cursor()
+const char* HTMLElement::get_cursor()
 {
     return get_style_property(kCSSPropertyCursor);
 }
@@ -1743,7 +1743,7 @@ static const int font_size_table[8][7] = {{9, 9, 9, 9, 11, 14, 18},
 void HTMLElement::init_font()
 {
     // initialize font size
-    const tchar_t* str = get_style_property(kCSSPropertyFontSize);
+    const char* str = get_style_property(kCSSPropertyFontSize);
 
     int parent_sz = 0;
     int doc_font_size = get_document()->container()->get_default_font_size();
@@ -1808,10 +1808,10 @@ void HTMLElement::init_font()
     }
 
     // initialize font
-    const tchar_t* name = get_style_property(kCSSPropertyFontFamily);
-    const tchar_t* weight = get_style_property(kCSSPropertyFontWeight);
-    const tchar_t* style = get_style_property(kCSSPropertyFontStyle);
-    const tchar_t* decoration = get_style_property(kCSSPropertyTextDecoration);
+    const char* name = get_style_property(kCSSPropertyFontFamily);
+    const char* weight = get_style_property(kCSSPropertyFontWeight);
+    const char* style = get_style_property(kCSSPropertyFontStyle);
+    const char* decoration = get_style_property(kCSSPropertyTextDecoration);
 
     font_ = get_document()->get_font(name,
         font_size_,
@@ -1826,9 +1826,9 @@ bool HTMLElement::is_break() const
     return false;
 }
 
-void HTMLElement::set_tagName(const tchar_t* tag)
+void HTMLElement::set_tagName(const char* tag)
 {
-    tstring s_val = tag;
+    std::string s_val = tag;
     for (size_t i = 0; i < s_val.length(); i++) {
         s_val[i] = std::tolower(s_val[i], std::locale::classic());
     }
@@ -2177,7 +2177,7 @@ int HTMLElement::place_element(const Element::ptr& el, int max_width)
     return ret_width;
 }
 
-bool HTMLElement::set_pseudo_class(const tchar_t* pclass, bool add)
+bool HTMLElement::set_pseudo_class(const char* pclass, bool add)
 {
     bool ret = false;
     if (add) {
@@ -2197,12 +2197,12 @@ bool HTMLElement::set_pseudo_class(const tchar_t* pclass, bool add)
     return ret;
 }
 
-bool HTMLElement::set_class(const tchar_t* pclass, bool add)
+bool HTMLElement::set_class(const char* pclass, bool add)
 {
     string_vector classes;
     bool changed = false;
 
-    split_string(pclass, classes, _t(" "));
+    split_string(pclass, classes, " ");
 
     if (add) {
         for (auto& _class : classes) {
@@ -2225,9 +2225,9 @@ bool HTMLElement::set_class(const tchar_t* pclass, bool add)
     }
 
     if (changed) {
-        tstring class_string;
-        join_string(class_string, m_class_values, _t(" "));
-        set_attr(_t("class"), class_string.c_str());
+        std::string class_string;
+        join_string(class_string, m_class_values, " ");
+        set_attr("class", class_string.c_str());
 
         return true;
     } else {
@@ -2649,7 +2649,7 @@ void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
 {
     list_marker lm;
 
-    const tchar_t* list_image = get_style_property(kCSSPropertyListStyleImage);
+    const char* list_image = get_style_property(kCSSPropertyListStyleImage);
     Size img_size;
     if (list_image) {
         CSSStylesheet::parse_css_url(list_image, lm.image);
@@ -2671,7 +2671,7 @@ void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
     if (list_style_type_ >= kListStyleTypeArmenian) {
         lm.pos.y = pos.y;
         lm.pos.height = pos.height;
-        lm.index = get_attr(_t("list_index"), _t(""))[0];
+        lm.index = get_attr("list_index", "")[0];
     } else {
         lm.pos.height = sz_font - sz_font * 2 / 3;
         lm.pos.y = pos.y + ln_height / 2 - lm.pos.height / 2;
@@ -2693,7 +2693,7 @@ void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
     if (list_style_position_ == kListStylePositionOutside) {
         if (list_style_type_ >= kListStyleTypeArmenian) {
             auto tw_space =
-                get_document()->container()->text_width(_t(" "), lm.font);
+                get_document()->container()->text_width(" ", lm.font);
             lm.pos.x = pos.x - tw_space * 2;
             lm.pos.width = tw_space;
         } else {
@@ -2707,7 +2707,7 @@ void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
         if (marker_text.empty()) {
             get_document()->container()->draw_list_marker(hdc, lm);
         } else {
-            marker_text += _t(".");
+            marker_text += ".";
             auto tw = get_document()->container()->text_width(marker_text.c_str(),
                 lm.font);
             auto text_pos = lm.pos;
@@ -2724,15 +2724,15 @@ void HTMLElement::draw_list_marker(uintptr_t hdc, const Position& pos)
     }
 }
 
-tstring HTMLElement::get_list_marker_text(int index)
+std::string HTMLElement::get_list_marker_text(int index)
 {
     switch (list_style_type_) {
         case kListStyleTypeDecimal:
-            return t_to_string(index);
+            return std::to_string(index);
         case kListStyleTypeDecimalLeadingZero: {
-            auto txt = t_to_string(index);
+            auto txt = std::to_string(index);
             if (txt.length() == 1) {
-                txt = _t("0") + txt;
+                txt = "0" + txt;
             }
             return txt;
         }
@@ -2765,7 +2765,7 @@ tstring HTMLElement::get_list_marker_text(int index)
         default:
             break;
     }
-    return _t("");
+    return "";
 }
 
 void HTMLElement::draw_children(uintptr_t hdc,
@@ -3070,7 +3070,7 @@ bool HTMLElement::is_nth_child(const Element::ptr& el, int num, int off, bool of
     for (const auto& child : m_children) {
         if (child->get_display() != kDisplayInlineText) {
             if ((!of_type) ||
-                (of_type && !t_strcmp(el->get_tagName(), child->get_tagName()))) {
+                (of_type && !strcmp(el->get_tagName(), child->get_tagName()))) {
                 if (el == child) {
                     if (num != 0) {
                         if ((idx - off) >= 0 && (idx - off) % num == 0) {
@@ -3101,7 +3101,7 @@ bool HTMLElement::is_nth_last_child(const Element::ptr& el,
          child != m_children.rend();
          child++) {
         if ((*child)->get_display() != kDisplayInlineText) {
-            if (!of_type || (of_type && !t_strcmp(el->get_tagName(),
+            if (!of_type || (of_type && !strcmp(el->get_tagName(),
                                             (*child)->get_tagName()))) {
                 if (el == (*child)) {
                     if (num != 0) {
@@ -3123,25 +3123,25 @@ bool HTMLElement::is_nth_last_child(const Element::ptr& el,
     return false;
 }
 
-void HTMLElement::parse_nth_child_params(tstring param, int& num, int& off)
+void HTMLElement::parse_nth_child_params(std::string param, int& num, int& off)
 {
-    if (param == _t("odd")) {
+    if (param == "odd") {
         num = 2;
         off = 1;
-    } else if (param == _t("even")) {
+    } else if (param == "even") {
         num = 2;
         off = 0;
     } else {
         string_vector tokens;
-        split_string(param, tokens, _t(" n"), _t("n"));
+        split_string(param, tokens, " n", "n");
 
-        tstring s_num;
-        tstring s_off;
+        std::string s_num;
+        std::string s_off;
 
-        tstring s_int;
+        std::string s_int;
         for (string_vector::iterator tok = tokens.begin(); tok != tokens.end();
              tok++) {
-            if ((*tok) == _t("n")) {
+            if ((*tok) == "n") {
                 s_num = s_int;
                 s_int.clear();
             } else {
@@ -3150,8 +3150,8 @@ void HTMLElement::parse_nth_child_params(tstring param, int& num, int& off)
         }
         s_off = s_int;
 
-        num = t_atoi(s_num.c_str());
-        off = t_atoi(s_off.c_str());
+        num = atoi(s_num.c_str());
+        off = atoi(s_off.c_str());
     }
 }
 
@@ -3258,7 +3258,7 @@ bool HTMLElement::is_only_child(const Element::ptr& el, bool of_type) const
     for (const auto& child : m_children) {
         if (child->get_display() != kDisplayInlineText) {
             if (!of_type ||
-                (of_type && !t_strcmp(el->get_tagName(), child->get_tagName()))) {
+                (of_type && !strcmp(el->get_tagName(), child->get_tagName()))) {
                 child_count++;
             }
             if (child_count > 1)
@@ -3309,12 +3309,12 @@ void HTMLElement::update_floats(int dy, const Element::ptr& parent)
 void HTMLElement::remove_before_after()
 {
     if (!m_children.empty()) {
-        if (!t_strcmp(m_children.front()->get_tagName(), _t("::before"))) {
+        if (!strcmp(m_children.front()->get_tagName(), "::before")) {
             m_children.erase(m_children.begin());
         }
     }
     if (!m_children.empty()) {
-        if (!t_strcmp(m_children.back()->get_tagName(), _t("::after"))) {
+        if (!strcmp(m_children.back()->get_tagName(), "::after")) {
             m_children.erase(m_children.end() - 1);
         }
     }
@@ -3323,7 +3323,7 @@ void HTMLElement::remove_before_after()
 Element::ptr HTMLElement::get_element_before()
 {
     if (!m_children.empty()) {
-        if (!t_strcmp(m_children.front()->get_tagName(), _t("::before"))) {
+        if (!strcmp(m_children.front()->get_tagName(), "::before")) {
             return m_children.front();
         }
     }
@@ -3336,7 +3336,7 @@ Element::ptr HTMLElement::get_element_before()
 Element::ptr HTMLElement::get_element_after()
 {
     if (!m_children.empty()) {
-        if (!t_strcmp(m_children.back()->get_tagName(), _t("::after"))) {
+        if (!strcmp(m_children.back()->get_tagName(), "::after")) {
             return m_children.back();
         }
     }
@@ -3807,12 +3807,12 @@ int HTMLElement::render_box(int x, int y, int max_width, bool second_pass /*= fa
     }
 
     if (m_display == kDisplayListItem) {
-        const tchar_t* list_image = get_style_property(kCSSPropertyListStyleImage);
+        const char* list_image = get_style_property(kCSSPropertyListStyleImage);
         if (list_image) {
-            tstring url;
+            std::string url;
             CSSStylesheet::parse_css_url(list_image, url);
 
-            const tchar_t* list_image_baseurl =
+            const char* list_image_baseurl =
                 get_style_property(kCSSPropertyListStyleImageBaseurl);
 
             URL list_image_url = resolve(URL(list_image_baseurl), URL(url));

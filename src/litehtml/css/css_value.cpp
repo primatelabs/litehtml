@@ -34,7 +34,7 @@
 
 namespace litehtml {
 
-CSSValue::CSSValue(const tstring& value, bool important)
+CSSValue::CSSValue(const std::string& value, bool important)
 : type_(kCSSValueString)
 , value_(value)
 , important_(important)
@@ -42,7 +42,7 @@ CSSValue::CSSValue(const tstring& value, bool important)
     inherit_ = !t_strcasecmp(value.c_str(), "inherit");
 }
 
-CSSValue::CSSValue(CSSValueType type, const tstring& value, bool important)
+CSSValue::CSSValue(CSSValueType type, const std::string& value, bool important)
 : type_(type)
 , value_(value)
 , important_(important)
@@ -50,7 +50,7 @@ CSSValue::CSSValue(CSSValueType type, const tstring& value, bool important)
     inherit_ = !t_strcasecmp(value.c_str(), "inherit");
 }
 
-CSSValue* CSSValue::factory(CSSProperty property, const tstring& str, bool important)
+CSSValue* CSSValue::factory(CSSProperty property, const std::string& str, bool important)
 {
     CSSValueType type = css_property_value_type(property);
 
@@ -101,19 +101,19 @@ nlohmann::json CSSValue::json() const
 
 #endif // ENABLE_JSON
 
-CSSColorValue::CSSColorValue(Color color, const tstring& value, bool important)
+CSSColorValue::CSSColorValue(Color color, const std::string& value, bool important)
 : CSSValue(kCSSValueColor, value, important)
 , color_(color)
 {
 }
 
-CSSKeywordValue::CSSKeywordValue(CSSKeyword keyword, const tstring& value, bool important)
+CSSKeywordValue::CSSKeywordValue(CSSKeyword keyword, const std::string& value, bool important)
 : CSSValue(kCSSValueKeyword, value, important)
 , keyword_(keyword)
 {
 }
 
-CSSLengthValue::CSSLengthValue(const CSSLength& length, const tstring& str, bool important)
+CSSLengthValue::CSSLengthValue(const CSSLength& length, const std::string& str, bool important)
 : CSSValue(kCSSValueLength, str, important)
 , length_(length)
 {

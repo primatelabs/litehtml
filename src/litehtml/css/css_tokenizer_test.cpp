@@ -37,7 +37,7 @@ using namespace litehtml;
 namespace {
 
 struct CSSTokenizerTestCase {
-    tstring css;
+    std::string css;
     std::vector<CSSToken> tokens;
 };
 
@@ -79,7 +79,7 @@ void test(std::vector<CSSTokenizerTestCase>& testcases)
 
 // Generate a CSS token of type t that contains a string value.  This includes
 // string tokens and identifier tokens.
-#define TS(t, v) CSSToken(kCSSToken##t, _t(v))
+#define TS(t, v) CSSToken(kCSSToken##t, v)
 
 // Generate a CSS number token that contains an integer value.
 #define TI(v) CSSToken(kCSSTokenNumber, CSSNumber(kCSSIntegerValue, v))
@@ -90,10 +90,10 @@ void test(std::vector<CSSTokenizerTestCase>& testcases)
 TEST(CSSTokenizerTest, DISABLED_BadString)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t(""), {}},
-        {_t("'hi"), {T(BadString)}},
-        {_t("\"hi\\"), {T(BadString)}},
-        {_t("\"hi\\\""), {T(BadString)}},
+        {"", {}},
+        {"'hi", {T(BadString)}},
+        {"\"hi\\", {T(BadString)}},
+        {"\"hi\\\"", {T(BadString)}},
     };
 
     test(testcases);
@@ -102,11 +102,11 @@ TEST(CSSTokenizerTest, DISABLED_BadString)
 TEST(CSSTokenizerTest, Comment)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t(""), {}},
-        {_t("/**/"), {}},
-        {_t(" /* */"), {T(Whitespace)}},
-        {_t("/* */ "), {T(Whitespace)}},
-        {_t(" /* */ "), {T(Whitespace), T(Whitespace)}},
+        {"", {}},
+        {"/**/", {}},
+        {" /* */", {T(Whitespace)}},
+        {"/* */ ", {T(Whitespace)}},
+        {" /* */ ", {T(Whitespace), T(Whitespace)}},
     };
 
     test(testcases);
@@ -115,14 +115,14 @@ TEST(CSSTokenizerTest, Comment)
 TEST(CSSTokenizerTest, Number)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t(""), {}},
-        {_t("0"), {TI(0)}},
-        {_t("+0"), {TI(0)}},
-        {_t("-0"), {TI(0)}},
-        {_t("100"), {TI(100)}},
-        {_t("100.0"), {TN(100.0)}},
-        {_t("+.4"), {TN(0.4)}},
-        {_t("-.4"), {TN(-0.4)}},
+        {"", {}},
+        {"0", {TI(0)}},
+        {"+0", {TI(0)}},
+        {"-0", {TI(0)}},
+        {"100", {TI(100)}},
+        {"100.0", {TN(100.0)}},
+        {"+.4", {TN(0.4)}},
+        {"-.4", {TN(-0.4)}},
     };
 
     test(testcases);
@@ -131,10 +131,10 @@ TEST(CSSTokenizerTest, Number)
 TEST(CSSTokenizerTest, NumberSign)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t(""), {}},
-        {_t("#ff00ff"), {TS(Hash, "ff00ff")}},
-        {_t("#fff"), {TS(Hash, "fff")}},
-        {_t("#000"), {TS(Hash, "000")}},
+        {"", {}},
+        {"#ff00ff", {TS(Hash, "ff00ff")}},
+        {"#fff", {TS(Hash, "fff")}},
+        {"#000", {TS(Hash, "000")}},
     };
 
     test(testcases);
@@ -143,18 +143,18 @@ TEST(CSSTokenizerTest, NumberSign)
 TEST(CSSTokenizerTest, String)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t(""), {}},
-        {_t("'hi'"), {TS(String, "hi")}},
-        {_t("\"hi\""), {TS(String, "hi")}},
-        {_t("\"hi\\\"\""), {TS(String, "hi\"")}},
-        {_t("'hi there'"), {TS(String, "hi there")}},
-        {_t("'hi' 'there'"),
+        {"", {}},
+        {"'hi'", {TS(String, "hi")}},
+        {"\"hi\"", {TS(String, "hi")}},
+        {"\"hi\\\"\"", {TS(String, "hi\"")}},
+        {"'hi there'", {TS(String, "hi there")}},
+        {"'hi' 'there'",
             {TS(String, "hi"), T(Whitespace), TS(String, "there")}},
-        {_t("'hi\"' 'there'"),
+        {"'hi\"' 'there'",
             {TS(String, "hi\""), T(Whitespace), TS(String, "there")}},
-        {_t("\"hi\'\" 'there'"),
+        {"\"hi\'\" 'there'",
             {TS(String, "hi'"), T(Whitespace), TS(String, "there")}},
-        {_t("\"hi\\\"\" 'there'"),
+        {"\"hi\\\"\" 'there'",
             {TS(String, "hi\""), T(Whitespace), TS(String, "there")}},
     };
 
@@ -164,17 +164,17 @@ TEST(CSSTokenizerTest, String)
 TEST(CSSTokenizerTest, URL)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t("url()"), {TS(URL, "")}},
-        {_t("url( )"), {TS(URL, "")}},
-        {_t("url(https://example.com/images/myImg.jpg)"),
+        {"url()", {TS(URL, "")}},
+        {"url( )", {TS(URL, "")}},
+        {"url(https://example.com/images/myImg.jpg)",
             {TS(URL, "https://example.com/images/myImg.jpg")}},
-        {_t("url(data:image/png;base64,iRxVB0)"),
+        {"url(data:image/png;base64,iRxVB0)",
             {TS(URL, "data:image/png;base64,iRxVB0")}},
-        {_t("url(#IDofSVGpath)"), {TS(URL, "#IDofSVGpath")}},
-        {_t("url(myFont.woff)"), {TS(URL, "myFont.woff")}},
-        {_t("url( myFont.woff)"), {TS(URL, "myFont.woff")}},
-        {_t("url(myFont.woff )"), {TS(URL, "myFont.woff")}},
-        {_t("url( myFont.woff )"), {TS(URL, "myFont.woff")}},
+        {"url(#IDofSVGpath)", {TS(URL, "#IDofSVGpath")}},
+        {"url(myFont.woff)", {TS(URL, "myFont.woff")}},
+        {"url( myFont.woff)", {TS(URL, "myFont.woff")}},
+        {"url(myFont.woff )", {TS(URL, "myFont.woff")}},
+        {"url( myFont.woff )", {TS(URL, "myFont.woff")}},
     };
 
     test(testcases);
@@ -183,29 +183,29 @@ TEST(CSSTokenizerTest, URL)
 TEST(CSSTokenizerTest, Whitespace)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t(""), {}},
-        {_t(" "), {T(Whitespace)}},
-        {_t("\t"), {T(Whitespace)}},
-        {_t("\n"), {T(Whitespace)}},
-        {_t("\r"), {T(Whitespace)}},
-        {_t("\f"), {T(Whitespace)}},
-        {_t("  "), {T(Whitespace)}},
-        {_t("  \t"), {T(Whitespace)}},
-        {_t("  \n"), {T(Whitespace)}},
-        {_t("  \r"), {T(Whitespace)}},
-        {_t("  \f"), {T(Whitespace)}},
-        {_t(" \t "), {T(Whitespace)}},
-        {_t(" \n "), {T(Whitespace)}},
-        {_t(" \r "), {T(Whitespace)}},
-        {_t(" \f "), {T(Whitespace)}},
-        {_t("\t  "), {T(Whitespace)}},
-        {_t("\n  "), {T(Whitespace)}},
-        {_t("\r  "), {T(Whitespace)}},
-        {_t("\f  "), {T(Whitespace)}},
-        {_t("\t  \n  \t  \r  \f  "), {T(Whitespace)}},
-        {_t("\n  \n  \t  \r  \f  "), {T(Whitespace)}},
-        {_t("\r  \n  \t  \r  \f  "), {T(Whitespace)}},
-        {_t("\f  \n  \t  \r  \f  "), {T(Whitespace)}},
+        {"", {}},
+        {" ", {T(Whitespace)}},
+        {"\t", {T(Whitespace)}},
+        {"\n", {T(Whitespace)}},
+        {"\r", {T(Whitespace)}},
+        {"\f", {T(Whitespace)}},
+        {"  ", {T(Whitespace)}},
+        {"  \t", {T(Whitespace)}},
+        {"  \n", {T(Whitespace)}},
+        {"  \r", {T(Whitespace)}},
+        {"  \f", {T(Whitespace)}},
+        {" \t ", {T(Whitespace)}},
+        {" \n ", {T(Whitespace)}},
+        {" \r ", {T(Whitespace)}},
+        {" \f ", {T(Whitespace)}},
+        {"\t  ", {T(Whitespace)}},
+        {"\n  ", {T(Whitespace)}},
+        {"\r  ", {T(Whitespace)}},
+        {"\f  ", {T(Whitespace)}},
+        {"\t  \n  \t  \r  \f  ", {T(Whitespace)}},
+        {"\n  \n  \t  \r  \f  ", {T(Whitespace)}},
+        {"\r  \n  \t  \r  \f  ", {T(Whitespace)}},
+        {"\f  \n  \t  \r  \f  ", {T(Whitespace)}},
     };
 
     test(testcases);
@@ -214,13 +214,14 @@ TEST(CSSTokenizerTest, Whitespace)
 TEST(CSSTokenizerTest, Stylesheet)
 {
     std::vector<CSSTokenizerTestCase> testcases = {
-        {_t("/* A simple CSS stylesheet */\n"
+        {
+            "/* A simple CSS stylesheet */\n"
             "body {\n"
             "  margin: 25px;\n"
             "  background-color: rgb(220,230,240);\n"
             "  font-family: roboto, arial, sans-serif;\n"
             "  font-size: 14px !important;\n"
-            "}\n"),
+            "}\n",
             {T(Whitespace),
                 TS(Ident, "body"),
                 T(Whitespace),
@@ -269,14 +270,14 @@ TEST(CSSTokenizerTest, Stylesheet)
                 T(Whitespace),
                 T(CloseBrace),
                 T(Whitespace)}},
-        {_t("body {\n"
+        {   "body {\n"
             "  margin: 25px;\n"
             "}\n"
             "@media (color) {\n"
             "  body {\n"
             "    margin: 50px;\n"
             "  }\n"
-            "}\n"),
+            "}\n",
             {TS(Ident, "body"),
                 T(Whitespace),
                 T(OpenBrace),

@@ -46,7 +46,7 @@ AnchorElement::~AnchorElement()
 
 void AnchorElement::on_click()
 {
-    const tchar_t* href = get_attr(_t("href"));
+    const char* href = get_attr("href");
 
     if (href) {
         get_document()->container()->on_anchor_click(href, this);
@@ -55,8 +55,8 @@ void AnchorElement::on_click()
 
 void AnchorElement::apply_stylesheet(const CSSStylesheet& stylesheet)
 {
-    if (get_attr(_t("href"))) {
-        m_pseudo_classes.push_back(_t("link"));
+    if (get_attr("href")) {
+        m_pseudo_classes.push_back("link");
     }
     HTMLElement::apply_stylesheet(stylesheet);
 }
