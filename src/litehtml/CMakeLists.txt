@@ -191,7 +191,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 14
+    CXX_STANDARD 17
     C_STANDARD 99
     PUBLIC_HEADER "${HEADER_LITEHTML}"
 )
@@ -299,7 +299,7 @@ if (BUILD_TESTING)
     )
 
     set_target_properties(${TEST_NAME} PROPERTIES
-        CXX_STANDARD 14
+        CXX_STANDARD 17
         C_STANDARD 99
         PUBLIC_HEADER "${HEADER_LITEHTML}"
     )

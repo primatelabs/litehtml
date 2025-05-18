@@ -8,7 +8,7 @@ add_executable(
 )
 
 set_target_properties(css_parser_fuzz PROPERTIES
-    CXX_STANDARD 14
+    CXX_STANDARD 17
     C_STANDARD 99
 )
 

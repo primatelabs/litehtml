@@ -49,7 +49,7 @@ add_executable(
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/../litehtml/master.css.inc PROPERTIES GENERATED TRUE)
 
 set_target_properties(${HEADLESS_NAME} PROPERTIES
-    CXX_STANDARD 14
+    CXX_STANDARD 17
     C_STANDARD 99
 )
 

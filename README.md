@@ -7,7 +7,7 @@ This repository contains [Primate Labs'](https://www.primatelabs.com/) fork of [
 
 * Python 3.7 or later
 * CMake 3.12 or later
-* C++14 compiler
+* C++17 compiler
 
 ## Building litehtml
 
@@ -36,7 +36,7 @@ headless demonstrates how to use litehtml and integrate it into an application. 
 
 * Python 3.7 or later
 * CMake 3.12 or later
-* C++14 compiler
+* C++17 compiler
 * Libraries
   * fmt
   * fontconfig
