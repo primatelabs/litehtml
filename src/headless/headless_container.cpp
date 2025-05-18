@@ -84,9 +84,6 @@ namespace headless {
 
 namespace {
 
-constexpr int kDefaultWidth = 1800;
-constexpr int kDefaultHeight = 900;
-
 // We cannot use a higher DPI setting until media queries are implemented.
 constexpr int kDefaultDPI = 72;
 
@@ -151,8 +148,10 @@ orion::rgba8 convert_color(const litehtml::Color& color)
 
 } // namespace
 
-HeadlessContainer::HeadlessContainer()
+HeadlessContainer::HeadlessContainer(int width, int height)
 : DocumentContainer()
+, width_(width)
+, height_(height)
 , dpi_(kDefaultDPI)
 {
     FT_CALL(FT_Init_FreeType(&library_));
@@ -648,8 +647,8 @@ void HeadlessContainer::get_media_features(litehtml::MediaFeatures& media) const
     media.type = litehtml::kMediaTypeScreen;
     media.width = client.width;
     media.height = client.height;
-    media.device_width = kDefaultWidth;
-    media.device_height = kDefaultHeight;
+    media.device_width = width_;
+    media.device_height = height_;
     media.color = 8;
     media.monochrome = 0;
     media.color_index = 0;
@@ -712,8 +711,8 @@ litehtml::Position HeadlessContainer::get_client_rect() const
 {
     litehtml::Position client;
 
-    client.width = kDefaultWidth;
-    client.height = kDefaultHeight;
+    client.width = width_;
+    client.height = height_;
 
     return client;
 }

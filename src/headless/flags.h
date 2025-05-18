@@ -50,6 +50,10 @@ struct Flags {
 
     std::string url;
 
+    int width;
+
+    int height;
+
     std::string output;
 };
 

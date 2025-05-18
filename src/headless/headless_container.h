@@ -41,6 +41,10 @@ class HeadlessContainer : public litehtml::DocumentContainer {
 public:
     FT_Library library_;
 
+    int width_;
+
+    int height_;
+
     int dpi_;
 
     // litehtml does not maintain its own image cache.  Instead, it notifies the
@@ -58,7 +62,7 @@ public:
 
     std::unordered_map<std::string, Image<uint8_t>> image_cache_;
 
-    HeadlessContainer();
+    HeadlessContainer(int width, int height);
 
     virtual ~HeadlessContainer();
 

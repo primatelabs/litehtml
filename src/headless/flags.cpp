@@ -46,12 +46,20 @@ enum Switches {
     kSwitchFile,
     kSwitchURL,
 
+    kSwitchWidth,
+    kSwitchHeight,
     kSwitchOutput,
 };
 
+constexpr int kDefaultWidth = 768;
+constexpr int kDefaultHeight = 1366;
+
 } // namespace
+
 Flags::Flags()
-: output("headless.png")
+: width(kDefaultWidth)
+, height(kDefaultHeight)
+, output("headless.png")
 {
 }
 
@@ -66,6 +74,8 @@ ParseStatus Flags::parse(int argc, char** argv)
         {"file", required_argument, nullptr, kSwitchFile},
         {"url", required_argument, nullptr, kSwitchURL},
 
+        {"width", required_argument, nullptr, kSwitchWidth},
+        {"height", required_argument, nullptr, kSwitchHeight},
         {"output", required_argument, nullptr, kSwitchOutput},
         {nullptr, 0, nullptr}
     };
@@ -87,6 +97,14 @@ ParseStatus Flags::parse(int argc, char** argv)
                 url = optarg;
                 break;
 
+            case kSwitchWidth:
+                width = atoi(optarg);
+                break;
+
+            case kSwitchHeight:
+                height = atoi(optarg);
+                break;
+
             case kSwitchOutput:
                 output = optarg;
                 break;
@@ -106,6 +124,8 @@ void Flags::usage(int exit_code)
     std::cout << "  -h, --help                  print this message\n";
     std::cout << "  ---file FILE                load and render the web page from FILE\n";
     std::cout << "  ---url URL                  load and render the web page from URL\n";
+    std::cout << "  ---width WIDTH              set the viewport to WIDTH pixels wide\n";
+    std::cout << "  ---height HEIGHT            set the viewport to HEIGHT pixels wide\n";
     std::cout << "  ---output PNG               save the rendered web page to PNG\n";
     std::cout << std::endl;
 

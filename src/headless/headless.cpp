@@ -33,10 +33,10 @@
 #include "flags.h"
 #include "headless_container.h"
 #include "http.h"
+#include "image/png_codec.h"
 #include "litehtml/document_parser.h"
 #include "litehtml/litehtml.h"
 #include "litehtml/logging.h"
-#include "image/png_codec.h"
 #include "orion_render_context.h"
 
 using namespace headless;
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
     std::string html;
 
     if (!flags.file.empty()) {
-        html = load(url.path());
+        html = load(flags.file);
     } else {
         http_response response = http_request(url);
         html = response.body;
@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 
     litehtml::Context ctx(master_stylesheet);
 
-    HeadlessContainer container;
+    HeadlessContainer container(flags.width, flags.height);
 
     std::unique_ptr<Document> document(DocumentParser::parse(
         html,
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
         &container,
         &ctx));
 
-    document->render(1800);
+    document->render(flags.width);
 
     OrionRenderContext orc(document->width(), document->height());
 
