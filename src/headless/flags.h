@@ -49,7 +49,7 @@ struct Flags {
 
     std::filesystem::path font_directory;
 
-    std::string file;
+    std::filesystem::path file;
 
     std::string url;
 

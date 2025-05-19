@@ -30,6 +30,8 @@
 #include <iostream>
 #include <string>
 
+#include <fmt/format.h>
+
 #include "flags.h"
 #include "headless_container.h"
 #include "http.h"
@@ -86,14 +88,16 @@ int main(int argc, char** argv)
 
     litehtml::URL url(flags.url);
 
-    std::string html;
+    // Generate a URL for the file path passed via the --file command-line
+    // switch. This makes it possible for headless to load resources with
+    // relative URLs in the HTML file.
 
     if (!flags.file.empty()) {
-        html = load(flags.file);
-    } else {
-        http_response response = http_request(url);
-        html = response.body;
+        url = URL("file", "", std::filesystem::absolute(flags.file).string(), "", "");
     }
+
+    http_response response = http_request(url);
+    std::string html = response.body;
 
     litehtml::Context ctx(master_stylesheet);
 
