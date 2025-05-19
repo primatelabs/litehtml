@@ -111,7 +111,9 @@ URL::URL(const std::string& scheme,
     if (!scheme_.empty()) {
         oss << scheme_ << ":";
     }
-    if (!authority_.empty()) {
+    // Include the two slash characters for schemes that define a default host
+    // (e.g., the file scheme). See Section 3.2.2 of RFC 3986 for details.
+    if (!authority_.empty() || scheme_ == "file") {
         oss << "//" << authority_;
     }
     if (!path_.empty()) {

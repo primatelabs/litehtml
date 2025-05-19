@@ -241,13 +241,10 @@ TEST(URLTest, Build)
             "",
             "section-2.2"},
 
-        // Disabled since the url class does not regenerate the same URL for
-        // this test case (it does not emit the double slash at the start of
-        // the authority).  How do we determine which schemes require the double
-        // slash and which ones do not?
-
-        // { "file:///home/litehtml/build/hipster.html",
-        //    "file", "", "/home/litehtml/build/hipster.html" },
+        {"file:///home/litehtml/build/hipster.html",
+            "file",
+            "",
+            "/home/litehtml/build/hipster.html"},
 
         {"/home/litehtml/Projects/litehtml/build/hipster.html",
             "",
