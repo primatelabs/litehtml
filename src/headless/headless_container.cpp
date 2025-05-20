@@ -302,13 +302,13 @@ int HeadlessContainer::text_width(const char* text,
 
     unsigned int glyph_count = 0;
     hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos(buffer, &glyph_count);
-    hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions(buffer, &glyph_count);
+    hb_glyph_position_t* glyph_positions = hb_buffer_get_glyph_positions(buffer, &glyph_count);
 
     int width = 0;
 
     // FIXME: Handle RTL text.
     for (unsigned int i = 0; i < glyph_count; ++i) {
-        width += glyph_pos[i].x_advance;
+        width += glyph_positions[i].x_advance;
     }
 
     hb_buffer_destroy(buffer);
@@ -347,7 +347,7 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
 
     unsigned int glyph_count = 0;
     hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos(buffer, &glyph_count);
-    hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions(buffer, &glyph_count);
+    hb_glyph_position_t* glyph_positions = hb_buffer_get_glyph_positions(buffer, &glyph_count);
 
     // TODO: Should we round the result rather than truncating the result?
     int target_height = font->ft_face->size->metrics.height / 64;
@@ -383,8 +383,8 @@ void HeadlessContainer::draw_text(uintptr_t hdc,
             glyph->bitmap_left,
             target_height - glyph->bitmap_top);
 
-        pen.x += glyph->advance.x;
-        pen.y += glyph->advance.y;
+        pen.x += glyph_positions[i].x_advance;
+        pen.y += glyph_positions[i].y_advance;
     }
 }
 
