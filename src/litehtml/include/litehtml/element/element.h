@@ -70,6 +70,18 @@ enum ElementType {
     kElementWhitespace,
 };
 
+enum Direction {
+    kDirectionLTR,
+    kDirectionRTL,
+    kDirectionAuto,
+    kDirectionUndefined
+};
+
+enum Directionality {
+    kDirectionalityLTR,
+    kDirectionalityRTL,
+};
+
 String element_type_name(ElementType type);
 
 class Element : public std::enable_shared_from_this<Element> {
@@ -109,6 +121,8 @@ protected:
     Margins border_;
 
     Margins padding_;
+
+    Direction direction_ = kDirectionUndefined;
 
     // Flag used by LineBox (and elsewhere). May control visibility since
     // skip is always true for certain elements (e.g., comments).
@@ -204,6 +218,15 @@ public:
     {
         return border_;
     }
+
+    Direction get_direction() const
+    {
+        return direction_;
+    }
+
+    Directionality get_directionality() const;
+
+    Directionality get_parent_directionality() const;
 
     bool in_normal_flow() const
     {

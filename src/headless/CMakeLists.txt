@@ -10,6 +10,7 @@ find_package(PkgConfig)
 pkg_search_module(FMT REQUIRED fmt)
 pkg_search_module(FONTCONFIG REQUIRED fontconfig>=2.0.0)
 pkg_search_module(FREETYPE REQUIRED freetype2)
+pkg_search_module(HARFBUZZ REQUIRED harfbuzz)
 pkg_search_module(LIBPNG REQUIRED libpng>=1.6.0)
 
 set(HEADLESS_NAME headless)
@@ -81,6 +82,7 @@ target_include_directories(
 target_link_directories(
     ${HEADLESS_NAME}
     PUBLIC
+    ${HARFBUZZ_LIBRARY_DIRS}
     ${FONTCONFIG_LIBRARY_DIRS}
     ${FMT_LIBRARY_DIRS}
     ${LIBPNG_LIBRARY_DIRS}
@@ -89,6 +91,7 @@ target_link_directories(
 target_link_libraries(
     ${HEADLESS_NAME}
     litehtml
+    ${HARFBUZZ_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${LIBPNG_LIBRARIES}
@@ -97,11 +100,15 @@ target_link_libraries(
     ${requiredlibs}
 )
 
-add_custom_command(
-    TARGET ${HEADLESS_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_CURRENT_SOURCE_DIR}/fonts/Roboto-Regular.ttf
-    ${CMAKE_BINARY_DIR}/Roboto-Regular.ttf)
+file(GLOB FONTS ${CMAKE_CURRENT_SOURCE_DIR}/fonts/*.ttf)
+foreach(CurrentFontFile IN LISTS FONTS)
+    add_custom_command(
+        TARGET ${HEADLESS_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CurrentFontFile}
+        ${CMAKE_BINARY_DIR}
+        COMMENT "Copying font: ${CurrentFontFile}")
+endforeach()
 
 # JSON
 if (ENABLE_JSON)

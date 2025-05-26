@@ -135,9 +135,12 @@ class LineBox : public Box {
     int m_baseline;
     TextAlign m_text_align;
 
+	Directionality directionality_;
+
 public:
-    LineBox(int top, int left, int right, int line_height, FontMetrics& fm, TextAlign align)
+    LineBox(int top, int left, int right, int line_height, FontMetrics& fm, TextAlign align, Directionality directionality)
     : Box(top, left, right)
+	, directionality_(directionality)
     {
         m_height = 0;
         m_width = 0;
