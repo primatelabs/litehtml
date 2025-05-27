@@ -86,6 +86,8 @@ private:
 
     css_text::vector m_css;
 
+    std::vector<std::string> m_scripts;
+
     CSSStylesheet stylesheet_;
 
     Color default_color_;
@@ -155,6 +157,9 @@ public:
     int width() const;
 
     int height() const;
+
+    void add_javascript(const std::string& str,
+        const URL& url);
 
     void add_stylesheet(const std::string& str,
         const URL& url,

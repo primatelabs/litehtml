@@ -31,6 +31,7 @@
 #include "litehtml/element/script_element.h"
 
 #include "litehtml/document.h"
+#include "litehtml/document_container.h"
 
 namespace litehtml {
 
@@ -43,9 +44,40 @@ ScriptElement::~ScriptElement()
 {
 }
 
+void ScriptElement::set_attr(const char* name, const char* val)
+{
+    if (name && val) {
+        std::string s_val = name;
+        for (size_t i = 0; i < s_val.length(); i++) {
+            s_val[i] = tolower(s_val[i]);
+        }
+        m_attrs[s_val] = val;
+    }
+}
+
+const char* ScriptElement::get_attr(const char* name, const char* def) const
+{
+    string_map::const_iterator attr = m_attrs.find(name);
+    if (attr != m_attrs.end()) {
+        return attr->second.c_str();
+    }
+    return def;
+}
+
 void ScriptElement::parse_attributes()
 {
     // TODO: pass script text to document container
+    Document* doc = get_document();
+    DocumentContainer* ctr = doc->container();
+
+    const char* src = get_attr("src");
+    if (src && src[0]) {
+        URL js_url = resolve(doc->base_url(), URL(src));
+        std::string js_text = ctr->import_js(js_url);
+        if (!js_text.empty()) {
+            doc->add_javascript(js_text, js_url);
+        }
+    }
 }
 
 bool ScriptElement::append_child(Element* element)

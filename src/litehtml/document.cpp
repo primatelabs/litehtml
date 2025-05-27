@@ -411,6 +411,13 @@ int Document::height() const
     return m_size.height;
 }
 
+void Document::add_javascript(const std::string& str, const URL& url)
+{
+    if (!str.empty()) {
+        m_scripts.push_back(str);
+    }
+}
+
 void Document::add_stylesheet(const std::string& str,
     const URL& url,
     const char* media)

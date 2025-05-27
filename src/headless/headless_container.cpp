@@ -789,6 +789,14 @@ std::string HeadlessContainer::import_css(const litehtml::URL& url)
     return response.body;
 }
 
+std::string HeadlessContainer::import_js(const litehtml::URL& url)
+{
+    HEADLESS_TRACE1(HeadlessContainer::import_js, url.string());
+
+    http_response response = http_request(url);
+    return response.body;
+}
+
 litehtml::Position HeadlessContainer::get_client_rect() const
 {
     litehtml::Position client;

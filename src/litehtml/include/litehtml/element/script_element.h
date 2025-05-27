@@ -36,6 +36,9 @@
 namespace litehtml {
 
 class ScriptElement : public Element {
+protected:
+    string_map m_attrs;
+
     std::string m_text;
 
 public:
@@ -46,6 +49,11 @@ public:
     {
         return kElementScript;
     }
+
+    virtual void set_attr(const char* name, const char* val) override;
+
+    virtual const char* get_attr(const char* name,
+        const char* def = nullptr) const override;
 
     virtual void parse_attributes() override;
     virtual bool append_child(Element* element) override;

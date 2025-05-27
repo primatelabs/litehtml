@@ -101,6 +101,8 @@ public:
 
     virtual std::string import_css(const URL& css_url) = 0;
 
+    virtual std::string import_js(const URL& css_url) = 0;
+
     virtual void set_clip(const litehtml::Position& pos,
         const litehtml::BorderRadii& border_radii,
         bool valid_x,

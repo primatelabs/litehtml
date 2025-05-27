@@ -146,6 +146,8 @@ public:
 
     virtual std::string import_css(const litehtml::URL& url) override;
 
+    virtual std::string import_js(const litehtml::URL& url) override;
+
     virtual litehtml::Position get_client_rect() const override;
 };
 

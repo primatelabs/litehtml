@@ -140,6 +140,11 @@ std::string test_container::import_css(const litehtml::URL& url)
     return "";
 }
 
+std::string test_container::import_js(const litehtml::URL& url)
+{
+    return "";
+}
+
 void test_container::set_clip(const litehtml::Position& pos,
     const litehtml::BorderRadii& border_radii,
     bool valid_x,
