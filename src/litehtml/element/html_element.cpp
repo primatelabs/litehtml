@@ -4356,4 +4356,62 @@ void HTMLElement::draw_children_table(uintptr_t hdc,
     }
 }
 
+static bool is_void_element(const std::string& tag)
+{
+    static const char* const void_elements[] = {
+        "area", "base", "br", "col", "embed", "hr", "img", "input",
+        "link", "meta", "param", "source", "track", "wbr", nullptr
+    };
+    for (int i = 0; void_elements[i]; i++) {
+        if (tag == void_elements[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static std::string html_escape_attr(const std::string& s)
+{
+    std::string result;
+    result.reserve(s.size());
+    for (char c : s) {
+        if (c == '&') {
+            result += "&amp;";
+        } else if (c == '"') {
+            result += "&quot;";
+        } else {
+            result += c;
+        }
+    }
+    return result;
+}
+
+std::string HTMLElement::outer_html() const
+{
+    if (m_tag.empty()) {
+        std::string result;
+        for (auto child : m_children) {
+            result += child->outer_html();
+        }
+        return result;
+    }
+
+    std::string result = "<" + m_tag;
+    for (const auto& attr : m_attrs) {
+        result += " " + attr.first + "=\"" + html_escape_attr(attr.second) + "\"";
+    }
+
+    if (is_void_element(m_tag)) {
+        result += ">";
+        return result;
+    }
+
+    result += ">";
+    for (auto child : m_children) {
+        result += child->outer_html();
+    }
+    result += "</" + m_tag + ">";
+    return result;
+}
+
 } // namespace litehtml

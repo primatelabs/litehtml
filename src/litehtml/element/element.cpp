@@ -934,4 +934,13 @@ nlohmann::json Element::json() const
 
 #endif
 
+std::string Element::outer_html() const
+{
+    std::string result;
+    for (auto child : m_children) {
+        result += child->outer_html();
+    }
+    return result;
+}
+
 } // namespace litehtml

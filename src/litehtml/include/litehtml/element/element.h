@@ -458,6 +458,8 @@ public:
         int zindex);
     virtual const Background* get_background(bool own_only = false);
 
+    virtual std::string outer_html() const;
+
 #if defined(ENABLE_JSON)
     virtual nlohmann::json json() const;
 #endif // ENABLE_JSON

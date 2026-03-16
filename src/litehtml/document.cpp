@@ -936,4 +936,12 @@ nlohmann::json Document::json() const
 
 #endif // ENABLE_JSON
 
+std::string Document::outer_html() const
+{
+    if (root_) {
+        return root_->outer_html();
+    }
+    return {};
+}
+
 } // namespace litehtml

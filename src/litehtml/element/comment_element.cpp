@@ -54,4 +54,9 @@ void CommentElement::set_data(const char* data)
     }
 }
 
+std::string CommentElement::outer_html() const
+{
+    return "<!--" + m_text + "-->";
+}
+
 } // namespace litehtml

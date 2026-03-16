@@ -64,4 +64,13 @@ const char* StyleElement::get_tagName() const
     return "style";
 }
 
+std::string StyleElement::outer_html() const
+{
+    std::string inner;
+    for (auto child : m_children) {
+        child->get_text(inner);
+    }
+    return "<style>" + inner + "</style>";
+}
+
 } // namespace litehtml

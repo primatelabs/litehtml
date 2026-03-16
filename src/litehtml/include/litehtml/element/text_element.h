@@ -68,6 +68,8 @@ public:
 
     virtual void get_text(std::string& text) const override;
 
+    virtual std::string outer_html() const override;
+
     virtual const char* get_style_property(CSSProperty name) override;
 
     virtual void parse_styles(bool is_reparse) override;

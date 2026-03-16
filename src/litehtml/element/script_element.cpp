@@ -91,4 +91,14 @@ const char* ScriptElement::get_tagName() const
     return "script";
 }
 
+std::string ScriptElement::outer_html() const
+{
+    std::string result = "<script";
+    for (const auto& attr : m_attrs) {
+        result += " " + attr.first + "=\"" + attr.second + "\"";
+    }
+    result += ">" + m_text + "</script>";
+    return result;
+}
+
 } // namespace litehtml

@@ -234,4 +234,22 @@ CSSOffsets TextElement::get_css_offsets() const
     return CSSOffsets();
 }
 
+std::string TextElement::outer_html() const
+{
+    std::string result;
+    result.reserve(text_.size());
+    for (char c : text_) {
+        if (c == '&') {
+            result += "&amp;";
+        } else if (c == '<') {
+            result += "&lt;";
+        } else if (c == '>') {
+            result += "&gt;";
+        } else {
+            result += c;
+        }
+    }
+    return result;
+}
+
 } // namespace litehtml

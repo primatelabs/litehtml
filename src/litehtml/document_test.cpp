@@ -133,3 +133,25 @@ TEST(DocumentTest, DeviceChange)
     doc->media_changed();
     doc->lang_changed();
 }
+
+TEST(DocumentTest, OuterHtml)
+{
+    std::vector<std::string> testcases = {
+        "<html><head></head><body><p>Hello</p></body></html>",
+        "<html><head></head><body><a href=\"http://example.com\">link</a></body></html>",
+        "<html><head></head><body>before<br>after</body></html>",
+        "<html><head></head><body><p>a &amp; b</p></body></html>",
+        "<html><head></head><body><div><span>inner</span></div></body></html>",
+    };
+
+    for (auto& testcase : testcases) {
+        Context context;
+        test_container container;
+        Document* document = DocumentParser::parse(
+            testcase,
+            URL(),
+            &container,
+            &context);
+        EXPECT_EQ(testcase, document->outer_html());
+    }
+}

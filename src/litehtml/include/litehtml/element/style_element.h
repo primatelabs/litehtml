@@ -48,6 +48,7 @@ public:
     virtual void parse_attributes() override;
     virtual bool append_child(Element* element) override;
     virtual const char* get_tagName() const override;
+    virtual std::string outer_html() const override;
 };
 
 } // namespace litehtml

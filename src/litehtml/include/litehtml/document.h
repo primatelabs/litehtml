@@ -216,6 +216,8 @@ public:
 
     void append_children_from_utf8(Element& parent, const char* str);
 
+    std::string outer_html() const;
+
 private:
     uintptr_t add_font(const char* name,
         int size,

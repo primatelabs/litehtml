@@ -49,6 +49,7 @@ public:
 
     virtual void get_text(std::string& text) const override;
     virtual void set_data(const char* data) override;
+    virtual std::string outer_html() const override;
 };
 
 } // namespace litehtml

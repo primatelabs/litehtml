@@ -54,4 +54,9 @@ void CDATAElement::set_data(const char* data)
     }
 }
 
+std::string CDATAElement::outer_html() const
+{
+    return "<![CDATA[" + m_text + "]]>";
+}
+
 } // namespace litehtml

@@ -299,6 +299,8 @@ public:
     virtual bool is_only_child(const Element::ptr& el, bool of_type) const override;
     virtual const Background* get_background(bool own_only = false) override;
 
+    virtual std::string outer_html() const override;
+
 protected:
     void draw_children_box(uintptr_t hdc,
         int x,
