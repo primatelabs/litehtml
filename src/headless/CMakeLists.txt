@@ -83,6 +83,7 @@ target_link_directories(
     ${HEADLESS_NAME}
     PUBLIC
     ${HARFBUZZ_LIBRARY_DIRS}
+    ${FREETYPE_LIBRARY_DIRS}
     ${FONTCONFIG_LIBRARY_DIRS}
     ${FMT_LIBRARY_DIRS}
     ${LIBPNG_LIBRARY_DIRS}
@@ -92,6 +93,7 @@ target_link_libraries(
     ${HEADLESS_NAME}
     litehtml
     ${HARFBUZZ_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${LIBPNG_LIBRARIES}
